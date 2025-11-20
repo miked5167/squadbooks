@@ -1,0 +1,287 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// CORE MODELS
+// ============================================
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  level       String // "U8", "U10", "U13", etc.
+  season      String // "2024-2025"
+  budgetTotal Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users             User[]
+  categories        Category[]
+  transactions      Transaction[]
+  budgetAllocations BudgetAllocation[]
+  bankAccounts      BankAccount[]
+  auditLogs         AuditLog[]
+  exports           Export[]
+  approvals         Approval[]
+
+  @@map("teams")
+}
+
+enum UserRole {
+  TREASURER
+  PRESIDENT
+  BOARD_MEMBER
+  PARENT
+  AUDITOR
+}
+
+model User {
+  id      String   @id @default(cuid())
+  clerkId String   @unique
+  email   String   @unique
+  name    String
+  role    UserRole @default(PARENT)
+  teamId  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  team                   Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  transactionsCreated    Transaction[] @relation("TransactionCreator")
+  approvalsCreated       Approval[]    @relation("ApprovalCreator")
+  approvalsApproved      Approval[]    @relation("Approver")
+  auditLogs              AuditLog[]
+  exports                Export[]
+
+  @@index([teamId])
+  @@index([clerkId])
+  @@map("users")
+}
+
+model Category {
+  id        String  @id @default(cuid())
+  teamId    String
+  name      String
+  heading   String // "Ice Time", "Equipment", etc.
+  color     String  @default("#3B82F6")
+  sortOrder Int     @default(0)
+  isDefault Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  team              Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  transactions      Transaction[]
+  budgetAllocations BudgetAllocation[]
+
+  @@index([teamId])
+  @@map("categories")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum TransactionStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Transaction {
+  id              String            @id @default(cuid())
+  teamId          String
+  type            TransactionType
+  status          TransactionStatus @default(DRAFT)
+  amount          Decimal           @db.Decimal(10, 2)
+  categoryId      String
+  vendor          String
+  description     String?           @db.Text
+  transactionDate DateTime
+  receiptUrl      String?
+  createdBy       String
+  deletedAt       DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  team      Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  category  Category   @relation(fields: [categoryId], references: [id])
+  creator   User       @relation("TransactionCreator", fields: [createdBy], references: [id])
+  approvals Approval[]
+
+  @@index([teamId])
+  @@index([categoryId])
+  @@index([createdBy])
+  @@index([transactionDate])
+  @@index([status])
+  @@map("transactions")
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Approval {
+  id            String         @id @default(cuid())
+  transactionId String
+  approvedBy    String
+  createdBy     String
+  status        ApprovalStatus @default(PENDING)
+  comment       String?        @db.Text
+  approvedAt    DateTime?
+  teamId        String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  approver    User        @relation("Approver", fields: [approvedBy], references: [id])
+  creator     User        @relation("ApprovalCreator", fields: [createdBy], references: [id])
+  team        Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([transactionId])
+  @@index([approvedBy])
+  @@index([status])
+  @@index([teamId])
+  @@map("approvals")
+}
+
+model BudgetAllocation {
+  id         String  @id @default(cuid())
+  teamId     String
+  categoryId String
+  season     String // "2024-2025"
+  allocated  Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([teamId, categoryId, season])
+  @@index([teamId])
+  @@index([categoryId])
+  @@map("budget_allocations")
+}
+
+// ============================================
+// AUDIT & COMPLIANCE
+// ============================================
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  teamId     String
+  userId     String
+  action     String // "CREATE_TRANSACTION", "APPROVE_EXPENSE", etc.
+  entityType String // "Transaction", "Approval", etc.
+  entityId   String
+  oldValues  Json?
+  newValues  Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([teamId])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================
+// FUTURE FEATURES (Phase 2)
+// ============================================
+
+enum BankAccountType {
+  CHECKING
+  SAVINGS
+}
+
+model BankAccount {
+  id              String          @id @default(cuid())
+  teamId          String
+  accountName     String
+  accountType     BankAccountType
+  lastFour        String
+  currentBalance  Decimal         @db.Decimal(10, 2)
+  isActive        Boolean         @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  team             Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  bankTransactions BankTransaction[]
+
+  @@index([teamId])
+  @@map("bank_accounts")
+}
+
+model BankTransaction {
+  id                String   @id @default(cuid())
+  bankAccountId     String
+  date              DateTime
+  description       String
+  amount            Decimal  @db.Decimal(10, 2)
+  transactionId     String? // Link to Transaction if matched
+  isReconciled      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+
+  @@index([bankAccountId])
+  @@index([date])
+  @@map("bank_transactions")
+}
+
+enum ExportFormat {
+  CSV
+  PDF
+  EXCEL
+}
+
+model Export {
+  id         String       @id @default(cuid())
+  teamId     String
+  userId     String
+  format     ExportFormat
+  reportType String // "monthly_summary", "budget_variance", "transaction_history"
+  fileUrl    String
+  createdAt  DateTime     @default(now())
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([teamId])
+  @@index([userId])
+  @@map("exports")
+}
