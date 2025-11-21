@@ -113,6 +113,7 @@ model Transaction {
   description     String?           @db.Text
   transactionDate DateTime
   receiptUrl      String?
+  receiptPath     String? // Storage path for file deletion
   createdBy       String
   deletedAt       DateTime?
 

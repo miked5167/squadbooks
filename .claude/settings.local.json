@@ -11,7 +11,8 @@
       "Bash(npx create-next-app:*)",
       "Bash(npm install)",
       "Bash(npm run db:generate:*)",
-      "Bash(npm run db:push:*)"
+      "Bash(npm run db:push:*)",
+      "mcp__supabase-hockey-directory__apply_migration"
     ],
     "deny": [],
     "ask": []

@@ -327,6 +327,17 @@ export async function deleteTransaction(id: string, teamId: string) {
     throw new Error('Can only delete draft transactions')
   }
 
+  // Delete associated receipt from storage if exists
+  if (existing.receiptPath) {
+    try {
+      const { deleteReceipt } = await import('@/lib/storage')
+      await deleteReceipt(existing.receiptPath)
+    } catch (error) {
+      console.error('Failed to delete receipt:', error)
+      // Continue with transaction deletion even if receipt deletion fails
+    }
+  }
+
   // Soft delete
   const transaction = await prisma.transaction.update({
     where: { id },
@@ -335,7 +346,6 @@ export async function deleteTransaction(id: string, teamId: string) {
     },
   })
 
-  // TODO: Delete associated receipt from storage
   // TODO: Log deletion in audit trail
   // TODO: Recalculate budget for category
 
