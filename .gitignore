@@ -20,3 +20,5 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+scripts/check-mikes-team.ts
+scripts/update-roles.ts
