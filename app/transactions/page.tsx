@@ -2,6 +2,29 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { AppNav } from '@/components/app-nav'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Plus, FileText, TrendingUp, ExternalLink, Loader2, Search, RefreshCw } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Transaction {
   id: string
@@ -26,13 +49,26 @@ interface Transaction {
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [filter, setFilter] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    fetchTransactions()
-  }, [filter])
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (mounted) {
+      fetchTransactions()
+    }
+  }, [filter, mounted])
+
+  useEffect(() => {
+    filterTransactions()
+  }, [transactions, typeFilter, searchQuery])
 
   async function fetchTransactions() {
     try {
@@ -49,241 +85,298 @@ export default function TransactionsPage() {
 
       const data = await res.json()
       setTransactions(data.transactions || [])
+      toast.success(`Loaded ${data.transactions?.length || 0} transactions`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load transactions')
+      const errorMsg = err instanceof Error ? err.message : 'Failed to load transactions'
+      toast.error(errorMsg)
     } finally {
       setLoading(false)
     }
   }
 
-  function getStatusBadge(status: string) {
-    const styles = {
-      DRAFT: 'bg-gray-100 text-gray-700',
-      PENDING: 'bg-yellow-100 text-yellow-700',
-      APPROVED: 'bg-green-100 text-green-700',
-      REJECTED: 'bg-red-100 text-red-700',
+  function filterTransactions() {
+    let filtered = [...transactions]
+
+    // Filter by type
+    if (typeFilter !== 'all') {
+      filtered = filtered.filter((t) => t.type === typeFilter.toUpperCase())
     }
-    return styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-700'
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter(
+        (t) =>
+          t.vendor.toLowerCase().includes(query) ||
+          t.description?.toLowerCase().includes(query) ||
+          t.category.name.toLowerCase().includes(query)
+      )
+    }
+
+    setFilteredTransactions(filtered)
   }
 
-  function getTypeBadge(type: string) {
-    return type === 'INCOME'
-      ? 'bg-green-50 text-green-700 border border-green-200'
-      : 'bg-red-50 text-red-700 border border-red-200'
+  function handleRefresh() {
+    toast.loading('Refreshing transactions...')
+    fetchTransactions().then(() => {
+      toast.dismiss()
+      toast.success('Transactions refreshed')
+    })
+  }
+
+  function getStatusBadge(status: string) {
+    const variants = {
+      DRAFT: { variant: 'secondary' as const, className: 'bg-gray-100 text-gray-700' },
+      PENDING: { variant: 'outline' as const, className: 'bg-golden/10 text-golden border-golden/30' },
+      APPROVED: { variant: 'outline' as const, className: 'bg-meadow/10 text-meadow border-meadow/30' },
+      REJECTED: { variant: 'outline' as const, className: 'bg-red-100 text-red-700 border-red-300' },
+    }
+    return variants[status as keyof typeof variants] || variants.DRAFT
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Squadbooks</h1>
-            <nav className="flex gap-6">
-              <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
-                Dashboard
-              </Link>
-              <Link href="/transactions" className="text-blue-600 font-medium">
-                Transactions
-              </Link>
-              <Link href="/budget" className="text-gray-600 hover:text-gray-900">
-                Budget
-              </Link>
-              <Link href="/approvals" className="text-gray-600 hover:text-gray-900">
-                Approvals
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-cream">
+      <AppNav />
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex justify-between items-center">
+        {/* Page Header */}
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Transactions</h2>
-            <p className="text-gray-600">View and manage all financial transactions</p>
+            <h1 className="text-display-2 text-navy mb-2">Transactions</h1>
+            <p className="text-lg text-navy/70">View and manage all financial transactions</p>
           </div>
           <div className="flex gap-3">
-            <Link
-              href="/expenses/new"
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-            >
-              + New Expense
-            </Link>
-            <Link
-              href="/payments/new"
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-            >
-              + New Payment
-            </Link>
+            <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+              <Link href="/expenses/new">
+                <Plus className="mr-2 w-4 h-4" />
+                New Expense
+              </Link>
+            </Button>
+            <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+              <Link href="/payments/new">
+                <Plus className="mr-2 w-4 h-4" />
+                New Payment
+              </Link>
+            </Button>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="mb-6 flex gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              filter === 'all'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setFilter('approved')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              filter === 'approved'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            Approved
-          </button>
-          <button
-            onClick={() => setFilter('pending')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              filter === 'pending'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            Pending
-          </button>
-          <button
-            onClick={() => setFilter('draft')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              filter === 'draft'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            Draft
-          </button>
-        </div>
+        <Card className="border-0 shadow-card mb-6">
+          <CardContent className="pt-6 space-y-4">
+            {/* Status Tabs */}
+            {mounted ? (
+              <Tabs value={filter} onValueChange={setFilter} className="w-full">
+                <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-flex">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="approved">Approved</TabsTrigger>
+                  <TabsTrigger value="pending">Pending</TabsTrigger>
+                  <TabsTrigger value="draft">Draft</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            ) : (
+              <div className="h-9 flex items-center text-sm text-muted-foreground">
+                Loading filters...
+              </div>
+            )}
 
-        {/* Error State */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            {error}
-          </div>
-        )}
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              {/* Search */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/40" />
+                <Input
+                  type="text"
+                  placeholder="Search by vendor, description, or category..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Type Filter */}
+              {mounted ? (
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
+                    <SelectValue placeholder="Transaction type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="expense">Expenses</SelectItem>
+                    <SelectItem value="income">Income</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="h-9 w-full sm:w-[180px] rounded-md border border-input bg-transparent px-3 py-2 text-sm text-muted-foreground flex items-center">
+                  Loading...
+                </div>
+              )}
+
+              {/* Refresh Button */}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleRefresh}
+                disabled={loading}
+                className="shrink-0"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Loading State */}
         {loading && (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-            <p className="mt-4 text-gray-600">Loading transactions...</p>
-          </div>
+          <Card className="border-0 shadow-card">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <Loader2 className="w-12 h-12 text-navy animate-spin mb-4" />
+              <p className="text-navy/70">Loading transactions...</p>
+            </CardContent>
+          </Card>
         )}
 
         {/* Empty State */}
-        {!loading && transactions.length === 0 && (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <div className="text-6xl mb-4">📊</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No transactions found</h3>
-            <p className="text-gray-600 mb-6">
-              {filter === 'all'
-                ? 'Get started by creating your first expense or payment'
-                : `No ${filter} transactions yet`}
-            </p>
-            <div className="flex gap-3 justify-center">
-              <Link
-                href="/expenses/new"
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-              >
-                + New Expense
-              </Link>
-              <Link
-                href="/payments/new"
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-              >
-                + New Payment
-              </Link>
-            </div>
-          </div>
+        {!loading && filteredTransactions.length === 0 && (
+          <Card className="border-0 shadow-card">
+            <CardContent className="text-center py-16">
+              <div className="w-16 h-16 bg-navy/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-8 h-8 text-navy/40" />
+              </div>
+              <CardTitle className="text-navy mb-2">No transactions found</CardTitle>
+              <CardDescription className="mb-6 max-w-sm mx-auto">
+                {transactions.length === 0
+                  ? 'Get started by creating your first expense or payment'
+                  : 'No transactions match your current filters'}
+              </CardDescription>
+              {transactions.length === 0 ? (
+                <div className="flex gap-3 justify-center">
+                  <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+                    <Link href="/expenses/new">
+                      <Plus className="mr-2 w-4 h-4" />
+                      New Expense
+                    </Link>
+                  </Button>
+                  <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+                    <Link href="/payments/new">
+                      <Plus className="mr-2 w-4 h-4" />
+                      New Payment
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery('')
+                    setTypeFilter('all')
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              )}
+            </CardContent>
+          </Card>
         )}
 
         {/* Transaction List */}
-        {!loading && transactions.length > 0 && (
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Vendor
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Receipt
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {transactions.map((transaction) => (
-                  <tr key={transaction.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(transaction.transactionDate).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeBadge(transaction.type)}`}>
-                        {transaction.type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      <div className="font-medium">{transaction.vendor}</div>
-                      {transaction.description && (
-                        <div className="text-gray-500 text-xs mt-1">{transaction.description}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {transaction.category.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={transaction.type === 'INCOME' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
-                        {transaction.type === 'INCOME' ? '+' : '-'}${parseFloat(transaction.amount).toFixed(2)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(transaction.status)}`}>
-                        {transaction.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {transaction.receiptUrl ? (
-                        <a
-                          href={transaction.receiptUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-700"
-                        >
-                          View
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {!loading && filteredTransactions.length > 0 && (
+          <Card className="border-0 shadow-card">
+            <CardHeader>
+              <CardTitle className="text-navy">All Transactions</CardTitle>
+              <CardDescription>
+                Showing {filteredTransactions.length} of {transactions.length} transaction
+                {transactions.length !== 1 ? 's' : ''}
+                {searchQuery && ` matching "${searchQuery}"`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-lg border border-gray-200 overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-navy/5 hover:bg-navy/5">
+                      <TableHead className="font-semibold text-navy">Date</TableHead>
+                      <TableHead className="font-semibold text-navy">Type</TableHead>
+                      <TableHead className="font-semibold text-navy">Vendor</TableHead>
+                      <TableHead className="font-semibold text-navy">Category</TableHead>
+                      <TableHead className="font-semibold text-navy text-right">Amount</TableHead>
+                      <TableHead className="font-semibold text-navy">Status</TableHead>
+                      <TableHead className="font-semibold text-navy">Receipt</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredTransactions.map((transaction) => {
+                      const statusBadge = getStatusBadge(transaction.status)
+                      return (
+                        <TableRow key={transaction.id} className="hover:bg-navy/5">
+                          <TableCell className="font-medium text-navy/80">
+                            {new Date(transaction.transactionDate).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            })}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={
+                                transaction.type === 'INCOME'
+                                  ? 'bg-meadow/10 text-meadow border-meadow/30'
+                                  : 'bg-red-50 text-red-700 border-red-200'
+                              }
+                            >
+                              {transaction.type}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium text-navy">{transaction.vendor}</div>
+                              {transaction.description && (
+                                <div className="text-sm text-navy/60 mt-0.5">
+                                  {transaction.description}
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-navy/70">{transaction.category.name}</TableCell>
+                          <TableCell className="text-right">
+                            <span
+                              className={`font-semibold ${
+                                transaction.type === 'INCOME' ? 'text-meadow' : 'text-red-600'
+                              }`}
+                            >
+                              {transaction.type === 'INCOME' ? '+' : '-'}$
+                              {parseFloat(transaction.amount).toFixed(2)}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={statusBadge.variant} className={statusBadge.className}>
+                              {transaction.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {transaction.receiptUrl ? (
+                              <a
+                                href={transaction.receiptUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-navy hover:text-navy-medium transition-colors"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                                <span className="text-sm">View</span>
+                              </a>
+                            ) : (
+                              <span className="text-navy/30 text-sm">—</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </main>
     </div>

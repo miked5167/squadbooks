@@ -3,13 +3,20 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { AppNav } from '@/components/app-nav'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { toast } from 'sonner'
+import { ArrowLeft, Upload, Loader2 } from 'lucide-react'
 
 export default function NewExpensePage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [uploadingReceipt, setUploadingReceipt] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
 
   const [formData, setFormData] = useState({
     amount: '',
@@ -29,22 +36,51 @@ export default function NewExpensePage() {
         if (res.ok) {
           const data = await res.json()
           setCategories(data.categories || [])
+        } else {
+          toast.error('Failed to load categories')
         }
       } catch (err) {
         console.error('Failed to fetch categories:', err)
+        toast.error('Failed to load categories')
       }
     }
     fetchCategories()
   }, [])
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) {
+      setReceiptFile(null)
+      return
+    }
+
+    // Validate file size (5MB max)
+    const maxSize = 5 * 1024 * 1024 // 5MB in bytes
+    if (file.size > maxSize) {
+      toast.error('File size must be less than 5MB')
+      e.target.value = '' // Reset input
+      return
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf']
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('File must be PDF, JPG, PNG, or WebP')
+      e.target.value = '' // Reset input
+      return
+    }
+
+    setReceiptFile(file)
+    toast.success(`File selected: ${file.name}`)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
-    setSuccess('')
 
     try {
       // Create transaction
+      toast.loading('Creating expense...')
       const transactionRes = await fetch('/api/transactions', {
         method: 'POST',
         headers: {
@@ -63,6 +99,7 @@ export default function NewExpensePage() {
       const transactionData = await transactionRes.json()
 
       if (!transactionRes.ok) {
+        toast.dismiss()
         throw new Error(transactionData.error || 'Failed to create transaction')
       }
 
@@ -70,222 +107,209 @@ export default function NewExpensePage() {
 
       // Upload receipt if provided
       if (receiptFile && transactionId) {
-        const formData = new FormData()
-        formData.append('file', receiptFile)
-        formData.append('transactionId', transactionId)
+        setUploadingReceipt(true)
+        toast.dismiss()
+        toast.loading('Uploading receipt...')
+
+        const uploadFormData = new FormData()
+        uploadFormData.append('file', receiptFile)
+        uploadFormData.append('transactionId', transactionId)
 
         const receiptRes = await fetch('/api/receipts/upload', {
           method: 'POST',
-          body: formData,
+          body: uploadFormData,
         })
 
         if (!receiptRes.ok) {
           const receiptError = await receiptRes.json()
           console.error('Receipt upload failed:', receiptError.error)
-          // Continue anyway - transaction was created
+          toast.dismiss()
+          toast.warning('Expense created but receipt upload failed')
+        } else {
+          toast.dismiss()
         }
+        setUploadingReceipt(false)
+      } else {
+        toast.dismiss()
       }
 
-      setSuccess(transactionData.message || 'Expense created successfully!')
+      toast.success('Expense created successfully!')
 
       // Redirect after a short delay
       setTimeout(() => {
         router.push('/transactions')
-      }, 1500)
+      }, 1000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create expense')
+      toast.error(err instanceof Error ? err.message : 'Failed to create expense')
     } finally {
       setLoading(false)
+      setUploadingReceipt(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Squadbooks</h1>
-            <nav className="flex gap-6">
-              <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
-                Dashboard
-              </Link>
-              <Link href="/transactions" className="text-gray-600 hover:text-gray-900">
-                Transactions
-              </Link>
-              <Link href="/budget" className="text-gray-600 hover:text-gray-900">
-                Budget
-              </Link>
-              <Link href="/approvals" className="text-gray-600 hover:text-gray-900">
-                Approvals
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-cream">
+      <AppNav />
 
       {/* Main Content */}
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <Link href="/dashboard" className="text-blue-600 hover:text-blue-700 text-sm">
-            ← Back to Dashboard
-          </Link>
-        </div>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-navy hover:text-navy-medium mb-6 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Dashboard
+        </Link>
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">New Expense</h2>
+        <Card className="border-0 shadow-card">
+          <CardHeader className="bg-gradient-to-r from-navy to-navy-medium text-white rounded-t-lg">
+            <CardTitle className="text-2xl">New Expense</CardTitle>
+            <CardDescription className="text-cream/90">
+              Record a new expense for your team
+            </CardDescription>
+          </CardHeader>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-              {error}
-            </div>
-          )}
+          <CardContent className="pt-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Amount */}
+              <div className="space-y-2">
+                <Label htmlFor="amount">Amount *</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-navy/60 font-medium">$</span>
+                  <Input
+                    type="number"
+                    id="amount"
+                    required
+                    min="0.01"
+                    step="0.01"
+                    max="100000"
+                    value={formData.amount}
+                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    className="pl-8"
+                    placeholder="0.00"
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Expenses over $200 require president approval
+                </p>
+              </div>
 
-          {success && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
-              {success}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Amount */}
-            <div>
-              <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
-                Amount *
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                <input
-                  type="number"
-                  id="amount"
+              {/* Category */}
+              <div className="space-y-2">
+                <Label htmlFor="category">Category *</Label>
+                <select
+                  id="category"
                   required
-                  min="0.01"
-                  step="0.01"
-                  max="100000"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="pl-8 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="0.00"
+                  value={formData.categoryId}
+                  onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name} ({cat.heading})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Vendor */}
+              <div className="space-y-2">
+                <Label htmlFor="vendor">Vendor/Payee *</Label>
+                <Input
+                  type="text"
+                  id="vendor"
+                  required
+                  maxLength={255}
+                  value={formData.vendor}
+                  onChange={(e) => setFormData({ ...formData, vendor: e.target.value })}
+                  placeholder="e.g., Hockey Equipment Store"
                 />
               </div>
-              <p className="mt-1 text-sm text-gray-500">
-                Expenses over $200 require president approval
-              </p>
-            </div>
 
-            {/* Category */}
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                Category *
-              </label>
-              <select
-                id="category"
-                required
-                value={formData.categoryId}
-                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.heading} - {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {/* Date */}
+              <div className="space-y-2">
+                <Label htmlFor="date">Transaction Date *</Label>
+                <Input
+                  type="date"
+                  id="date"
+                  required
+                  max={new Date().toISOString().split('T')[0]}
+                  value={formData.transactionDate}
+                  onChange={(e) => setFormData({ ...formData, transactionDate: e.target.value })}
+                />
+              </div>
 
-            {/* Vendor */}
-            <div>
-              <label htmlFor="vendor" className="block text-sm font-medium text-gray-700 mb-2">
-                Vendor/Payee *
-              </label>
-              <input
-                type="text"
-                id="vendor"
-                required
-                maxLength={255}
-                value={formData.vendor}
-                onChange={(e) => setFormData({ ...formData, vendor: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="e.g., Hockey Equipment Store"
-              />
-            </div>
-
-            {/* Date */}
-            <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
-                Transaction Date *
-              </label>
-              <input
-                type="date"
-                id="date"
-                required
-                max={new Date().toISOString().split('T')[0]}
-                value={formData.transactionDate}
-                onChange={(e) => setFormData({ ...formData, transactionDate: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                Description (Optional)
-              </label>
-              <textarea
-                id="description"
-                rows={3}
-                maxLength={500}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Additional details about this expense..."
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                {formData.description.length}/500 characters
-              </p>
-            </div>
-
-            {/* Receipt Upload */}
-            <div>
-              <label htmlFor="receipt" className="block text-sm font-medium text-gray-700 mb-2">
-                Receipt (Optional)
-              </label>
-              <input
-                type="file"
-                id="receipt"
-                accept=".pdf,.jpg,.jpeg,.png,.webp"
-                onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                PDF, JPG, PNG, or WebP (Max 5MB)
-              </p>
-              {receiptFile && (
-                <p className="mt-2 text-sm text-green-600">
-                  ✓ {receiptFile.name} selected ({(receiptFile.size / 1024 / 1024).toFixed(2)} MB)
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Description (Optional)</Label>
+                <Textarea
+                  id="description"
+                  rows={3}
+                  maxLength={500}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Additional details about this expense..."
+                />
+                <p className="text-sm text-muted-foreground">
+                  {formData.description.length}/500 characters
                 </p>
-              )}
-            </div>
+              </div>
 
-            {/* Submit Buttons */}
-            <div className="flex gap-4 pt-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
-              >
-                {loading ? 'Creating...' : 'Create Expense'}
-              </button>
-              <Link
-                href="/dashboard"
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition text-center"
-              >
-                Cancel
-              </Link>
-            </div>
-          </form>
-        </div>
+              {/* Receipt Upload */}
+              <div className="space-y-2">
+                <Label htmlFor="receipt">Receipt (Optional)</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="file"
+                    id="receipt"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    onChange={handleFileChange}
+                    className="cursor-pointer"
+                  />
+                  <Upload className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  PDF, JPG, PNG, or WebP (Max 5MB)
+                </p>
+                {receiptFile && (
+                  <div className="flex items-center gap-2 text-sm text-meadow">
+                    <span className="font-medium">✓ {receiptFile.name}</span>
+                    <span className="text-muted-foreground">
+                      ({(receiptFile.size / 1024 / 1024).toFixed(2)} MB)
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex gap-4 pt-4">
+                <Button
+                  type="submit"
+                  disabled={loading || uploadingReceipt}
+                  className="flex-1 bg-navy hover:bg-navy-medium text-white"
+                >
+                  {loading || uploadingReceipt ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {uploadingReceipt ? 'Uploading...' : 'Creating...'}
+                    </>
+                  ) : (
+                    'Create Expense'
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push('/dashboard')}
+                  disabled={loading || uploadingReceipt}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </main>
     </div>
   )
