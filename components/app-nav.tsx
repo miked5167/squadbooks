@@ -13,7 +13,7 @@ import {
   Menu,
   X,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -26,6 +26,11 @@ const navigation = [
 export function AppNav() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
@@ -64,7 +69,7 @@ export function AppNav() {
 
           {/* Right side - User button */}
           <div className="flex items-center gap-4">
-            <UserButton afterSignOutUrl="/" />
+            {mounted && <UserButton afterSignOutUrl="/" />}
 
             {/* Mobile menu button */}
             <button

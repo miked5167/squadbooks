@@ -51,31 +51,57 @@ export async function createTransaction(
     },
   })
 
-  // If approval required, create approval record
+  // If approval required, create approval record and send email
   if (needsApproval) {
-    // Find team president for approval
-    const president = await prisma.user.findFirst({
+    // Find team assistant treasurer for approval
+    const assistantTreasurer = await prisma.user.findFirst({
       where: {
         teamId,
-        role: 'PRESIDENT',
+        role: 'ASSISTANT_TREASURER',
       },
     })
 
-    if (president) {
-      await prisma.approval.create({
+    if (assistantTreasurer) {
+      const approval = await prisma.approval.create({
         data: {
           transactionId: transaction.id,
-          approvedBy: president.id,
+          approvedBy: assistantTreasurer.id,
           createdBy: userId,
           teamId,
           status: 'PENDING',
         },
       })
+
+      // Send approval request email (non-blocking)
+      try {
+        const { sendApprovalRequestEmail } = await import('@/lib/email')
+        const team = await prisma.team.findUnique({
+          where: { id: teamId },
+          select: { name: true },
+        })
+
+        await sendApprovalRequestEmail({
+          approverName: assistantTreasurer.name,
+          approverEmail: assistantTreasurer.email,
+          treasurerName: transaction.creator.name,
+          teamName: team?.name || 'Your Team',
+          transactionType: type as 'EXPENSE' | 'INCOME',
+          amount: Number(amount),
+          vendor,
+          description: description || undefined,
+          categoryName: transaction.category.name,
+          transactionDate: transactionDate,
+          transactionId: transaction.id,
+          approvalId: approval.id,
+        })
+      } catch (error) {
+        console.error('Failed to send approval email:', error)
+        // Don't fail the transaction creation if email fails
+      }
     }
   }
 
   // TODO: Create audit log entry
-  // TODO: Trigger email notification if approval required
 
   return {
     transaction,
