@@ -181,10 +181,11 @@ export default function BudgetPage() {
 
   const pieData = Object.values(headingGroups)
 
-  // Show top 10 categories by spending for bar chart
+  // Show top 8 categories by allocation for bar chart (reduced for label clarity)
   const barData = [...categories]
-    .sort((a, b) => b.spent - a.spent)
-    .slice(0, 10)
+    .filter((cat) => cat.allocated > 0)
+    .sort((a, b) => b.allocated - a.allocated)
+    .slice(0, 8)
     .map((item) => ({
       name: item.categoryName,
       Allocated: item.allocated,
@@ -308,25 +309,32 @@ export default function BudgetPage() {
           {/* Bar Chart */}
           <Card className="border-0 shadow-card">
             <CardHeader>
-              <CardTitle className="text-navy">Top 10 Categories by Spending</CardTitle>
-              <CardDescription>Highest spending categories</CardDescription>
+              <CardTitle className="text-navy">Top 10 Budget Categories</CardTitle>
+              <CardDescription>Highest budget allocations and spending</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={barData} layout="horizontal" margin={{ left: 120 }}>
-                  <XAxis type="number" />
-                  <YAxis
-                    type="category"
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart
+                  data={barData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
+                >
+                  <XAxis
                     dataKey="name"
-                    width={110}
-                    tick={{ fontSize: 12 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    interval={0}
+                    tick={{ fontSize: 11 }}
+                  />
+                  <YAxis
+                    tickFormatter={(value) => `$${value.toLocaleString()}`}
                   />
                   <Tooltip
                     formatter={(value: number) => `$${value.toLocaleString()}`}
                   />
                   <Legend />
-                  <Bar dataKey="Allocated" fill="#001B40" name="Allocated" />
-                  <Bar dataKey="Spent" fill="#7CB342" name="Spent" />
+                  <Bar dataKey="Allocated" fill="#001B40" name="Allocated" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Spent" fill="#7CB342" name="Spent" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
