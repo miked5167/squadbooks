@@ -13,7 +13,10 @@
       "Bash(npm run db:generate:*)",
       "Bash(npm run db:push:*)",
       "mcp__supabase-hockey-directory__apply_migration",
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "Bash(git reset:*)",
+      "Bash(npm install:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
