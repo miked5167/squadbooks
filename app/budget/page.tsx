@@ -162,19 +162,34 @@ export default function BudgetPage() {
 
   const { totalAllocated, totalSpent, totalRemaining, categories } = budgetData
 
-  const pieData = categories.map((item) => ({
-    name: item.categoryName,
-    value: item.allocated,
-    spent: item.spent,
-    color: item.categoryColor,
-  }))
+  // Group categories by heading for pie chart
+  const headingGroups = categories.reduce((acc, item) => {
+    const heading = item.categoryHeading
+    if (!acc[heading]) {
+      acc[heading] = {
+        name: heading,
+        value: 0,
+        spent: 0,
+        // Use first category color from this heading
+        color: item.categoryColor,
+      }
+    }
+    acc[heading].value += item.allocated
+    acc[heading].spent += item.spent
+    return acc
+  }, {} as Record<string, { name: string; value: number; spent: number; color: string }>)
 
-  const barData = categories.map((item) => ({
-    name: item.categoryName,
-    Allocated: item.allocated,
-    Spent: item.spent,
-    Remaining: item.remaining,
-  }))
+  const pieData = Object.values(headingGroups)
+
+  // Show top 10 categories by spending for bar chart
+  const barData = [...categories]
+    .sort((a, b) => b.spent - a.spent)
+    .slice(0, 10)
+    .map((item) => ({
+      name: item.categoryName,
+      Allocated: item.allocated,
+      Spent: item.spent,
+    }))
 
   const getStatusIcon = (allocated: number, spent: number) => {
     const percentage = (spent / allocated) * 100
@@ -257,19 +272,19 @@ export default function BudgetPage() {
           {/* Pie Chart */}
           <Card className="border-0 shadow-card">
             <CardHeader>
-              <CardTitle className="text-navy">Budget Allocation</CardTitle>
-              <CardDescription>How your budget is distributed</CardDescription>
+              <CardTitle className="text-navy">Budget Allocation by Category</CardTitle>
+              <CardDescription>Grouped by major spending areas</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={350}>
                 <PieChart>
                   <Pie
                     data={pieData}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
+                    labelLine={true}
+                    label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                    outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
                   >
@@ -277,7 +292,14 @@ export default function BudgetPage() {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value: number) => `$${value.toLocaleString()}`}
+                  />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={36}
+                    iconType="circle"
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
@@ -286,15 +308,22 @@ export default function BudgetPage() {
           {/* Bar Chart */}
           <Card className="border-0 shadow-card">
             <CardHeader>
-              <CardTitle className="text-navy">Spending Overview</CardTitle>
-              <CardDescription>Allocated vs. Spent by category</CardDescription>
+              <CardTitle className="text-navy">Top 10 Categories by Spending</CardTitle>
+              <CardDescription>Highest spending categories</CardDescription>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={barData}>
-                  <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
-                  <YAxis />
-                  <Tooltip />
+              <ResponsiveContainer width="100%" height={350}>
+                <BarChart data={barData} layout="horizontal" margin={{ left: 120 }}>
+                  <XAxis type="number" />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={110}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <Tooltip
+                    formatter={(value: number) => `$${value.toLocaleString()}`}
+                  />
                   <Legend />
                   <Bar dataKey="Allocated" fill="#001B40" name="Allocated" />
                   <Bar dataKey="Spent" fill="#7CB342" name="Spent" />

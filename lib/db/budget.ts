@@ -148,38 +148,76 @@ export async function getBudgetOverview(
     },
   })
 
-  // Calculate spending for each category
-  const categoryBudgets: CategoryBudget[] = await Promise.all(
-    budgetAllocations.map(async (allocation) => {
-      const [spent, pending] = await Promise.all([
-        calculateCategorySpending(teamId, allocation.categoryId, currentSeason),
-        calculateCategoryPending(teamId, allocation.categoryId, currentSeason),
-      ])
+  // Batch fetch all spending and pending amounts in 2 queries
+  const categoryIds = budgetAllocations.map((a) => a.categoryId)
 
-      const allocated = Number(allocation.allocated)
-      const remaining = allocated - spent
-      const percentage = allocated > 0 ? (spent / allocated) * 100 : 0
-      const projectedSpent = spent + pending
-      const projectedPercentage = allocated > 0 ? (projectedSpent / allocated) * 100 : 0
-      const health = calculateBudgetHealth(percentage)
-      const projectedHealth = calculateBudgetHealth(projectedPercentage)
+  const [spentByCategory, pendingByCategory] = await Promise.all([
+    // Get all APPROVED spending grouped by category
+    prisma.transaction.groupBy({
+      by: ['categoryId'],
+      where: {
+        teamId,
+        categoryId: { in: categoryIds },
+        type: 'EXPENSE',
+        status: 'APPROVED',
+        deletedAt: null,
+      },
+      _sum: {
+        amount: true,
+      },
+    }),
+    // Get all PENDING spending grouped by category
+    prisma.transaction.groupBy({
+      by: ['categoryId'],
+      where: {
+        teamId,
+        categoryId: { in: categoryIds },
+        type: 'EXPENSE',
+        status: 'PENDING',
+        deletedAt: null,
+      },
+      _sum: {
+        amount: true,
+      },
+    }),
+  ])
 
-      return {
-        categoryId: allocation.category.id,
-        categoryName: allocation.category.name,
-        categoryHeading: allocation.category.heading,
-        categoryColor: allocation.category.color,
-        allocated,
-        spent,
-        pending,
-        remaining,
-        percentage,
-        projectedPercentage,
-        health,
-        projectedHealth,
-      }
-    })
+  // Create lookup maps for fast access
+  const spentMap = new Map(
+    spentByCategory.map((item) => [item.categoryId, Number(item._sum.amount || 0)])
   )
+  const pendingMap = new Map(
+    pendingByCategory.map((item) => [item.categoryId, Number(item._sum.amount || 0)])
+  )
+
+  // Calculate spending for each category
+  const categoryBudgets: CategoryBudget[] = budgetAllocations.map((allocation) => {
+    const spent = spentMap.get(allocation.categoryId) || 0
+    const pending = pendingMap.get(allocation.categoryId) || 0
+
+    const allocated = Number(allocation.allocated)
+    const remaining = allocated - spent
+    const percentage = allocated > 0 ? (spent / allocated) * 100 : 0
+    const projectedSpent = spent + pending
+    const projectedPercentage = allocated > 0 ? (projectedSpent / allocated) * 100 : 0
+    const health = calculateBudgetHealth(percentage)
+    const projectedHealth = calculateBudgetHealth(projectedPercentage)
+
+    return {
+      categoryId: allocation.category.id,
+      categoryName: allocation.category.name,
+      categoryHeading: allocation.category.heading,
+      categoryColor: allocation.category.color,
+      allocated,
+      spent,
+      pending,
+      remaining,
+      percentage,
+      projectedPercentage,
+      health,
+      projectedHealth,
+    }
+  })
 
   // Calculate totals
   const totalAllocated = categoryBudgets.reduce((sum, cat) => sum + cat.allocated, 0)
