@@ -12,7 +12,8 @@
       "Bash(npm install)",
       "Bash(npm run db:generate:*)",
       "Bash(npm run db:push:*)",
-      "mcp__supabase-hockey-directory__apply_migration"
+      "mcp__supabase-hockey-directory__apply_migration",
+      "Bash(npm run dev)"
     ],
     "deny": [],
     "ask": []
