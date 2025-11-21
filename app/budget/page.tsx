@@ -9,9 +9,12 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Plus, Loader2, Edit, Clock } from 'lucide-react'
 import { toast } from 'sonner'
+import { BudgetHealthSummary } from '@/components/dashboard/BudgetHealthSummary'
+import { BudgetAllocationChart } from '@/components/dashboard/BudgetAllocationChart'
+import { TopCategoriesChart } from '@/components/dashboard/TopCategoriesChart'
+import type { BudgetSummary, BudgetHeadingGroup, BudgetCategory } from '@/lib/types/budget'
 
 interface BudgetData {
   season: string
@@ -160,37 +163,65 @@ export default function BudgetPage() {
     )
   }
 
-  const { totalAllocated, totalSpent, totalRemaining, categories } = budgetData
+  const { totalAllocated, totalSpent, totalRemaining, totalPending, categories, season } = budgetData
 
-  // Group categories by heading for pie chart
+  // Transform data for new components
+
+  // Create BudgetSummary for health summary component
+  const categoriesOnTrack = categories.filter((cat) => cat.percentage <= 85).length
+  const categoriesWarning = categories.filter((cat) => cat.percentage > 85 && cat.percentage <= 95).length
+  const categoriesOverBudget = categories.filter((cat) => cat.percentage > 95).length
+
+  const budgetSummary: BudgetSummary = {
+    totalBudget: totalAllocated * 100, // Convert to cents
+    totalSpent: totalSpent * 100,
+    totalRemaining: totalRemaining * 100,
+    percentUsed: totalAllocated > 0 ? (totalSpent / totalAllocated) * 100 : 0,
+    categoriesOnTrack,
+    categoriesWarning,
+    categoriesOverBudget,
+    projectedSurplusDeficit: (totalRemaining - (totalPending || 0)) * 100,
+    season: season || '2024-25 Season',
+    lastUpdated: new Date(),
+  }
+
+  // Group categories by heading for allocation chart
   const headingGroups = categories.reduce((acc, item) => {
     const heading = item.categoryHeading
     if (!acc[heading]) {
       acc[heading] = {
-        name: heading,
-        value: 0,
-        spent: 0,
-        // Use first category color from this heading
+        heading,
         color: item.categoryColor,
+        allocated: 0,
+        spent: 0,
+        percentOfTotal: 0,
       }
     }
-    acc[heading].value += item.allocated
-    acc[heading].spent += item.spent
+    acc[heading].allocated += item.allocated * 100 // Convert to cents
+    acc[heading].spent += item.spent * 100
     return acc
-  }, {} as Record<string, { name: string; value: number; spent: number; color: string }>)
+  }, {} as Record<string, BudgetHeadingGroup>)
 
-  const pieData = Object.values(headingGroups)
+  // Calculate percentages
+  const allocationGroups = Object.values(headingGroups).map((group) => ({
+    ...group,
+    percentOfTotal: totalAllocated > 0 ? (group.allocated / 100 / totalAllocated) * 100 : 0,
+  }))
 
-  // Show top 8 categories by allocation for bar chart (reduced for label clarity)
-  const barData = [...categories]
-    .filter((cat) => cat.allocated > 0)
-    .sort((a, b) => b.allocated - a.allocated)
-    .slice(0, 8)
-    .map((item) => ({
-      name: item.categoryName,
-      Allocated: item.allocated,
-      Spent: item.spent,
-    }))
+  // Transform categories for top categories chart
+  const budgetCategories: BudgetCategory[] = categories.map((cat) => ({
+    id: cat.categoryId,
+    name: cat.categoryName,
+    heading: cat.categoryHeading,
+    color: cat.categoryColor,
+    allocated: cat.allocated * 100, // Convert to cents
+    spent: cat.spent * 100,
+    remaining: cat.remaining * 100,
+    percentUsed: cat.percentage,
+    trend: undefined, // TODO: Calculate trend from historical data
+    lastExpenseDate: undefined, // TODO: Get from last transaction
+    transactionCount: 0, // TODO: Get actual transaction count
+  }))
 
   const getStatusIcon = (allocated: number, spent: number) => {
     const percentage = (spent / allocated) * 100
@@ -268,77 +299,21 @@ export default function BudgetPage() {
           </Card>
         </div>
 
+        {/* Budget Health Summary */}
+        <div className="mb-8">
+          <BudgetHealthSummary summary={budgetSummary} />
+        </div>
+
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Pie Chart */}
-          <Card className="border-0 shadow-card">
-            <CardHeader>
-              <CardTitle className="text-navy">Budget Allocation by Category</CardTitle>
-              <CardDescription>Grouped by major spending areas</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={true}
-                    label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value: number) => `$${value.toLocaleString()}`}
-                  />
-                  <Legend
-                    verticalAlign="bottom"
-                    height={36}
-                    iconType="circle"
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          {/* Budget Allocation Chart */}
+          <BudgetAllocationChart
+            groups={allocationGroups}
+            totalBudget={totalAllocated * 100}
+          />
 
-          {/* Bar Chart */}
-          <Card className="border-0 shadow-card">
-            <CardHeader>
-              <CardTitle className="text-navy">Top 10 Budget Categories</CardTitle>
-              <CardDescription>Highest budget allocations and spending</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart
-                  data={barData}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
-                >
-                  <XAxis
-                    dataKey="name"
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                    interval={0}
-                    tick={{ fontSize: 11 }}
-                  />
-                  <YAxis
-                    tickFormatter={(value) => `$${value.toLocaleString()}`}
-                  />
-                  <Tooltip
-                    formatter={(value: number) => `$${value.toLocaleString()}`}
-                  />
-                  <Legend />
-                  <Bar dataKey="Allocated" fill="#001B40" name="Allocated" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Spent" fill="#7CB342" name="Spent" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          {/* Top Categories Chart */}
+          <TopCategoriesChart categories={budgetCategories} limit={8} />
         </div>
 
         {/* Category Breakdown */}
