@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { AppNav } from '@/components/app-nav'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowUpRight, Plus, TrendingUp, TrendingDown, Clock } from 'lucide-react'
+import { ArrowUpRight, Plus, DollarSign, List, TrendingUp, TrendingDown, Clock } from 'lucide-react'
+import { prisma } from '@/lib/prisma'
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -13,12 +14,44 @@ export default async function DashboardPage() {
     redirect('/sign-in')
   }
 
-  // TODO: Fetch real data from database
+  // Fetch user and team data
+  const user = await prisma.user.findUnique({
+    where: { clerkId: userId },
+    include: { team: true },
+  })
+
+  if (!user) {
+    redirect('/sign-in')
+  }
+
+  // Fetch approved expenses for actual spending
+  const approvedExpenses = await prisma.transaction.findMany({
+    where: {
+      teamId: user.teamId,
+      type: 'EXPENSE',
+      status: 'APPROVED',
+      deletedAt: null,
+    },
+  })
+
+  // Fetch pending approvals count
+  const pendingApprovalsCount = await prisma.approval.count({
+    where: {
+      teamId: user.teamId,
+      status: 'PENDING',
+    },
+  })
+
+  // Calculate stats from real data
+  const totalBudget = Number(user.team.budgetTotal)
+  const spent = approvedExpenses.reduce((sum, txn) => sum + Number(txn.amount), 0)
+  const remaining = totalBudget - spent
+
   const stats = {
-    totalBudget: 10000,
-    spent: 0,
-    remaining: 10000,
-    pending: 0,
+    totalBudget,
+    spent,
+    remaining,
+    pending: pendingApprovalsCount,
   }
 
   const spentPercentage = (stats.spent / stats.totalBudget) * 100
@@ -58,7 +91,7 @@ export default async function DashboardPage() {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 bg-golden/10 rounded-lg flex items-center justify-center group-hover:bg-golden/20 transition-colors">
-                <TrendingUp className="w-6 h-6 text-golden" />
+                <DollarSign className="w-6 h-6 text-golden" />
               </div>
               <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-golden group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
             </div>
@@ -72,7 +105,7 @@ export default async function DashboardPage() {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-12 h-12 bg-navy/10 rounded-lg flex items-center justify-center group-hover:bg-navy/20 transition-colors">
-                <TrendingUp className="w-6 h-6 text-navy" />
+                <List className="w-6 h-6 text-navy" />
               </div>
               <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-navy group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
             </div>
