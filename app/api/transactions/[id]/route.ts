@@ -98,7 +98,7 @@ export async function PUT(
     }
 
     // Update transaction
-    const transaction = await updateTransaction(params.id, user.teamId, validatedData)
+    const transaction = await updateTransaction(params.id, user.teamId, user.id, validatedData)
 
     return NextResponse.json(
       {
@@ -150,7 +150,7 @@ export async function DELETE(
     }
 
     // Delete transaction
-    await deleteTransaction(params.id, user.teamId)
+    await deleteTransaction(params.id, user.teamId, user.id)
 
     return NextResponse.json(
       { message: 'Transaction deleted successfully' },

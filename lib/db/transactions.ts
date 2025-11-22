@@ -53,19 +53,29 @@ export async function createTransaction(
 
   // If approval required, create approval record and send email
   if (needsApproval) {
-    // Find team assistant treasurer for approval
-    const assistantTreasurer = await prisma.user.findFirst({
+    // CRITICAL: Determine appropriate approver based on creator's role
+    // If creator is assistant treasurer, assign to treasurer and vice versa
+    const creatorRole = transaction.creator.role
+    const approverRole = creatorRole === 'ASSISTANT_TREASURER' ? 'TREASURER' : 'ASSISTANT_TREASURER'
+
+    // Find the appropriate approver (not the creator)
+    const approver = await prisma.user.findFirst({
       where: {
         teamId,
-        role: 'ASSISTANT_TREASURER',
+        role: approverRole,
       },
     })
 
-    if (assistantTreasurer) {
+    if (approver) {
+      // Additional safety check: ensure approver is not the creator
+      if (approver.id === userId) {
+        throw new Error('Cannot assign approval to transaction creator. Team needs both a treasurer and assistant treasurer.')
+      }
+
       const approval = await prisma.approval.create({
         data: {
           transactionId: transaction.id,
-          approvedBy: assistantTreasurer.id,
+          approvedBy: approver.id,
           createdBy: userId,
           teamId,
           status: 'PENDING',
@@ -81,8 +91,8 @@ export async function createTransaction(
         })
 
         await sendApprovalRequestEmail({
-          approverName: assistantTreasurer.name,
-          approverEmail: assistantTreasurer.email,
+          approverName: approver.name,
+          approverEmail: approver.email,
           treasurerName: transaction.creator.name,
           teamName: team?.name || 'Your Team',
           transactionType: type as 'EXPENSE' | 'INCOME',
@@ -101,7 +111,29 @@ export async function createTransaction(
     }
   }
 
-  // TODO: Create audit log entry
+  // Create audit log entry
+  try {
+    const { createAuditLog, AuditAction, EntityType } = await import('@/lib/db/audit')
+    await createAuditLog({
+      teamId,
+      userId,
+      action: AuditAction.CREATE_TRANSACTION,
+      entityType: EntityType.TRANSACTION,
+      entityId: transaction.id,
+      newValues: {
+        type: transaction.type,
+        status: transaction.status,
+        amount: transaction.amount.toString(),
+        categoryId: transaction.categoryId,
+        vendor: transaction.vendor,
+        description: transaction.description,
+        transactionDate: transaction.transactionDate.toISOString(),
+      },
+    })
+  } catch (error) {
+    console.error('Failed to create audit log for transaction creation:', error)
+    // Don't fail transaction creation if audit logging fails
+  }
 
   return {
     transaction,
@@ -294,6 +326,7 @@ export async function getTransactionById(id: string, teamId: string) {
 export async function updateTransaction(
   id: string,
   teamId: string,
+  userId: string,
   data: UpdateTransactionInput
 ) {
   // Check current transaction status
@@ -307,6 +340,17 @@ export async function updateTransaction(
 
   if (existing.status === 'APPROVED' || existing.status === 'REJECTED') {
     throw new Error('Cannot update approved or rejected transactions')
+  }
+
+  // Capture old values for audit trail
+  const oldValues = {
+    type: existing.type,
+    status: existing.status,
+    amount: existing.amount.toString(),
+    categoryId: existing.categoryId,
+    vendor: existing.vendor,
+    description: existing.description,
+    transactionDate: existing.transactionDate.toISOString(),
   }
 
   // Update transaction
@@ -329,7 +373,31 @@ export async function updateTransaction(
     },
   })
 
-  // TODO: Log changes in audit trail
+  // Create audit log entry
+  try {
+    const { createAuditLog, AuditAction, EntityType } = await import('@/lib/db/audit')
+    await createAuditLog({
+      teamId,
+      userId,
+      action: AuditAction.UPDATE_TRANSACTION,
+      entityType: EntityType.TRANSACTION,
+      entityId: transaction.id,
+      oldValues,
+      newValues: {
+        type: transaction.type,
+        status: transaction.status,
+        amount: transaction.amount.toString(),
+        categoryId: transaction.categoryId,
+        vendor: transaction.vendor,
+        description: transaction.description,
+        transactionDate: transaction.transactionDate.toISOString(),
+      },
+    })
+  } catch (error) {
+    console.error('Failed to create audit log for transaction update:', error)
+    // Don't fail transaction update if audit logging fails
+  }
+
   // TODO: Recalculate budget if amount or category changed
 
   return transaction
@@ -339,7 +407,7 @@ export async function updateTransaction(
  * Soft delete a transaction
  * Can only delete if status is DRAFT
  */
-export async function deleteTransaction(id: string, teamId: string) {
+export async function deleteTransaction(id: string, teamId: string, userId: string) {
   // Check current transaction status
   const existing = await prisma.transaction.findFirst({
     where: { id, teamId, deletedAt: null },
@@ -351,6 +419,17 @@ export async function deleteTransaction(id: string, teamId: string) {
 
   if (existing.status !== 'DRAFT') {
     throw new Error('Can only delete draft transactions')
+  }
+
+  // Capture old values for audit trail
+  const oldValues = {
+    type: existing.type,
+    status: existing.status,
+    amount: existing.amount.toString(),
+    categoryId: existing.categoryId,
+    vendor: existing.vendor,
+    description: existing.description,
+    transactionDate: existing.transactionDate.toISOString(),
   }
 
   // Delete associated receipt from storage if exists
@@ -372,7 +451,22 @@ export async function deleteTransaction(id: string, teamId: string) {
     },
   })
 
-  // TODO: Log deletion in audit trail
+  // Create audit log entry
+  try {
+    const { createAuditLog, AuditAction, EntityType } = await import('@/lib/db/audit')
+    await createAuditLog({
+      teamId,
+      userId,
+      action: AuditAction.DELETE_TRANSACTION,
+      entityType: EntityType.TRANSACTION,
+      entityId: transaction.id,
+      oldValues,
+    })
+  } catch (error) {
+    console.error('Failed to create audit log for transaction deletion:', error)
+    // Don't fail transaction deletion if audit logging fails
+  }
+
   // TODO: Recalculate budget for category
 
   return transaction

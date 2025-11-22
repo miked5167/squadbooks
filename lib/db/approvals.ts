@@ -147,6 +147,11 @@ export async function approveTransaction(
     throw new Error('Transaction is not in pending state')
   }
 
+  // CRITICAL: Prevent self-approval fraud
+  if (approval.transaction.createdBy === approverId) {
+    throw new Error('You cannot approve your own transaction')
+  }
+
   // Update approval status
   const updatedApproval = await prisma.approval.update({
     where: { id: approvalId },
@@ -181,7 +186,34 @@ export async function approveTransaction(
     // Don't fail the approval if email fails
   }
 
-  // TODO: Create audit log entry
+  // Create audit log entry
+  try {
+    const { createAuditLog, AuditAction, EntityType } = await import('@/lib/db/audit')
+    await createAuditLog({
+      teamId,
+      userId: approverId,
+      action: AuditAction.APPROVE_TRANSACTION,
+      entityType: EntityType.APPROVAL,
+      entityId: approvalId,
+      oldValues: {
+        status: 'PENDING',
+        transactionStatus: 'PENDING',
+      },
+      newValues: {
+        status: 'APPROVED',
+        transactionStatus: 'APPROVED',
+        comment,
+        approvedAt: new Date().toISOString(),
+        transactionId: approval.transactionId,
+        amount: approval.transaction.amount.toString(),
+        vendor: approval.transaction.vendor,
+      },
+    })
+  } catch (error) {
+    console.error('Failed to create audit log for approval:', error)
+    // Don't fail the approval if audit logging fails
+  }
+
   // TODO: Recalculate budget impact
 
   return updatedApproval
@@ -223,6 +255,11 @@ export async function rejectTransaction(
     throw new Error('Transaction is not in pending state')
   }
 
+  // CRITICAL: Prevent self-approval fraud (also applies to rejections)
+  if (approval.transaction.createdBy === approverId) {
+    throw new Error('You cannot approve or reject your own transaction')
+  }
+
   // Update approval status
   const updatedApproval = await prisma.approval.update({
     where: { id: approvalId },
@@ -257,7 +294,33 @@ export async function rejectTransaction(
     // Don't fail the rejection if email fails
   }
 
-  // TODO: Create audit log entry
+  // Create audit log entry
+  try {
+    const { createAuditLog, AuditAction, EntityType } = await import('@/lib/db/audit')
+    await createAuditLog({
+      teamId,
+      userId: approverId,
+      action: AuditAction.REJECT_TRANSACTION,
+      entityType: EntityType.APPROVAL,
+      entityId: approvalId,
+      oldValues: {
+        status: 'PENDING',
+        transactionStatus: 'PENDING',
+      },
+      newValues: {
+        status: 'REJECTED',
+        transactionStatus: 'REJECTED',
+        comment,
+        approvedAt: new Date().toISOString(),
+        transactionId: approval.transactionId,
+        amount: approval.transaction.amount.toString(),
+        vendor: approval.transaction.vendor,
+      },
+    })
+  } catch (error) {
+    console.error('Failed to create audit log for rejection:', error)
+    // Don't fail the rejection if audit logging fails
+  }
 
   return updatedApproval
 }
