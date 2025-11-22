@@ -9,6 +9,7 @@ import {
   Receipt,
   PiggyBank,
   CheckCircle,
+  FileText,
   Settings,
   Menu,
   X,
@@ -20,6 +21,7 @@ const navigation = [
   { name: 'Transactions', href: '/transactions', icon: Receipt },
   { name: 'Budget', href: '/budget', icon: PiggyBank },
   { name: 'Approvals', href: '/approvals', icon: CheckCircle },
+  { name: 'Reports', href: '/reports', icon: FileText },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
