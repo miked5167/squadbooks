@@ -246,7 +246,7 @@ export default async function DashboardPage() {
               </div>
               <h3 className="text-lg font-semibold text-navy mb-2">No transactions yet</h3>
               <p className="text-navy/60 mb-6 max-w-sm mx-auto">
-                Create your first expense or payment to get started tracking your team's finances
+                Create your first expense or income to get started tracking your team's finances
               </p>
               <div className="flex gap-3 justify-center">
                 <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
@@ -256,9 +256,9 @@ export default async function DashboardPage() {
                   </Link>
                 </Button>
                 <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-                  <Link href="/payments/new">
+                  <Link href="/income/new">
                     <Plus className="mr-2 w-4 h-4" />
-                    Add Payment
+                    Add Income
                   </Link>
                 </Button>
               </div>

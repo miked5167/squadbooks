@@ -13,7 +13,7 @@ const ibmPlexSans = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: "Squadbooks - Team Financial Management",
-  description: "Prevent fraud and build trust with transparent budget tracking for volunteer-run hockey teams",
+  description: "Build trust with transparent financial safeguards and budget tracking for volunteer-run hockey teams",
   keywords: ["team finance", "budget tracking", "sports team", "hockey", "financial management", "expense tracking"],
   authors: [{ name: "Squadbooks" }],
   openGraph: {

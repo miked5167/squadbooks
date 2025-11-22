@@ -35,8 +35,25 @@ model Team {
   approvals         Approval[]
   invitations       Invitation[]
   seasonClosures    SeasonClosure[]
+  families          Family[]
 
   @@map("teams")
+}
+
+model Family {
+  id             String   @id @default(cuid())
+  teamId         String
+  familyName     String
+  primaryEmail   String
+  secondaryEmail String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@map("families")
 }
 
 enum UserRole {
@@ -73,14 +90,20 @@ model User {
   @@map("users")
 }
 
+enum CategoryType {
+  EXPENSE
+  INCOME
+}
+
 model Category {
-  id        String  @id @default(cuid())
+  id        String       @id @default(cuid())
   teamId    String
   name      String
-  heading   String // "Ice Time", "Equipment", etc.
-  color     String  @default("#3B82F6")
-  sortOrder Int     @default(0)
-  isDefault Boolean @default(false)
+  heading   String       // "Ice Time", "Equipment", etc.
+  color     String       @default("#3B82F6")
+  type      CategoryType @default(EXPENSE)
+  sortOrder Int          @default(0)
+  isDefault Boolean      @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

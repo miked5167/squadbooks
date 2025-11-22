@@ -51,11 +51,11 @@ export function BudgetAllocationChart({ groups, totalBudget }: BudgetAllocationC
                     }
                   }}
                 >
-                  {/* Percentage label (only show if segment is wide enough) */}
-                  {group.percentOfTotal >= 8 && (
+                  {/* Dollar amount label (only show if segment is wide enough) */}
+                  {group.percentOfTotal >= 5 && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className="text-xs font-bold text-white drop-shadow-sm tabular-nums">
-                        {group.percentOfTotal.toFixed(0)}%
+                        {formatCurrency(group.allocated)}
                       </span>
                     </div>
                   )}

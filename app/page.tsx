@@ -120,7 +120,7 @@ export default function Home() {
             <p className="text-navy/60 font-semibold mb-8">Built for hockey teams and clubs</p>
             <div className="flex flex-wrap justify-center items-center gap-8 text-navy/40">
               <span className="text-2xl font-bold">🏒</span>
-              <span className="text-sm">Fraud Prevention</span>
+              <span className="text-sm">Financial Protection</span>
               <span className="text-2xl">•</span>
               <span className="text-sm">Budget Transparency</span>
               <span className="text-2xl">•</span>

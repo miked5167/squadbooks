@@ -34,10 +34,10 @@ const DEFAULT_CATEGORIES = [
   { name: 'Insurance', heading: 'League & Registration', color: '#EC4899', sortOrder: 20 },
 
   // Team Operations (Heading 6)
-  { name: 'Team Photos', heading: 'Team Operations', color: '#6366F1', sortOrder: 21 },
-  { name: 'Team Party/Events', heading: 'Team Operations', color: '#6366F1', sortOrder: 22 },
-  { name: 'Awards & Trophies', heading: 'Team Operations', color: '#6366F1', sortOrder: 23 },
-  { name: 'Office Supplies', heading: 'Team Operations', color: '#6366F1', sortOrder: 24 },
+  { name: 'Team Photos', heading: 'Team Operations', color: '#06B6D4', sortOrder: 21 },
+  { name: 'Team Party/Events', heading: 'Team Operations', color: '#06B6D4', sortOrder: 22 },
+  { name: 'Awards & Trophies', heading: 'Team Operations', color: '#06B6D4', sortOrder: 23 },
+  { name: 'Office Supplies', heading: 'Team Operations', color: '#06B6D4', sortOrder: 24 },
 
   // Fundraising & Income (Heading 7)
   { name: 'Registration Fees', heading: 'Fundraising & Income', color: '#14B8A6', sortOrder: 25 },

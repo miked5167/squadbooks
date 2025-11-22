@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { AppNav } from '@/components/app-nav'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,8 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, FileText, TrendingUp, ExternalLink, Loader2, Search, RefreshCw } from 'lucide-react'
+import { Plus, FileText, ExternalLink, Loader2, Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, X, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
 import { toast } from 'sonner'
+import { ReceiptViewer } from '@/components/ReceiptViewer'
 
 interface Transaction {
   id: string
@@ -47,36 +49,80 @@ interface Transaction {
   }
 }
 
+type SortKey = 'date' | 'amount' | 'vendor' | 'category' | 'status' | null
+type SortDirection = 'asc' | 'desc'
+
 export default function TransactionsPage() {
+  const searchParams = useSearchParams()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
   const [typeFilter, setTypeFilter] = useState<string>('all')
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [mounted, setMounted] = useState(false)
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+  const [perPage] = useState(50)
+
+  // Receipt viewer state
+  const [selectedReceipt, setSelectedReceipt] = useState<{
+    url: string
+    vendor: string
+    id: string
+  } | null>(null)
+
+  // Sort state - default to date descending (newest first)
+  const [sortConfig, setSortConfig] = useState<{
+    key: SortKey
+    direction: SortDirection
+  }>({
+    key: 'date',
+    direction: 'desc',
+  })
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  // Read categoryId from URL on mount
+  useEffect(() => {
+    if (searchParams) {
+      const categoryId = searchParams.get('categoryId')
+      setCategoryFilter(categoryId)
+    }
+  }, [searchParams])
+
   useEffect(() => {
     if (mounted) {
-      fetchTransactions()
+      setCurrentPage(1) // Reset to page 1 when filter changes
+      fetchTransactions(1)
     }
   }, [filter, mounted])
 
   useEffect(() => {
-    filterTransactions()
-  }, [transactions, typeFilter, searchQuery])
+    if (mounted) {
+      fetchTransactions(currentPage)
+    }
+  }, [currentPage])
 
-  async function fetchTransactions() {
+  useEffect(() => {
+    filterTransactions()
+  }, [transactions, typeFilter, categoryFilter, searchQuery])
+
+  async function fetchTransactions(page: number = currentPage) {
     try {
       setLoading(true)
       const params = new URLSearchParams()
       if (filter !== 'all') {
         params.append('status', filter.toUpperCase())
       }
+      params.append('page', page.toString())
+      params.append('perPage', perPage.toString())
 
       const res = await fetch(`/api/transactions?${params.toString()}`)
       if (!res.ok) {
@@ -85,7 +131,10 @@ export default function TransactionsPage() {
 
       const data = await res.json()
       setTransactions(data.transactions || [])
-      toast.success(`Loaded ${data.transactions?.length || 0} transactions`)
+      setTotalPages(data.totalPages || 1)
+      setTotalCount(data.totalCount || 0)
+      setCurrentPage(data.currentPage || 1)
+      toast.success(`Loaded ${data.transactions?.length || 0} of ${data.totalCount || 0} transactions`)
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to load transactions'
       toast.error(errorMsg)
@@ -96,6 +145,11 @@ export default function TransactionsPage() {
 
   function filterTransactions() {
     let filtered = [...transactions]
+
+    // Filter by category
+    if (categoryFilter) {
+      filtered = filtered.filter((t) => t.category.id === categoryFilter)
+    }
 
     // Filter by type
     if (typeFilter !== 'all') {
@@ -116,13 +170,102 @@ export default function TransactionsPage() {
     setFilteredTransactions(filtered)
   }
 
+  // Sort handler - toggles direction or switches column
+  function handleSort(key: SortKey) {
+    setSortConfig((prev) => {
+      // If clicking the same column, toggle direction
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === 'asc' ? 'desc' : 'asc',
+        }
+      }
+      // If clicking a new column, sort ascending by default (except date which defaults to desc)
+      return {
+        key,
+        direction: key === 'date' ? 'desc' : 'asc',
+      }
+    })
+  }
+
+  // Apply sorting to filtered transactions
+  const sortedTransactions = useMemo(() => {
+    if (!sortConfig.key) return filteredTransactions
+
+    return [...filteredTransactions].sort((a, b) => {
+      let compareResult = 0
+
+      switch (sortConfig.key) {
+        case 'date':
+          // Sort by transaction date
+          const dateA = new Date(a.transactionDate).getTime()
+          const dateB = new Date(b.transactionDate).getTime()
+          compareResult = dateA - dateB
+          break
+
+        case 'amount':
+          // Sort by absolute value (ignore +/- sign for income vs expense)
+          const amountA = Math.abs(parseFloat(a.amount))
+          const amountB = Math.abs(parseFloat(b.amount))
+          compareResult = amountA - amountB
+          break
+
+        case 'vendor':
+          // Alphabetical, case-insensitive
+          compareResult = a.vendor.localeCompare(b.vendor, undefined, {
+            sensitivity: 'base',
+          })
+          break
+
+        case 'category':
+          // Alphabetical by category name, case-insensitive
+          compareResult = a.category.name.localeCompare(b.category.name, undefined, {
+            sensitivity: 'base',
+          })
+          break
+
+        case 'status':
+          // Priority order: PENDING > DRAFT > APPROVED > REJECTED
+          const statusOrder: Record<string, number> = {
+            PENDING: 1,
+            DRAFT: 2,
+            APPROVED: 3,
+            REJECTED: 4,
+          }
+          compareResult = statusOrder[a.status] - statusOrder[b.status]
+          break
+
+        default:
+          compareResult = 0
+      }
+
+      // Apply sort direction
+      return sortConfig.direction === 'asc' ? compareResult : -compareResult
+    })
+  }, [filteredTransactions, sortConfig])
+
   function handleRefresh() {
     toast.loading('Refreshing transactions...')
-    fetchTransactions().then(() => {
+    fetchTransactions(currentPage).then(() => {
       toast.dismiss()
       toast.success('Transactions refreshed')
     })
   }
+
+  function handleClearCategoryFilter() {
+    setCategoryFilter(null)
+    // Update URL to remove categoryId parameter
+    const url = new URL(window.location.href)
+    url.searchParams.delete('categoryId')
+    window.history.replaceState({}, '', url.toString())
+  }
+
+  // Get the category name for the active filter
+  const activeCategoryName = useMemo(() => {
+    if (!categoryFilter || transactions.length === 0) return null
+    const transaction = transactions.find((t) => t.category.id === categoryFilter)
+    return transaction?.category.name || null
+  }, [categoryFilter, transactions])
 
   function getStatusBadge(status: string) {
     const variants = {
@@ -132,6 +275,18 @@ export default function TransactionsPage() {
       REJECTED: { variant: 'outline' as const, className: 'bg-red-100 text-red-700 border-red-300' },
     }
     return variants[status as keyof typeof variants] || variants.DRAFT
+  }
+
+  // Render sort icon based on current sort state
+  function renderSortIcon(columnKey: SortKey) {
+    if (sortConfig.key !== columnKey) {
+      return <ArrowUpDown className="w-4 h-4 text-gray-400" />
+    }
+    return sortConfig.direction === 'asc' ? (
+      <ArrowUp className="w-4 h-4 text-navy" />
+    ) : (
+      <ArrowDown className="w-4 h-4 text-navy" />
+    )
   }
 
   return (
@@ -153,9 +308,9 @@ export default function TransactionsPage() {
               </Link>
             </Button>
             <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-              <Link href="/payments/new">
+              <Link href="/income/new">
                 <Plus className="mr-2 w-4 h-4" />
-                New Payment
+                New Income
               </Link>
             </Button>
           </div>
@@ -223,6 +378,26 @@ export default function TransactionsPage() {
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               </Button>
             </div>
+
+            {/* Active Category Filter Chip */}
+            {categoryFilter && activeCategoryName && (
+              <div className="flex items-center gap-2 pt-2">
+                <span className="text-sm text-navy/60">Filtered by category:</span>
+                <Badge
+                  variant="outline"
+                  className="bg-navy/5 text-navy border-navy/20 gap-2 pr-1"
+                >
+                  {activeCategoryName}
+                  <button
+                    onClick={handleClearCategoryFilter}
+                    className="ml-1 rounded-full hover:bg-navy/10 p-0.5 transition-colors"
+                    aria-label="Clear category filter"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -246,7 +421,7 @@ export default function TransactionsPage() {
               <CardTitle className="text-navy mb-2">No transactions found</CardTitle>
               <CardDescription className="mb-6 max-w-sm mx-auto">
                 {transactions.length === 0
-                  ? 'Get started by creating your first expense or payment'
+                  ? 'Get started by creating your first expense or income'
                   : 'No transactions match your current filters'}
               </CardDescription>
               {transactions.length === 0 ? (
@@ -258,9 +433,9 @@ export default function TransactionsPage() {
                     </Link>
                   </Button>
                   <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-                    <Link href="/payments/new">
+                    <Link href="/income/new">
                       <Plus className="mr-2 w-4 h-4" />
-                      New Payment
+                      New Income
                     </Link>
                   </Button>
                 </div>
@@ -295,17 +470,75 @@ export default function TransactionsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-navy/5 hover:bg-navy/5">
-                      <TableHead className="font-semibold text-navy">Date</TableHead>
+                      {/* Date Column - Sortable */}
+                      <TableHead className="font-semibold text-navy">
+                        <button
+                          onClick={() => handleSort('date')}
+                          className="flex items-center gap-1.5 hover:bg-gray-100 rounded px-2 py-1.5 -mx-2 -my-1.5 transition-colors cursor-pointer"
+                          aria-label="Sort by date"
+                        >
+                          <span>Date</span>
+                          {renderSortIcon('date')}
+                        </button>
+                      </TableHead>
+
+                      {/* Type Column - Not Sortable */}
                       <TableHead className="font-semibold text-navy">Type</TableHead>
-                      <TableHead className="font-semibold text-navy">Vendor</TableHead>
-                      <TableHead className="font-semibold text-navy">Category</TableHead>
-                      <TableHead className="font-semibold text-navy text-right">Amount</TableHead>
-                      <TableHead className="font-semibold text-navy">Status</TableHead>
-                      <TableHead className="font-semibold text-navy">Receipt</TableHead>
+
+                      {/* Vendor Column - Sortable */}
+                      <TableHead className="font-semibold text-navy">
+                        <button
+                          onClick={() => handleSort('vendor')}
+                          className="flex items-center gap-1.5 hover:bg-gray-100 rounded px-2 py-1.5 -mx-2 -my-1.5 transition-colors cursor-pointer"
+                          aria-label="Sort by vendor"
+                        >
+                          <span>Vendor</span>
+                          {renderSortIcon('vendor')}
+                        </button>
+                      </TableHead>
+
+                      {/* Category Column - Sortable */}
+                      <TableHead className="font-semibold text-navy">
+                        <button
+                          onClick={() => handleSort('category')}
+                          className="flex items-center gap-1.5 hover:bg-gray-100 rounded px-2 py-1.5 -mx-2 -my-1.5 transition-colors cursor-pointer"
+                          aria-label="Sort by category"
+                        >
+                          <span>Category</span>
+                          {renderSortIcon('category')}
+                        </button>
+                      </TableHead>
+
+                      {/* Amount Column - Sortable */}
+                      <TableHead className="font-semibold text-navy text-right">
+                        <button
+                          onClick={() => handleSort('amount')}
+                          className="flex items-center gap-1.5 justify-end hover:bg-gray-100 rounded px-2 py-1.5 -mx-2 -my-1.5 transition-colors cursor-pointer ml-auto"
+                          aria-label="Sort by amount"
+                        >
+                          <span>Amount</span>
+                          {renderSortIcon('amount')}
+                        </button>
+                      </TableHead>
+
+                      {/* Status Column - Sortable */}
+                      <TableHead className="font-semibold text-navy">
+                        <button
+                          onClick={() => handleSort('status')}
+                          className="flex items-center gap-1.5 hover:bg-gray-100 rounded px-2 py-1.5 -mx-2 -my-1.5 transition-colors cursor-pointer"
+                          aria-label="Sort by status"
+                        >
+                          <span>Status</span>
+                          {renderSortIcon('status')}
+                        </button>
+                      </TableHead>
+
+                      {/* Receipt Column - Not Sortable */}
+                      <TableHead className="font-semibold text-navy text-center">Receipt</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredTransactions.map((transaction) => {
+                    {sortedTransactions.map((transaction) => {
                       const statusBadge = getStatusBadge(transaction.status)
                       return (
                         <TableRow key={transaction.id} className="hover:bg-navy/5">
@@ -356,15 +589,19 @@ export default function TransactionsPage() {
                           </TableCell>
                           <TableCell>
                             {transaction.receiptUrl ? (
-                              <a
-                                href={transaction.receiptUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-navy hover:text-navy-medium transition-colors"
+                              <button
+                                onClick={() =>
+                                  setSelectedReceipt({
+                                    url: transaction.receiptUrl!,
+                                    vendor: transaction.vendor,
+                                    id: transaction.id,
+                                  })
+                                }
+                                className="inline-flex items-center gap-1 text-navy hover:text-navy-medium transition-colors hover:underline"
                               >
-                                <ExternalLink className="w-4 h-4" />
+                                <Eye className="w-4 h-4" />
                                 <span className="text-sm">View</span>
-                              </a>
+                              </button>
                             ) : (
                               <span className="text-navy/30 text-sm">—</span>
                             )}
@@ -375,10 +612,50 @@ export default function TransactionsPage() {
                   </TableBody>
                 </Table>
               </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between px-4 py-4 border-t">
+                  <div className="text-sm text-muted-foreground">
+                    Page {currentPage} of {totalPages} ({totalCount} total transactions)
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1 || loading}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Previous
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages || loading}
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
       </main>
+
+      {/* Receipt Viewer Modal */}
+      {selectedReceipt && (
+        <ReceiptViewer
+          isOpen={!!selectedReceipt}
+          onClose={() => setSelectedReceipt(null)}
+          receiptUrl={selectedReceipt.url}
+          transactionVendor={selectedReceipt.vendor}
+          transactionId={selectedReceipt.id}
+        />
+      )}
     </div>
   )
 }

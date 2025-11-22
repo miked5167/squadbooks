@@ -1,20 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { AppNav } from '@/components/app-nav'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Plus, Loader2, Edit, Clock } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { TrendingUp, AlertTriangle, Plus, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { BudgetHealthSummary } from '@/components/dashboard/BudgetHealthSummary'
 import { BudgetAllocationChart } from '@/components/dashboard/BudgetAllocationChart'
-import { TopCategoriesChart } from '@/components/dashboard/TopCategoriesChart'
-import type { BudgetSummary, BudgetHeadingGroup, BudgetCategory } from '@/lib/types/budget'
+import { CategoryGroup } from '@/components/budget/CategoryGroup'
+import { BudgetFilters, type FilterStatus } from '@/components/budget/BudgetFilters'
+import type { BudgetSummary, BudgetHeadingGroup } from '@/lib/types/budget'
+import { groupCategoriesByHeading, getBudgetStatus, type CategoryWithHeading } from '@/lib/utils/budgetStatus'
 
 interface BudgetData {
   season: string
@@ -45,6 +48,7 @@ interface BudgetData {
 }
 
 export default function BudgetPage() {
+  const router = useRouter()
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null)
   const [loading, setLoading] = useState(true)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
@@ -55,6 +59,18 @@ export default function BudgetPage() {
   } | null>(null)
   const [editAmount, setEditAmount] = useState('')
   const [saving, setSaving] = useState(false)
+
+  // Add Category dialog state
+  const [addCategoryDialogOpen, setAddCategoryDialogOpen] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState('')
+  const [newCategoryHeading, setNewCategoryHeading] = useState('')
+  const [newCategoryColor, setNewCategoryColor] = useState('#3B82F6')
+  const [newCategoryType, setNewCategoryType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE')
+  const [addingSaving, setAddingSaving] = useState(false)
+
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
 
   async function fetchBudget() {
     try {
@@ -77,10 +93,153 @@ export default function BudgetPage() {
     fetchBudget()
   }, [])
 
+  // Transform categories to CategoryWithHeading format
+  const categoriesWithHeading: CategoryWithHeading[] = useMemo(() => {
+    if (!budgetData) return []
+    return budgetData.categories.map(cat => ({
+      categoryId: cat.categoryId,
+      categoryName: cat.categoryName,
+      categoryHeading: cat.categoryHeading,
+      categoryColor: cat.categoryColor,
+      allocated: cat.allocated,
+      spent: cat.spent,
+      pending: cat.pending,
+      remaining: cat.remaining,
+      percentage: cat.percentage,
+      projectedPercentage: cat.projectedPercentage,
+    }))
+  }, [budgetData])
+
+  // Group categories by heading
+  const groupedCategories = useMemo(
+    () => groupCategoriesByHeading(categoriesWithHeading),
+    [categoriesWithHeading]
+  )
+
+  // Apply search and filter
+  const filteredGroups = useMemo(() => {
+    let filtered = groupedCategories
+
+    // Apply status filter
+    if (filterStatus !== 'all') {
+      filtered = filtered
+        .map(group => ({
+          ...group,
+          categories: group.categories.filter(cat => {
+            const status = getBudgetStatus(cat.allocated, cat.spent)
+            return status === filterStatus
+          }),
+        }))
+        .filter(group => group.categories.length > 0)
+    }
+
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered
+        .map(group => ({
+          ...group,
+          categories: group.categories.filter(cat =>
+            cat.categoryName.toLowerCase().includes(query) ||
+            cat.categoryHeading.toLowerCase().includes(query)
+          ),
+        }))
+        .filter(group => group.categories.length > 0)
+    }
+
+    return filtered
+  }, [groupedCategories, filterStatus, searchQuery])
+
+  // Calculate counts for filters
+  const totalCategoryCount = categoriesWithHeading.length
+  const filteredCategoryCount = filteredGroups.reduce((sum, group) => sum + group.categories.length, 0)
+
+  // Get unique headings from existing categories with their colors
+  const uniqueHeadings = useMemo(() => {
+    if (!budgetData) return []
+    const headings = new Set(budgetData.categories.map(cat => cat.categoryHeading))
+    return Array.from(headings).sort()
+  }, [budgetData])
+
+  // Create a map of heading to color based on existing categories
+  const headingColorMap = useMemo(() => {
+    if (!budgetData) return new Map<string, string>()
+    const map = new Map<string, string>()
+    budgetData.categories.forEach(cat => {
+      if (!map.has(cat.categoryHeading)) {
+        map.set(cat.categoryHeading, cat.categoryColor)
+      }
+    })
+    return map
+  }, [budgetData])
+
+  // Update color when heading changes
+  useEffect(() => {
+    if (newCategoryHeading && headingColorMap.has(newCategoryHeading)) {
+      const headingColor = headingColorMap.get(newCategoryHeading)
+      if (headingColor) {
+        setNewCategoryColor(headingColor)
+      }
+    }
+  }, [newCategoryHeading, headingColorMap])
+
   const handleEditBudget = (category: { id: string; name: string; allocated: number }) => {
     setEditingCategory(category)
     setEditAmount(category.allocated.toString())
     setEditDialogOpen(true)
+  }
+
+  const handleAddCategory = async () => {
+    // Validate inputs
+    if (!newCategoryName.trim()) {
+      toast.error('Category name is required')
+      return
+    }
+    if (!newCategoryHeading) {
+      toast.error('Please select a heading')
+      return
+    }
+
+    setAddingSaving(true)
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newCategoryName.trim(),
+          heading: newCategoryHeading,
+          color: newCategoryColor,
+          type: newCategoryType,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        toast.success('Category created successfully')
+        setAddCategoryDialogOpen(false)
+        // Reset form
+        setNewCategoryName('')
+        setNewCategoryHeading('')
+        setNewCategoryColor('#3B82F6')
+        setNewCategoryType('EXPENSE')
+        // Refresh budget data
+        await fetchBudget()
+      } else {
+        toast.error(data.error || 'Failed to create category')
+      }
+    } catch (err) {
+      console.error('Failed to create category:', err)
+      toast.error('Failed to create category')
+    } finally {
+      setAddingSaving(false)
+    }
+  }
+
+  const handleCategoryClick = (categoryId: string) => {
+    router.push(`/transactions?categoryId=${categoryId}`)
   }
 
   const handleSaveBudget = async () => {
@@ -165,12 +324,10 @@ export default function BudgetPage() {
 
   const { totalAllocated, totalSpent, totalRemaining, totalPending, categories, season } = budgetData
 
-  // Transform data for new components
-
   // Create BudgetSummary for health summary component
-  const categoriesOnTrack = categories.filter((cat) => cat.percentage <= 85).length
-  const categoriesWarning = categories.filter((cat) => cat.percentage > 85 && cat.percentage <= 95).length
-  const categoriesOverBudget = categories.filter((cat) => cat.percentage > 95).length
+  const categoriesOnTrack = categories.filter((cat) => cat.percentage <= 70).length
+  const categoriesWarning = categories.filter((cat) => cat.percentage > 70 && cat.percentage < 90).length
+  const categoriesOverBudget = categories.filter((cat) => cat.percentage >= 90).length
 
   const budgetSummary: BudgetSummary = {
     totalBudget: totalAllocated * 100, // Convert to cents
@@ -208,95 +365,69 @@ export default function BudgetPage() {
     percentOfTotal: totalAllocated > 0 ? (group.allocated / 100 / totalAllocated) * 100 : 0,
   }))
 
-  // Transform categories for top categories chart
-  const budgetCategories: BudgetCategory[] = categories.map((cat) => ({
-    id: cat.categoryId,
-    name: cat.categoryName,
-    heading: cat.categoryHeading,
-    color: cat.categoryColor,
-    allocated: cat.allocated * 100, // Convert to cents
-    spent: cat.spent * 100,
-    remaining: cat.remaining * 100,
-    percentUsed: cat.percentage,
-    trend: undefined, // TODO: Calculate trend from historical data
-    lastExpenseDate: undefined, // TODO: Get from last transaction
-    transactionCount: 0, // TODO: Get actual transaction count
-  }))
-
-  const getStatusIcon = (allocated: number, spent: number) => {
-    const percentage = (spent / allocated) * 100
-    if (percentage >= 90) {
-      return <AlertTriangle className="w-5 h-5 text-red-500" />
-    } else if (percentage >= 70) {
-      return <TrendingUp className="w-5 h-5 text-golden" />
-    } else {
-      return <CheckCircle className="w-5 h-5 text-meadow" />
-    }
-  }
-
-  const getStatusColor = (allocated: number, spent: number) => {
-    const percentage = (spent / allocated) * 100
-    if (percentage >= 90) return 'text-red-600'
-    if (percentage >= 70) return 'text-golden'
-    return 'text-meadow'
-  }
-
   return (
     <div className="min-h-screen bg-cream">
       <AppNav />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
-        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-display-2 text-navy mb-2">Budget</h1>
-            <p className="text-lg text-navy/70">Track spending across all budget categories</p>
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+            <div>
+              <h1 className="text-display-2 text-navy mb-2">Budget</h1>
+              <p className="text-base sm:text-lg text-navy/70">{season || '2024-25 Season'}</p>
+            </div>
+            <Button
+              className="bg-navy hover:bg-navy-medium text-white"
+              onClick={() => setAddCategoryDialogOpen(true)}
+            >
+              <Plus className="mr-2 w-4 h-4" />
+              Add Category
+            </Button>
           </div>
-          <Button className="bg-navy hover:bg-navy-medium text-white">
-            <Plus className="mr-2 w-4 h-4" />
-            Add Category
-          </Button>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-3">
-              <CardDescription className="text-navy/60">Total Allocated</CardDescription>
-              <CardTitle className="text-3xl text-navy">${totalAllocated.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-sm text-navy/70">Allocated across {categories.length} categories</div>
-            </CardContent>
-          </Card>
+        {/* Sticky Summary Cards */}
+        <div className="sticky top-0 z-20 bg-cream pb-6 -mt-2 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 bg-cream">
+            <Card className="border-0 shadow-card">
+              <CardHeader className="pb-2 sm:pb-3">
+                <CardDescription className="text-navy/60 text-sm">Total Allocated</CardDescription>
+                <CardTitle className="text-2xl sm:text-3xl text-navy">${totalAllocated.toLocaleString()}</CardTitle>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="text-xs sm:text-sm text-navy/70">{categories.length} categories</div>
+              </CardContent>
+            </Card>
 
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-3">
-              <CardDescription className="text-navy/60">Total Spent</CardDescription>
-              <CardTitle className="text-3xl text-navy">${totalSpent.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2">
-                <Progress value={(totalSpent / totalAllocated) * 100} className="flex-1" />
-                <span className="text-sm font-medium text-navy/70">
-                  {totalAllocated > 0 ? ((totalSpent / totalAllocated) * 100).toFixed(0) : 0}%
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+            <Card className="border-0 shadow-card">
+              <CardHeader className="pb-2 sm:pb-3">
+                <CardDescription className="text-navy/60 text-sm">Total Spent</CardDescription>
+                <CardTitle className="text-2xl sm:text-3xl text-navy">${totalSpent.toLocaleString()}</CardTitle>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Progress value={(totalSpent / totalAllocated) * 100} className="flex-1 h-2" />
+                  <span className="text-xs sm:text-sm font-medium text-navy/70 min-w-[3ch]">
+                    {totalAllocated > 0 ? ((totalSpent / totalAllocated) * 100).toFixed(0) : 0}%
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-3">
-              <CardDescription className="text-navy/60">Remaining</CardDescription>
-              <CardTitle className="text-3xl text-meadow">${totalRemaining.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-1 text-sm">
-                <TrendingUp className="w-4 h-4 text-meadow" />
-                <span className="text-navy/70">{totalAllocated > 0 ? ((totalRemaining / totalAllocated) * 100).toFixed(0) : 0}% available</span>
-              </div>
-            </CardContent>
-          </Card>
+            <Card className="border-0 shadow-card">
+              <CardHeader className="pb-2 sm:pb-3">
+                <CardDescription className="text-navy/60 text-sm">Remaining</CardDescription>
+                <CardTitle className="text-2xl sm:text-3xl text-meadow">${totalRemaining.toLocaleString()}</CardTitle>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <div className="flex items-center gap-1 text-xs sm:text-sm">
+                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-meadow" />
+                  <span className="text-navy/70">{totalAllocated > 0 ? ((totalRemaining / totalAllocated) * 100).toFixed(0) : 0}% available</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Budget Health Summary */}
@@ -304,113 +435,73 @@ export default function BudgetPage() {
           <BudgetHealthSummary summary={budgetSummary} />
         </div>
 
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Budget Allocation Chart */}
+        {/* Budget Allocation Chart - Hide on mobile */}
+        <div className="mb-8 hidden lg:block">
           <BudgetAllocationChart
             groups={allocationGroups}
             totalBudget={totalAllocated * 100}
           />
-
-          {/* Top Categories Chart */}
-          <TopCategoriesChart categories={budgetCategories} limit={8} />
         </div>
 
-        {/* Category Breakdown */}
+        {/* Category Breakdown with Search & Filters */}
         <Card className="border-0 shadow-card">
           <CardHeader>
             <CardTitle className="text-navy">Category Breakdown</CardTitle>
-            <CardDescription>Detailed view of all budget categories</CardDescription>
+            <CardDescription>
+              {totalCategoryCount} categories grouped by heading
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              {categories.map((item) => {
-                return (
-                  <div key={item.categoryId} className="border-b border-gray-200 pb-6 last:border-0 last:pb-0">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: item.categoryColor }}
-                        />
-                        <div>
-                          <h3 className="font-semibold text-navy">{item.categoryName}</h3>
-                          <p className="text-sm text-navy/60 mt-0.5">
-                            ${item.spent.toLocaleString()} of ${item.allocated.toLocaleString()} spent
-                          </p>
-                          {item.pending > 0 && (
-                            <div className="flex items-center gap-1 text-sm text-golden mt-1">
-                              <Clock className="w-3 h-3" />
-                              <span>${item.pending.toLocaleString()} pending</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {getStatusIcon(item.allocated, item.spent)}
-                        <Badge
-                          variant="outline"
-                          className={`${
-                            item.percentage >= 90
-                              ? 'bg-red-50 text-red-700 border-red-200'
-                              : item.percentage >= 70
-                              ? 'bg-golden/10 text-golden border-golden/30'
-                              : 'bg-meadow/10 text-meadow border-meadow/30'
-                          }`}
-                        >
-                          {item.percentage.toFixed(0)}% Used
-                        </Badge>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditBudget({
-                            id: item.categoryId,
-                            name: item.categoryName,
-                            allocated: item.allocated
-                          })}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="mb-2">
-                      <Progress value={item.percentage} className="h-3" />
-                    </div>
-
-                    <div className="flex justify-between text-sm">
-                      <span className={`font-medium ${getStatusColor(item.allocated, item.spent)}`}>
-                        ${item.remaining.toLocaleString()} remaining
-                      </span>
-                      <span className="text-navy/60">
-                        {item.percentage >= 90 && '⚠️ Nearly depleted'}
-                        {item.percentage >= 70 && item.percentage < 90 && '⚡ Watch spending'}
-                        {item.percentage < 70 && '✓ On track'}
-                      </span>
-                    </div>
-                    {item.pending > 0 && item.projectedPercentage !== item.percentage && (
-                      <div className="mt-2 pt-2 border-t border-gray-100">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-navy/60">Projected (with pending):</span>
-                          <Badge
-                            variant="outline"
-                            className={`${
-                              item.projectedPercentage >= 90
-                                ? 'bg-red-50 text-red-700 border-red-200'
-                                : item.projectedPercentage >= 70
-                                ? 'bg-golden/10 text-golden border-golden/30'
-                                : 'bg-meadow/10 text-meadow border-meadow/30'
-                            }`}
-                          >
-                            {item.projectedPercentage.toFixed(0)}% Projected
-                          </Badge>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+            {/* Search and Filters */}
+            <div className="mb-6">
+              <BudgetFilters
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                filterStatus={filterStatus}
+                onFilterChange={setFilterStatus}
+                resultCount={filteredCategoryCount}
+                totalCount={totalCategoryCount}
+              />
             </div>
+
+            {/* Grouped Categories */}
+            {filteredGroups.length > 0 ? (
+              <div className="space-y-4">
+                {filteredGroups.map((group) => (
+                  <CategoryGroup
+                    key={group.heading}
+                    group={group}
+                    onEdit={handleEditBudget}
+                    onCategoryClick={handleCategoryClick}
+                  />
+                ))}
+              </div>
+            ) : (
+              /* Empty State */
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-navy/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <AlertTriangle className="w-8 h-8 text-navy/40" />
+                </div>
+                <h3 className="text-lg font-semibold text-navy mb-2">No categories found</h3>
+                <p className="text-navy/60 mb-6 max-w-sm mx-auto">
+                  {searchQuery || filterStatus !== 'all'
+                    ? 'Try adjusting your search or filters'
+                    : 'No budget categories have been created yet'}
+                </p>
+                {(searchQuery || filterStatus !== 'all') && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchQuery('')
+                      setFilterStatus('all')
+                    }}
+                    className="border-navy/20 text-navy hover:bg-navy/5"
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>
@@ -462,6 +553,107 @@ export default function BudgetPage() {
                 </>
               ) : (
                 'Save Changes'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Category Dialog */}
+      <Dialog open={addCategoryDialogOpen} onOpenChange={setAddCategoryDialogOpen}>
+        <DialogContent className="bg-white dark:bg-gray-900">
+          <DialogHeader>
+            <DialogTitle className="text-navy dark:text-white text-xl font-bold">Add New Category</DialogTitle>
+            <DialogDescription className="text-gray-700 dark:text-gray-300">
+              Create a custom category for your team's budget
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="categoryName" className="text-navy dark:text-white font-medium">Category Name</Label>
+              <Input
+                id="categoryName"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder="e.g., Team Gear"
+                maxLength={100}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="categoryType" className="text-navy dark:text-white font-medium">Type</Label>
+              <Select value={newCategoryType} onValueChange={(value: 'EXPENSE' | 'INCOME') => setNewCategoryType(value)}>
+                <SelectTrigger id="categoryType" className="bg-white text-navy">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                  <SelectItem value="EXPENSE" className="text-navy dark:text-white hover:bg-navy/10 focus:bg-navy/10 cursor-pointer">
+                    Expense
+                  </SelectItem>
+                  <SelectItem value="INCOME" className="text-navy dark:text-white hover:bg-navy/10 focus:bg-navy/10 cursor-pointer">
+                    Income
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="categoryHeading" className="text-navy dark:text-white font-medium">Heading</Label>
+              <Select value={newCategoryHeading} onValueChange={setNewCategoryHeading}>
+                <SelectTrigger id="categoryHeading" className="bg-white text-navy">
+                  <SelectValue placeholder="Select a heading" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                  {uniqueHeadings.map((heading) => (
+                    <SelectItem
+                      key={heading}
+                      value={heading}
+                      className="text-navy dark:text-white hover:bg-navy/10 focus:bg-navy/10 cursor-pointer"
+                    >
+                      {heading}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="categoryColor" className="text-navy dark:text-white font-medium">Color</Label>
+              <Input
+                id="categoryColor"
+                type="color"
+                value={newCategoryColor}
+                onChange={(e) => setNewCategoryColor(e.target.value)}
+                className="w-24 h-12 cursor-pointer"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setAddCategoryDialogOpen(false)
+                setNewCategoryName('')
+                setNewCategoryHeading('')
+                setNewCategoryColor('#3B82F6')
+                setNewCategoryType('EXPENSE')
+              }}
+              disabled={addingSaving}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddCategory}
+              disabled={addingSaving}
+              className="bg-navy hover:bg-navy-medium text-white"
+            >
+              {addingSaving ? (
+                <>
+                  <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 w-4 h-4" />
+                  Add Category
+                </>
               )}
             </Button>
           </DialogFooter>

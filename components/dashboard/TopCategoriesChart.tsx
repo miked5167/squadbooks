@@ -55,7 +55,7 @@ export function TopCategoriesChart({ categories, limit = 10 }: TopCategoriesChar
             <BudgetCategoryRow
               key={category.id}
               category={category}
-              onClick={() => router.push(`/transactions?category=${category.id}`)}
+              onClick={() => router.push(`/transactions?categoryId=${category.id}`)}
             />
           ))}
         </div>
@@ -66,7 +66,7 @@ export function TopCategoriesChart({ categories, limit = 10 }: TopCategoriesChar
             <BudgetCategoryRow
               key={category.id}
               category={category}
-              onClick={() => router.push(`/transactions?category=${category.id}`)}
+              onClick={() => router.push(`/transactions?categoryId=${category.id}`)}
             />
           ))}
         </div>
@@ -77,7 +77,7 @@ export function TopCategoriesChart({ categories, limit = 10 }: TopCategoriesChar
             <BudgetCategoryRow
               key={category.id}
               category={category}
-              onClick={() => router.push(`/transactions?category=${category.id}`)}
+              onClick={() => router.push(`/transactions?categoryId=${category.id}`)}
             />
           ))}
         </div>
