@@ -18,19 +18,38 @@ jobs:
       - name: Trigger Supabase Edge Function
         id: trigger
         run: |
+          set -x  # Enable debug mode
           echo "Triggering daily snapshot job at $(date)"
+
+          echo "Testing secrets are set..."
+          if [ -z "${{ secrets.SUPABASE_FUNCTION_URL }}" ]; then
+            echo "ERROR: SUPABASE_FUNCTION_URL secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.SUPABASE_SERVICE_KEY }}" ]; then
+            echo "ERROR: SUPABASE_SERVICE_KEY secret is not set"
+            exit 1
+          fi
+
+          echo "Secrets are configured. Making request..."
 
           RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
             "${{ secrets.SUPABASE_FUNCTION_URL }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_KEY }}" \
-            -H "Content-Type: application/json")
+            -H "Content-Type: application/json") || {
+            echo "ERROR: curl command failed with exit code $?"
+            exit 1
+          }
 
           HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
           BODY=$(echo "$RESPONSE" | sed '$d')
 
           echo "HTTP Status Code: $HTTP_CODE"
           echo "Response Body:"
-          echo "$BODY" | jq '.' || echo "$BODY"
+          echo "$BODY"
+
+          # Try to pretty print JSON if possible
+          echo "$BODY" | jq '.' 2>/dev/null || true
 
           # Save output for later steps
           echo "response_body=$BODY" >> $GITHUB_OUTPUT
@@ -42,6 +61,7 @@ jobs:
             exit 0
           else
             echo "❌ Snapshot job failed with HTTP $HTTP_CODE"
+            echo "Response body: $BODY"
             exit 1
           fi
 
