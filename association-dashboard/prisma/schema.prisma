@@ -8,8 +8,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // ============================================
@@ -161,7 +159,7 @@ model Alert {
   team              AssociationTeam @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
   resolver          AssociationUser? @relation("AlertResolvedBy", fields: [resolvedBy], references: [id])
 
-  @@index([associationId, status, severity, createdAt(sort: Desc)], name: "idx_alerts_active", where: "status = 'active'")
+  @@index([associationId, status, severity, createdAt(sort: Desc)], name: "idx_alerts_active")
   @@unique([associationTeamId, alertType, status], name: "uq_active_alert")
   @@map("alerts")
 }
