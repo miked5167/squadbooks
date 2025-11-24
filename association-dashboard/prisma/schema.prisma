@@ -1,0 +1,221 @@
+// Association Command Center - Database Schema
+// Based on HuddleBooks-Association-Command-Center-PRD.md
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// ASSOCIATIONS
+// ============================================
+model Association {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String   @db.VarChar(255)
+  abbreviation  String?  @db.VarChar(32)
+  provinceState String?  @map("province_state") @db.VarChar(64)
+  country       String?  @db.VarChar(64)
+  logoUrl       String?  @map("logo_url") @db.VarChar(500)
+  season        String?  @db.VarChar(32) // e.g., "2025-2026"
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  users         AssociationUser[]
+  teams         AssociationTeam[]
+  alerts        Alert[]
+  reports       Report[]
+  config        DashboardConfig?
+
+  @@map("associations")
+}
+
+// ============================================
+// ASSOCIATION USERS
+// ============================================
+model AssociationUser {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId String    @map("association_id") @db.Uuid
+  clerkUserId   String    @unique @map("clerk_user_id") @db.VarChar(255)
+  email         String    @db.VarChar(255)
+  name          String?   @db.VarChar(255)
+  role          String    @db.VarChar(32) // 'association_admin', 'board_member', 'auditor'
+  lastLoginAt   DateTime? @map("last_login_at") @db.Timestamptz
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  association   Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  reports       Report[]
+  alertsResolved Alert[]   @relation("AlertResolvedBy")
+
+  @@map("association_users")
+}
+
+// ============================================
+// ASSOCIATION TEAMS
+// ============================================
+model AssociationTeam {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId     String    @map("association_id") @db.Uuid
+
+  // HuddleBooks identifiers
+  teamId            String    @map("team_id") @db.VarChar(255)
+  teamName          String    @map("team_name") @db.VarChar(255)
+  division          String?   @db.VarChar(64)
+  season            String?   @db.VarChar(32)
+
+  // OAuth / connection
+  apiAccessToken    String?   @map("api_access_token") @db.Text
+  tokenExpiresAt    DateTime? @map("token_expires_at") @db.Timestamptz
+  connectedAt       DateTime? @map("connected_at") @db.Timestamptz
+  lastSyncedAt      DateTime? @map("last_synced_at") @db.Timestamptz
+
+  // State
+  isActive          Boolean   @default(true) @map("is_active")
+
+  // Treasurer info (read-only mirror)
+  treasurerName     String?   @map("treasurer_name") @db.VarChar(255)
+  treasurerEmail    String?   @map("treasurer_email") @db.VarChar(255)
+
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  association       Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  snapshots         TeamFinancialSnapshot[]
+  alerts            Alert[]
+
+  @@unique([associationId, teamId])
+  @@map("association_teams")
+}
+
+// ============================================
+// TEAM FINANCIAL SNAPSHOTS
+// ============================================
+model TeamFinancialSnapshot {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationTeamId     String    @map("association_team_id") @db.Uuid
+
+  snapshotAt            DateTime  @default(now()) @map("snapshot_at") @db.Timestamptz
+
+  // Health
+  healthStatus          String    @map("health_status") @db.VarChar(16) // 'healthy', 'needs_attention', 'at_risk'
+  healthScore           Int?      @map("health_score") // optional numeric score (Phase 2)
+
+  // Budget figures
+  budgetTotal           Decimal?  @map("budget_total") @db.Decimal(10, 2)
+  spent                 Decimal?  @db.Decimal(10, 2)
+  remaining             Decimal?  @db.Decimal(10, 2)
+  percentUsed           Decimal?  @map("percent_used") @db.Decimal(5, 2)
+
+  // Operational metrics
+  pendingApprovals      Int?      @map("pending_approvals")
+  missingReceipts       Int?      @map("missing_receipts")
+  bankReconciledThrough DateTime? @map("bank_reconciled_through") @db.Date
+  bankConnected         Boolean?  @map("bank_connected")
+  lastActivityAt        DateTime? @map("last_activity_at") @db.Timestamptz
+
+  // Flags
+  redFlags              Json?     @map("red_flags") // array of {code, message}
+
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  team                  AssociationTeam @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
+
+  @@index([associationTeamId, snapshotAt(sort: Desc)], name: "idx_snapshots_team_time")
+  @@map("team_financial_snapshots")
+}
+
+// ============================================
+// ALERTS
+// ============================================
+model Alert {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId     String    @map("association_id") @db.Uuid
+  associationTeamId String    @map("association_team_id") @db.Uuid
+
+  alertType         String    @map("alert_type") @db.VarChar(64) // 'budget_utilization', 'bank_reconciliation', 'pending_approvals', 'inactivity'
+  severity          String    @db.VarChar(16) // 'warning', 'critical'
+
+  title             String    @db.VarChar(255)
+  description       String?   @db.Text
+
+  status            String    @default("active") @db.VarChar(16) // 'active', 'resolved'
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  resolvedAt        DateTime? @map("resolved_at") @db.Timestamptz
+  resolvedBy        String?   @map("resolved_by") @db.Uuid
+
+  lastTriggeredAt   DateTime  @default(now()) @map("last_triggered_at") @db.Timestamptz
+
+  notes             String?   @db.Text
+
+  // Relations
+  association       Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  team              AssociationTeam @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
+  resolver          AssociationUser? @relation("AlertResolvedBy", fields: [resolvedBy], references: [id])
+
+  @@index([associationId, status, severity, createdAt(sort: Desc)], name: "idx_alerts_active", where: "status = 'active'")
+  @@unique([associationTeamId, alertType, status], name: "uq_active_alert")
+  @@map("alerts")
+}
+
+// ============================================
+// REPORTS
+// ============================================
+model Report {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId   String    @map("association_id") @db.Uuid
+  generatedBy     String    @map("generated_by") @db.Uuid
+
+  reportType      String    @map("report_type") @db.VarChar(32) // 'board_summary', 'compliance_snapshot'
+  dateRangeStart  DateTime? @map("date_range_start") @db.Date
+  dateRangeEnd    DateTime? @map("date_range_end") @db.Date
+
+  fileUrl         String?   @map("file_url") @db.VarChar(500)
+  generatedAt     DateTime  @default(now()) @map("generated_at") @db.Timestamptz
+
+  // Relations
+  association     Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  generator       AssociationUser @relation(fields: [generatedBy], references: [id])
+
+  @@index([associationId, reportType, generatedAt(sort: Desc)], name: "idx_reports_association_type_time")
+  @@map("reports")
+}
+
+// ============================================
+// DASHBOARD CONFIG
+// ============================================
+model DashboardConfig {
+  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId           String   @unique @map("association_id") @db.Uuid
+
+  // Budget thresholds
+  budgetWarningPct        Decimal  @default(80.0) @map("budget_warning_pct") @db.Decimal(5, 2)
+  budgetCriticalPct       Decimal  @default(95.0) @map("budget_critical_pct") @db.Decimal(5, 2)
+
+  // Bank reconciliation thresholds (days)
+  bankWarningDays         Int      @default(30) @map("bank_warning_days")
+  bankCriticalDays        Int      @default(60) @map("bank_critical_days")
+
+  // Pending approvals thresholds
+  approvalsWarningCount   Int      @default(5) @map("approvals_warning_count")
+  approvalsCriticalCount  Int      @default(10) @map("approvals_critical_count")
+
+  // Inactivity threshold (days)
+  inactivityWarningDays   Int      @default(21) @map("inactivity_warning_days")
+
+  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  association             Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+
+  @@map("dashboard_config")
+}
