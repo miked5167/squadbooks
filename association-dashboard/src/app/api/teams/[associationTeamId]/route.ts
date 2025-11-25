@@ -66,7 +66,7 @@ interface TeamDetailResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { associationTeamId: string } }
+  { params }: { params: Promise<{ associationTeamId: string }> }
 ): Promise<NextResponse<TeamDetailResponse>> {
   try {
     // Authenticate request
@@ -84,7 +84,9 @@ export async function GET(
       )
     }
 
-    const associationTeamId = params.associationTeamId
+    // Await params (Next.js 15+)
+    const resolvedParams = await params
+    const associationTeamId = resolvedParams.associationTeamId
     if (!associationTeamId) {
       return NextResponse.json(
         {

@@ -1,0 +1,1461 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\miked\\Squadbooks\\playwright.config.ts",
+    "rootDir": "C:/Users/miked/Squadbooks/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "test-results/html"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/miked/Squadbooks/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/miked/Squadbooks/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/miked/Squadbooks/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/miked/Squadbooks/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/miked/Squadbooks/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/miked/Squadbooks/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/miked/Squadbooks/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "C:/Users/miked/Squadbooks/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/miked/Squadbooks/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "C:/Users/miked/Squadbooks/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/miked/Squadbooks/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "Microsoft Edge",
+        "name": "Microsoft Edge",
+        "testDir": "C:/Users/miked/Squadbooks/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.56.1",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "e2e\\reports-budget.spec.ts",
+      "file": "e2e/reports-budget.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Reports and Budget",
+          "file": "e2e/reports-budget.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Budget Page",
+              "file": "e2e/reports-budget.spec.ts",
+              "line": 9,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should display budget overview",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 976,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:11:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 11
+                            },
+                            "snippet": "\u001b[0m \u001b[90m  9 |\u001b[39m   test\u001b[33m.\u001b[39mdescribe(\u001b[32m'Budget Page'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 10 |\u001b[39m     test(\u001b[32m'should display budget overview'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/budget'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m       \u001b[90m// Page should load\u001b[39m\n \u001b[90m 14 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1:has-text(\"Budget\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 11
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n\n   9 |   test.describe('Budget Page', () => {\n  10 |     test('should display budget overview', async ({ page }) => {\n> 11 |       await page.goto('http://localhost:3000/budget');\n     |                  ^\n  12 |\n  13 |       // Page should load\n  14 |       await expect(page.locator('h1:has-text(\"Budget\")')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:11:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:24:54.951Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-f046f-uld-display-budget-overview-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-f046f-uld-display-budget-overview-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 11
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-b6dc5305f27b538137d1",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 10,
+                  "column": 9
+                },
+                {
+                  "title": "should display category breakdown",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 693,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:27:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 27
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m\n \u001b[90m 26 |\u001b[39m     test(\u001b[32m'should display category breakdown'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/budget'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m\n \u001b[90m 29 |\u001b[39m       \u001b[90m// Should show multiple categories\u001b[39m\n \u001b[90m 30 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=Equipment'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 27
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n\n  25 |\n  26 |     test('should display category breakdown', async ({ page }) => {\n> 27 |       await page.goto('http://localhost:3000/budget');\n     |                  ^\n  28 |\n  29 |       // Should show multiple categories\n  30 |       await expect(page.locator('text=Equipment')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:27:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:24:57.952Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-0c95c--display-category-breakdown-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-0c95c--display-category-breakdown-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 27
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-e07ff9faea6a2f6276a2",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 26,
+                  "column": 9
+                },
+                {
+                  "title": "should show budget status colors",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 561,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:39:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 39
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 37 |\u001b[39m\n \u001b[90m 38 |\u001b[39m     test(\u001b[32m'should show budget status colors'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 39 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/budget'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 40 |\u001b[39m\n \u001b[90m 41 |\u001b[39m       \u001b[90m// Categories should have status indicators\u001b[39m\n \u001b[90m 42 |\u001b[39m       \u001b[90m// Green (<70%), Yellow (70-90%), Red (>90%)\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 39
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n\n  37 |\n  38 |     test('should show budget status colors', async ({ page }) => {\n> 39 |       await page.goto('http://localhost:3000/budget');\n     |                  ^\n  40 |\n  41 |       // Categories should have status indicators\n  42 |       // Green (<70%), Yellow (70-90%), Red (>90%)\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:39:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:00.802Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-d3af6-d-show-budget-status-colors-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-d3af6-d-show-budget-status-colors-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 39
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-145095736397e9dbccd2",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 38,
+                  "column": 9
+                },
+                {
+                  "title": "should calculate totals correctly",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 633,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:52:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 52
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 50 |\u001b[39m\n \u001b[90m 51 |\u001b[39m     test(\u001b[32m'should calculate totals correctly'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 52 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/budget'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 53 |\u001b[39m\n \u001b[90m 54 |\u001b[39m       \u001b[90m// Get total budget amount\u001b[39m\n \u001b[90m 55 |\u001b[39m       \u001b[36mconst\u001b[39m totalText \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/Total Budget:.*\\\\$([\\\\d,]+\\\\.\\\\d{2})/'\u001b[39m)\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 52
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n\n  50 |\n  51 |     test('should calculate totals correctly', async ({ page }) => {\n> 52 |       await page.goto('http://localhost:3000/budget');\n     |                  ^\n  53 |\n  54 |       // Get total budget amount\n  55 |       const totalText = await page.locator('text=/Total Budget:.*\\\\$([\\\\d,]+\\\\.\\\\d{2})/')\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:52:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:03.125Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-62915--calculate-totals-correctly-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-62915--calculate-totals-correctly-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 52
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-d1b0dce10ee9a1b5998e",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 51,
+                  "column": 9
+                },
+                {
+                  "title": "should display pie chart visualization",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 4,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 612,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:64:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 64
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 62 |\u001b[39m\n \u001b[90m 63 |\u001b[39m     test(\u001b[32m'should display pie chart visualization'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/budget'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 65 |\u001b[39m\n \u001b[90m 66 |\u001b[39m       \u001b[90m// Should have chart container\u001b[39m\n \u001b[90m 67 |\u001b[39m       \u001b[36mconst\u001b[39m chart \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"budget-chart\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 64
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n\n  62 |\n  63 |     test('should display pie chart visualization', async ({ page }) => {\n> 64 |       await page.goto('http://localhost:3000/budget');\n     |                  ^\n  65 |\n  66 |       // Should have chart container\n  67 |       const chart = page.locator('[data-testid=\"budget-chart\"]');\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:64:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:05.558Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-72965-lay-pie-chart-visualization-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-72965-lay-pie-chart-visualization-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 64
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-64dee069e5f31da0a36d",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 63,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Reports Page",
+              "file": "e2e/reports-budget.spec.ts",
+              "line": 78,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should display reports dashboard",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 614,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:80:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 80
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 78 |\u001b[39m   test\u001b[33m.\u001b[39mdescribe(\u001b[32m'Reports Page'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 79 |\u001b[39m     test(\u001b[32m'should display reports dashboard'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 80 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/reports'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 81 |\u001b[39m\n \u001b[90m 82 |\u001b[39m       \u001b[90m// Page should load\u001b[39m\n \u001b[90m 83 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'h1:has-text(\"Reports\")'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 80
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n\n  78 |   test.describe('Reports Page', () => {\n  79 |     test('should display reports dashboard', async ({ page }) => {\n> 80 |       await page.goto('http://localhost:3000/reports');\n     |                  ^\n  81 |\n  82 |       // Page should load\n  83 |       await expect(page.locator('h1:has-text(\"Reports\")')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:80:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:08.022Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-c454f-d-display-reports-dashboard-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-c454f-d-display-reports-dashboard-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 80
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-5dadbb7fe4bcd77800c0",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 79,
+                  "column": 9
+                },
+                {
+                  "title": "should generate monthly summary report",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 564,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:92:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 92
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 90 |\u001b[39m\n \u001b[90m 91 |\u001b[39m     test(\u001b[32m'should generate monthly summary report'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 92 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/reports'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 93 |\u001b[39m\n \u001b[90m 94 |\u001b[39m       \u001b[90m// Find monthly summary section\u001b[39m\n \u001b[90m 95 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/monthly.*summary/i'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 92
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n\n  90 |\n  91 |     test('should generate monthly summary report', async ({ page }) => {\n> 92 |       await page.goto('http://localhost:3000/reports');\n     |                  ^\n  93 |\n  94 |       // Find monthly summary section\n  95 |       await expect(page.locator('text=/monthly.*summary/i')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:92:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:10.523Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-8217d-rate-monthly-summary-report-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-8217d-rate-monthly-summary-report-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 92
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-88df9c18ae44693d3bb6",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 91,
+                  "column": 9
+                },
+                {
+                  "title": "should generate budget variance report",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 569,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:112:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 112
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 110 |\u001b[39m\n \u001b[90m 111 |\u001b[39m     test(\u001b[32m'should generate budget variance report'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 112 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/reports'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 113 |\u001b[39m\n \u001b[90m 114 |\u001b[39m       \u001b[90m// Find budget variance section\u001b[39m\n \u001b[90m 115 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/budget.*variance/i'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 112
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n\n  110 |\n  111 |     test('should generate budget variance report', async ({ page }) => {\n> 112 |       await page.goto('http://localhost:3000/reports');\n      |                  ^\n  113 |\n  114 |       // Find budget variance section\n  115 |       await expect(page.locator('text=/budget.*variance/i')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:112:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:13.063Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-5ae94-rate-budget-variance-report-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-5ae94-rate-budget-variance-report-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 112
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-be18ada15aacdf55f0ec",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 111,
+                  "column": 9
+                },
+                {
+                  "title": "should export transactions as CSV",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 626,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:130:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 130
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 128 |\u001b[39m\n \u001b[90m 129 |\u001b[39m     test(\u001b[32m'should export transactions as CSV'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 130 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/reports'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 131 |\u001b[39m\n \u001b[90m 132 |\u001b[39m       \u001b[90m// Find export section\u001b[39m\n \u001b[90m 133 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/transaction.*export/i'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 130
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n\n  128 |\n  129 |     test('should export transactions as CSV', async ({ page }) => {\n> 130 |       await page.goto('http://localhost:3000/reports');\n      |                  ^\n  131 |\n  132 |       // Find export section\n  133 |       await expect(page.locator('text=/transaction.*export/i')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:130:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:15.558Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-0387f--export-transactions-as-CSV-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-0387f--export-transactions-as-CSV-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 130
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-cc42b0b4c1e64ffa8b8c",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 129,
+                  "column": 9
+                },
+                {
+                  "title": "should filter transactions before export",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 9,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 576,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:154:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 154
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 152 |\u001b[39m\n \u001b[90m 153 |\u001b[39m     test(\u001b[32m'should filter transactions before export'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 154 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/reports'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 155 |\u001b[39m\n \u001b[90m 156 |\u001b[39m       \u001b[90m// Set filters\u001b[39m\n \u001b[90m 157 |\u001b[39m       \u001b[36mconst\u001b[39m typeSelect \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'select[name=\"type\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 154
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/reports\", waiting until \"load\"\u001b[22m\n\n\n  152 |\n  153 |     test('should filter transactions before export', async ({ page }) => {\n> 154 |       await page.goto('http://localhost:3000/reports');\n      |                  ^\n  155 |\n  156 |       // Set filters\n  157 |       const typeSelect = page.locator('select[name=\"type\"]');\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:154:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:18.005Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-75b94--transactions-before-export-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-75b94--transactions-before-export-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 154
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-dfb08db2bd184f370334",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 153,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Dashboard Budget Snapshot",
+              "file": "e2e/reports-budget.spec.ts",
+              "line": 176,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should show budget snapshot on dashboard",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 10,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 576,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:178:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 178
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 176 |\u001b[39m   test\u001b[33m.\u001b[39mdescribe(\u001b[32m'Dashboard Budget Snapshot'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 177 |\u001b[39m     test(\u001b[32m'should show budget snapshot on dashboard'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 178 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/dashboard'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 179 |\u001b[39m\n \u001b[90m 180 |\u001b[39m       \u001b[90m// Should have budget section\u001b[39m\n \u001b[90m 181 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/budget.*snapshot|budget.*overview/i'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 178
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n\n  176 |   test.describe('Dashboard Budget Snapshot', () => {\n  177 |     test('should show budget snapshot on dashboard', async ({ page }) => {\n> 178 |       await page.goto('http://localhost:3000/dashboard');\n      |                  ^\n  179 |\n  180 |       // Should have budget section\n  181 |       await expect(page.locator('text=/budget.*snapshot|budget.*overview/i')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:178:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:20.501Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-854b7-udget-snapshot-on-dashboard-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-854b7-udget-snapshot-on-dashboard-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 178
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-a915cd40c77379e1a41e",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 177,
+                  "column": 9
+                },
+                {
+                  "title": "should link to full budget page",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 11,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 606,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:188:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 188
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 186 |\u001b[39m\n \u001b[90m 187 |\u001b[39m     test(\u001b[32m'should link to full budget page'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 188 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/dashboard'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 189 |\u001b[39m\n \u001b[90m 190 |\u001b[39m       \u001b[90m// Find \"View Full Budget\" link\u001b[39m\n \u001b[90m 191 |\u001b[39m       \u001b[36mconst\u001b[39m budgetLink \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'a:has-text(\"Budget\")'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 188
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n\n  186 |\n  187 |     test('should link to full budget page', async ({ page }) => {\n> 188 |       await page.goto('http://localhost:3000/dashboard');\n      |                  ^\n  189 |\n  190 |       // Find \"View Full Budget\" link\n  191 |       const budgetLink = page.locator('a:has-text(\"Budget\")').first();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:188:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:22.781Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-71df9-ld-link-to-full-budget-page-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-71df9-ld-link-to-full-budget-page-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 188
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-f812d75f271e929b439a",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 187,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Parent Dashboard View",
+              "file": "e2e/reports-budget.spec.ts",
+              "line": 199,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should show financial transparency for parents",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 12,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 599,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:202:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 202
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 200 |\u001b[39m     test(\u001b[32m'should show financial transparency for parents'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 201 |\u001b[39m       \u001b[90m// Login as parent\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 202 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/dashboard'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 203 |\u001b[39m\n \u001b[90m 204 |\u001b[39m       \u001b[90m// Should see budget overview\u001b[39m\n \u001b[90m 205 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/budget|balance/i'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 202
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n\n  200 |     test('should show financial transparency for parents', async ({ page }) => {\n  201 |       // Login as parent\n> 202 |       await page.goto('http://localhost:3000/dashboard');\n      |                  ^\n  203 |\n  204 |       // Should see budget overview\n  205 |       await expect(page.locator('text=/budget|balance/i')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:202:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:25.078Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-f57e7-al-transparency-for-parents-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-f57e7-al-transparency-for-parents-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 202
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-0b1fbbbb11a641135ada",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 200,
+                  "column": 9
+                },
+                {
+                  "title": "should display financial health status",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 13,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 546,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:215:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 215
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 213 |\u001b[39m\n \u001b[90m 214 |\u001b[39m     test(\u001b[32m'should display financial health status'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 215 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/dashboard'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 216 |\u001b[39m\n \u001b[90m 217 |\u001b[39m       \u001b[90m// Should show health indicator\u001b[39m\n \u001b[90m 218 |\u001b[39m       \u001b[36mconst\u001b[39m healthStatus \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/healthy|warning|danger|good|concerning/i'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 215
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n\n  213 |\n  214 |     test('should display financial health status', async ({ page }) => {\n> 215 |       await page.goto('http://localhost:3000/dashboard');\n      |                  ^\n  216 |\n  217 |       // Should show health indicator\n  218 |       const healthStatus = page.locator('text=/healthy|warning|danger|good|concerning/i');\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:215:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:27.473Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-07654-lay-financial-health-status-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-07654-lay-financial-health-status-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 215
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-ff8e46f7d93f95e2cdf7",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 214,
+                  "column": 9
+                },
+                {
+                  "title": "should show category spending breakdown",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 14,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 548,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:223:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 223
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 221 |\u001b[39m\n \u001b[90m 222 |\u001b[39m     test(\u001b[32m'should show category spending breakdown'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 223 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/dashboard'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 224 |\u001b[39m\n \u001b[90m 225 |\u001b[39m       \u001b[90m// Should have spending by category\u001b[39m\n \u001b[90m 226 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=/Equipment|Tournament|Travel/i'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 223
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/dashboard\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/dashboard\", waiting until \"load\"\u001b[22m\n\n\n  221 |\n  222 |     test('should show category spending breakdown', async ({ page }) => {\n> 223 |       await page.goto('http://localhost:3000/dashboard');\n      |                  ^\n  224 |\n  225 |       // Should have spending by category\n  226 |       await expect(page.locator('text=/Equipment|Tournament|Travel/i')).toBeVisible();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:223:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:29.774Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-e6997-category-spending-breakdown-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-e6997-category-spending-breakdown-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 223
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-23f6955521e0044bb876",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 222,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Budget Calculations",
+              "file": "e2e/reports-budget.spec.ts",
+              "line": 233,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should update budget after expense creation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 15,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 596,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:236:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 236
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 234 |\u001b[39m     test(\u001b[32m'should update budget after expense creation'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 235 |\u001b[39m       \u001b[90m// Get initial budget state\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 236 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/budget'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 237 |\u001b[39m       \u001b[36mconst\u001b[39m initialRemaining \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"remaining-amount\"]'\u001b[39m)\n \u001b[90m 238 |\u001b[39m         \u001b[33m.\u001b[39mfirst()\n \u001b[90m 239 |\u001b[39m         \u001b[33m.\u001b[39mtextContent()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 236
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n\n  234 |     test('should update budget after expense creation', async ({ page }) => {\n  235 |       // Get initial budget state\n> 236 |       await page.goto('http://localhost:3000/budget');\n      |                  ^\n  237 |       const initialRemaining = await page.locator('[data-testid=\"remaining-amount\"]')\n  238 |         .first()\n  239 |         .textContent();\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:236:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:32.079Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-d3071-dget-after-expense-creation-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-d3071-dget-after-expense-creation-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 236
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-7e3f9768159fe2ad9530",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 234,
+                  "column": 9
+                },
+                {
+                  "title": "should not count pending transactions in budget",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 16,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 612,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/expenses/new\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/expenses/new\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/expenses/new\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/expenses/new\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:262:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 262
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 260 |\u001b[39m     test(\u001b[32m'should not count pending transactions in budget'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 261 |\u001b[39m       \u001b[90m// Create high-value expense (requires approval)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 262 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/expenses/new'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 263 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'[name=\"vendor\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'Pending Budget Test'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 264 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mfill(\u001b[32m'[name=\"amount\"]'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'500.00'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 265 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mselectOption(\u001b[32m'[name=\"categoryId\"]'\u001b[39m\u001b[33m,\u001b[39m { index\u001b[33m:\u001b[39m \u001b[35m1\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 262
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/expenses/new\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/expenses/new\", waiting until \"load\"\u001b[22m\n\n\n  260 |     test('should not count pending transactions in budget', async ({ page }) => {\n  261 |       // Create high-value expense (requires approval)\n> 262 |       await page.goto('http://localhost:3000/expenses/new');\n      |                  ^\n  263 |       await page.fill('[name=\"vendor\"]', 'Pending Budget Test');\n  264 |       await page.fill('[name=\"amount\"]', '500.00');\n  265 |       await page.selectOption('[name=\"categoryId\"]', { index: 1 });\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:262:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:34.368Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-d13a5-ding-transactions-in-budget-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-d13a5-ding-transactions-in-budget-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 262
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-a067886e8b0d84082299",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 260,
+                  "column": 9
+                },
+                {
+                  "title": "should show over-budget warning",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 17,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 571,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:277:18",
+                            "location": {
+                              "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                              "column": 18,
+                              "line": 277
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 275 |\u001b[39m\n \u001b[90m 276 |\u001b[39m     test(\u001b[32m'should show over-budget warning'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 277 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'http://localhost:3000/budget'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 278 |\u001b[39m\n \u001b[90m 279 |\u001b[39m       \u001b[90m// Look for any over-budget indicators\u001b[39m\n \u001b[90m 280 |\u001b[39m       \u001b[36mconst\u001b[39m warningIndicators \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-status=\"over-budget\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                                "column": 18,
+                                "line": 277
+                              },
+                              "message": "Error: page.goto: net::ERR_UNSAFE_REDIRECT at http://localhost:3000/budget\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/budget\", waiting until \"load\"\u001b[22m\n\n\n  275 |\n  276 |     test('should show over-budget warning', async ({ page }) => {\n> 277 |       await page.goto('http://localhost:3000/budget');\n      |                  ^\n  278 |\n  279 |       // Look for any over-budget indicators\n  280 |       const warningIndicators = page.locator('[data-status=\"over-budget\"]');\n    at C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts:277:18"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-23T04:25:36.852Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-4caf3-ld-show-over-budget-warning-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\miked\\Squadbooks\\test-results\\e2e-reports-budget-Reports-4caf3-ld-show-over-budget-warning-chromium\\video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\miked\\Squadbooks\\tests\\e2e\\reports-budget.spec.ts",
+                            "column": 18,
+                            "line": 277
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "ec3e97ee71266ebb5368-b6dd08fe1a10351a8c9f",
+                  "file": "e2e/reports-budget.spec.ts",
+                  "line": 276,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-11-23T04:24:52.079Z",
+    "duration": 45649,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 18,
+    "flaky": 0
+  }
+}

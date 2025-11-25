@@ -38,6 +38,7 @@ import {
   TrendingUp,
   ChevronLeft,
   ChevronRight,
+  ExternalLink,
 } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
 
@@ -246,6 +247,22 @@ export default function TeamDetailPage({ params }: { params: { id: string } }) {
               {teamInfo.season && <span>• {teamInfo.season}</span>}
             </div>
           </div>
+
+          {/* Link to Team's Budget Dashboard */}
+          <Button
+            asChild
+            variant="default"
+            className="gap-2"
+          >
+            <a
+              href={`http://localhost:3001/dashboard?teamId=${teamInfo.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ExternalLink className="h-4 w-4" />
+              View Team Dashboard
+            </a>
+          </Button>
         </div>
 
         {/* Treasurer Info */}
