@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { formatTeamLevel } from '@/lib/team-utils'
 
 export async function GET(req: NextRequest) {
   try {
@@ -142,7 +143,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       team: {
         name: team.name,
-        level: team.level,
+        level: formatTeamLevel(team.teamType, team.ageDivision, team.competitiveLevel, team.level),
         season: team.season,
       },
       budget: {

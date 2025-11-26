@@ -10,20 +10,30 @@ import { formatCurrency } from '@/lib/utils';
 
 interface StepBudgetProps {
   teamId: string;
-  teamLevel: string;
+  teamType: string;
+  ageDivision: string;
+  competitiveLevel: string;
   familyCount?: number;
   onComplete: (budgetTotal: number) => void;
   onBack: () => void;
 }
 
-export function StepBudget({ teamId, teamLevel, familyCount = 0, onComplete, onBack }: StepBudgetProps) {
+export function StepBudget({
+  teamId,
+  teamType,
+  ageDivision,
+  competitiveLevel,
+  familyCount = 0,
+  onComplete,
+  onBack
+}: StepBudgetProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'quick' | 'manual'>('quick');
 
   // Quick estimate - use familyCount if available, otherwise default to 18
   const [playerCount, setPlayerCount] = useState(familyCount > 0 ? familyCount : 18);
-  const [feePerPlayer, setFeePerPlayer] = useState(getDefaultFee(teamLevel));
+  const [feePerPlayer, setFeePerPlayer] = useState(getDefaultFee(teamType, ageDivision, competitiveLevel));
   const suggestedBudget = playerCount * feePerPlayer;
   const hasRoster = familyCount > 0;
 
@@ -194,9 +204,9 @@ export function StepBudget({ teamId, teamLevel, familyCount = 0, onComplete, onB
 
             <div className="pt-4 border-t">
               <p className="text-sm text-muted-foreground">
-                💡 Most {getLevelName(teamLevel)} teams budget between{' '}
-                {formatCurrency(getBudgetRange(teamLevel).min)} and{' '}
-                {formatCurrency(getBudgetRange(teamLevel).max)}
+                💡 Most {getLevelName(teamType, ageDivision, competitiveLevel)} teams budget between{' '}
+                {formatCurrency(getBudgetRange(teamType, ageDivision, competitiveLevel).min)} and{' '}
+                {formatCurrency(getBudgetRange(teamType, ageDivision, competitiveLevel).max)}
               </p>
             </div>
 
@@ -236,56 +246,92 @@ export function StepBudget({ teamId, teamLevel, familyCount = 0, onComplete, onB
 }
 
 // Helper functions
-function getDefaultFee(level: string): number {
-  const fees: Record<string, number> = {
-    house: 800,
-    u7: 900,
-    u9: 1000,
-    u11: 1100,
-    u13: 1200,
-    u15: 1300,
-    u18: 1400,
-    a: 1300,
-    aa: 1500,
-    aaa: 1800,
-    adult: 700,
-    other: 1200,
+function getDefaultFee(teamType: string, ageDivision: string, competitiveLevel: string): number {
+  // Base fee by team type
+  if (teamType === 'HOUSE_LEAGUE') return 800;
+  if (teamType === 'ADULT_RECREATIONAL') return 700;
+
+  // For representative teams, use competitive level and age division
+  let baseFee = 1200;
+
+  // Adjust by age division
+  const ageFees: Record<string, number> = {
+    U7: 900,
+    U9: 1000,
+    U11: 1100,
+    U13: 1200,
+    U15: 1300,
+    U18: 1400,
   };
-  return fees[level] || 1200;
+  baseFee = ageFees[ageDivision] || 1200;
+
+  // Adjust by competitive level
+  const levelMultipliers: Record<string, number> = {
+    AAA: 1.5,
+    AA: 1.25,
+    A: 1.08,
+    BB: 1.0,
+    B: 1.0,
+    MD: 1.0,
+  };
+  const multiplier = levelMultipliers[competitiveLevel] || 1.0;
+
+  return Math.round(baseFee * multiplier);
 }
 
-function getBudgetRange(level: string): { min: number; max: number } {
-  const ranges: Record<string, { min: number; max: number }> = {
-    house: { min: 10000, max: 18000 },
-    u7: { min: 12000, max: 20000 },
-    u9: { min: 15000, max: 22000 },
-    u11: { min: 18000, max: 25000 },
-    u13: { min: 20000, max: 30000 },
-    u15: { min: 22000, max: 35000 },
-    u18: { min: 24000, max: 40000 },
-    a: { min: 22000, max: 35000 },
-    aa: { min: 25000, max: 45000 },
-    aaa: { min: 35000, max: 60000 },
-    adult: { min: 8000, max: 15000 },
-    other: { min: 15000, max: 30000 },
+function getBudgetRange(teamType: string, ageDivision: string, competitiveLevel: string): { min: number; max: number } {
+  // House League budgets
+  if (teamType === 'HOUSE_LEAGUE') {
+    return { min: 10000, max: 18000 };
+  }
+
+  // Adult Rec budgets
+  if (teamType === 'ADULT_RECREATIONAL') {
+    return { min: 8000, max: 15000 };
+  }
+
+  // Representative teams - base on age + competitive level
+  const ageRanges: Record<string, { min: number; max: number }> = {
+    U7: { min: 12000, max: 20000 },
+    U9: { min: 15000, max: 22000 },
+    U11: { min: 18000, max: 25000 },
+    U13: { min: 20000, max: 30000 },
+    U15: { min: 22000, max: 35000 },
+    U18: { min: 24000, max: 40000 },
   };
-  return ranges[level] || { min: 15000, max: 30000 };
+
+  let range = ageRanges[ageDivision] || { min: 15000, max: 30000 };
+
+  // Adjust for competitive level
+  if (competitiveLevel === 'AAA') {
+    range = { min: range.min * 1.4, max: range.max * 1.5 };
+  } else if (competitiveLevel === 'AA') {
+    range = { min: range.min * 1.2, max: range.max * 1.3 };
+  } else if (competitiveLevel === 'A') {
+    range = { min: range.min * 1.0, max: range.max * 1.1 };
+  }
+
+  return {
+    min: Math.round(range.min),
+    max: Math.round(range.max),
+  };
 }
 
-function getLevelName(level: string): string {
-  const names: Record<string, string> = {
-    house: 'House League',
-    u7: 'U7',
-    u9: 'U9',
-    u11: 'U11',
-    u13: 'U13',
-    u15: 'U15',
-    u18: 'U18',
-    a: 'Single A',
-    aa: 'Double A',
-    aaa: 'Triple A',
-    adult: 'Adult Rec',
-    other: 'similar',
-  };
-  return names[level] || 'similar';
+function getLevelName(teamType: string, ageDivision: string, competitiveLevel: string): string {
+  if (teamType === 'HOUSE_LEAGUE') return 'House League';
+  if (teamType === 'ADULT_RECREATIONAL') return 'Adult Recreational';
+
+  // Representative teams
+  const age = ageDivision !== 'OTHER' ? ageDivision : '';
+  const level = competitiveLevel !== 'OTHER' ? competitiveLevel : '';
+
+  if (age && level) {
+    return `${age} ${level}`;
+  } else if (age) {
+    return age;
+  } else if (level) {
+    return level;
+  }
+
+  return 'similar';
 }

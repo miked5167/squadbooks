@@ -4,8 +4,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, Plus, Users } from 'lucide-react';
+import { Trash2, Plus, Users, Download, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ExcelUpload } from '@/components/ExcelUpload';
+import { downloadRosterTemplate } from '@/lib/excel/roster-template';
+import type { Family } from '@/lib/validations/family';
 
 interface StepRosterProps {
   teamId: string;
@@ -24,6 +27,7 @@ interface FamilyData {
 export function StepRoster({ teamId, onComplete, onBack, onSkip }: StepRosterProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [families, setFamilies] = useState<FamilyData[]>([
     { id: '1', familyName: '', primaryEmail: '', secondaryEmail: '' },
   ]);
@@ -119,6 +123,37 @@ export function StepRoster({ teamId, onComplete, onBack, onSkip }: StepRosterPro
     }
   };
 
+  const handleImportFamilies = (importedFamilies: Family[]) => {
+    // Convert imported families to FamilyData format and merge with existing
+    const newFamilies = importedFamilies.map(f => ({
+      id: Date.now().toString() + Math.random().toString(),
+      familyName: f.familyName,
+      primaryEmail: f.primaryEmail,
+      secondaryEmail: f.secondaryEmail || '',
+    }));
+
+    // Filter out the default empty family if it's still empty
+    const existingNonEmpty = families.filter(
+      f => f.familyName.trim() || f.primaryEmail.trim()
+    );
+
+    setFamilies([...existingNonEmpty, ...newFamilies]);
+    setShowUploadModal(false);
+
+    toast({
+      title: 'Families imported',
+      description: `Successfully imported ${importedFamilies.length} ${importedFamilies.length === 1 ? 'family' : 'families'}`,
+    });
+  };
+
+  const handleDownloadTemplate = () => {
+    downloadRosterTemplate();
+    toast({
+      title: 'Template downloaded',
+      description: 'Fill in your family information and upload the file when ready',
+    });
+  };
+
   const validFamilyCount = families.filter(
     (f) => f.familyName.trim() && f.primaryEmail.trim()
   ).length;
@@ -126,13 +161,35 @@ export function StepRoster({ teamId, onComplete, onBack, onSkip }: StepRosterPro
   return (
     <div className="max-w-3xl mx-auto">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-          <Users className="w-8 h-8 text-primary" />
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-golden/20 mb-4">
+          <Users className="w-8 h-8 text-navy" />
         </div>
-        <h1 className="text-3xl font-bold mb-2">Add your team roster</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl font-bold mb-2 text-navy">Add your team roster</h1>
+        <p className="text-navy/70">
           Enter family contact information. You can always add more families later.
         </p>
+      </div>
+
+      {/* Excel Upload Buttons */}
+      <div className="mb-6 flex gap-3 justify-center">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleDownloadTemplate}
+          className="border-golden text-golden hover:bg-golden/10"
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Download Template
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setShowUploadModal(true)}
+          className="border-navy text-navy hover:bg-navy/10"
+        >
+          <Upload className="w-4 h-4 mr-2" />
+          Upload Excel
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -254,6 +311,15 @@ export function StepRoster({ teamId, onComplete, onBack, onSkip }: StepRosterPro
       <p className="text-xs text-center text-muted-foreground mt-4">
         We'll use these emails to notify families about payment statuses and team updates.
       </p>
+
+      {/* Excel Upload Modal */}
+      {showUploadModal && (
+        <ExcelUpload
+          existingFamilies={families}
+          onImport={handleImportFamilies}
+          onCancel={() => setShowUploadModal(false)}
+        />
+      )}
     </div>
   );
 }

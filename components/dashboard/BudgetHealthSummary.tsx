@@ -1,14 +1,17 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { formatCurrency, type BudgetSummary } from '@/lib/types/budget'
-import { Clock } from 'lucide-react'
+import { Clock, HelpCircle } from 'lucide-react'
+import type { FilterStatus } from '@/components/budget/BudgetFilters'
 
 interface BudgetHealthSummaryProps {
   summary: BudgetSummary
+  onStatusClick?: (status: FilterStatus) => void
 }
 
-export function BudgetHealthSummary({ summary }: BudgetHealthSummaryProps) {
+export function BudgetHealthSummary({ summary, onStatusClick }: BudgetHealthSummaryProps) {
   const {
     totalBudget,
     totalSpent,
@@ -24,58 +27,50 @@ export function BudgetHealthSummary({ summary }: BudgetHealthSummaryProps) {
   // Format time ago
   const timeAgo = getTimeAgo(lastUpdated)
 
-  // Format projected surplus/deficit
-  const projectedText =
-    projectedSurplusDeficit >= 0
-      ? `${formatCurrency(projectedSurplusDeficit)} surplus`
-      : `${formatCurrency(Math.abs(projectedSurplusDeficit))} deficit`
-
-  const projectedColor = projectedSurplusDeficit >= 0 ? 'text-green-600' : 'text-red-600'
-
   return (
     <Card className="border-0 shadow-card">
       <CardContent className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <div>
+          <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold text-navy">Budget Health Summary</h2>
-            <div className="flex items-center gap-2 mt-1 text-sm text-navy/60">
-              <span className="font-medium">{season}</span>
-              <span>•</span>
-              <div className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" />
-                <span>Updated {timeAgo}</span>
-              </div>
-            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="text-navy/40 hover:text-navy/60 transition-colors">
+                    <HelpCircle className="w-4 h-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-navy text-white max-w-xs">
+                  <p className="font-semibold mb-1">Category Status Thresholds:</p>
+                  <ul className="space-y-0.5 text-xs">
+                    <li>• On Track: &lt; 80% of budget used</li>
+                    <li>• Need Attention: 80-100% of budget used</li>
+                    <li>• Over Budget: &gt; 100% of budget used</li>
+                  </ul>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-        </div>
-
-        {/* Total Budget Overview */}
-        <div className="mb-6 p-4 bg-gradient-to-r from-navy/5 to-navy/10 rounded-lg">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-3xl font-bold text-navy tabular-nums">
-              {formatCurrency(totalBudget)}
-            </span>
-            <span className="text-sm text-navy/60">total</span>
-            <span className="text-navy/40">|</span>
-            <span className="text-2xl font-semibold text-navy tabular-nums">
-              {formatCurrency(totalSpent)}
-            </span>
-            <span className="text-sm text-navy/60">spent</span>
-            <span
-              className={`text-lg font-medium tabular-nums ${
-                percentUsed > 90 ? 'text-red-600' : percentUsed > 75 ? 'text-amber-600' : 'text-green-600'
-              }`}
-            >
-              ({percentUsed.toFixed(0)}%)
-            </span>
+          <div className="flex items-center gap-2 text-sm text-navy/60">
+            <span className="font-medium hidden sm:inline">{season}</span>
+            <span className="hidden sm:inline">•</span>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Updated {timeAgo}</span>
+              <span className="sm:hidden">{timeAgo}</span>
+            </div>
           </div>
         </div>
 
         {/* Status Indicators */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
           {/* On Track */}
-          <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
+          <button
+            onClick={() => onStatusClick?.('under')}
+            className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-100 hover:bg-green-100 hover:border-green-200 transition-all cursor-pointer text-left"
+            disabled={!onStatusClick}
+          >
             <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
               <span className="text-xl">🟢</span>
             </div>
@@ -85,10 +80,14 @@ export function BudgetHealthSummary({ summary }: BudgetHealthSummaryProps) {
               </div>
               <div className="text-xs font-medium text-green-600">On Track</div>
             </div>
-          </div>
+          </button>
 
           {/* Warning */}
-          <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100">
+          <button
+            onClick={() => onStatusClick?.('warning')}
+            className="flex items-center gap-3 p-3 bg-amber-50 rounded-lg border border-amber-100 hover:bg-amber-100 hover:border-amber-200 transition-all cursor-pointer text-left"
+            disabled={!onStatusClick}
+          >
             <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
               <span className="text-xl">🟡</span>
             </div>
@@ -98,30 +97,24 @@ export function BudgetHealthSummary({ summary }: BudgetHealthSummaryProps) {
               </div>
               <div className="text-xs font-medium text-amber-600">Need Attention</div>
             </div>
-          </div>
+          </button>
 
-          {/* Over Budget */}
-          <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+          {/* Over Budget - More prominent styling */}
+          <button
+            onClick={() => onStatusClick?.('over')}
+            className="flex items-center gap-3 p-3 bg-red-50 rounded-lg border-2 border-red-200 hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer text-left shadow-sm hover:shadow-md"
+            disabled={!onStatusClick}
+          >
+            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 border border-red-200">
               <span className="text-xl">🔴</span>
             </div>
             <div>
               <div className="text-2xl font-bold text-red-700 tabular-nums">
                 {categoriesOverBudget}
               </div>
-              <div className="text-xs font-medium text-red-600">Over Budget</div>
+              <div className="text-xs font-semibold text-red-600">Over Budget</div>
             </div>
-          </div>
-        </div>
-
-        {/* Projected Surplus/Deficit */}
-        <div className="pt-4 border-t border-navy/10">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-navy/70">Projected Season End:</span>
-            <span className={`text-base font-semibold tabular-nums ${projectedColor}`}>
-              {projectedText}
-            </span>
-          </div>
+          </button>
         </div>
       </CardContent>
     </Card>

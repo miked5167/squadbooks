@@ -7,6 +7,7 @@
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Search, X, Filter } from 'lucide-react'
 import { type BudgetStatus } from '@/lib/utils/budgetStatus'
 
@@ -19,6 +20,8 @@ interface BudgetFiltersProps {
   onFilterChange: (status: FilterStatus) => void
   resultCount: number
   totalCount: number
+  showSpendingOnly?: boolean
+  onShowSpendingOnlyChange?: (value: boolean) => void
 }
 
 export function BudgetFilters({
@@ -28,12 +31,17 @@ export function BudgetFilters({
   onFilterChange,
   resultCount,
   totalCount,
+  showSpendingOnly = false,
+  onShowSpendingOnlyChange,
 }: BudgetFiltersProps) {
-  const hasActiveFilters = searchQuery !== '' || filterStatus !== 'all'
+  const hasActiveFilters = searchQuery !== '' || filterStatus !== 'all' || showSpendingOnly
 
   const handleClearAll = () => {
     onSearchChange('')
     onFilterChange('all')
+    if (onShowSpendingOnlyChange) {
+      onShowSpendingOnlyChange(false)
+    }
   }
 
   return (
@@ -112,10 +120,28 @@ export function BudgetFilters({
             className="text-navy/60 hover:text-navy ml-auto"
           >
             <X className="w-3 h-3 mr-1" />
-            Clear filters
+            Reset
           </Button>
         )}
       </div>
+
+      {/* Show Spending Only Checkbox */}
+      {onShowSpendingOnlyChange && (
+        <div className="flex items-center gap-2 pl-6">
+          <Checkbox
+            id="show-spending-only"
+            checked={showSpendingOnly}
+            onCheckedChange={(checked) => onShowSpendingOnlyChange(checked as boolean)}
+            className="border-navy/30"
+          />
+          <label
+            htmlFor="show-spending-only"
+            className="text-sm text-navy/70 cursor-pointer select-none"
+          >
+            Show categories with spending only
+          </label>
+        </div>
+      )}
 
       {/* Results Count */}
       {hasActiveFilters && (

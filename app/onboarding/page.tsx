@@ -21,18 +21,15 @@ export default function OnboardingPage() {
   const [wizardData, setWizardData] = useState({
     teamId: '',
     teamName: '',
-    teamLevel: '',
+    teamType: '',
+    ageDivision: '',
+    competitiveLevel: '',
     season: '',
     familyCount: 0,
     budgetTotal: 0,
     bankConnected: false,
     approverAdded: false,
   });
-
-  // Redirect if user already has a team
-  if (isLoaded && user?.publicMetadata?.teamId) {
-    redirect('/dashboard');
-  }
 
   const totalSteps = 4;
 
@@ -56,7 +53,9 @@ export default function OnboardingPage() {
           initialData={{
             teamId: wizardData.teamId,
             name: wizardData.teamName,
-            level: wizardData.teamLevel,
+            teamType: wizardData.teamType,
+            ageDivision: wizardData.ageDivision,
+            competitiveLevel: wizardData.competitiveLevel,
             season: wizardData.season,
           }}
           onComplete={(data) => {
@@ -66,7 +65,9 @@ export default function OnboardingPage() {
               stepName: getStepName(1),
               action: 'complete',
               metadata: {
-                teamLevel: data.level,
+                teamType: data.teamType,
+                ageDivision: data.ageDivision,
+                competitiveLevel: data.competitiveLevel,
               },
             });
 
@@ -74,7 +75,9 @@ export default function OnboardingPage() {
               ...wizardData,
               teamId: data.teamId,
               teamName: data.name,
-              teamLevel: data.level,
+              teamType: data.teamType,
+              ageDivision: data.ageDivision,
+              competitiveLevel: data.competitiveLevel,
               season: data.season
             });
             setCurrentStep(2);
@@ -124,7 +127,9 @@ export default function OnboardingPage() {
       {currentStep === 3 && (
         <StepBudget
           teamId={wizardData.teamId}
-          teamLevel={wizardData.teamLevel}
+          teamType={wizardData.teamType}
+          ageDivision={wizardData.ageDivision}
+          competitiveLevel={wizardData.competitiveLevel}
           familyCount={wizardData.familyCount}
           onComplete={(budgetTotal) => {
             // Track completion

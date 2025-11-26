@@ -32,23 +32,28 @@ export function CategoryRow({ category, onEdit, onClick }: CategoryRowProps) {
 
   return (
     <div
-      className="pl-6 pr-6 py-4 border-b border-gray-100 last:border-0 hover:bg-gray-100 transition-colors cursor-pointer"
+      className="pl-6 pr-6 py-4 border-b border-gray-200 last:border-0 hover:bg-gray-50 transition-colors cursor-pointer"
       onClick={onClick}
     >
-      <div className="flex items-start justify-between gap-4 mb-3">
+      <div className="flex items-start justify-between gap-4 mb-2">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div
-            className="w-3 h-3 rounded-full flex-shrink-0"
-            style={{ backgroundColor: category.categoryColor }}
+            className="w-4 h-4 rounded-full flex-shrink-0 ring-2 ring-offset-1"
+            style={{ backgroundColor: category.categoryColor, ringColor: category.categoryColor + '40' }}
             aria-hidden="true"
           />
           <div className="flex-1 min-w-0">
-            <h4 className="font-medium text-navy text-sm sm:text-base truncate">
-              {category.categoryName}
-            </h4>
-            <p className="text-sm text-navy/60 mt-0.5">
-              {formatCurrency(category.spent)} of {formatCurrency(category.allocated)} spent
-            </p>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <h4 className="font-semibold text-navy text-sm sm:text-base">
+                {category.categoryName}
+              </h4>
+              <span className="text-sm text-navy/60 tabular-nums">
+                ${category.spent.toLocaleString()} / ${category.allocated.toLocaleString()}
+              </span>
+              <span className="text-xs font-medium text-navy/50">
+                ({category.percentage.toFixed(0)}% used)
+              </span>
+            </div>
             {category.pending > 0 && (
               <div className="flex items-center gap-1 text-xs text-golden mt-1">
                 <Clock className="w-3 h-3" />
@@ -59,11 +64,6 @@ export function CategoryRow({ category, onEdit, onClick }: CategoryRowProps) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          <StatusBadge
-            status={status}
-            difference={difference}
-            className="hidden sm:flex"
-          />
           <Button
             variant="ghost"
             size="sm"
@@ -75,7 +75,7 @@ export function CategoryRow({ category, onEdit, onClick }: CategoryRowProps) {
                 allocated: category.allocated,
               })
             }}
-            className="h-9 w-9 p-0"
+            className="h-9 w-9 p-0 hover:bg-navy/10"
             aria-label={`Edit budget for ${category.categoryName}`}
           >
             <Edit className="w-4 h-4" />
@@ -83,12 +83,16 @@ export function CategoryRow({ category, onEdit, onClick }: CategoryRowProps) {
         </div>
       </div>
 
-      {/* Progress Bar */}
+      {/* Progress Bar - Using category color */}
       <div className="mb-2">
-        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden border border-gray-200">
           <div
-            className={`${progressColor} h-2.5 rounded-full transition-all duration-300`}
-            style={{ width: `${Math.min(category.percentage, 100)}%` }}
+            className="h-3 rounded-full transition-all duration-300"
+            style={{
+              width: `${Math.min(category.percentage, 100)}%`,
+              backgroundColor: category.categoryColor,
+              opacity: category.percentage > 90 ? 0.9 : category.percentage > 70 ? 0.85 : 0.8,
+            }}
             role="progressbar"
             aria-valuenow={category.percentage}
             aria-valuemin={0}
@@ -103,14 +107,12 @@ export function CategoryRow({ category, onEdit, onClick }: CategoryRowProps) {
         <StatusBadge status={status} difference={difference} className="w-full justify-center" />
       </div>
 
-      {/* Bottom Row: Remaining & Percentage */}
-      <div className="flex justify-between text-sm">
-        <span className="font-medium text-navy/70">
+      {/* Bottom Row: Remaining */}
+      <div className="flex justify-between items-center text-sm">
+        <span className={`font-semibold ${category.remaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
           {formatCurrency(category.remaining)} remaining
         </span>
-        <span className="text-navy/60">
-          {category.percentage.toFixed(0)}% used
-        </span>
+        <StatusBadge status={status} difference={difference} className="hidden sm:flex text-xs" />
       </div>
 
       {/* Projected with Pending */}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { AppNav } from '@/components/app-nav'
+import { AppSidebar } from '@/components/app-sidebar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -16,6 +16,9 @@ import { BudgetHealthSummary } from '@/components/dashboard/BudgetHealthSummary'
 import { BudgetAllocationChart } from '@/components/dashboard/BudgetAllocationChart'
 import { CategoryGroup } from '@/components/budget/CategoryGroup'
 import { BudgetFilters, type FilterStatus } from '@/components/budget/BudgetFilters'
+import { CashPositionCards } from '@/components/budget/CashPositionCards'
+import { BudgetPositionCards } from '@/components/budget/BudgetPositionCards'
+import { ProjectedSeasonEndCard } from '@/components/budget/ProjectedSeasonEndCard'
 import type { BudgetSummary, BudgetHeadingGroup } from '@/lib/types/budget'
 import { groupCategoriesByHeading, getBudgetStatus, type CategoryWithHeading } from '@/lib/utils/budgetStatus'
 
@@ -71,6 +74,28 @@ export default function BudgetPage() {
   // Search and filter state
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
+  const [showSpendingOnly, setShowSpendingOnly] = useState(false)
+
+  // Financial summary state
+  const [financialSummary, setFinancialSummary] = useState<{
+    totalIncome: number
+    totalExpenses: number
+    netPosition: number
+    budgetedExpensesTotal: number
+  } | null>(null)
+
+  // Scroll to category function
+  const scrollToCategory = (heading: string) => {
+    const element = document.getElementById(`category-group-${heading}`)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      // Flash the element briefly to indicate it
+      element.classList.add('ring-2', 'ring-navy', 'ring-offset-2')
+      setTimeout(() => {
+        element.classList.remove('ring-2', 'ring-navy', 'ring-offset-2')
+      }, 2000)
+    }
+  }
 
   async function fetchBudget() {
     try {
@@ -89,8 +114,21 @@ export default function BudgetPage() {
     }
   }
 
+  async function fetchFinancialSummary() {
+    try {
+      const res = await fetch('/api/financial-summary')
+      if (res.ok) {
+        const data = await res.json()
+        setFinancialSummary(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch financial summary:', err)
+    }
+  }
+
   useEffect(() => {
     fetchBudget()
+    fetchFinancialSummary()
   }, [])
 
   // Transform categories to CategoryWithHeading format
@@ -147,8 +185,18 @@ export default function BudgetPage() {
         .filter(group => group.categories.length > 0)
     }
 
+    // Apply show spending only filter
+    if (showSpendingOnly) {
+      filtered = filtered
+        .map(group => ({
+          ...group,
+          categories: group.categories.filter(cat => cat.spent > 0),
+        }))
+        .filter(group => group.categories.length > 0)
+    }
+
     return filtered
-  }, [groupedCategories, filterStatus, searchQuery])
+  }, [groupedCategories, filterStatus, searchQuery, showSpendingOnly])
 
   // Calculate counts for filters
   const totalCategoryCount = categoriesWithHeading.length
@@ -285,8 +333,8 @@ export default function BudgetPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream">
-        <AppNav />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <AppSidebar />
+        <main className="ml-64 px-8 py-8">
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-navy" />
           </div>
@@ -298,8 +346,8 @@ export default function BudgetPage() {
   if (!budgetData) {
     return (
       <div className="min-h-screen bg-cream">
-        <AppNav />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <AppSidebar />
+        <main className="ml-64 px-8 py-8">
           <Card className="border-0 shadow-card">
             <CardContent className="py-12">
               <div className="text-center">
@@ -367,9 +415,9 @@ export default function BudgetPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <AppNav />
+      <AppSidebar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="ml-64 px-8 py-8">
         {/* Page Header */}
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
@@ -387,52 +435,46 @@ export default function BudgetPage() {
           </div>
         </div>
 
-        {/* Sticky Summary Cards */}
-        <div className="sticky top-0 z-20 bg-cream pb-6 -mt-2 pt-2">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 bg-cream">
-            <Card className="border-0 shadow-card">
-              <CardHeader className="pb-2 sm:pb-3">
-                <CardDescription className="text-navy/60 text-sm">Total Allocated</CardDescription>
-                <CardTitle className="text-2xl sm:text-3xl text-navy">${totalAllocated.toLocaleString()}</CardTitle>
-              </CardHeader>
-              <CardContent className="pb-3">
-                <div className="text-xs sm:text-sm text-navy/70">{categories.length} categories</div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-card">
-              <CardHeader className="pb-2 sm:pb-3">
-                <CardDescription className="text-navy/60 text-sm">Total Spent</CardDescription>
-                <CardTitle className="text-2xl sm:text-3xl text-navy">${totalSpent.toLocaleString()}</CardTitle>
-              </CardHeader>
-              <CardContent className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Progress value={(totalSpent / totalAllocated) * 100} className="flex-1 h-2" />
-                  <span className="text-xs sm:text-sm font-medium text-navy/70 min-w-[3ch]">
-                    {totalAllocated > 0 ? ((totalSpent / totalAllocated) * 100).toFixed(0) : 0}%
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-card">
-              <CardHeader className="pb-2 sm:pb-3">
-                <CardDescription className="text-navy/60 text-sm">Remaining</CardDescription>
-                <CardTitle className="text-2xl sm:text-3xl text-meadow">${totalRemaining.toLocaleString()}</CardTitle>
-              </CardHeader>
-              <CardContent className="pb-3">
-                <div className="flex items-center gap-1 text-xs sm:text-sm">
-                  <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-meadow" />
-                  <span className="text-navy/70">{totalAllocated > 0 ? ((totalRemaining / totalAllocated) * 100).toFixed(0) : 0}% available</span>
-                </div>
-              </CardContent>
-            </Card>
+        {/* CASH POSITION - Top Row */}
+        {financialSummary && (
+          <div className="mb-6">
+            <h2 className="text-base font-semibold text-navy/70 mb-2 uppercase tracking-wide">Cash Position</h2>
+            <CashPositionCards
+              totalIncome={financialSummary.totalIncome}
+              totalExpenses={financialSummary.totalExpenses}
+              netPosition={financialSummary.netPosition}
+            />
           </div>
+        )}
+
+        {/* BUDGET POSITION - Second Row */}
+        <div className="mb-6">
+          <h2 className="text-base font-semibold text-navy/70 mb-2 uppercase tracking-wide">Budget Position</h2>
+          <BudgetPositionCards
+            totalBudgeted={totalAllocated}
+            totalSpent={totalSpent}
+            totalRemaining={totalRemaining}
+          />
         </div>
 
-        {/* Budget Health Summary */}
-        <div className="mb-8">
-          <BudgetHealthSummary summary={budgetSummary} />
+        {/* Budget Health Summary and Projected Season-End */}
+        <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <BudgetHealthSummary
+              summary={budgetSummary}
+              onStatusClick={(status) => {
+                setFilterStatus(status)
+                // Scroll to category breakdown section
+                const categorySection = document.querySelector('[data-category-breakdown]')
+                if (categorySection) {
+                  categorySection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+              }}
+            />
+          </div>
+          <div>
+            <ProjectedSeasonEndCard projectedSurplusDeficit={budgetSummary.projectedSurplusDeficit} />
+          </div>
         </div>
 
         {/* Budget Allocation Chart - Hide on mobile */}
@@ -440,11 +482,12 @@ export default function BudgetPage() {
           <BudgetAllocationChart
             groups={allocationGroups}
             totalBudget={totalAllocated * 100}
+            onSegmentClick={scrollToCategory}
           />
         </div>
 
         {/* Category Breakdown with Search & Filters */}
-        <Card className="border-0 shadow-card">
+        <Card className="border-0 shadow-card" data-category-breakdown>
           <CardHeader>
             <CardTitle className="text-navy">Category Breakdown</CardTitle>
             <CardDescription>
@@ -461,6 +504,8 @@ export default function BudgetPage() {
                 onFilterChange={setFilterStatus}
                 resultCount={filteredCategoryCount}
                 totalCount={totalCategoryCount}
+                showSpendingOnly={showSpendingOnly}
+                onShowSpendingOnlyChange={setShowSpendingOnly}
               />
             </div>
 
@@ -468,12 +513,14 @@ export default function BudgetPage() {
             {filteredGroups.length > 0 ? (
               <div className="space-y-4">
                 {filteredGroups.map((group) => (
-                  <CategoryGroup
-                    key={group.heading}
-                    group={group}
-                    onEdit={handleEditBudget}
-                    onCategoryClick={handleCategoryClick}
-                  />
+                  <div key={`${group.heading}-${filterStatus}-${searchQuery}`} id={`category-group-${group.heading}`}>
+                    <CategoryGroup
+                      group={group}
+                      onEdit={handleEditBudget}
+                      onCategoryClick={handleCategoryClick}
+                      defaultExpanded={filterStatus !== 'all' || searchQuery !== '' || showSpendingOnly}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (
@@ -488,12 +535,13 @@ export default function BudgetPage() {
                     ? 'Try adjusting your search or filters'
                     : 'No budget categories have been created yet'}
                 </p>
-                {(searchQuery || filterStatus !== 'all') && (
+                {(searchQuery || filterStatus !== 'all' || showSpendingOnly) && (
                   <Button
                     variant="outline"
                     onClick={() => {
                       setSearchQuery('')
                       setFilterStatus('all')
+                      setShowSpendingOnly(false)
                     }}
                     className="border-navy/20 text-navy hover:bg-navy/5"
                   >

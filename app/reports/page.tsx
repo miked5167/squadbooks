@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { AppNav } from '@/components/app-nav'
+import { AppSidebar } from '@/components/app-sidebar'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download, Receipt, TrendingUp } from 'lucide-react'
@@ -17,9 +17,9 @@ export default async function ReportsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <AppNav />
+      <AppSidebar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="ml-64 px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-display-2 text-navy mb-2">Reports</h1>

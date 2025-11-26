@@ -27,7 +27,6 @@ async function main() {
       provinceState: 'Ontario',
       country: 'Canada',
       season: '2024-2025',
-      isActive: true,
     },
   })
   console.log(`✓ Created association: ${association.name}`)

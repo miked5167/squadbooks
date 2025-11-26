@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { AppNav } from '@/components/app-nav'
+import { AppSidebar } from '@/components/app-sidebar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -150,8 +150,8 @@ export default function ApprovalsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream">
-        <AppNav />
-        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <AppSidebar />
+        <main className="ml-64 px-8 py-8">
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-navy" />
           </div>
@@ -162,10 +162,10 @@ export default function ApprovalsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <AppNav />
+      <AppSidebar />
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="ml-64 px-8 py-8">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 text-navy hover:text-navy-medium mb-6 transition-colors"

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { AppNav } from '@/components/app-nav'
+import { AppSidebar } from '@/components/app-sidebar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -149,10 +149,10 @@ export default function NewExpensePage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <AppNav />
+      <AppSidebar />
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="ml-64 px-8 py-8 max-w-3xl">
         <Link
           href="/dashboard"
           className="inline-flex items-center gap-2 text-navy hover:text-navy-medium mb-6 transition-colors"

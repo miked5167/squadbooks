@@ -1,11 +1,13 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { AppNav } from '@/components/app-nav'
+import { AppSidebar } from '@/components/app-sidebar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { ArrowUpRight, Plus, DollarSign, List, TrendingUp, TrendingDown, Clock } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
+import { getFinancialSummary } from '@/lib/db/financial-summary'
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -21,18 +23,11 @@ export default async function DashboardPage() {
   })
 
   if (!user) {
-    redirect('/sign-in')
+    redirect('/onboarding')
   }
 
-  // Fetch approved expenses for actual spending
-  const approvedExpenses = await prisma.transaction.findMany({
-    where: {
-      teamId: user.teamId,
-      type: 'EXPENSE',
-      status: 'APPROVED',
-      deletedAt: null,
-    },
-  })
+  // Get comprehensive financial summary
+  const financialSummary = await getFinancialSummary(user.teamId)
 
   // Fetch pending approvals count
   const pendingApprovalsCount = await prisma.approval.count({
@@ -42,27 +37,20 @@ export default async function DashboardPage() {
     },
   })
 
-  // Calculate stats from real data
-  const totalBudget = Number(user.team.budgetTotal)
-  const spent = approvedExpenses.reduce((sum, txn) => sum + Number(txn.amount), 0)
-  const remaining = totalBudget - spent
+  // Calculate expense percentage vs budget
+  const expensePercentage =
+    financialSummary.budgetedExpensesTotal > 0
+      ? (financialSummary.totalExpenses / financialSummary.budgetedExpensesTotal) * 100
+      : 0
 
-  const stats = {
-    totalBudget,
-    spent,
-    remaining,
-    pending: pendingApprovalsCount,
-  }
-
-  const spentPercentage = (stats.spent / stats.totalBudget) * 100
-  const remainingPercentage = (stats.remaining / stats.totalBudget) * 100
+  const isNetPositive = financialSummary.netPosition >= 0
 
   return (
     <div className="min-h-screen bg-cream">
-      <AppNav />
+      <AppSidebar />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="ml-64 px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-display-2 text-navy mb-2">Dashboard</h1>
@@ -114,115 +102,109 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* Financial Summary - 3 Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Total Income Card */}
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60">Total Budget</CardDescription>
-              <CardTitle className="text-3xl text-navy">${stats.totalBudget.toLocaleString()}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                <div className="bg-navy h-2 rounded-full" style={{ width: '100%' }}></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60">Spent</CardDescription>
-              <CardTitle className="text-3xl text-navy">${stats.spent.toLocaleString()}</CardTitle>
+              <CardDescription className="text-navy/60">Total Income</CardDescription>
+              <CardTitle className="text-3xl text-green-600">
+                ${financialSummary.totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-1 text-sm">
-                <TrendingDown className="w-4 h-4 text-red-500" />
-                <span className="text-navy/70">{spentPercentage.toFixed(1)}% of budget</span>
+                <TrendingUp className="w-4 h-4 text-green-600" />
+                <span className="text-navy/70">Registration, fundraising, sponsorships</span>
               </div>
             </CardContent>
           </Card>
 
+          {/* Total Expenses vs Budget Card */}
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60">Remaining</CardDescription>
-              <CardTitle className="text-3xl text-meadow">${stats.remaining.toLocaleString()}</CardTitle>
+              <CardDescription className="text-navy/60">Total Expenses</CardDescription>
+              <CardTitle className="text-3xl text-navy">
+                ${financialSummary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Progress value={expensePercentage} className="h-2" />
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-navy/70">{expensePercentage.toFixed(1)}% of budget</span>
+                  <span className="text-navy/70 font-medium">
+                    ${financialSummary.budgetedExpensesTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} budgeted
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Net Position Card */}
+          <Card className="border-0 shadow-card">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-navy/60">Net Position</CardDescription>
+              <CardTitle className={`text-3xl ${isNetPositive ? 'text-green-600' : 'text-red-600'}`}>
+                {isNetPositive ? '+' : ''}${financialSummary.netPosition.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-1 text-sm">
-                <TrendingUp className="w-4 h-4 text-meadow" />
-                <span className="text-navy/70">{remainingPercentage.toFixed(1)}% available</span>
+                {isNetPositive ? (
+                  <>
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                    <span className="text-navy/70">Positive cash position</span>
+                  </>
+                ) : (
+                  <>
+                    <TrendingDown className="w-4 h-4 text-red-600" />
+                    <span className="text-navy/70">Deficit position</span>
+                  </>
+                )}
               </div>
+              <p className="text-xs text-navy/50 mt-1">Income minus expenses for this season</p>
             </CardContent>
           </Card>
+        </div>
 
+        {/* Pending Approvals */}
+        <div className="mb-8">
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
               <CardDescription className="text-navy/60">Pending Approvals</CardDescription>
-              <CardTitle className="text-3xl text-golden">{stats.pending}</CardTitle>
+              <CardTitle className="text-3xl text-golden">{pendingApprovalsCount}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-1 text-sm">
                 <Clock className="w-4 h-4 text-golden" />
                 <span className="text-navy/70">Awaiting review</span>
               </div>
+              {pendingApprovalsCount > 0 && (
+                <Button asChild className="mt-4 w-full bg-golden hover:bg-golden/90 text-navy">
+                  <Link href="/approvals">
+                    Review Approvals
+                    <ArrowUpRight className="ml-2 w-4 h-4" />
+                  </Link>
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Budget Overview */}
+        {/* Budget Overview Link */}
         <Card className="border-0 shadow-card mb-8">
           <CardHeader>
-            <CardTitle className="text-navy">Budget Overview</CardTitle>
-            <CardDescription>See how your spending compares to your budget</CardDescription>
+            <CardTitle className="text-navy">Budget Management</CardTitle>
+            <CardDescription>Track category-level spending vs budget</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {/* Example category */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-meadow rounded-full"></div>
-                    <span className="font-medium text-navy">Ice Time</span>
-                  </div>
-                  <span className="text-sm text-navy/70">$0 / $4,000</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-meadow h-2 rounded-full" style={{ width: '0%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-golden rounded-full"></div>
-                    <span className="font-medium text-navy">Equipment</span>
-                  </div>
-                  <span className="text-sm text-navy/70">$0 / $2,500</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-golden h-2 rounded-full" style={{ width: '0%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-navy rounded-full"></div>
-                    <span className="font-medium text-navy">Tournaments</span>
-                  </div>
-                  <span className="text-sm text-navy/70">$0 / $2,000</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-navy h-2 rounded-full" style={{ width: '0%' }}></div>
-                </div>
-              </div>
-
-              <Button asChild className="w-full bg-navy hover:bg-navy-medium text-white">
-                <Link href="/budget">
-                  View Full Budget
-                  <ArrowUpRight className="ml-2 w-4 h-4" />
-                </Link>
-              </Button>
-            </div>
+            <Button asChild className="w-full bg-navy hover:bg-navy-medium text-white">
+              <Link href="/budget">
+                View Full Budget Breakdown
+                <ArrowUpRight className="ml-2 w-4 h-4" />
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
@@ -240,29 +222,44 @@ export default async function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-navy/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-navy/40" />
+            {financialSummary.totalIncome === 0 && financialSummary.totalExpenses === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-navy/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="w-8 h-8 text-navy/40" />
+                </div>
+                <h3 className="text-lg font-semibold text-navy mb-2">No transactions yet</h3>
+                <p className="text-navy/60 mb-6 max-w-sm mx-auto">
+                  Create your first expense or income to get started tracking your team's finances
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+                    <Link href="/expenses/new">
+                      <Plus className="mr-2 w-4 h-4" />
+                      Add Expense
+                    </Link>
+                  </Button>
+                  <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+                    <Link href="/income/new">
+                      <Plus className="mr-2 w-4 h-4" />
+                      Add Income
+                    </Link>
+                  </Button>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-navy mb-2">No transactions yet</h3>
-              <p className="text-navy/60 mb-6 max-w-sm mx-auto">
-                Create your first expense or income to get started tracking your team's finances
-              </p>
-              <div className="flex gap-3 justify-center">
-                <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
-                  <Link href="/expenses/new">
-                    <Plus className="mr-2 w-4 h-4" />
-                    Add Expense
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm text-navy/70">
+                  You have {financialSummary.expensesByCategory.length} expense categories and{' '}
+                  {financialSummary.incomeByCategory.length} income categories with activity.
+                </p>
+                <Button asChild className="w-full bg-navy hover:bg-navy-medium text-white">
+                  <Link href="/transactions">
+                    View All Transactions
+                    <ArrowUpRight className="ml-2 w-4 h-4" />
                   </Link>
                 </Button>
-                <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-                  <Link href="/income/new">
-                    <Plus className="mr-2 w-4 h-4" />
-                    Add Income
-                  </Link>
-                </Button>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </main>

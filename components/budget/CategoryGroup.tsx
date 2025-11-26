@@ -35,12 +35,12 @@ export function CategoryGroup({ group, onEdit, onCategoryClick, defaultExpanded 
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+    <div className="border-2 border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
       {/* Heading Row - Always Visible */}
       <button
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
-        className="w-full px-4 sm:px-6 py-4 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between gap-4 text-left focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2"
+        className="w-full px-4 sm:px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition-colors flex items-center justify-between gap-4 text-left focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2"
         aria-expanded={isExpanded}
         aria-controls={`category-group-${group.heading}`}
       >

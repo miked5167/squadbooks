@@ -49,11 +49,25 @@ export default async function DashboardLayout({
     // TODO: Redirect to onboarding if no association
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-2xl mx-auto p-6">
           <h1 className="text-2xl font-bold mb-2">No Association Found</h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mb-6">
             You are not associated with any organization.
           </p>
+          <div className="bg-muted p-4 rounded-lg text-left">
+            <p className="font-semibold mb-2">To set up your demo association:</p>
+            <ol className="list-decimal list-inside space-y-2 text-sm">
+              <li>Your Clerk User ID is: <code className="bg-background px-2 py-1 rounded">{userId}</code></li>
+              <li>Run this command in your terminal:</li>
+            </ol>
+            <pre className="bg-background p-3 rounded mt-2 text-xs overflow-x-auto">
+              cd association-dashboard{'\n'}
+              set SEED_CLERK_USER_ID={userId} && npm run seed
+            </pre>
+            <p className="text-xs text-muted-foreground mt-3">
+              Then refresh this page to see your dashboard!
+            </p>
+          </div>
         </div>
       </div>
     )

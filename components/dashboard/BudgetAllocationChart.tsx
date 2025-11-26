@@ -7,10 +7,17 @@ import { formatCurrency, type BudgetHeadingGroup } from '@/lib/types/budget'
 interface BudgetAllocationChartProps {
   groups: BudgetHeadingGroup[]
   totalBudget: number
+  onSegmentClick?: (heading: string) => void
 }
 
-export function BudgetAllocationChart({ groups, totalBudget }: BudgetAllocationChartProps) {
+export function BudgetAllocationChart({ groups, totalBudget, onSegmentClick }: BudgetAllocationChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  const handleSegmentClick = (heading: string) => {
+    if (onSegmentClick) {
+      onSegmentClick(heading)
+    }
+  }
 
   return (
     <Card className="border-0 shadow-card">
@@ -19,7 +26,8 @@ export function BudgetAllocationChart({ groups, totalBudget }: BudgetAllocationC
           Budget Allocation by Category
         </CardTitle>
         <p className="text-sm text-navy/60 mt-1">
-          Total Budget: <span className="font-bold tabular-nums">{formatCurrency(totalBudget)}</span>
+          <span className="font-medium">Total Budget:</span>{' '}
+          <span className="font-bold tabular-nums text-navy">{formatCurrency(totalBudget)}</span>
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -34,20 +42,22 @@ export function BudgetAllocationChart({ groups, totalBudget }: BudgetAllocationC
               return (
                 <div
                   key={group.heading}
-                  className="absolute top-0 h-full transition-all duration-300 ease-out cursor-pointer hover:opacity-90"
+                  className="absolute top-0 h-full transition-all duration-300 ease-out cursor-pointer hover:opacity-90 hover:scale-105"
                   style={{
                     left: `${leftOffset}%`,
                     width: `${group.percentOfTotal}%`,
                     backgroundColor: group.color,
                   }}
+                  onClick={() => handleSegmentClick(group.heading)}
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   role="button"
                   tabIndex={0}
-                  aria-label={`${group.heading}: ${formatCurrency(group.allocated)}, ${group.percentOfTotal.toFixed(0)}% of total budget`}
+                  aria-label={`${group.heading}: ${formatCurrency(group.allocated)}, ${group.percentOfTotal.toFixed(0)}% of total budget. Click to jump to category.`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      setHoveredIndex(index)
+                      e.preventDefault()
+                      handleSegmentClick(group.heading)
                     }
                   }}
                 >
@@ -68,8 +78,9 @@ export function BudgetAllocationChart({ groups, totalBudget }: BudgetAllocationC
           {hoveredIndex !== null && (
             <div className="mt-3 animate-in fade-in slide-in-from-top-1 duration-200">
               <div
-                className="inline-block bg-navy text-white rounded-lg p-3 shadow-lg"
+                className="inline-block bg-navy text-white rounded-lg p-3 shadow-lg cursor-pointer"
                 style={{ backgroundColor: groups[hoveredIndex].color }}
+                onClick={() => handleSegmentClick(groups[hoveredIndex].heading)}
               >
                 <div className="font-semibold text-sm mb-1">{groups[hoveredIndex].heading}</div>
                 <div className="text-xs space-y-0.5">
@@ -84,6 +95,7 @@ export function BudgetAllocationChart({ groups, totalBudget }: BudgetAllocationC
                   <div className="opacity-90">
                     Spent: {formatCurrency(groups[hoveredIndex].spent)}
                   </div>
+                  <div className="opacity-75 italic mt-1">Click to jump to category</div>
                 </div>
               </div>
             </div>
@@ -123,12 +135,21 @@ export function BudgetAllocationChart({ groups, totalBudget }: BudgetAllocationC
 
         {/* Legend - Desktop */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {groups.map((group) => (
+          {groups.map((group, index) => (
             <div
               key={group.heading}
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-cream/50 transition-colors cursor-pointer"
-              onMouseEnter={() => setHoveredIndex(groups.indexOf(group))}
+              onClick={() => handleSegmentClick(group.heading)}
+              onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  handleSegmentClick(group.heading)
+                }
+              }}
             >
               <div
                 className="w-4 h-4 rounded-full flex-shrink-0"
