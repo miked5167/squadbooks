@@ -203,12 +203,11 @@ export default function AuditPage() {
               <Label htmlFor="action" className="text-sm">
                 Action Type
               </Label>
-              <Select value={action} onValueChange={setAction}>
+              <Select value={action || undefined} onValueChange={setAction}>
                 <SelectTrigger id="action">
                   <SelectValue placeholder="All actions" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All actions</SelectItem>
                   <SelectItem value="CREATE">Create</SelectItem>
                   <SelectItem value="UPDATE">Update</SelectItem>
                   <SelectItem value="DELETE">Delete</SelectItem>
