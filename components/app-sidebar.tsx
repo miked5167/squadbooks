@@ -23,17 +23,46 @@ const navigation = [
   { name: 'Transactions', href: '/transactions', icon: Receipt },
   { name: 'Roster', href: '/players', icon: Users },
   { name: 'Reports', href: '/reports', icon: FileText },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  {
+    name: 'Settings',
+    href: '/settings',
+    icon: Settings,
+    requiresRole: ['TREASURER', 'ASSISTANT_TREASURER'] // Only show to treasurers
+  },
   { name: 'Activity', href: '/activity', icon: Activity },
   { name: 'Support', href: '/support', icon: HelpCircle },
 ]
 
+interface UserData {
+  name: string
+  role: string
+  team: {
+    name: string
+  }
+}
+
 export function AppSidebar() {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
+  const [userData, setUserData] = useState<UserData | null>(null)
 
   useEffect(() => {
     setMounted(true)
+
+    // Fetch current user data for role-based navigation
+    async function fetchUserData() {
+      try {
+        const res = await fetch('/api/user/me')
+        if (res.ok) {
+          const data = await res.json()
+          setUserData(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch user data:', error)
+      }
+    }
+
+    fetchUserData()
   }, [])
 
   return (
@@ -50,35 +79,47 @@ export function AppSidebar() {
           <div className="w-6 h-6 bg-navy/10 rounded flex items-center justify-center">
             <Users className="w-4 h-4 text-navy" />
           </div>
-          <span className="font-medium text-navy">My Team</span>
+          <span className="font-medium text-navy truncate">
+            {userData?.team.name || 'My Team'}
+          </span>
         </div>
       </div>
 
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
         <div className="space-y-1">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href
-            const Icon = item.icon
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-200 group',
-                  isActive
-                    ? 'bg-navy text-white'
-                    : 'text-navy/70 hover:text-navy hover:bg-navy/5'
-                )}
-              >
-                <Icon className={cn(
-                  'w-5 h-5 transition-colors',
-                  isActive ? 'text-white' : 'text-navy/50 group-hover:text-navy'
-                )} />
-                <span>{item.name}</span>
-              </Link>
-            )
-          })}
+          {navigation
+            .filter((item) => {
+              // Filter based on role requirements
+              if (item.requiresRole && userData?.role) {
+                return item.requiresRole.includes(userData.role)
+              }
+              return true
+            })
+            .map((item) => {
+              const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-200 group',
+                    isActive
+                      ? 'bg-navy text-white'
+                      : 'text-navy/70 hover:text-navy hover:bg-navy/5'
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      'w-5 h-5 transition-colors',
+                      isActive ? 'text-white' : 'text-navy/50 group-hover:text-navy'
+                    )}
+                  />
+                  <span>{item.name}</span>
+                </Link>
+              )
+            })}
         </div>
       </nav>
 
@@ -91,13 +132,17 @@ export function AppSidebar() {
                 afterSignOutUrl="/"
                 appearance={{
                   elements: {
-                    avatarBox: 'w-10 h-10'
-                  }
+                    avatarBox: 'w-10 h-10',
+                  },
                 }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-navy truncate">User</p>
-                <p className="text-xs text-navy/60 truncate">Treasurer</p>
+                <p className="text-sm font-medium text-navy truncate">
+                  {userData?.name || 'User'}
+                </p>
+                <p className="text-xs text-navy/60 truncate">
+                  {userData?.role.replace('_', ' ') || 'Loading...'}
+                </p>
               </div>
             </>
           )}

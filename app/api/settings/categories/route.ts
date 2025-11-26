@@ -7,7 +7,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
+import { prisma } from '@/lib/prisma'
 import { requireTreasurer } from '@/lib/auth/permissions'
 import { categorySchema, updateCategorySchema } from '@/lib/validations/settings'
 import { z } from 'zod'

@@ -6,7 +6,7 @@
 
 import { redirect } from 'next/navigation'
 import { auth } from '@clerk/nextjs/server'
-import { prisma } from '@/lib/db'
+import { prisma } from '@/lib/prisma'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import {

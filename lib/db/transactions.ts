@@ -4,10 +4,23 @@ import type { CreateTransactionInput, UpdateTransactionInput, TransactionFilter 
 
 /**
  * Business Logic: Determine if a transaction requires approval
- * Rule: EXPENSE transactions > $200 require approval
+ * Rule: EXPENSE transactions above the dual approval threshold require approval
+ * The threshold is configured per-team in Settings (default: $200)
  */
-export function requiresApproval(type: TransactionType, amount: number): boolean {
-  return type === 'EXPENSE' && amount > 200
+export async function requiresApproval(
+  type: TransactionType,
+  amount: number,
+  teamId: string
+): Promise<boolean> {
+  if (type !== 'EXPENSE') {
+    return false
+  }
+
+  // Get team's dual approval settings
+  const { requiresDualApproval } = await import('@/lib/auth/permissions')
+
+  // Amount is in cents, requiresDualApproval expects cents
+  return await requiresDualApproval(amount, teamId)
 }
 
 /**
@@ -21,7 +34,7 @@ export async function createTransaction(
   const { type, amount, categoryId, vendor, description, transactionDate, receiptUrl } = data
 
   // Determine initial status based on approval requirements
-  const needsApproval = requiresApproval(type as TransactionType, amount)
+  const needsApproval = await requiresApproval(type as TransactionType, amount, teamId)
   const status: TransactionStatus = needsApproval ? 'PENDING' : 'APPROVED'
 
   // Create transaction
