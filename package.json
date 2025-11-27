@@ -12,6 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "node prisma/seed.js",
+    "seed:demo": "tsx prisma/seed-demo.ts",
+    "verify:demo": "tsx prisma/verify-demo.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -88,6 +90,7 @@
     "postcss": "^8",
     "prisma": "^6.1.0",
     "tailwindcss": "^4.1.17",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

@@ -1,4 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+const DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
 
 const isPublicRoute = createRouteMatcher([
   '/',
@@ -8,7 +12,14 @@ const isPublicRoute = createRouteMatcher([
   '/api/admin(.*)', // Allow admin endpoints for setup
 ])
 
-export default clerkMiddleware()
+// In dev mode, bypass Clerk middleware entirely
+export default function middleware(req: NextRequest) {
+  if (DEV_MODE) {
+    return NextResponse.next()
+  }
+
+  return clerkMiddleware()(req)
+}
 
 export const config = {
   matcher: [

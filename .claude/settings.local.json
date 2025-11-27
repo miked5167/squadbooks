@@ -133,7 +133,17 @@
       "Bash(cmd /c \"taskkill /F /PID 8528 2>nul & echo Killed process 8528 & timeout /t 3 >nul\")",
       "Bash(cmd /c \"taskkill /F /IM node.exe 2>nul & rmdir /s /q .next 2>nul & rmdir /s /q node_modules\\.prisma 2>nul & echo Cleaned up & timeout /t 5 >nul & echo Attempting generation...\")",
       "Bash(cmd /c \"dir /b node_modules\\.prisma\\client\\index.d.ts 2>nul && echo TypeScript types exist || echo Types not found\")",
-      "Bash(cmd /c \"if exist node_modules\\.prisma\\client (echo Client folder exists & dir /b node_modules\\.prisma\\client\\*.d.ts) else (echo Client folder does not exist)\")"
+      "Bash(cmd /c \"if exist node_modules\\.prisma\\client (echo Client folder exists & dir /b node_modules\\.prisma\\client\\*.d.ts) else (echo Client folder does not exist)\")",
+      "Bash(cmd /c \"taskkill /F /IM node.exe 2>nul & if exist .next rmdir /s /q .next & timeout /t 2 >nul & echo Ready\")",
+      "Bash(cmd /c \"timeout /t 6 >nul\")",
+      "Bash(cmd /c \"taskkill /F /PID 25588 2>nul & timeout /t 2 >nul & if exist .next\\dev\\lock del .next\\dev\\lock 2>nul & if exist .next rmdir /s /q .next 2>nul & echo Cleaned up\")",
+      "Bash(cmd /c \"timeout /t 3 >nul & if exist .next rmdir /s /q .next & echo Ready for fresh start\")",
+      "Bash(npm run verify:demo:*)",
+      "Bash(cmd /c \"timeout /t 2 >nul & if exist .next\\dev\\lock del .next\\dev\\lock & echo Ready\")",
+      "Bash(cmd /c \"taskkill /F /IM node.exe 2>nul & timeout /t 3 >nul & if exist .next rmdir /s /q .next & echo Cleaned up\")",
+      "Bash(cmd /c \"taskkill /F /IM node.exe >nul 2>&1 & rmdir /s /q .next 2>nul & echo Ready for fresh start\")",
+      "Bash(cmd /c:*)",
+      "Bash(npm run seed:demo:*)"
     ],
     "deny": [],
     "ask": []

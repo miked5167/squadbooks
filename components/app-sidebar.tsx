@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { UserButton } from '@clerk/nextjs'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -14,13 +13,22 @@ import {
   Users,
   HelpCircle,
   Activity,
+  User,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+
+const DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Budget', href: '/budget', icon: PiggyBank },
   { name: 'Transactions', href: '/transactions', icon: Receipt },
+  {
+    name: 'Approvals',
+    href: '/approvals',
+    icon: CheckCircle,
+    requiresRole: ['TREASURER', 'ASSISTANT_TREASURER'] // Only show to treasurers
+  },
   { name: 'Roster', href: '/players', icon: Users },
   { name: 'Reports', href: '/reports', icon: FileText },
   {
@@ -128,14 +136,27 @@ export function AppSidebar() {
         <div className="flex items-center gap-3">
           {mounted && (
             <>
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: 'w-10 h-10',
-                  },
-                }}
-              />
+              {DEV_MODE ? (
+                // Dev mode: Show simple avatar
+                <div className="w-10 h-10 bg-navy/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 text-navy" />
+                </div>
+              ) : (
+                // Production: Show Clerk UserButton
+                (() => {
+                  const { UserButton } = require('@clerk/nextjs')
+                  return (
+                    <UserButton
+                      afterSignOutUrl="/"
+                      appearance={{
+                        elements: {
+                          avatarBox: 'w-10 h-10',
+                        },
+                      }}
+                    />
+                  )
+                })()
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-navy truncate">
                   {userData?.name || 'User'}

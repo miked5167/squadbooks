@@ -30,6 +30,7 @@ interface PlayersTabProps {
   teamSeason: string
   teamLevel: string | null
   teamType: string | null
+  isTreasurer: boolean
 }
 
 export function PlayersTab({
@@ -39,6 +40,7 @@ export function PlayersTab({
   teamSeason,
   teamLevel,
   teamType,
+  isTreasurer,
 }: PlayersTabProps) {
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false)
 
@@ -113,13 +115,15 @@ export function PlayersTab({
             <CardTitle className="text-navy">Team Players</CardTitle>
             <CardDescription>Complete roster with player details</CardDescription>
           </div>
-          <Button
-            className="bg-meadow hover:bg-meadow/90 text-white"
-            onClick={() => setIsAddPlayerOpen(true)}
-          >
-            <Plus className="mr-2 w-4 h-4" />
-            Add Player
-          </Button>
+          {isTreasurer && (
+            <Button
+              className="bg-meadow hover:bg-meadow/90 text-white"
+              onClick={() => setIsAddPlayerOpen(true)}
+            >
+              <Plus className="mr-2 w-4 h-4" />
+              Add Player
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           {players.length === 0 ? (
@@ -131,13 +135,15 @@ export function PlayersTab({
               <p className="text-navy/60 mb-6 max-w-sm mx-auto">
                 Once your roster is set, players will appear here
               </p>
-              <Button
-                className="bg-meadow hover:bg-meadow/90 text-white"
-                onClick={() => setIsAddPlayerOpen(true)}
-              >
-                <Plus className="mr-2 w-4 h-4" />
-                Add First Player
-              </Button>
+              {isTreasurer && (
+                <Button
+                  className="bg-meadow hover:bg-meadow/90 text-white"
+                  onClick={() => setIsAddPlayerOpen(true)}
+                >
+                  <Plus className="mr-2 w-4 h-4" />
+                  Add First Player
+                </Button>
+              )}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -181,13 +187,15 @@ export function PlayersTab({
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-navy/20 text-navy hover:bg-navy/5"
-                        >
-                          Edit
-                        </Button>
+                        {isTreasurer && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-navy/20 text-navy hover:bg-navy/5"
+                          >
+                            Edit
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth, currentUser } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 
 const DEFAULT_CATEGORIES = [

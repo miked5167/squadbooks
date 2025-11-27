@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/lib/auth/server-auth';
 import { prisma } from '@/lib/prisma';
 import { validateSeasonClosure, DEFAULT_POLICY } from '@/lib/season-closure/validation';
 import { submitToAssociation } from '@/lib/season-closure/submission';

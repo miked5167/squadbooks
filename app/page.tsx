@@ -1,4 +1,12 @@
+'use client'
+
+const DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
+
 export default function Home() {
+  // Helper to get the right link based on dev mode
+  const getSignInLink = () => DEV_MODE ? '/dashboard' : '/sign-in'
+  const getSignUpLink = () => DEV_MODE ? '/dashboard' : '/sign-up'
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -25,17 +33,17 @@ export default function Home() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <a
-                href="/sign-up"
+                href={getSignUpLink()}
                 className="group px-8 py-4 bg-golden text-navy font-semibold rounded-lg hover:bg-golden/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-golden/20 w-full sm:w-auto text-center"
               >
-                Start Free Trial
+                {DEV_MODE ? 'Go to Dashboard' : 'Start Free Trial'}
                 <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
               </a>
               <a
-                href="/sign-in"
+                href={getSignInLink()}
                 className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all duration-300 w-full sm:w-auto text-center backdrop-blur-sm"
               >
-                Sign In
+                {DEV_MODE ? 'Dashboard' : 'Sign In'}
               </a>
             </div>
 
@@ -143,10 +151,10 @@ export default function Home() {
               Join teams across North America who are building trust through transparent financial management.
             </p>
             <a
-              href="/sign-up"
+              href={getSignUpLink()}
               className="inline-block px-8 py-4 bg-golden text-navy font-semibold rounded-lg hover:bg-golden/90 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-golden/20"
             >
-              Start Your Free Trial →
+              {DEV_MODE ? 'Go to Dashboard →' : 'Start Your Free Trial →'}
             </a>
             <p className="text-navy/50 text-sm mt-4">
               30-day free trial • No credit card required

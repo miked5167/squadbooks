@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth/server-auth'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getPendingApprovals, getAllApprovals } from '@/lib/db/approvals'

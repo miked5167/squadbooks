@@ -519,6 +519,7 @@ model AuditLog {
   entityId   String
   oldValues  Json?
   newValues  Json?
+  metadata   Json? // Extra contextual data (vendor, amount, category, etc.)
   ipAddress  String?
   userAgent  String?
   createdAt  DateTime @default(now())
@@ -531,6 +532,7 @@ model AuditLog {
   @@index([userId])
   @@index([entityType, entityId])
   @@index([createdAt])
+  @@index([action])
   @@map("audit_logs")
 }
 

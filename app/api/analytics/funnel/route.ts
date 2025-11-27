@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/lib/auth/server-auth';
 import { getOnboardingFunnelMetrics, getAverageStepDurations } from '@/lib/analytics/funnel-analytics';
 
 export async function GET(request: Request) {

@@ -55,6 +55,7 @@ export interface CreateAuditLogInput {
   entityId: string
   oldValues?: Record<string, unknown>
   newValues?: Record<string, unknown>
+  metadata?: Record<string, unknown>
   ipAddress?: string
   userAgent?: string
 }
@@ -72,6 +73,7 @@ export async function createAuditLog(input: CreateAuditLogInput) {
     entityId,
     oldValues,
     newValues,
+    metadata,
     ipAddress,
     userAgent,
   } = input
@@ -86,6 +88,7 @@ export async function createAuditLog(input: CreateAuditLogInput) {
         entityId,
         oldValues: oldValues ? (oldValues as Prisma.JsonValue) : null,
         newValues: newValues ? (newValues as Prisma.JsonValue) : null,
+        metadata: metadata ? (metadata as Prisma.JsonValue) : null,
         ipAddress,
         userAgent,
       },

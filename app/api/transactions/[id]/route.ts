@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth/server-auth'
 import { UpdateTransactionSchema } from '@/lib/validations/transaction'
 import { getTransactionById, updateTransaction, deleteTransaction } from '@/lib/db/transactions'
 import { prisma } from '@/lib/prisma'

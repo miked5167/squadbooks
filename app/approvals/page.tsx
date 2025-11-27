@@ -1,150 +1,240 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
+import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { AppSidebar } from '@/components/app-sidebar'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { toast } from 'sonner'
-import { ArrowLeft, CheckCircle, XCircle, Clock, Loader2, AlertCircle } from 'lucide-react'
-
-interface Approval {
-  id: string
-  status: string
-  createdAt: string
-  comment?: string
-  transaction: {
-    id: string
-    type: string
-    amount: number
-    vendor: string
-    description?: string
-    transactionDate: string
-    category: {
-      name: string
-      heading: string
-      color: string
-    }
-    creator: {
-      name: string
-      email: string
-    }
-  }
-}
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { CheckCircle, Loader2 } from 'lucide-react'
+import { ApprovalFiltersToolbar } from '@/components/approvals/ApprovalFiltersToolbar'
+import { ApprovalTable } from '@/components/approvals/ApprovalTable'
+import { ApprovalDetailsDrawer } from '@/components/approvals/ApprovalDetailsDrawer'
+import { ApprovalMobileList } from '@/components/approvals/ApprovalMobileCard'
+import { BulkActionDialog } from '@/components/approvals/BulkActionDialog'
+import {
+  usePendingApprovals,
+  useApproveApproval,
+  useRejectApproval,
+  useBulkApprove,
+  useBulkReject,
+} from '@/lib/hooks/use-approvals'
+import {
+  ApprovalFilters,
+  ApprovalSort,
+  PendingApprovalWithRisk,
+} from '@/lib/types/approvals'
+import { sortByRiskLevel } from '@/lib/utils/approval-risk'
 
 export default function ApprovalsPage() {
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const [approvals, setApprovals] = useState<Approval[]>([])
-  const [loading, setLoading] = useState(true)
-  const [processingId, setProcessingId] = useState<string | null>(null)
-  const [comments, setComments] = useState<Record<string, string>>({})
 
-  // Fetch approvals
-  useEffect(() => {
-    async function fetchApprovals() {
-      try {
-        const res = await fetch('/api/approvals?status=pending')
-        if (res.ok) {
-          const data = await res.json()
-          setApprovals(data.approvals)
-        } else {
-          toast.error('Failed to load approvals')
-        }
-      } catch (err) {
-        console.error('Failed to fetch approvals:', err)
-        toast.error('Failed to load approvals')
-      } finally {
-        setLoading(false)
-      }
+  // Data fetching
+  const { approvals, loading, refetch } = usePendingApprovals()
+  const { approve, loading: approving } = useApproveApproval()
+  const { reject, loading: rejecting } = useRejectApproval()
+  const { bulkApprove, loading: bulkApproving } = useBulkApprove()
+  const { bulkReject, loading: bulkRejecting } = useBulkReject()
+
+  // UI state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [activeApproval, setActiveApproval] = useState<PendingApprovalWithRisk | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [bulkAction, setBulkAction] = useState<'approve' | 'reject' | null>(null)
+
+  // Filters and sorting
+  const [filters, setFilters] = useState<ApprovalFilters>({
+    search: '',
+    categories: [],
+    riskLevels: [],
+    groupBy: 'NONE',
+  })
+
+  const [sort, setSort] = useState<ApprovalSort>({
+    field: 'submittedAt',
+    direction: 'desc',
+  })
+
+  // Filter and sort approvals
+  const filteredAndSortedApprovals = useMemo(() => {
+    let result = [...approvals]
+
+    // Apply search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase()
+      result = result.filter(
+        (approval) =>
+          approval.transaction.vendor.toLowerCase().includes(searchLower) ||
+          approval.transaction.description?.toLowerCase().includes(searchLower) ||
+          approval.transaction.creator.name.toLowerCase().includes(searchLower)
+      )
     }
-    fetchApprovals()
-  }, [])
 
-  // Highlight specific approval if coming from email
-  useEffect(() => {
-    const highlightId = searchParams?.get('highlight')
-    if (highlightId && !loading) {
-      const element = document.getElementById(`approval-${highlightId}`)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        element.classList.add('ring-2', 'ring-meadow', 'ring-offset-2')
-        setTimeout(() => {
-          element.classList.remove('ring-2', 'ring-meadow', 'ring-offset-2')
-        }, 3000)
-      }
+    // Apply category filter
+    if (filters.categories.length > 0) {
+      result = result.filter((approval) =>
+        filters.categories.includes(approval.transaction.category.heading)
+      )
     }
-  }, [searchParams, loading])
 
-  const handleApprove = async (approvalId: string) => {
-    setProcessingId(approvalId)
-    try {
-      const res = await fetch(`/api/approvals/${approvalId}/approve`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          comment: comments[approvalId] || undefined,
-        }),
+    // Apply risk level filter
+    if (filters.riskLevels.length > 0) {
+      result = result.filter((approval) => filters.riskLevels.includes(approval.riskLevel))
+    }
+
+    // Apply amount range filter
+    if (filters.minAmount !== undefined) {
+      result = result.filter(
+        (approval) => Number(approval.transaction.amount) >= filters.minAmount!
+      )
+    }
+    if (filters.maxAmount !== undefined) {
+      result = result.filter(
+        (approval) => Number(approval.transaction.amount) <= filters.maxAmount!
+      )
+    }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      let comparison = 0
+
+      switch (sort.field) {
+        case 'amount':
+          comparison = Number(a.transaction.amount) - Number(b.transaction.amount)
+          break
+        case 'vendor':
+          comparison = a.transaction.vendor.localeCompare(b.transaction.vendor)
+          break
+        case 'submittedAt':
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          break
+        case 'transactionDate':
+          comparison =
+            new Date(a.transaction.transactionDate).getTime() -
+            new Date(b.transaction.transactionDate).getTime()
+          break
+      }
+
+      return sort.direction === 'asc' ? comparison : -comparison
+    })
+
+    return result
+  }, [approvals, filters, sort])
+
+  // Group approvals if needed
+  const groupedApprovals = useMemo(() => {
+    if (filters.groupBy === 'NONE') {
+      return [{ group: null, approvals: filteredAndSortedApprovals }]
+    }
+
+    const groups: Record<string, PendingApprovalWithRisk[]> = {}
+
+    filteredAndSortedApprovals.forEach((approval) => {
+      let groupKey: string
+
+      switch (filters.groupBy) {
+        case 'CATEGORY':
+          groupKey = approval.transaction.category.heading
+          break
+        case 'VENDOR':
+          groupKey = approval.transaction.vendor
+          break
+        case 'RISK':
+          groupKey = `${approval.riskLevel} Risk`
+          break
+        default:
+          groupKey = 'Other'
+      }
+
+      if (!groups[groupKey]) {
+        groups[groupKey] = []
+      }
+      groups[groupKey].push(approval)
+    })
+
+    // Sort groups by risk level if grouping by risk
+    const groupKeys = Object.keys(groups)
+    if (filters.groupBy === 'RISK') {
+      groupKeys.sort((a, b) => {
+        const riskOrder = { 'HIGH Risk': 0, 'MEDIUM Risk': 1, 'LOW Risk': 2 }
+        return (
+          (riskOrder[a as keyof typeof riskOrder] || 999) -
+          (riskOrder[b as keyof typeof riskOrder] || 999)
+        )
       })
+    } else {
+      groupKeys.sort()
+    }
 
-      if (res.ok) {
-        toast.success('Transaction approved!')
-        // Remove from list
-        setApprovals(approvals.filter(a => a.id !== approvalId))
-        // Clear comment
-        setComments({ ...comments, [approvalId]: '' })
-      } else {
-        const data = await res.json()
-        toast.error(data.error || 'Failed to approve transaction')
-      }
-    } catch (err) {
-      console.error('Failed to approve:', err)
-      toast.error('Failed to approve transaction')
-    } finally {
-      setProcessingId(null)
+    return groupKeys.map((key) => ({ group: key, approvals: groups[key] }))
+  }, [filteredAndSortedApprovals, filters.groupBy])
+
+  // Calculate totals
+  const totalAmount = useMemo(() => {
+    return filteredAndSortedApprovals.reduce(
+      (sum, approval) => sum + Number(approval.transaction.amount),
+      0
+    )
+  }, [filteredAndSortedApprovals])
+
+  const selectedApprovals = useMemo(() => {
+    return filteredAndSortedApprovals.filter((a) => selectedIds.has(a.id))
+  }, [filteredAndSortedApprovals, selectedIds])
+
+  const selectedTotalAmount = useMemo(() => {
+    return selectedApprovals.reduce((sum, a) => sum + Number(a.transaction.amount), 0)
+  }, [selectedApprovals])
+
+  // Get unique categories for filter dropdown
+  const categories = useMemo(() => {
+    return approvals.map((a) => a.transaction.category)
+  }, [approvals])
+
+  // Handlers
+  const handleApprove = async (approvalId: string, comment?: string) => {
+    const success = await approve(approvalId, comment)
+    if (success) {
+      await refetch()
+      setSelectedIds((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(approvalId)
+        return newSet
+      })
     }
   }
 
-  const handleReject = async (approvalId: string) => {
-    const comment = comments[approvalId]
-    if (!comment || comment.trim().length === 0) {
-      toast.error('Please provide a reason for rejection')
-      return
-    }
-
-    setProcessingId(approvalId)
-    try {
-      const res = await fetch(`/api/approvals/${approvalId}/reject`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          comment: comment.trim(),
-        }),
+  const handleReject = async (approvalId: string, comment: string) => {
+    const success = await reject(approvalId, comment)
+    if (success) {
+      await refetch()
+      setSelectedIds((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(approvalId)
+        return newSet
       })
-
-      if (res.ok) {
-        toast.success('Transaction rejected')
-        // Remove from list
-        setApprovals(approvals.filter(a => a.id !== approvalId))
-        // Clear comment
-        setComments({ ...comments, [approvalId]: '' })
-      } else {
-        const data = await res.json()
-        toast.error(data.error || 'Failed to reject transaction')
-      }
-    } catch (err) {
-      console.error('Failed to reject:', err)
-      toast.error('Failed to reject transaction')
-    } finally {
-      setProcessingId(null)
     }
+  }
+
+  const handleBulkApprove = async (comment?: string) => {
+    const result = await bulkApprove(Array.from(selectedIds), comment)
+    if (result.succeeded.length > 0) {
+      await refetch()
+      setSelectedIds(new Set())
+      setBulkAction(null)
+    }
+  }
+
+  const handleBulkReject = async (comment: string) => {
+    const result = await bulkReject(Array.from(selectedIds), comment)
+    if (result.succeeded.length > 0) {
+      await refetch()
+      setSelectedIds(new Set())
+      setBulkAction(null)
+    }
+  }
+
+  const handleRowClick = (approval: PendingApprovalWithRisk) => {
+    setActiveApproval(approval)
+    setIsDrawerOpen(true)
   }
 
   if (loading) {
@@ -152,8 +242,10 @@ export default function ApprovalsPage() {
       <div className="min-h-screen bg-cream">
         <AppSidebar />
         <main className="ml-64 px-8 py-8">
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-navy" />
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-96 w-full" />
           </div>
         </main>
       </div>
@@ -164,25 +256,16 @@ export default function ApprovalsPage() {
     <div className="min-h-screen bg-cream">
       <AppSidebar />
 
-      {/* Main Content */}
       <main className="ml-64 px-8 py-8">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 text-navy hover:text-navy-medium mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
-        </Link>
-
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-display-2 text-navy mb-2">Pending Approvals</h1>
           <p className="text-lg text-navy/70">
-            Review and approve or reject expense transactions over $200
+            Review and approve or reject expense transactions over your team's threshold
           </p>
         </div>
 
-        {/* Approvals List */}
+        {/* Empty State */}
         {approvals.length === 0 ? (
           <Card className="border-0 shadow-card">
             <CardContent className="py-12">
@@ -190,166 +273,89 @@ export default function ApprovalsPage() {
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-navy mb-2">All caught up!</h3>
+                <h3 className="text-lg font-semibold text-navy mb-2">No pending approvals 🎉</h3>
                 <p className="text-navy/60">
-                  No pending approvals at this time
+                  All team expenses above the threshold have been reviewed
                 </p>
               </div>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-6">
-            {approvals.map((approval) => (
-              <Card
-                key={approval.id}
-                id={`approval-${approval.id}`}
-                className="border-0 shadow-card transition-all"
-              >
-                <CardHeader className="bg-gradient-to-r from-golden/10 to-golden/5">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock className="w-5 h-5 text-golden" />
-                        <CardTitle className="text-xl text-navy">
-                          ${Number(approval.transaction.amount).toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                        </CardTitle>
-                        <span
-                          className="px-2 py-1 rounded text-xs font-semibold text-white"
-                          style={{ backgroundColor: approval.transaction.category.color }}
-                        >
-                          {approval.transaction.category.name}
-                        </span>
-                      </div>
-                      <CardDescription className="text-base">
-                        {approval.transaction.type} • {approval.transaction.vendor}
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
+            {/* Filters Toolbar */}
+            <ApprovalFiltersToolbar
+              filters={filters}
+              onFiltersChange={setFilters}
+              totalPending={filteredAndSortedApprovals.length}
+              totalAmount={totalAmount}
+              selectedCount={selectedIds.size}
+              onApproveSelected={() => setBulkAction('approve')}
+              onRejectSelected={() => setBulkAction('reject')}
+              bulkLoading={bulkApproving || bulkRejecting}
+              categories={categories}
+            />
 
-                <CardContent className="pt-6">
-                  {/* Transaction Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-cream rounded-lg">
-                    <div>
-                      <span className="text-sm text-navy/60 block mb-1">Created By</span>
-                      <span className="text-navy font-medium">
-                        {approval.transaction.creator.name}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-navy/60 block mb-1">Transaction Date</span>
-                      <span className="text-navy font-medium">
-                        {new Date(approval.transaction.transactionDate).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-navy/60 block mb-1">Category</span>
-                      <span className="text-navy font-medium">
-                        {approval.transaction.category.heading} → {approval.transaction.category.name}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-navy/60 block mb-1">Submitted</span>
-                      <span className="text-navy font-medium">
-                        {new Date(approval.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </span>
-                    </div>
-                    {approval.transaction.description && (
-                      <div className="md:col-span-2">
-                        <span className="text-sm text-navy/60 block mb-1">Description</span>
-                        <p className="text-navy">{approval.transaction.description}</p>
-                      </div>
-                    )}
-                  </div>
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+              {groupedApprovals.map(({ group, approvals: groupApprovals }, index) => (
+                <div key={group || index} className="space-y-3 mb-6">
+                  {group && (
+                    <h3 className="text-lg font-semibold text-navy px-2">{group}</h3>
+                  )}
+                  <ApprovalTable
+                    approvals={groupApprovals}
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                    sort={sort}
+                    onSortChange={setSort}
+                    onRowClick={handleRowClick}
+                  />
+                </div>
+              ))}
+            </div>
 
-                  {/* Comment/Reason */}
-                  <div className="mb-4">
-                    <Label htmlFor={`comment-${approval.id}`} className="mb-2 flex items-center gap-2">
-                      <span>Comment (Optional for approval, required for rejection)</span>
-                      {comments[approval.id] && comments[approval.id].trim().length === 0 && (
-                        <span className="text-xs text-amber-600 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" />
-                          Required for rejection
-                        </span>
-                      )}
-                    </Label>
-                    <Textarea
-                      id={`comment-${approval.id}`}
-                      rows={2}
-                      maxLength={500}
-                      value={comments[approval.id] || ''}
-                      onChange={(e) =>
-                        setComments({ ...comments, [approval.id]: e.target.value })
-                      }
-                      placeholder="Add a comment or reason for your decision..."
-                      disabled={processingId === approval.id}
-                    />
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={() => handleApprove(approval.id)}
-                      disabled={processingId !== null}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      {processingId === approval.id ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Approving...
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          Approve
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      onClick={() => handleReject(approval.id)}
-                      disabled={processingId !== null}
-                      variant="destructive"
-                      className="flex-1"
-                    >
-                      {processingId === approval.id ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Rejecting...
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="w-4 h-4 mr-2" />
-                          Reject
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="border-navy/20 text-navy hover:bg-navy/5"
-                    >
-                      <Link href={`/transactions/${approval.transaction.id}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {/* Mobile Card View */}
+            <div className="md:hidden">
+              {groupedApprovals.map(({ group, approvals: groupApprovals }, index) => (
+                <div key={group || index} className="space-y-3 mb-6">
+                  {group && (
+                    <h3 className="text-lg font-semibold text-navy px-2">{group}</h3>
+                  )}
+                  <ApprovalMobileList
+                    approvals={groupApprovals}
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                    onViewDetails={handleRowClick}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </main>
+
+      {/* Details Drawer */}
+      <ApprovalDetailsDrawer
+        approval={activeApproval}
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        processing={approving || rejecting}
+      />
+
+      {/* Bulk Action Dialog */}
+      {bulkAction && (
+        <BulkActionDialog
+          open={!!bulkAction}
+          onOpenChange={(open) => !open && setBulkAction(null)}
+          action={bulkAction}
+          count={selectedIds.size}
+          totalAmount={selectedTotalAmount}
+          onConfirm={bulkAction === 'approve' ? handleBulkApprove : handleBulkReject}
+          loading={bulkApproving || bulkRejecting}
+        />
+      )}
     </div>
   )
 }

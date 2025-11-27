@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Only treasurers can create categories
-    if (user.role !== 'TREASURER') {
+    if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
       return NextResponse.json(
         { error: 'Only treasurers can create categories' },
         { status: 403 }

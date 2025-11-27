@@ -8,7 +8,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Progress } from '@/components/ui/progress'
-import { TrendingUp, HelpCircle } from 'lucide-react'
+import { TrendingUp, TrendingDown, HelpCircle } from 'lucide-react'
 
 interface BudgetPositionCardsProps {
   totalBudgeted: number
@@ -89,14 +89,23 @@ export function BudgetPositionCards({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <CardTitle className="text-2xl sm:text-3xl text-green-600">
+          <CardTitle className={`text-2xl sm:text-3xl ${totalRemaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             ${totalRemaining.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-1 text-sm">
-            <TrendingUp className="w-4 h-4 text-green-600" />
-            <span className="text-navy/70">Budget still available</span>
+            {totalRemaining >= 0 ? (
+              <>
+                <TrendingUp className="w-4 h-4 text-green-600" />
+                <span className="text-navy/70">Budget still available</span>
+              </>
+            ) : (
+              <>
+                <TrendingDown className="w-4 h-4 text-red-600" />
+                <span className="text-navy/70">Over budget</span>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>

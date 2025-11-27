@@ -24,9 +24,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, FileText, ExternalLink, Loader2, Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, X, Eye, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Plus, FileText, ExternalLink, Loader2, Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, X, Eye, ChevronLeft, ChevronRight, Info } from 'lucide-react'
 import { toast } from 'sonner'
 import { ReceiptViewer } from '@/components/ReceiptViewer'
+import { TransactionDetailsDrawer } from '@/components/transactions/transaction-details-drawer'
+
+interface Approval {
+  id: string
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+  approvedAt: string | null
+  approver: {
+    id: string
+    name: string
+    role: string
+  }
+}
 
 interface Transaction {
   id: string
@@ -47,6 +59,7 @@ interface Transaction {
     name: string
     role: string
   }
+  approvals?: Approval[]
 }
 
 type SortKey = 'date' | 'amount' | 'vendor' | 'category' | 'status' | null
@@ -75,6 +88,10 @@ export default function TransactionsPage() {
     vendor: string
     id: string
   } | null>(null)
+
+  // Transaction details drawer state
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+  const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false)
 
   // Sort state - default to date descending (newest first)
   const [sortConfig, setSortConfig] = useState<{
@@ -275,6 +292,27 @@ export default function TransactionsPage() {
       REJECTED: { variant: 'outline' as const, className: 'bg-red-100 text-red-700 border-red-300' },
     }
     return variants[status as keyof typeof variants] || variants.DRAFT
+  }
+
+  // Generate approval summary text
+  function getApprovalSummary(transaction: Transaction): string | null {
+    if (!transaction.approvals || transaction.approvals.length === 0) {
+      return null
+    }
+
+    const approvedApprovals = transaction.approvals.filter(a => a.status === 'APPROVED')
+
+    if (approvedApprovals.length === 0) {
+      return null
+    }
+
+    if (approvedApprovals.length === 1) {
+      return `Approved by ${approvedApprovals[0].approver.name}`
+    }
+
+    // Multiple approvals
+    const remaining = approvedApprovals.length - 1
+    return `Approved by ${approvedApprovals[0].approver.name} + ${remaining} more`
   }
 
   // Render sort icon based on current sort state
@@ -533,6 +571,9 @@ export default function TransactionsPage() {
                         </button>
                       </TableHead>
 
+                      {/* Approvals Column - Not Sortable */}
+                      <TableHead className="font-semibold text-navy">Approvals</TableHead>
+
                       {/* Receipt Column - Not Sortable */}
                       <TableHead className="font-semibold text-navy text-center">Receipt</TableHead>
                     </TableRow>
@@ -586,6 +627,26 @@ export default function TransactionsPage() {
                             <Badge variant={statusBadge.variant} className={statusBadge.className}>
                               {transaction.status}
                             </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {(() => {
+                              const approvalSummary = getApprovalSummary(transaction)
+                              if (approvalSummary) {
+                                return (
+                                  <button
+                                    onClick={() => {
+                                      setSelectedTransaction(transaction)
+                                      setDetailsDrawerOpen(true)
+                                    }}
+                                    className="inline-flex items-center gap-1.5 text-sm text-navy hover:text-navy-medium transition-colors hover:underline"
+                                  >
+                                    <Info className="w-4 h-4 flex-shrink-0" />
+                                    <span className="truncate">{approvalSummary}</span>
+                                  </button>
+                                )
+                              }
+                              return <span className="text-navy/30 text-sm">—</span>
+                            })()}
                           </TableCell>
                           <TableCell>
                             {transaction.receiptUrl ? (
@@ -656,6 +717,13 @@ export default function TransactionsPage() {
           transactionId={selectedReceipt.id}
         />
       )}
+
+      {/* Transaction Details Drawer */}
+      <TransactionDetailsDrawer
+        transaction={selectedTransaction}
+        open={detailsDrawerOpen}
+        onOpenChange={setDetailsDrawerOpen}
+      />
     </div>
   )
 }

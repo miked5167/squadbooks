@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth/server-auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { AppSidebar } from '@/components/app-sidebar'
@@ -25,6 +25,9 @@ export default async function DashboardPage() {
   if (!user) {
     redirect('/onboarding')
   }
+
+  // Check if user is treasurer (authorized to create transactions)
+  const isTreasurer = user.role === 'TREASURER' || user.role === 'ASSISTANT_TREASURER'
 
   // Get comprehensive financial summary
   const financialSummary = await getFinancialSummary(user.teamId)
@@ -58,34 +61,38 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Link
-            href="/expenses/new"
-            className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-meadow/20"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-12 h-12 bg-meadow/10 rounded-lg flex items-center justify-center group-hover:bg-meadow/20 transition-colors">
-                <Plus className="w-6 h-6 text-meadow" />
-              </div>
-              <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-meadow group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-            </div>
-            <h3 className="text-lg font-semibold text-navy mb-1">Add Expense</h3>
-            <p className="text-sm text-navy/60">Record a new team expense with receipt</p>
-          </Link>
+        <div className={`grid grid-cols-1 ${isTreasurer ? 'md:grid-cols-3' : 'md:grid-cols-1'} gap-6 mb-8`}>
+          {isTreasurer && (
+            <>
+              <Link
+                href="/expenses/new"
+                className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-meadow/20"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-12 h-12 bg-meadow/10 rounded-lg flex items-center justify-center group-hover:bg-meadow/20 transition-colors">
+                    <Plus className="w-6 h-6 text-meadow" />
+                  </div>
+                  <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-meadow group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                </div>
+                <h3 className="text-lg font-semibold text-navy mb-1">Add Expense</h3>
+                <p className="text-sm text-navy/60">Record a new team expense with receipt</p>
+              </Link>
 
-          <Link
-            href="/income/new"
-            className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-golden/20"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-12 h-12 bg-golden/10 rounded-lg flex items-center justify-center group-hover:bg-golden/20 transition-colors">
-                <DollarSign className="w-6 h-6 text-golden" />
-              </div>
-              <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-golden group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-            </div>
-            <h3 className="text-lg font-semibold text-navy mb-1">Add Income</h3>
-            <p className="text-sm text-navy/60">Record registration fees, donations, or sponsorships</p>
-          </Link>
+              <Link
+                href="/income/new"
+                className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-golden/20"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-12 h-12 bg-golden/10 rounded-lg flex items-center justify-center group-hover:bg-golden/20 transition-colors">
+                    <DollarSign className="w-6 h-6 text-golden" />
+                  </div>
+                  <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-golden group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                </div>
+                <h3 className="text-lg font-semibold text-navy mb-1">Add Income</h3>
+                <p className="text-sm text-navy/60">Record registration fees, donations, or sponsorships</p>
+              </Link>
+            </>
+          )}
 
           <Link
             href="/transactions"
@@ -229,22 +236,26 @@ export default async function DashboardPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-navy mb-2">No transactions yet</h3>
                 <p className="text-navy/60 mb-6 max-w-sm mx-auto">
-                  Create your first expense or income to get started tracking your team's finances
+                  {isTreasurer
+                    ? 'Create your first expense or income to get started tracking your team\'s finances'
+                    : 'No financial activity to display yet'}
                 </p>
-                <div className="flex gap-3 justify-center">
-                  <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
-                    <Link href="/expenses/new">
-                      <Plus className="mr-2 w-4 h-4" />
-                      Add Expense
-                    </Link>
-                  </Button>
-                  <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-                    <Link href="/income/new">
-                      <Plus className="mr-2 w-4 h-4" />
-                      Add Income
-                    </Link>
-                  </Button>
-                </div>
+                {isTreasurer && (
+                  <div className="flex gap-3 justify-center">
+                    <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+                      <Link href="/expenses/new">
+                        <Plus className="mr-2 w-4 h-4" />
+                        Add Expense
+                      </Link>
+                    </Button>
+                    <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+                      <Link href="/income/new">
+                        <Plus className="mr-2 w-4 h-4" />
+                        Add Income
+                      </Link>
+                    </Button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-3">

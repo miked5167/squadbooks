@@ -95,32 +95,34 @@ export async function createTransaction(
         },
       })
 
-      // Send approval request email (non-blocking)
-      try {
-        const { sendApprovalRequestEmail } = await import('@/lib/email')
-        const team = await prisma.team.findUnique({
-          where: { id: teamId },
-          select: { name: true },
-        })
+      // Send approval request email (non-blocking, fire and forget)
+      Promise.resolve().then(async () => {
+        try {
+          const { sendApprovalRequestEmail } = await import('@/lib/email')
+          const team = await prisma.team.findUnique({
+            where: { id: teamId },
+            select: { name: true },
+          })
 
-        await sendApprovalRequestEmail({
-          approverName: approver.name,
-          approverEmail: approver.email,
-          treasurerName: transaction.creator.name,
-          teamName: team?.name || 'Your Team',
-          transactionType: type as 'EXPENSE' | 'INCOME',
-          amount: Number(amount),
-          vendor,
-          description: description || undefined,
-          categoryName: transaction.category.name,
-          transactionDate: transactionDate,
-          transactionId: transaction.id,
-          approvalId: approval.id,
-        })
-      } catch (error) {
-        console.error('Failed to send approval email:', error)
-        // Don't fail the transaction creation if email fails
-      }
+          await sendApprovalRequestEmail({
+            approverName: approver.name,
+            approverEmail: approver.email,
+            treasurerName: transaction.creator.name,
+            teamName: team?.name || 'Your Team',
+            transactionType: type as 'EXPENSE' | 'INCOME',
+            amount: Number(amount),
+            vendor,
+            description: description || undefined,
+            categoryName: transaction.category.name,
+            transactionDate: transactionDate,
+            transactionId: transaction.id,
+            approvalId: approval.id,
+          })
+        } catch (error) {
+          console.error('Failed to send approval email:', error)
+          // Don't fail the transaction creation if email fails
+        }
+      })
     }
   }
 

@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth/server-auth'
 import { redirect } from 'next/navigation'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,6 +48,9 @@ export default async function RosterPage() {
   const families = user.team.families || []
   const players = user.team.players || []
 
+  // Check if user is treasurer (authorized to manage players)
+  const isTreasurer = user.role === 'TREASURER' || user.role === 'ASSISTANT_TREASURER'
+
   return (
     <div className="min-h-screen bg-cream">
       <AppSidebar />
@@ -75,6 +78,7 @@ export default async function RosterPage() {
               teamSeason={user.team.season}
               teamLevel={user.team.level}
               teamType={user.team.teamType}
+              isTreasurer={isTreasurer}
             />
           </TabsContent>
 

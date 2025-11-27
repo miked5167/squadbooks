@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
@@ -28,14 +28,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get user's team
+    // Get user's team and role
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      select: { teamId: true },
+      select: { teamId: true, role: true },
     })
 
     if (!user?.teamId) {
       return NextResponse.json({ error: 'User not associated with a team' }, { status: 400 })
+    }
+
+    // Only TREASURER and ASSISTANT_TREASURER can create players
+    if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
+      return NextResponse.json(
+        { error: 'Only treasurers can create players' },
+        { status: 403 }
+      )
     }
 
     // If familyId is provided, verify it belongs to the same team
