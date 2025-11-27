@@ -3,7 +3,7 @@
  * Role-based access control helpers for the Settings module
  */
 
-import { auth } from '@clerk/nextjs/server'
+import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 import { UserRole } from '@prisma/client'
 
