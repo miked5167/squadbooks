@@ -72,34 +72,36 @@ export function BulkActionDialog({
               </>
             )}
           </AlertDialogTitle>
-          <AlertDialogDescription className="space-y-3">
-            <p>
-              You're about to {action} <strong>{count}</strong> transactions totalling{' '}
-              <strong>
-                ${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-              </strong>
-              .
-            </p>
-            {action === 'approve' && (
-              <Alert className="border-amber-200 bg-amber-50">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <AlertDescription className="text-amber-800">
-                  This action cannot be undone. Once approved, these transactions will be marked as
-                  approved and impact your budget.
-                </AlertDescription>
-              </Alert>
-            )}
-            {action === 'reject' && (
-              <Alert className="border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800">
-                  This action cannot be undone. Rejected transactions will be removed from the
-                  approval queue.
-                </AlertDescription>
-              </Alert>
-            )}
+          <AlertDialogDescription>
+            You're about to {action} <strong>{count}</strong> transactions totalling{' '}
+            <strong>
+              ${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </strong>
+            .
           </AlertDialogDescription>
         </AlertDialogHeader>
+
+        {/* Warning Alerts */}
+        <div className="space-y-3">
+          {action === 'approve' && (
+            <Alert className="border-amber-200 bg-amber-50">
+              <AlertCircle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800">
+                This action cannot be undone. Once approved, these transactions will be marked as
+                approved and impact your budget.
+              </AlertDescription>
+            </Alert>
+          )}
+          {action === 'reject' && (
+            <Alert className="border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800">
+                This action cannot be undone. Rejected transactions will be removed from the
+                approval queue.
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
 
         {/* Comment Section */}
         <div className="my-4">
