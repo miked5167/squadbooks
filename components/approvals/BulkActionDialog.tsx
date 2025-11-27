@@ -57,9 +57,9 @@ export function BulkActionDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-white">
         <AlertDialogHeader>
-          <AlertDialogTitle className="flex items-center gap-2">
+          <AlertDialogTitle className="flex items-center gap-2 text-navy">
             {action === 'approve' ? (
               <>
                 <CheckCircle className="w-5 h-5 text-green-600" />
@@ -72,9 +72,9 @@ export function BulkActionDialog({
               </>
             )}
           </AlertDialogTitle>
-          <AlertDialogDescription>
-            You're about to {action} <strong>{count}</strong> transactions totalling{' '}
-            <strong>
+          <AlertDialogDescription className="text-navy/70 font-medium">
+            You're about to {action} <strong className="text-navy">{count}</strong> transactions totalling{' '}
+            <strong className="text-navy">
               ${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </strong>
             .
@@ -105,10 +105,10 @@ export function BulkActionDialog({
 
         {/* Comment Section */}
         <div className="my-4">
-          <Label htmlFor="bulk-comment" className="mb-2 flex items-center gap-2">
+          <Label htmlFor="bulk-comment" className="mb-2 flex items-center gap-2 text-navy font-semibold">
             <span>Comment</span>
-            {action === 'reject' && <span className="text-xs text-red-600">(Required)</span>}
-            {action === 'approve' && <span className="text-xs text-navy/60">(Optional)</span>}
+            {action === 'reject' && <span className="text-xs text-red-600 font-normal">(Required)</span>}
+            {action === 'approve' && <span className="text-xs text-navy/70 font-normal">(Optional)</span>}
           </Label>
           <Textarea
             id="bulk-comment"
