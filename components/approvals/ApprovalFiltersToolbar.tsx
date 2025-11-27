@@ -120,13 +120,14 @@ export function ApprovalFiltersToolbar({
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-64">
-              <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+            <DropdownMenuContent align="start" className="w-64 bg-white">
+              <DropdownMenuLabel className="text-navy font-semibold">Filter by Category</DropdownMenuLabel>
               {uniqueCategories.map((category) => (
                 <DropdownMenuCheckboxItem
                   key={category}
                   checked={filters.categories.includes(category)}
                   onCheckedChange={() => toggleCategory(category)}
+                  className="text-navy font-medium cursor-pointer"
                 >
                   {category}
                 </DropdownMenuCheckboxItem>
@@ -134,12 +135,13 @@ export function ApprovalFiltersToolbar({
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuLabel>Filter by Risk Level</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-navy font-semibold">Filter by Risk Level</DropdownMenuLabel>
               {riskLevels.map((level) => (
                 <DropdownMenuCheckboxItem
                   key={level}
                   checked={filters.riskLevels.includes(level)}
                   onCheckedChange={() => toggleRiskLevel(level)}
+                  className="text-navy font-medium cursor-pointer"
                 >
                   {level}
                 </DropdownMenuCheckboxItem>
@@ -151,7 +153,7 @@ export function ApprovalFiltersToolbar({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-full justify-start"
+                    className="w-full justify-start text-navy hover:bg-navy/10"
                     onClick={clearFilters}
                   >
                     Clear all filters
