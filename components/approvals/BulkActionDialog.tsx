@@ -63,17 +63,17 @@ export function BulkActionDialog({
             {action === 'approve' ? (
               <>
                 <CheckCircle className="w-5 h-5 text-green-600" />
-                Approve {count} Transactions?
+                Approve {count} Transaction{count > 1 ? 's' : ''}?
               </>
             ) : (
               <>
                 <XCircle className="w-5 h-5 text-red-600" />
-                Reject {count} Transactions?
+                Reject {count} Transaction{count > 1 ? 's' : ''}?
               </>
             )}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-navy/70 font-medium">
-            You're about to {action} <strong className="text-navy">{count}</strong> transactions totalling{' '}
+            You're about to {action} <strong className="text-navy">{count}</strong> transaction{count > 1 ? 's' : ''} totalling{' '}
             <strong className="text-navy">
               ${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </strong>
@@ -87,7 +87,7 @@ export function BulkActionDialog({
             <Alert className="border-amber-200 bg-amber-50">
               <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
-                This action cannot be undone. Once approved, these transactions will be marked as
+                This action cannot be undone. Once approved, {count > 1 ? 'these transactions' : 'this transaction'} will be marked as
                 approved and impact your budget.
               </AlertDescription>
             </Alert>
@@ -96,7 +96,7 @@ export function BulkActionDialog({
             <Alert className="border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4 text-red-600" />
               <AlertDescription className="text-red-800">
-                This action cannot be undone. Rejected transactions will be removed from the
+                This action cannot be undone. {count > 1 ? 'Rejected transactions' : 'This rejected transaction'} will be removed from the
                 approval queue.
               </AlertDescription>
             </Alert>
@@ -121,8 +121,8 @@ export function BulkActionDialog({
             }}
             placeholder={
               action === 'reject'
-                ? 'Provide a reason for rejecting these transactions...'
-                : 'Add an optional comment for all approvals...'
+                ? `Provide a reason for rejecting ${count > 1 ? 'these transactions' : 'this transaction'}...`
+                : `Add an optional comment ${count > 1 ? 'for all approvals' : 'for this approval'}...`
             }
             disabled={loading}
             className={error ? 'border-red-500' : ''}
@@ -155,7 +155,10 @@ export function BulkActionDialog({
               </>
             ) : (
               <>
-                {action === 'approve' ? 'Approve All' : 'Reject All'}
+                {action === 'approve'
+                  ? (count > 1 ? 'Approve All' : 'Approve')
+                  : (count > 1 ? 'Reject All' : 'Reject')
+                }
               </>
             )}
           </AlertDialogAction>
