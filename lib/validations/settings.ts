@@ -11,17 +11,17 @@ import { UserRole } from '@prisma/client'
  */
 export const teamProfileSchema = z.object({
   name: z.string().min(1, 'Team name is required').max(100),
-  teamType: z.enum(['HOCKEY', 'SOCCER', 'BASKETBALL', 'BASEBALL', 'OTHER']).optional(),
-  ageDivision: z.enum(['U7', 'U9', 'U11', 'U13', 'U15', 'U18', 'ADULT']).optional(),
-  competitiveLevel: z.enum(['RECREATIONAL', 'COMPETITIVE', 'SELECT', 'AAA', 'AA', 'A']).optional(),
+  teamType: z.enum(['HOUSE_LEAGUE', 'REPRESENTATIVE', 'ADULT_RECREATIONAL', 'OTHER']).optional(),
+  ageDivision: z.enum(['U7', 'U9', 'U11', 'U13', 'U15', 'U18', 'OTHER']).optional(),
+  competitiveLevel: z.enum(['AAA', 'AA', 'A', 'BB', 'B', 'MD', 'HOUSE_RECREATIONAL', 'NOT_APPLICABLE', 'OTHER']).optional(),
   level: z.string().optional(),
   season: z.string().min(1, 'Season is required'),
-  logoUrl: z.string().url('Invalid logo URL').optional().nullable(),
+  logoUrl: z.union([z.string().url('Invalid logo URL'), z.literal('')]).optional().nullable(),
   associationName: z.string().max(200).optional().nullable(),
   seasonStartDate: z.string().datetime().optional().nullable(),
   seasonEndDate: z.string().datetime().optional().nullable(),
   contactName: z.string().max(100).optional().nullable(),
-  contactEmail: z.string().email('Invalid contact email').optional().nullable(),
+  contactEmail: z.union([z.string().email('Invalid contact email'), z.literal('')]).optional().nullable(),
   contactPhone: z.string().max(20).optional().nullable(),
 })
 

@@ -170,10 +170,9 @@ export default function TeamProfilePage() {
                     <SelectValue placeholder="Select team type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="HOCKEY">Hockey</SelectItem>
-                    <SelectItem value="SOCCER">Soccer</SelectItem>
-                    <SelectItem value="BASKETBALL">Basketball</SelectItem>
-                    <SelectItem value="BASEBALL">Baseball</SelectItem>
+                    <SelectItem value="HOUSE_LEAGUE">House League</SelectItem>
+                    <SelectItem value="REPRESENTATIVE">Representative</SelectItem>
+                    <SelectItem value="ADULT_RECREATIONAL">Adult Recreational</SelectItem>
                     <SelectItem value="OTHER">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -195,7 +194,7 @@ export default function TeamProfilePage() {
                     <SelectItem value="U13">U13</SelectItem>
                     <SelectItem value="U15">U15</SelectItem>
                     <SelectItem value="U18">U18</SelectItem>
-                    <SelectItem value="ADULT">Adult</SelectItem>
+                    <SelectItem value="OTHER">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -212,12 +211,15 @@ export default function TeamProfilePage() {
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="RECREATIONAL">Recreational</SelectItem>
-                    <SelectItem value="COMPETITIVE">Competitive</SelectItem>
-                    <SelectItem value="SELECT">Select</SelectItem>
                     <SelectItem value="AAA">AAA</SelectItem>
                     <SelectItem value="AA">AA</SelectItem>
                     <SelectItem value="A">A</SelectItem>
+                    <SelectItem value="BB">BB</SelectItem>
+                    <SelectItem value="B">B</SelectItem>
+                    <SelectItem value="MD">MD</SelectItem>
+                    <SelectItem value="HOUSE_RECREATIONAL">House/Recreational</SelectItem>
+                    <SelectItem value="NOT_APPLICABLE">Not Applicable</SelectItem>
+                    <SelectItem value="OTHER">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
