@@ -50,11 +50,15 @@ export default function TeamProfilePage() {
       try {
         const res = await fetch('/api/settings')
         if (!res.ok) {
-          throw new Error('Failed to fetch team profile')
+          const errorData = await res.json().catch(() => ({}))
+          console.error('Settings API error:', errorData)
+          throw new Error(errorData.error || 'Failed to fetch team profile')
         }
         const data = await res.json()
+        console.log('Settings API response:', data)
         setProfile(data.team)
       } catch (error: any) {
+        console.error('Settings fetch error:', error)
         toast({
           title: 'Error',
           description: error.message || 'Failed to load team profile',
