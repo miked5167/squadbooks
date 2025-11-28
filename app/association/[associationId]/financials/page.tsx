@@ -1,7 +1,10 @@
+'use client'
+
 import { notFound } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { getAssociationFinancials } from './actions'
-import { AssociationNav } from '@/app/components/AssociationNav'
+import { useEffect, useState } from 'react'
 
 interface PageProps {
   params: Promise<{
@@ -112,6 +115,7 @@ function TeamFinancialRow({
   team: any
   associationId: string
 }) {
+  const router = useRouter()
   const percentUsed = team.budgetUsedPercent
 
   let percentColor = 'text-green-600'
@@ -128,8 +132,10 @@ function TeamFinancialRow({
   const remaining = team.budget - team.spent
 
   return (
-    <Link href={`/association/${associationId}/teams/${team.id}`}>
-      <tr className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer">
+      <tr
+        className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+        onClick={() => router.push(`/association/${associationId}/teams/${team.id}`)}
+      >
         <td className="px-4 py-4">
           <div className="flex flex-col">
             <span className="font-semibold text-gray-900">{team.name}</span>
@@ -196,19 +202,59 @@ function TeamFinancialRow({
           )}
         </td>
       </tr>
-    </Link>
   )
 }
 
-export default async function AssociationFinancialsPage({ params }: PageProps) {
-  const { associationId } = await params
-  const data = await getAssociationFinancials(associationId)
+export default function AssociationFinancialsPage({ params }: PageProps) {
+  const [associationId, setAssociationId] = useState<string | null>(null)
+  const [association, setAssociation] = useState<any>(null)
+  const [summary, setSummary] = useState<any>(null)
+  const [categories, setCategories] = useState<any[]>([])
+  const [teams, setTeams] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  if (!data.association) {
-    notFound()
+  useEffect(() => {
+    async function loadParams() {
+      const resolvedParams = await params
+      setAssociationId(resolvedParams.associationId)
+    }
+    loadParams()
+  }, [params])
+
+  useEffect(() => {
+    async function loadData() {
+      if (!associationId) return
+
+      setLoading(true)
+      const data = await getAssociationFinancials(associationId)
+
+      if (!data.association) {
+        notFound()
+      }
+
+      setAssociation(data.association)
+      setSummary(data.summary)
+      setCategories(data.categories)
+      setTeams(data.teams)
+      setLoading(false)
+    }
+    loadData()
+  }, [associationId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
-  const { association, summary, categories, teams } = data
+  if (!association) {
+    notFound()
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -252,11 +298,8 @@ export default async function AssociationFinancialsPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Navigation */}
-      <AssociationNav associationId={association.id} />
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <SummaryCard
@@ -372,7 +415,7 @@ export default async function AssociationFinancialsPage({ params }: PageProps) {
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Teams Connected</h3>
-                <p className="text-gray-500">Teams using Squadbooks will appear here once they connect to your association.</p>
+                <p className="text-gray-500">Teams using HuddleBooks will appear here once they connect to your association.</p>
               </div>
             )}
           </div>

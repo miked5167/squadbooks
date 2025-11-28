@@ -279,6 +279,7 @@ model Team {
   seasonClosures    SeasonClosure[]
   families          Family[]
   players           Player[]
+  parentInviteTokens ParentInviteToken[]
   associationTeam   AssociationTeam? // Link to association dashboard (optional)
   teamSettings      TeamSettings?
 
@@ -300,6 +301,18 @@ model Family {
   secondaryEmail String?
   secondaryPhone String?
 
+  // Emergency Contact
+  emergencyContactName     String?
+  emergencyContactRelation String?
+  emergencyContactPhone    String?
+
+  // Medical Information
+  medicalNotes             String?  @db.Text
+  allergies                String?  @db.Text
+
+  // Address (optional future expansion)
+  address                  String?  @db.Text
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -318,6 +331,12 @@ enum PlayerStatus {
   INACTIVE
 }
 
+enum OnboardingStatus {
+  NOT_INVITED
+  INVITED
+  COMPLETED
+}
+
 model Player {
   id           String        @id @default(cuid())
   teamId       String
@@ -329,16 +348,46 @@ model Player {
   dateOfBirth  DateTime?     @db.Date
   status       PlayerStatus  @default(ACTIVE)
 
+  // Parent onboarding tracking
+  onboardingStatus OnboardingStatus @default(NOT_INVITED)
+  inviteSentAt     DateTime?
+  completedAt      DateTime?
+  reminderCount    Int              @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  team   Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  family Family? @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  team           Team                @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  family         Family?             @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  inviteTokens   ParentInviteToken[]
 
   @@index([teamId])
   @@index([familyId])
+  @@index([onboardingStatus])
   @@map("players")
+}
+
+model ParentInviteToken {
+  id         String    @id @default(cuid())
+  playerId   String
+  familyId   String
+  teamId     String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([playerId])
+  @@index([teamId])
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@map("parent_invite_tokens")
 }
 
 enum UserRole {

@@ -2,17 +2,30 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, Users, RefreshCw } from 'lucide-react'
+import { ChevronDown, Users, RefreshCw, Building2 } from 'lucide-react'
 
-interface DemoTeam {
+interface DemoUser {
   id: string
   name: string
   userId: string
   userName: string
   division: string
+  isAssociation?: boolean
+  associationId?: string
 }
 
-const DEMO_TEAMS: DemoTeam[] = [
+const DEMO_USERS: DemoUser[] = [
+  // Association Admin
+  {
+    id: 'association-admin',
+    name: 'HuddleBooks Command Center',
+    userId: 'demo_2025_2026_000001',
+    userName: 'Association Admin',
+    division: 'Command Center',
+    isAssociation: true,
+    associationId: 'cmig8fz3f0000tg4o8qb5z8qm', // Will be auto-redirected to first association
+  },
+  // Team Users
   {
     id: 'cmig8gd1o0000tg4om4ddrqta',
     name: 'U13 AA Storm',
@@ -38,7 +51,7 @@ const DEMO_TEAMS: DemoTeam[] = [
 
 export function TeamSwitcher() {
   const [isOpen, setIsOpen] = useState(false)
-  const [currentTeam, setCurrentTeam] = useState<DemoTeam>(DEMO_TEAMS[0])
+  const [currentUser, setCurrentUser] = useState<DemoUser>(DEMO_USERS[1]) // Default to first team user
   const [isDevMode, setIsDevMode] = useState(false)
   const router = useRouter()
 
@@ -48,29 +61,34 @@ export function TeamSwitcher() {
     setIsDevMode(devMode)
 
     if (devMode) {
-      // Load saved team from localStorage
+      // Load saved user from localStorage
       const savedUserId = localStorage.getItem('dev_user_id')
       if (savedUserId) {
-        const team = DEMO_TEAMS.find(t => t.userId === savedUserId)
-        if (team) {
-          setCurrentTeam(team)
+        const user = DEMO_USERS.find(u => u.userId === savedUserId)
+        if (user) {
+          setCurrentUser(user)
         }
       }
     }
   }, [])
 
-  const switchTeam = (team: DemoTeam) => {
+  const switchUser = (user: DemoUser) => {
     // Save to both localStorage (for UI state) and cookie (for server-side auth)
-    localStorage.setItem('dev_user_id', team.userId)
+    localStorage.setItem('dev_user_id', user.userId)
 
     // Set cookie that server can read
-    document.cookie = `dev_user_id=${team.userId}; path=/; max-age=31536000; SameSite=Lax`
+    document.cookie = `dev_user_id=${user.userId}; path=/; max-age=31536000; SameSite=Lax`
 
-    setCurrentTeam(team)
+    setCurrentUser(user)
     setIsOpen(false)
 
-    // Reload the page to apply the new user context
-    window.location.href = '/dashboard'
+    // Route to appropriate dashboard based on user type
+    if (user.isAssociation) {
+      // Redirect to /association which will auto-detect the user's association
+      window.location.href = '/association'
+    } else {
+      window.location.href = '/dashboard'
+    }
   }
 
   // Don't render if not in dev mode
@@ -80,16 +98,24 @@ export function TeamSwitcher() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* Team Switcher Button */}
+      {/* User Switcher Button */}
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
+          className={`flex items-center gap-2 ${
+            currentUser.isAssociation
+              ? 'bg-gradient-to-r from-orange-600 to-red-600'
+              : 'bg-gradient-to-r from-purple-600 to-blue-600'
+          } text-white px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 font-medium`}
         >
-          <Users className="w-5 h-5" />
+          {currentUser.isAssociation ? (
+            <Building2 className="w-5 h-5" />
+          ) : (
+            <Users className="w-5 h-5" />
+          )}
           <div className="text-left">
             <div className="text-xs opacity-90">Dev Mode</div>
-            <div className="text-sm font-semibold">{currentTeam.division}</div>
+            <div className="text-sm font-semibold">{currentUser.division}</div>
           </div>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
@@ -108,33 +134,41 @@ export function TeamSwitcher() {
               <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3">
                 <h3 className="font-semibold flex items-center gap-2">
                   <RefreshCw className="w-4 h-4" />
-                  Switch Demo Team
+                  Switch Demo User
                 </h3>
-                <p className="text-xs mt-1 opacity-90">Select a team to test with</p>
+                <p className="text-xs mt-1 opacity-90">Select a user to test with</p>
               </div>
 
               <div className="divide-y divide-gray-100">
-                {DEMO_TEAMS.map((team) => (
+                {DEMO_USERS.map((user) => (
                   <button
-                    key={team.id}
-                    onClick={() => switchTeam(team)}
+                    key={user.id}
+                    onClick={() => switchUser(user)}
                     className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
-                      currentTeam.id === team.id ? 'bg-blue-50' : ''
+                      currentUser.id === user.id ? 'bg-blue-50' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-900">
-                          {team.name}
+                        <div className="flex items-center gap-2">
+                          <div className="font-semibold text-gray-900">
+                            {user.name}
+                          </div>
+                          {user.isAssociation && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                              <Building2 className="w-3 h-3" />
+                              Association
+                            </span>
+                          )}
                         </div>
                         <div className="text-sm text-gray-600 mt-1">
-                          {team.userName}
+                          {user.userName}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
-                          Division: {team.division}
+                          {user.isAssociation ? 'Oversees all teams' : `Division: ${user.division}`}
                         </div>
                       </div>
-                      {currentTeam.id === team.id && (
+                      {currentUser.id === user.id && (
                         <div className="flex-shrink-0 ml-2">
                           <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                         </div>
@@ -146,7 +180,7 @@ export function TeamSwitcher() {
 
               <div className="bg-gray-50 px-4 py-2 border-t border-gray-200">
                 <p className="text-xs text-gray-600">
-                  💡 Switching teams will reload the page
+                  💡 Switching users will reload the page
                 </p>
               </div>
             </div>

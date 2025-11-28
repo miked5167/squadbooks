@@ -12,7 +12,6 @@ import {
   type TransactionDetailRow,
   type AlertReportRow,
 } from './actions'
-import { AssociationNav } from '@/app/components/AssociationNav'
 
 export default function ReportsPage({
   params,
@@ -133,11 +132,6 @@ export default function ReportsPage({
           <p className="text-gray-600 mt-2">
             {data.association.name} — {data.association.season || 'All Seasons'}
           </p>
-        </div>
-
-        {/* Navigation */}
-        <div className="mb-8">
-          <AssociationNav associationId={associationId} />
         </div>
 
         {/* Report Sections */}

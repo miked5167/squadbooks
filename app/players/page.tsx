@@ -27,7 +27,9 @@ export default async function RosterPage() {
             include: {
               family: {
                 select: {
+                  id: true,
                   familyName: true,
+                  primaryEmail: true,
                 },
               },
             },

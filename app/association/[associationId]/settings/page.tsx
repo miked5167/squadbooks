@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { getAssociationSettings } from './actions'
 import AssociationSettingsForm from './components/AssociationSettingsForm'
 import UsersManagementTable from './components/UsersManagementTable'
-import { AssociationNav } from '@/app/components/AssociationNav'
 import { isDemoMode } from '@/app/lib/demoMode'
 
 interface PageProps {
@@ -76,11 +75,8 @@ export default async function AssociationSettingsPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Navigation */}
-      <AssociationNav associationId={associationId} />
-
       {/* Main Content - Two Column Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Demo Mode Banner */}
         {isDemoMode() && (
           <div className="mb-4 rounded-md border border-indigo-200 bg-indigo-50 p-3 text-xs text-indigo-700">

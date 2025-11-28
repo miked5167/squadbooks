@@ -22,11 +22,12 @@ import {
   User,
   Calendar,
   Receipt,
-  ExternalLink,
+  Eye,
   AlertTriangle,
 } from 'lucide-react'
 import { PendingApprovalWithRisk } from '@/lib/types/approvals'
 import { getRiskBadgeClass } from '@/lib/utils/approval-risk'
+import { ReceiptViewer } from '@/components/ReceiptViewer'
 
 interface ApprovalDetailsDrawerProps {
   approval: PendingApprovalWithRisk | null
@@ -47,6 +48,7 @@ export function ApprovalDetailsDrawer({
 }: ApprovalDetailsDrawerProps) {
   const [comment, setComment] = useState('')
   const [commentError, setCommentError] = useState('')
+  const [showReceiptModal, setShowReceiptModal] = useState(false)
 
   if (!approval) return null
 
@@ -237,11 +239,13 @@ export function ApprovalDetailsDrawer({
                 Receipt
               </h3>
               <div className="bg-navy/5 rounded-lg p-4 border border-navy/10">
-                <Button asChild variant="outline" className="w-full border-navy/20 hover:bg-navy/5">
-                  <a href={approval.transaction.receiptUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    View Receipt
-                  </a>
+                <Button
+                  variant="outline"
+                  className="w-full border-navy/20 hover:bg-navy/5"
+                  onClick={() => setShowReceiptModal(true)}
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  View Receipt
                 </Button>
               </div>
             </div>
@@ -316,6 +320,17 @@ export function ApprovalDetailsDrawer({
           </div>
         </div>
       </SheetContent>
+
+      {/* Receipt Viewer Modal */}
+      {approval.transaction.receiptUrl && (
+        <ReceiptViewer
+          isOpen={showReceiptModal}
+          onClose={() => setShowReceiptModal(false)}
+          receiptUrl={approval.transaction.receiptUrl}
+          transactionVendor={approval.transaction.vendor}
+          transactionId={approval.transaction.id}
+        />
+      )}
     </Sheet>
   )
 }

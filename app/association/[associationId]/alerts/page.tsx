@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getAlertsData, type NormalizedAlert, type AlertSeverity } from './actions'
-import { AssociationNav } from '@/app/components/AssociationNav'
 import { SeverityBadge } from '@/app/components/SeverityBadge'
 import { EmptyState } from '@/app/components/EmptyState'
 
@@ -214,11 +213,8 @@ export default function AlertsPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Navigation */}
-      {associationId && <AssociationNav associationId={associationId} />}
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Filters */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-3">

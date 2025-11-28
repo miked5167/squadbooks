@@ -197,10 +197,10 @@ export async function requiresDualApproval(amount: number, teamId: string) {
     return false
   }
 
-  // Convert threshold from dollars to cents for comparison
-  const thresholdInCents = Number(settings.dualApprovalThreshold) * 100
+  // Both amount and threshold are in dollars
+  const threshold = Number(settings.dualApprovalThreshold)
 
-  return amount >= thresholdInCents
+  return amount >= threshold
 }
 
 /**

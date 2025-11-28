@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getOverviewData } from './actions'
-import { AssociationNav } from '@/app/components/AssociationNav'
 import { EmptyState } from '@/app/components/EmptyState'
 import { isDemoMode } from '@/app/lib/demoMode'
 
@@ -203,11 +202,8 @@ export default async function AssociationOverviewPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Navigation */}
-      <AssociationNav associationId={association.id} />
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Demo Mode Banner */}
         {isDemoMode() && (
           <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700">
@@ -247,7 +243,7 @@ export default async function AssociationOverviewPage({ params }: PageProps) {
           {teams.length === 0 ? (
             <EmptyState
               title="No teams connected yet"
-              description="Once teams start using Squadbooks, they'll appear here with live budgets and health scores."
+              description="Once teams start using HuddleBooks, they'll appear here with live budgets and health scores."
             />
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

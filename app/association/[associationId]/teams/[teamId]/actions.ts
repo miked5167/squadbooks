@@ -24,7 +24,6 @@ export interface SnapshotHistory {
   percentUsed: number | null
   pendingApprovals: number | null
   missingReceipts: number | null
-  overspendAmount: number | null
 }
 
 export interface TeamDetailData {
@@ -62,7 +61,6 @@ export interface TeamDetailData {
     percentUsed: number | null
     pendingApprovals: number | null
     missingReceipts: number | null
-    overspendAmount: number | null
     snapshotAt: Date
   } | null
   budgetByCategory: Array<{
@@ -192,7 +190,6 @@ export async function getTeamDetailData(
             percentUsed: true,
             pendingApprovals: true,
             missingReceipts: true,
-            overspendAmount: true,
             snapshotAt: true,
           },
         },
@@ -283,7 +280,7 @@ export async function getTeamDetailData(
         amount: true,
         vendor: true,
         description: true,
-        missingReceipt: true,
+        receiptUrl: true,
         transactionDate: true,
         createdAt: true,
         category: {
@@ -299,7 +296,10 @@ export async function getTeamDetailData(
           },
         },
       },
-    })
+    }).then(txns => txns.map(t => ({
+      ...t,
+      missingReceipt: !t.receiptUrl
+    })))
 
     // Fetch recent approved transactions
     const recentTransactions = await prisma.transaction.findMany({
@@ -318,7 +318,7 @@ export async function getTeamDetailData(
         amount: true,
         vendor: true,
         description: true,
-        missingReceipt: true,
+        receiptUrl: true,
         transactionDate: true,
         createdAt: true,
         category: {
@@ -334,7 +334,10 @@ export async function getTeamDetailData(
           },
         },
       },
-    })
+    }).then(txns => txns.map(t => ({
+      ...t,
+      missingReceipt: !t.receiptUrl
+    })))
 
     // Fetch pending transactions
     const pendingTransactions = await prisma.transaction.findMany({
@@ -384,7 +387,6 @@ export async function getTeamDetailData(
         percentUsed: true,
         pendingApprovals: true,
         missingReceipts: true,
-        overspendAmount: true,
       },
     })
 
@@ -400,8 +402,8 @@ export async function getTeamDetailData(
       },
       select: {
         id: true,
-        type: true,
-        message: true,
+        alertType: true,
+        title: true,
         severity: true,
         createdAt: true,
       },
@@ -412,8 +414,8 @@ export async function getTeamDetailData(
         id: `alert-${alert.id}`,
         teamId: associationTeam.id,
         teamName: associationTeam.teamName,
-        type: alert.type,
-        message: alert.message,
+        type: alert.alertType,
+        message: alert.title,
         severity: alert.severity as AlertSeverity,
         createdAt: alert.createdAt,
         link: `/association/${associationId}/teams/${teamId}`,

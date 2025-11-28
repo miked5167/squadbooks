@@ -689,31 +689,41 @@ function prepareTeamUsersData(cfg: TeamConfig) {
   const presidentClerkId = generateDemoClerkId();
   const boardMemberClerkId = generateDemoClerkId();
 
+  // Generate actual person names for team roles
+  const treasurerFirstName = randomChoice(FIRST_NAMES);
+  const treasurerLastName = randomChoice(LAST_NAMES);
+  const assistantTreasurerFirstName = randomChoice(FIRST_NAMES);
+  const assistantTreasurerLastName = randomChoice(LAST_NAMES);
+  const presidentFirstName = randomChoice(FIRST_NAMES);
+  const presidentLastName = randomChoice(LAST_NAMES);
+  const boardMemberFirstName = randomChoice(FIRST_NAMES);
+  const boardMemberLastName = randomChoice(LAST_NAMES);
+
   const treasurerData = {
     clerkId: treasurerClerkId,
     email: `${cfg.code}.treasurer${DEMO_EMAIL_DOMAIN}`,
-    name: `${cfg.name} Treasurer`,
+    name: `${treasurerFirstName} ${treasurerLastName}`,
     role: UserRole.TREASURER,
   };
 
   const assistantTreasurerData = {
     clerkId: assistantTreasurerClerkId,
     email: `${cfg.code}.assistant-treasurer${DEMO_EMAIL_DOMAIN}`,
-    name: `${cfg.name} Assistant Treasurer`,
+    name: `${assistantTreasurerFirstName} ${assistantTreasurerLastName}`,
     role: UserRole.ASSISTANT_TREASURER,
   };
 
   const presidentData = {
     clerkId: presidentClerkId,
     email: `${cfg.code}.president${DEMO_EMAIL_DOMAIN}`,
-    name: `${cfg.name} President`,
+    name: `${presidentFirstName} ${presidentLastName}`,
     role: UserRole.PRESIDENT,
   };
 
   const boardMemberData = {
     clerkId: boardMemberClerkId,
     email: `${cfg.code}.board${DEMO_EMAIL_DOMAIN}`,
-    name: `${cfg.name} Board Member`,
+    name: `${boardMemberFirstName} ${boardMemberLastName}`,
     role: UserRole.BOARD_MEMBER,
   };
 

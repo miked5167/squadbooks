@@ -201,8 +201,8 @@ export default async function OverviewPage() {
 
   const association = associationUser.association
 
-  // Fetch overview data
-  const data = await getOverviewData(association.id)
+  // Redirect to the overview page with sidebar
+  redirect(`/association/${association.id}/overview`)
 
   if (!data) {
     return (
