@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Card, CardContent } from '@/components/ui/card'
@@ -24,6 +24,7 @@ import {
   PendingApprovalWithRisk,
 } from '@/lib/types/approvals'
 import { sortByRiskLevel } from '@/lib/utils/approval-risk'
+import { UserRole } from '@prisma/client'
 
 export default function ApprovalsPage() {
   const searchParams = useSearchParams()
@@ -40,6 +41,23 @@ export default function ApprovalsPage() {
   const [activeApproval, setActiveApproval] = useState<PendingApprovalWithRisk | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [bulkAction, setBulkAction] = useState<'approve' | 'reject' | null>(null)
+  const [userRole, setUserRole] = useState<UserRole | undefined>()
+
+  // Fetch current user role
+  useEffect(() => {
+    async function fetchUserRole() {
+      try {
+        const res = await fetch('/api/user/me')
+        if (res.ok) {
+          const data = await res.json()
+          setUserRole(data.role)
+        }
+      } catch (error) {
+        console.error('Failed to fetch user role:', error)
+      }
+    }
+    fetchUserRole()
+  }, [])
 
   // Filters and sorting
   const [filters, setFilters] = useState<ApprovalFilters>({
@@ -237,6 +255,21 @@ export default function ApprovalsPage() {
     setIsDrawerOpen(true)
   }
 
+  const handleRefreshApproval = async () => {
+    // Refetch approvals - this will trigger the effect below to update activeApproval
+    await refetch()
+  }
+
+  // Auto-update activeApproval when approvals list changes (e.g., after receipt upload)
+  useEffect(() => {
+    if (activeApproval && approvals.length > 0) {
+      const updated = approvals.find((a) => a.id === activeApproval.id)
+      if (updated && JSON.stringify(updated) !== JSON.stringify(activeApproval)) {
+        setActiveApproval(updated)
+      }
+    }
+  }, [approvals, activeApproval])
+
   if (loading) {
     return (
       <div className="min-h-screen bg-cream">
@@ -342,6 +375,8 @@ export default function ApprovalsPage() {
         onApprove={handleApprove}
         onReject={handleReject}
         processing={approving || rejecting}
+        userRole={userRole}
+        onRefresh={handleRefreshApproval}
       />
 
       {/* Bulk Action Dialog */}

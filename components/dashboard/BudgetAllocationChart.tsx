@@ -32,7 +32,7 @@ export function BudgetAllocationChart({ groups, totalBudget, onSegmentClick }: B
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Horizontal stacked bar - Desktop */}
-        <div className="hidden md:block">
+        <div className="hidden md:block relative pb-24">
           <div className="relative h-16 bg-navy/5 rounded-full overflow-hidden shadow-inner">
             {groups.map((group, index) => {
               const leftOffset = groups
@@ -74,32 +74,34 @@ export function BudgetAllocationChart({ groups, totalBudget, onSegmentClick }: B
             })}
           </div>
 
-          {/* Tooltip */}
-          {hoveredIndex !== null && (
-            <div className="mt-3 animate-in fade-in slide-in-from-top-1 duration-200">
-              <div
-                className="inline-block bg-navy text-white rounded-lg p-3 shadow-lg cursor-pointer"
-                style={{ backgroundColor: groups[hoveredIndex].color }}
-                onClick={() => handleSegmentClick(groups[hoveredIndex].heading)}
-              >
-                <div className="font-semibold text-sm mb-1">{groups[hoveredIndex].heading}</div>
-                <div className="text-xs space-y-0.5">
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-bold text-lg tabular-nums">
-                      {formatCurrency(groups[hoveredIndex].allocated)}
-                    </span>
-                    <span className="opacity-90">
-                      ({groups[hoveredIndex].percentOfTotal.toFixed(1)}%)
-                    </span>
+          {/* Tooltip - Positioned absolutely to prevent layout shift */}
+          <div className="absolute top-full left-0 right-0 h-24 pointer-events-none">
+            {hoveredIndex !== null && (
+              <div className="mt-3 animate-in fade-in slide-in-from-top-1 duration-200 pointer-events-auto">
+                <div
+                  className="inline-block bg-navy text-white rounded-lg p-3 shadow-lg cursor-pointer"
+                  style={{ backgroundColor: groups[hoveredIndex].color }}
+                  onClick={() => handleSegmentClick(groups[hoveredIndex].heading)}
+                >
+                  <div className="font-semibold text-sm mb-1">{groups[hoveredIndex].heading}</div>
+                  <div className="text-xs space-y-0.5">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-bold text-lg tabular-nums">
+                        {formatCurrency(groups[hoveredIndex].allocated)}
+                      </span>
+                      <span className="opacity-90">
+                        ({groups[hoveredIndex].percentOfTotal.toFixed(1)}%)
+                      </span>
+                    </div>
+                    <div className="opacity-90">
+                      Spent: {formatCurrency(groups[hoveredIndex].spent)}
+                    </div>
+                    <div className="opacity-75 italic mt-1">Click to jump to category</div>
                   </div>
-                  <div className="opacity-90">
-                    Spent: {formatCurrency(groups[hoveredIndex].spent)}
-                  </div>
-                  <div className="opacity-75 italic mt-1">Click to jump to category</div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Vertical stacked list - Mobile */}

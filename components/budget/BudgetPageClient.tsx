@@ -471,8 +471,8 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
         </div>
       </div>
 
-      {/* Budget Allocation Chart - Hide on mobile */}
-      <div className="mb-8 hidden lg:block">
+      {/* Budget Allocation Chart */}
+      <div className="mb-8">
         <BudgetAllocationChart
           groups={allocationGroups}
           totalBudget={totalAllocated * 100}

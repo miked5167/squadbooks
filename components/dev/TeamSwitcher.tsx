@@ -10,6 +10,7 @@ interface DemoUser {
   userId: string
   userName: string
   division: string
+  role?: string
   isAssociation?: boolean
   associationId?: string
 }
@@ -22,30 +23,84 @@ const DEMO_USERS: DemoUser[] = [
     userId: 'demo_2025_2026_000001',
     userName: 'Association Admin',
     division: 'Command Center',
+    role: 'Association',
     isAssociation: true,
     associationId: 'cmig8fz3f0000tg4o8qb5z8qm', // Will be auto-redirected to first association
   },
-  // Team Users
+  // U13 AA Storm
   {
-    id: 'cmig8gd1o0000tg4om4ddrqta',
+    id: 'cmig8gd1o0000tg4om4ddrqta-treasurer',
     name: 'U13 AA Storm',
     userId: 'demo_2025_2026_000002',
     userName: 'U13 AA Storm Treasurer',
     division: 'U13 AA',
+    role: 'Treasurer',
   },
   {
-    id: 'cmig8ilgv00gntg4oky4n5lfu',
+    id: 'cmig8gd1o0000tg4om4ddrqta-assistant',
+    name: 'U13 AA Storm',
+    userId: 'demo_2025_2026_000003',
+    userName: 'U13 AA Storm Asst Treasurer',
+    division: 'U13 AA',
+    role: 'Assistant Treasurer',
+  },
+  {
+    id: 'cmig8gd1o0000tg4om4ddrqta-parent',
+    name: 'U13 AA Storm',
+    userId: 'demo_2025_2026_000004',
+    userName: 'U13 AA Storm Parent',
+    division: 'U13 AA',
+    role: 'Parent',
+  },
+  // U15 A Thunder
+  {
+    id: 'cmig8ilgv00gntg4oky4n5lfu-treasurer',
     name: 'U15 A Thunder',
     userId: 'demo_2025_2026_000041',
     userName: 'U15 A Thunder Treasurer',
     division: 'U15 A',
+    role: 'Treasurer',
   },
   {
-    id: 'cmig8kspb00wytg4oz4mz59f4',
+    id: 'cmig8ilgv00gntg4oky4n5lfu-assistant',
+    name: 'U15 A Thunder',
+    userId: 'demo_2025_2026_000042',
+    userName: 'U15 A Thunder Asst Treasurer',
+    division: 'U15 A',
+    role: 'Assistant Treasurer',
+  },
+  {
+    id: 'cmig8ilgv00gntg4oky4n5lfu-parent',
+    name: 'U15 A Thunder',
+    userId: 'demo_2025_2026_000043',
+    userName: 'U15 A Thunder Parent',
+    division: 'U15 A',
+    role: 'Parent',
+  },
+  // U11 AAA Lightning
+  {
+    id: 'cmig8kspb00wytg4oz4mz59f4-treasurer',
     name: 'U11 AAA Lightning',
     userId: 'demo_2025_2026_000076',
     userName: 'U11 AAA Lightning Treasurer',
     division: 'U11 AAA',
+    role: 'Treasurer',
+  },
+  {
+    id: 'cmig8kspb00wytg4oz4mz59f4-assistant',
+    name: 'U11 AAA Lightning',
+    userId: 'demo_2025_2026_000077',
+    userName: 'U11 AAA Lightning Asst Treasurer',
+    division: 'U11 AAA',
+    role: 'Assistant Treasurer',
+  },
+  {
+    id: 'cmig8kspb00wytg4oz4mz59f4-parent',
+    name: 'U11 AAA Lightning',
+    userId: 'demo_2025_2026_000078',
+    userName: 'U11 AAA Lightning Parent',
+    division: 'U11 AAA',
+    role: 'Parent',
   },
 ]
 
@@ -115,7 +170,14 @@ export function TeamSwitcher() {
           )}
           <div className="text-left">
             <div className="text-xs opacity-90">Dev Mode</div>
-            <div className="text-sm font-semibold">{currentUser.division}</div>
+            <div className="text-sm font-semibold">
+              {currentUser.division}
+              {currentUser.role && !currentUser.isAssociation && (
+                <span className="text-xs font-normal opacity-75 ml-1">
+                  • {currentUser.role}
+                </span>
+              )}
+            </div>
           </div>
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
@@ -139,7 +201,7 @@ export function TeamSwitcher() {
                 <p className="text-xs mt-1 opacity-90">Select a user to test with</p>
               </div>
 
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 max-h-[60vh] overflow-y-auto">
                 {DEMO_USERS.map((user) => (
                   <button
                     key={user.id}
@@ -150,7 +212,7 @@ export function TeamSwitcher() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <div className="font-semibold text-gray-900">
                             {user.name}
                           </div>
@@ -158,6 +220,17 @@ export function TeamSwitcher() {
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                               <Building2 className="w-3 h-3" />
                               Association
+                            </span>
+                          )}
+                          {user.role && !user.isAssociation && (
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                              user.role === 'Treasurer'
+                                ? 'bg-purple-100 text-purple-800'
+                                : user.role === 'Assistant Treasurer'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-green-100 text-green-800'
+                            }`}>
+                              {user.role}
                             </span>
                           )}
                         </div>

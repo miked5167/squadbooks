@@ -71,10 +71,10 @@ export async function PUT(
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check role - only TREASURER can update transactions
-    if (user.role !== 'TREASURER') {
+    // Check role - TREASURER and ASSISTANT_TREASURER can update transactions
+    if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
       return NextResponse.json(
-        { error: 'Only treasurers can update transactions' },
+        { error: 'Only treasurers and assistant treasurers can update transactions' },
         { status: 403 }
       )
     }

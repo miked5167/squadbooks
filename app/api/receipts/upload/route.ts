@@ -25,10 +25,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check role - only TREASURER can upload receipts
-    if (user.role !== 'TREASURER') {
+    // Check role - TREASURER and ASSISTANT_TREASURER can upload receipts
+    if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
       return NextResponse.json(
-        { error: 'Only treasurers can upload receipts' },
+        { error: 'Only treasurers and assistant treasurers can upload receipts' },
         { status: 403 }
       )
     }

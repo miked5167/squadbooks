@@ -2,6 +2,8 @@ import { auth } from '@/lib/auth/server-auth'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { approveTransaction } from '@/lib/db/approvals'
+import { requiresReceipt } from '@/lib/auth/permissions'
+import { MANDATORY_RECEIPT_THRESHOLD } from '@/lib/constants/validation'
 
 /**
  * POST /api/approvals/[id]/approve
@@ -40,8 +42,40 @@ export async function POST(
     const body = await request.json()
     const { comment } = body
 
+    // Fetch the approval with transaction details to validate receipt requirement
+    const approval = await prisma.approval.findUnique({
+      where: { id: approvalId },
+      include: {
+        transaction: {
+          select: {
+            id: true,
+            amount: true,
+            type: true,
+            receiptUrl: true,
+          },
+        },
+      },
+    })
+
+    if (!approval) {
+      return NextResponse.json({ error: 'Approval not found' }, { status: 404 })
+    }
+
+    // Validate receipt requirement
+    const amount = Number(approval.transaction.amount)
+    const hasReceipt = !!approval.transaction.receiptUrl
+
+    if (requiresReceipt(amount, approval.transaction.type, hasReceipt)) {
+      return NextResponse.json(
+        {
+          error: `Receipt required for expenses $${MANDATORY_RECEIPT_THRESHOLD.toFixed(2)} and above. Please attach a receipt before approving.`,
+        },
+        { status: 400 }
+      )
+    }
+
     // Approve the transaction
-    const approval = await approveTransaction(
+    const approvedApproval = await approveTransaction(
       approvalId,
       user.id,
       user.teamId,
@@ -50,7 +84,7 @@ export async function POST(
 
     return NextResponse.json({
       message: 'Transaction approved successfully',
-      approval,
+      approval: approvedApproval,
     })
   } catch (error) {
     console.error('Failed to approve transaction:', error)

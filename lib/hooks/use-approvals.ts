@@ -147,6 +147,7 @@ export function useBulkApprove() {
     const results = {
       succeeded: [] as string[],
       failed: [] as string[],
+      failedDueToReceipt: [] as string[],
     }
 
     for (let i = 0; i < approvalIds.length; i++) {
@@ -167,6 +168,11 @@ export function useBulkApprove() {
         if (res.ok) {
           results.succeeded.push(approvalId)
         } else {
+          const data = await res.json()
+          // Check if failure was due to missing receipt
+          if (data.error?.includes('Receipt required')) {
+            results.failedDueToReceipt.push(approvalId)
+          }
           results.failed.push(approvalId)
         }
       } catch (err) {
@@ -181,11 +187,17 @@ export function useBulkApprove() {
     if (results.succeeded.length === approvalIds.length) {
       toast.success(`Successfully approved ${results.succeeded.length} transactions`)
     } else if (results.succeeded.length > 0) {
+      const receiptMsg = results.failedDueToReceipt.length > 0
+        ? ` (${results.failedDueToReceipt.length} missing required receipts)`
+        : ''
       toast.warning(
-        `Approved ${results.succeeded.length} of ${approvalIds.length} transactions. ${results.failed.length} failed.`
+        `Approved ${results.succeeded.length} of ${approvalIds.length} transactions. ${results.failed.length} failed${receiptMsg}.`
       )
     } else {
-      toast.error('Failed to approve transactions')
+      const receiptMsg = results.failedDueToReceipt.length > 0
+        ? ` ${results.failedDueToReceipt.length} transactions require receipts for expenses $250+.`
+        : ''
+      toast.error(`Failed to approve transactions.${receiptMsg}`)
     }
 
     return results

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,7 +41,6 @@ interface FieldErrors {
 export function StepTeamBasics({ onComplete, initialData }: StepTeamBasicsProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -145,8 +143,8 @@ export function StepTeamBasics({ onComplete, initialData }: StepTeamBasicsProps)
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          email: user?.primaryEmailAddress?.emailAddress || 'user@example.com',
-          userName: user?.fullName || user?.firstName || 'User',
+          email: 'user@example.com',
+          userName: 'Demo User',
         }),
       });
 

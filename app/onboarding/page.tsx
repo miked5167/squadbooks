@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { redirect } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
 import { WizardLayout } from './components/WizardLayout';
 import { StepTeamBasics } from './components/StepTeamBasics';
 import { StepRoster } from './components/StepRoster';
@@ -16,7 +14,6 @@ import {
 } from '@/lib/analytics/onboarding-analytics';
 
 export default function OnboardingPage() {
-  const { user, isLoaded } = useUser();
   const [currentStep, setCurrentStep] = useState(1);
   const [wizardData, setWizardData] = useState({
     teamId: '',

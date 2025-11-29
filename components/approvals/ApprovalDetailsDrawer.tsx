@@ -24,10 +24,15 @@ import {
   Receipt,
   Eye,
   AlertTriangle,
+  Upload,
 } from 'lucide-react'
 import { PendingApprovalWithRisk } from '@/lib/types/approvals'
 import { getRiskBadgeClass } from '@/lib/utils/approval-risk'
 import { ReceiptViewer } from '@/components/ReceiptViewer'
+import { ReceiptUpload } from '@/components/ReceiptUpload'
+import { MANDATORY_RECEIPT_THRESHOLD } from '@/lib/constants/validation'
+import { TransactionType, UserRole } from '@prisma/client'
+import { toast } from 'sonner'
 
 interface ApprovalDetailsDrawerProps {
   approval: PendingApprovalWithRisk | null
@@ -36,6 +41,8 @@ interface ApprovalDetailsDrawerProps {
   onApprove: (approvalId: string, comment?: string) => Promise<void>
   onReject: (approvalId: string, comment: string) => Promise<void>
   processing: boolean
+  userRole?: UserRole
+  onRefresh?: () => Promise<void>
 }
 
 export function ApprovalDetailsDrawer({
@@ -45,14 +52,24 @@ export function ApprovalDetailsDrawer({
   onApprove,
   onReject,
   processing,
+  userRole,
+  onRefresh,
 }: ApprovalDetailsDrawerProps) {
   const [comment, setComment] = useState('')
   const [commentError, setCommentError] = useState('')
   const [showReceiptModal, setShowReceiptModal] = useState(false)
+  const [showUpload, setShowUpload] = useState(false)
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   if (!approval) return null
 
   const amount = Number(approval.transaction.amount)
+  const hasReceipt = !!approval.transaction.receiptUrl
+  const receiptRequired =
+    approval.transaction.type === TransactionType.EXPENSE &&
+    amount >= MANDATORY_RECEIPT_THRESHOLD &&
+    !hasReceipt
 
   const handleApprove = async () => {
     await onApprove(approval.id, comment || undefined)
@@ -71,6 +88,48 @@ export function ApprovalDetailsDrawer({
     setCommentError('')
     onOpenChange(false)
   }
+
+  const handleUploadReceipt = async () => {
+    if (!uploadFile) {
+      toast.error('Please select a receipt file')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', uploadFile)
+      formData.append('transactionId', approval.transaction.id)
+
+      const res = await fetch('/api/receipts/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to upload receipt')
+      }
+
+      toast.success('Receipt uploaded successfully!')
+      setUploadFile(null)
+      setShowUpload(false)
+
+      // Refresh approval data
+      if (onRefresh) {
+        await onRefresh()
+      }
+    } catch (error) {
+      console.error('Failed to upload receipt:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload receipt'
+      toast.error(errorMessage)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const canUploadReceipt =
+    userRole === UserRole.TREASURER || userRole === UserRole.ASSISTANT_TREASURER
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -95,6 +154,23 @@ export function ApprovalDetailsDrawer({
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
+          {/* Receipt Required Alert */}
+          {receiptRequired && (
+            <div className="p-4 rounded-lg border bg-red-50 border-red-300">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 mt-0.5 text-red-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-red-900">Receipt Required</h4>
+                  <p className="text-sm text-red-700 mt-1">
+                    This expense of ${amount.toFixed(2)} requires a receipt attachment. Expenses $
+                    {MANDATORY_RECEIPT_THRESHOLD.toFixed(2)} and above cannot be approved without a
+                    receipt for audit compliance.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Risk Alert */}
           {approval.riskLevel !== 'LOW' && (
             <div
@@ -232,12 +308,17 @@ export function ApprovalDetailsDrawer({
           </div>
 
           {/* Receipt */}
-          {approval.transaction.receiptUrl && (
-            <div>
-              <h3 className="text-sm font-semibold text-navy mb-3 flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-navy" />
-                Receipt
-              </h3>
+          <div>
+            <h3 className="text-sm font-semibold text-navy mb-3 flex items-center gap-2">
+              <Receipt className="w-4 h-4 text-navy" />
+              Receipt
+              {receiptRequired && (
+                <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300 ml-2">
+                  Required
+                </Badge>
+              )}
+            </h3>
+            {approval.transaction.receiptUrl ? (
               <div className="bg-navy/5 rounded-lg p-4 border border-navy/10">
                 <Button
                   variant="outline"
@@ -248,8 +329,82 @@ export function ApprovalDetailsDrawer({
                   View Receipt
                 </Button>
               </div>
-            </div>
-          )}
+            ) : showUpload && canUploadReceipt ? (
+              <div className="space-y-3">
+                <ReceiptUpload
+                  onFileSelect={setUploadFile}
+                  onFileRemove={() => setUploadFile(null)}
+                  currentFile={uploadFile}
+                  disabled={uploading}
+                  maxSizeMB={5}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleUploadReceipt}
+                    disabled={!uploadFile || uploading}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload Receipt
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowUpload(false)
+                      setUploadFile(null)
+                    }}
+                    disabled={uploading}
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div
+                className={`rounded-lg p-4 border ${
+                  receiptRequired
+                    ? 'bg-red-50 border-red-200'
+                    : 'bg-navy/5 border-navy/10'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm">
+                    <AlertCircle
+                      className={`w-4 h-4 ${
+                        receiptRequired ? 'text-red-600' : 'text-navy/60'
+                      }`}
+                    />
+                    <span
+                      className={receiptRequired ? 'text-red-700 font-medium' : 'text-navy/60'}
+                    >
+                      No receipt attached
+                      {receiptRequired && ' - Required for approval'}
+                    </span>
+                  </div>
+                  {canUploadReceipt && (
+                    <Button
+                      onClick={() => setShowUpload(true)}
+                      size="sm"
+                      variant={receiptRequired ? 'default' : 'outline'}
+                      className={receiptRequired ? 'bg-red-600 hover:bg-red-700' : ''}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Add Receipt
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           <Separator />
 
@@ -284,13 +439,23 @@ export function ApprovalDetailsDrawer({
           <div className="flex gap-3 pt-4 border-t sticky bottom-0 bg-white pb-4">
             <Button
               onClick={handleApprove}
-              disabled={processing}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+              disabled={processing || receiptRequired}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              title={
+                receiptRequired
+                  ? `Receipt required for expenses $${MANDATORY_RECEIPT_THRESHOLD.toFixed(2)} and above`
+                  : undefined
+              }
             >
               {processing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Processing...
+                </>
+              ) : receiptRequired ? (
+                <>
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  Receipt Required
                 </>
               ) : (
                 <>

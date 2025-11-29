@@ -1,9 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { ValidationResult, ValidationIssue, PolicySnapshot } from './types';
+import { MANDATORY_RECEIPT_THRESHOLD } from '@/lib/constants/validation';
 
 // Configuration constants
 export const DEFAULT_POLICY: PolicySnapshot = {
-  minReceiptAmount: 100,
+  minReceiptAmount: MANDATORY_RECEIPT_THRESHOLD,
   requireZeroBalance: true,
   bankReconciliationDays: 30,
 };

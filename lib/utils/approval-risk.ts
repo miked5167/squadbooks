@@ -1,4 +1,5 @@
 import { PendingApproval, PendingApprovalWithRisk, RiskLevel } from '../types/approvals'
+import { MANDATORY_RECEIPT_THRESHOLD } from '../constants/validation'
 
 // Default threshold amount - transactions above this require approval
 const DEFAULT_THRESHOLD = 200
@@ -39,9 +40,9 @@ export function calculateRiskLevel(approval: PendingApproval): PendingApprovalWi
   }
 
   // Factor 2: Missing receipt
-  if (!hasReceipt && amount > 100) {
+  if (!hasReceipt && amount >= MANDATORY_RECEIPT_THRESHOLD) {
     riskScore += 2
-    reasons.push('Missing receipt for transaction over $100')
+    reasons.push(`Missing receipt for transaction over $${MANDATORY_RECEIPT_THRESHOLD.toFixed(2)}`)
   } else if (!hasReceipt) {
     riskScore += 1
     reasons.push('Missing receipt')

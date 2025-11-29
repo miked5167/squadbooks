@@ -21,7 +21,7 @@ interface CategoryRowProps {
     percentage: number
     projectedPercentage: number
   }
-  onEdit: (category: { id: string; name: string; allocated: number }) => void
+  onEdit?: (category: { id: string; name: string; allocated: number }) => void
   onClick?: () => void
 }
 
@@ -55,7 +55,7 @@ export function CategoryRow({ category, onEdit, onClick }: CategoryRowProps) {
               </span>
             </div>
             {category.pending > 0 && (
-              <div className="flex items-center gap-1 text-xs text-golden mt-1">
+              <div className="flex items-center gap-1 text-xs text-amber-700 font-medium mt-1">
                 <Clock className="w-3 h-3" />
                 <span>{formatCurrency(category.pending)} pending</span>
               </div>
@@ -63,24 +63,26 @@ export function CategoryRow({ category, onEdit, onClick }: CategoryRowProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation()
-              onEdit({
-                id: category.categoryId,
-                name: category.categoryName,
-                allocated: category.allocated,
-              })
-            }}
-            className="h-9 w-9 p-0 hover:bg-navy/10"
-            aria-label={`Edit budget for ${category.categoryName}`}
-          >
-            <Edit className="w-4 h-4" />
-          </Button>
-        </div>
+        {onEdit && (
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onEdit({
+                  id: category.categoryId,
+                  name: category.categoryName,
+                  allocated: category.allocated,
+                })
+              }}
+              className="h-9 w-9 p-0 hover:bg-navy/10"
+              aria-label={`Edit budget for ${category.categoryName}`}
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Progress Bar - Using category color */}

@@ -28,6 +28,7 @@ import {
   PlayerStatus,
   BankAccountType
 } from '@prisma/client';
+import { MANDATORY_RECEIPT_THRESHOLD } from '../lib/constants/validation';
 
 const prisma = new PrismaClient({
   log: ['warn', 'error'],
@@ -413,7 +414,15 @@ async function wipeDemoData() {
     const delAuditLogs = await prisma.auditLog.deleteMany({
       where: { teamId: { in: demoTeamIds } },
     });
-    if (delAuditLogs.count > 0) console.log(`   ✓ Deleted ${delAuditLogs.count} audit logs`);
+    if (delAuditLogs.count > 0) console.log(`   ✓ Deleted ${delAuditLogs.count} audit logs by teamId`);
+  }
+
+  // Also delete audit logs by userId to prevent foreign key constraint errors
+  if (demoUserIds.length > 0) {
+    const delAuditLogsByUser = await prisma.auditLog.deleteMany({
+      where: { userId: { in: demoUserIds } },
+    });
+    if (delAuditLogsByUser.count > 0) console.log(`   ✓ Deleted ${delAuditLogsByUser.count} audit logs by userId`);
   }
 
   // 11. Invitations (references Team)
@@ -1311,7 +1320,7 @@ async function createTransactions(
         vendor: randomChoice([...VENDORS.retail, ...VENDORS.gas]),
         description: 'Pending expense awaiting approval',
         transactionDate: txDate,
-        receiptUrl: amount >= 100 ? receiptUrl(cfg.code, txDate) : undefined,
+        receiptUrl: amount >= MANDATORY_RECEIPT_THRESHOLD ? receiptUrl(cfg.code, txDate) : undefined,
         createdBy: treasurerId,
         createdAt: txDate,
       },

@@ -13,7 +13,7 @@ import { formatCurrency, type CategoryGroup as CategoryGroupType } from '@/lib/u
 
 interface CategoryGroupProps {
   group: CategoryGroupType
-  onEdit: (category: { id: string; name: string; allocated: number }) => void
+  onEdit?: (category: { id: string; name: string; allocated: number }) => void
   onCategoryClick?: (categoryId: string) => void
   defaultExpanded?: boolean
 }

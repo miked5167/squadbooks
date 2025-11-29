@@ -254,7 +254,7 @@ export default function SeasonClosurePage() {
                 passed={validationResult.allReceiptsPresent}
                 label="All Required Receipts Present"
                 successMessage={`All required receipts are attached (${validationResult.receiptCount} total)`}
-                errorMessage={`${validationResult.missingReceipts} expense(s) over $100 missing receipts`}
+                errorMessage={`${validationResult.missingReceipts} expense(s) over $250 missing receipts`}
               />
 
               <ChecklistItem

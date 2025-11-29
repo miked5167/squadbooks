@@ -25,10 +25,10 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check role - only TREASURER can delete receipts
-    if (user.role !== 'TREASURER') {
+    // Check role - TREASURER and ASSISTANT_TREASURER can delete receipts
+    if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
       return NextResponse.json(
-        { error: 'Only treasurers can delete receipts' },
+        { error: 'Only treasurers and assistant treasurers can delete receipts' },
         { status: 403 }
       )
     }

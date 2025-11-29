@@ -5,7 +5,8 @@
 
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
-import { UserRole } from '@prisma/client'
+import { UserRole, TransactionType } from '@prisma/client'
+import { MANDATORY_RECEIPT_THRESHOLD } from '@/lib/constants/validation'
 
 /**
  * Gets the current user from Clerk and database
@@ -201,6 +202,27 @@ export async function requiresDualApproval(amount: number, teamId: string) {
   const threshold = Number(settings.dualApprovalThreshold)
 
   return amount >= threshold
+}
+
+/**
+ * Checks if a transaction requires a receipt based on amount and type
+ * @param amount - Transaction amount in dollars
+ * @param type - Transaction type (EXPENSE or INCOME)
+ * @param hasReceipt - Whether transaction already has a receipt
+ * @returns true if receipt is required but missing
+ */
+export function requiresReceipt(
+  amount: number,
+  type: TransactionType,
+  hasReceipt: boolean
+): boolean {
+  // Only expenses require receipts (not income)
+  if (type !== TransactionType.EXPENSE) {
+    return false
+  }
+
+  // Receipt required if amount >= threshold and no receipt attached
+  return amount >= MANDATORY_RECEIPT_THRESHOLD && !hasReceipt
 }
 
 /**

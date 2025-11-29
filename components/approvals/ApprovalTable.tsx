@@ -172,15 +172,21 @@ export function ApprovalTable({
                     <div className="flex items-center justify-end gap-2">
                       {isHighRisk && (
                         <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <AlertTriangle className="w-4 h-4 text-red-600" />
+                          <Tooltip delayDuration={200}>
+                            <TooltipTrigger asChild>
+                              <div className="cursor-help">
+                                <AlertTriangle className="w-4 h-4 text-red-600" />
+                              </div>
                             </TooltipTrigger>
-                            <TooltipContent className="max-w-xs">
-                              <div className="space-y-1">
-                                <p className="font-semibold">High Risk Transaction</p>
+                            <TooltipContent
+                              side="bottom"
+                              align="end"
+                              className="max-w-xs bg-navy text-white shadow-xl border border-navy/20 z-[100]"
+                            >
+                              <div className="space-y-1.5 p-1">
+                                <p className="font-semibold text-sm">High Risk Transaction</p>
                                 {approval.riskReasons.map((reason, idx) => (
-                                  <p key={idx} className="text-xs">
+                                  <p key={idx} className="text-xs leading-relaxed">
                                     • {reason}
                                   </p>
                                 ))}
@@ -230,23 +236,29 @@ export function ApprovalTable({
                   </TableCell>
                   <TableCell>
                     <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Badge variant="outline" className={getRiskBadgeClass(approval.riskLevel)}>
-                            {approval.riskLevel}
-                          </Badge>
+                      <Tooltip delayDuration={200}>
+                        <TooltipTrigger asChild>
+                          <div className="inline-block">
+                            <Badge variant="outline" className={getRiskBadgeClass(approval.riskLevel)}>
+                              {approval.riskLevel}
+                            </Badge>
+                          </div>
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
+                        <TooltipContent
+                          side="bottom"
+                          align="center"
+                          className="max-w-xs bg-navy text-white shadow-xl border border-navy/20 z-[100]"
+                        >
                           {approval.riskReasons.length > 0 ? (
-                            <div className="space-y-1">
+                            <div className="space-y-1.5 p-1">
                               {approval.riskReasons.map((reason, idx) => (
-                                <p key={idx} className="text-xs">
+                                <p key={idx} className="text-xs leading-relaxed">
                                   • {reason}
                                 </p>
                               ))}
                             </div>
                           ) : (
-                            <p className="text-xs">Standard transaction</p>
+                            <p className="text-xs p-1">Standard transaction</p>
                           )}
                         </TooltipContent>
                       </Tooltip>

@@ -27,8 +27,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { useToast } from '@/hooks/use-toast'
-import { Loader2, Plus, Edit, Archive, FolderTree } from 'lucide-react'
+import { Loader2, Plus, Edit, Archive, TrendingDown, TrendingUp } from 'lucide-react'
 
 interface Category {
   id: string
@@ -40,15 +46,39 @@ interface Category {
   createdAt: string
 }
 
+interface BudgetAllocation {
+  categoryId: string
+  allocated: number
+}
+
+// Define expense and income group headings
+const EXPENSE_GROUPS = [
+  'Ice & Facilities',
+  'Equipment & Uniforms',
+  'Tournament & League Fees',
+  'Travel & Accommodation',
+  'Coaching & Officials',
+  'Fundraising & Events',
+  'Administrative',
+  'Other',
+] as const
+
+const INCOME_GROUPS = ['Fundraising & Income'] as const
+
+const STORAGE_KEY = 'categories-expanded-groups'
+
 export default function CategoriesPage() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState<Category[]>([])
+  const [budgetAllocations, setBudgetAllocations] = useState<BudgetAllocation[]>([])
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([])
+  const [isInitialized, setIsInitialized] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -58,19 +88,71 @@ export default function CategoriesPage() {
     sortOrder: 0,
   })
 
-  // Fetch categories
+  // Helper to get all unique group headings from categories
+  function getAllGroupHeadings(): string[] {
+    const headings = new Set(categories.map((c) => c.heading))
+    return Array.from(headings)
+  }
+
+  // Load expanded groups from localStorage on mount
   useEffect(() => {
-    fetchCategories()
+    if (typeof window !== 'undefined' && !isInitialized) {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        try {
+          setExpandedGroups(JSON.parse(saved))
+        } catch {
+          // If parsing fails, default to all expanded
+          setExpandedGroups(getAllGroupHeadings())
+        }
+      } else {
+        // Default: all groups expanded
+        setExpandedGroups(getAllGroupHeadings())
+      }
+      setIsInitialized(true)
+    }
+  }, [isInitialized, categories])
+
+  // Save expanded groups to localStorage
+  useEffect(() => {
+    if (isInitialized && expandedGroups.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(expandedGroups))
+    }
+  }, [expandedGroups, isInitialized])
+
+  // Fetch categories and budget data
+  useEffect(() => {
+    fetchData()
   }, [])
 
-  async function fetchCategories() {
+  async function fetchData() {
     try {
-      const res = await fetch('/api/settings/categories')
-      if (!res.ok) {
+      // Fetch categories and budget in parallel
+      const [categoriesRes, budgetRes] = await Promise.all([
+        fetch('/api/settings/categories'),
+        fetch('/api/budget').catch(() => null), // Budget is optional
+      ])
+
+      if (!categoriesRes.ok) {
         throw new Error('Failed to fetch categories')
       }
-      const data = await res.json()
-      setCategories(data.categories)
+
+      const categoriesData = await categoriesRes.json()
+      setCategories(categoriesData.categories)
+
+      // Load budget allocations if available
+      if (budgetRes?.ok) {
+        const budgetData = await budgetRes.json()
+        if (budgetData.categories) {
+          const allocations: BudgetAllocation[] = budgetData.categories.map(
+            (cat: any) => ({
+              categoryId: cat.categoryId,
+              allocated: cat.allocated || 0,
+            })
+          )
+          setBudgetAllocations(allocations)
+        }
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -80,6 +162,10 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  async function fetchCategories() {
+    await fetchData()
   }
 
   // Handle create category
@@ -240,6 +326,35 @@ export default function CategoriesPage() {
     setEditDialogOpen(true)
   }
 
+  function openCreateDialogForGroup(heading: string) {
+    setFormData({
+      name: '',
+      heading: heading,
+      color: '#3B82F6',
+      sortOrder: 0,
+    })
+    setCreateDialogOpen(true)
+  }
+
+  // Helper functions for group classification
+  function isIncomeGroup(heading: string): boolean {
+    return INCOME_GROUPS.includes(heading as any)
+  }
+
+  function isExpenseGroup(heading: string): boolean {
+    return EXPENSE_GROUPS.includes(heading as any)
+  }
+
+  // Calculate total budget allocation for a group
+  function getGroupTotal(heading: string): number {
+    const groupCategories = categories.filter((c) => c.heading === heading)
+    const total = groupCategories.reduce((sum, cat) => {
+      const allocation = budgetAllocations.find((a) => a.categoryId === cat.id)
+      return sum + (allocation?.allocated || 0)
+    }, 0)
+    return total
+  }
+
   // Group categories by heading
   const groupedCategories = categories.reduce((acc, category) => {
     if (!acc[category.heading]) {
@@ -249,11 +364,141 @@ export default function CategoriesPage() {
     return acc
   }, {} as Record<string, Category[]>)
 
+  // Separate groups into expense and income
+  const expenseGroupsData = Object.entries(groupedCategories).filter(([heading]) =>
+    isExpenseGroup(heading)
+  )
+  const incomeGroupsData = Object.entries(groupedCategories).filter(([heading]) =>
+    isIncomeGroup(heading)
+  )
+  const otherGroupsData = Object.entries(groupedCategories).filter(
+    ([heading]) => !isExpenseGroup(heading) && !isIncomeGroup(heading)
+  )
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="w-8 h-8 animate-spin text-navy" />
       </div>
+    )
+  }
+
+  // Render a single category group
+  const renderCategoryGroup = (
+    heading: string,
+    headingCategories: Category[],
+    groupType: 'expense' | 'income' | 'other'
+  ) => {
+    const groupTotal = getGroupTotal(heading)
+    const IconComponent = groupType === 'income' ? TrendingUp : TrendingDown
+
+    return (
+      <AccordionItem key={heading} value={heading} className="border-b">
+        <div className="flex items-center justify-between py-3 pr-4">
+          <AccordionTrigger className="hover:no-underline flex-1 py-0">
+            <div className="flex items-center gap-3 w-full">
+              <IconComponent
+                className={`w-5 h-5 ${
+                  groupType === 'income' ? 'text-green-600' : 'text-blue-600'
+                }`}
+              />
+              <div className="text-left flex-1">
+                <h3 className="font-bold text-navy">
+                  {heading}
+                  {groupType === 'income' && (
+                    <span className="text-sm font-normal text-green-600 ml-2">
+                      (Money In)
+                    </span>
+                  )}
+                </h3>
+                <span className="text-xs text-navy/60">
+                  {headingCategories.length} categor
+                  {headingCategories.length === 1 ? 'y' : 'ies'}
+                </span>
+              </div>
+              {groupTotal > 0 && (
+                <div className="text-right mr-2">
+                  <div className="text-xs text-navy/60">Budget Total</div>
+                  <div className="text-sm font-semibold text-navy">
+                    ${groupTotal.toLocaleString()}
+                  </div>
+                </div>
+              )}
+            </div>
+          </AccordionTrigger>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => openCreateDialogForGroup(heading)}
+            className="text-xs ml-3 flex-shrink-0"
+          >
+            <Plus className="w-3 h-3 mr-1" />
+            Add
+          </Button>
+        </div>
+
+        <AccordionContent className="pt-2 pb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {headingCategories.map((category) => (
+              <div
+                key={category.id}
+                className={`group p-2.5 border rounded-lg transition-all ${
+                  category.isActive
+                    ? 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                    : 'border-gray-200 bg-gray-50'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div
+                      className="w-6 h-6 rounded flex-shrink-0"
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium text-sm text-navy truncate">
+                          {category.name}
+                        </h4>
+                        {!category.isActive && (
+                          <span className="px-1.5 py-0.5 text-xs font-medium bg-gray-200 text-gray-700 rounded">
+                            Archived
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-navy/50">
+                        Sort: {category.sortOrder}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => openEditDialog(category)}
+                      className="h-7 w-7 p-0"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedCategory(category)
+                        setArchiveDialogOpen(true)
+                      }}
+                      className="h-7 w-7 p-0"
+                    >
+                      <Archive className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
     )
   }
 
@@ -266,93 +511,85 @@ export default function CategoriesPage() {
             <div>
               <h2 className="text-xl font-bold text-navy">Budget & Categories</h2>
               <p className="text-sm text-navy/60 mt-1">
-                Manage expense categories and budget structure
+                Manage expense and income categories for budget planning
               </p>
             </div>
-            <Button onClick={() => setCreateDialogOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Category
-            </Button>
           </div>
         </div>
 
-        {/* Categories List (Grouped by Heading) */}
-        <div className="p-6 space-y-6">
-          {Object.entries(groupedCategories).map(([heading, headingCategories]) => (
-            <div key={heading} className="space-y-3">
-              <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
-                <FolderTree className="w-5 h-5 text-navy" />
-                <h3 className="font-bold text-navy">{heading}</h3>
-                <span className="text-sm text-navy/60">
-                  ({headingCategories.length} categories)
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {headingCategories.map((category) => (
-                  <div
-                    key={category.id}
-                    className={`p-4 border rounded-lg ${
-                      category.isActive
-                        ? 'border-gray-200 bg-white'
-                        : 'border-gray-200 bg-gray-50'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div
-                          className="w-8 h-8 rounded-md flex-shrink-0"
-                          style={{ backgroundColor: category.color }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold text-navy truncate">
-                              {category.name}
-                            </h4>
-                            {!category.isActive && (
-                              <span className="px-2 py-0.5 text-xs font-medium bg-gray-200 text-gray-700 rounded">
-                                Archived
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-navy/60">
-                            Sort Order: {category.sortOrder}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditDialog(category)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedCategory(category)
-                            setArchiveDialogOpen(true)
-                          }}
-                        >
-                          <Archive className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {/* Categories List (Accordion by Group) */}
+        <div className="p-6">
+          {categories.length === 0 ? (
+            <div className="p-12 text-center">
+              <p className="text-navy/60">No categories found</p>
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Expense Categories Section */}
+              {expenseGroupsData.length > 0 && (
+                <div>
+                  <div className="mb-3 pb-2 border-b-2 border-blue-100">
+                    <h3 className="text-sm font-bold text-blue-700 uppercase tracking-wide">
+                      Expense Categories
+                    </h3>
+                  </div>
+                  <Accordion
+                    type="multiple"
+                    value={expandedGroups}
+                    onValueChange={setExpandedGroups}
+                    className="space-y-0"
+                  >
+                    {expenseGroupsData.map(([heading, headingCategories]) =>
+                      renderCategoryGroup(heading, headingCategories, 'expense')
+                    )}
+                  </Accordion>
+                </div>
+              )}
 
-        {categories.length === 0 && (
-          <div className="p-12 text-center">
-            <p className="text-navy/60">No categories found</p>
-          </div>
-        )}
+              {/* Income Categories Section */}
+              {incomeGroupsData.length > 0 && (
+                <div>
+                  <div className="mb-3 pb-2 border-b-2 border-green-100">
+                    <h3 className="text-sm font-bold text-green-700 uppercase tracking-wide">
+                      Income Categories
+                    </h3>
+                  </div>
+                  <Accordion
+                    type="multiple"
+                    value={expandedGroups}
+                    onValueChange={setExpandedGroups}
+                    className="space-y-0"
+                  >
+                    {incomeGroupsData.map(([heading, headingCategories]) =>
+                      renderCategoryGroup(heading, headingCategories, 'income')
+                    )}
+                  </Accordion>
+                </div>
+              )}
+
+              {/* Other Categories (if any don't match expense/income) */}
+              {otherGroupsData.length > 0 && (
+                <div>
+                  <div className="mb-3 pb-2 border-b-2 border-gray-100">
+                    <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+                      Other Categories
+                    </h3>
+                  </div>
+                  <Accordion
+                    type="multiple"
+                    value={expandedGroups}
+                    onValueChange={setExpandedGroups}
+                    className="space-y-0"
+                  >
+                    {otherGroupsData.map(([heading, headingCategories]) =>
+                      renderCategoryGroup(heading, headingCategories, 'other')
+                    )}
+                  </Accordion>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Create Category Dialog */}
