@@ -32,6 +32,7 @@ model Association {
   alerts        Alert[]
   reports       Report[]
   config        DashboardConfig?
+  rules         AssociationRule[] @relation("AssociationRules")
 
   @@map("associations")
 }
@@ -207,6 +208,131 @@ model DashboardConfig {
 }
 
 // ============================================
+// ASSOCIATION RULE ENGINE
+// ============================================
+
+model AssociationRule {
+  id            String   @id @default(cuid())
+  associationId String   @db.Uuid
+  ruleType      String   // 'MAX_BUDGET', 'MAX_ASSESSMENT', 'MAX_BUYOUT', 'APPROVAL_TIERS', 'ZERO_BALANCE', 'REQUIRED_EXPENSES'
+  name          String
+  description   String?  @db.Text
+  isActive      Boolean  @default(true)
+
+  // Flexible configuration stored as JSON
+  config        Json     // e.g., { "maxAmount": 20000, "currency": "CAD" }
+
+  // For approval tier rules
+  approvalTiers Json?    // e.g., [{ "min": 0, "max": 100, "approvals": 0 }, { "min": 100, "max": 500, "approvals": 1 }]
+
+  // For required expense rules
+  requiredExpenses Json? // e.g., ["Ice Rental", "Referee Fees"]
+
+  // Metadata
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     String?
+
+  // Relations
+  association   Association @relation("AssociationRules", fields: [associationId], references: [id], onDelete: Cascade)
+  overrides     TeamRuleOverride[]
+  violations    RuleViolation[]
+
+  @@index([associationId])
+  @@index([ruleType])
+  @@index([isActive])
+  @@map("association_rules")
+}
+
+model TeamRuleOverride {
+  id              String   @id @default(cuid())
+  teamId          String
+  ruleId          String
+
+  overrideReason  String   @db.Text
+  overrideConfig  Json     // The override values
+
+  approvedBy      String?
+  approvedAt      DateTime?
+  expiresAt       DateTime?
+
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  team            Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  rule            AssociationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([ruleId])
+  @@index([isActive])
+  @@map("team_rule_overrides")
+}
+
+model RuleViolation {
+  id              String   @id @default(cuid())
+  teamId          String
+  ruleId          String
+
+  violationType   String   // 'BUDGET_EXCEEDED', 'ASSESSMENT_TOO_HIGH', 'MISSING_APPROVAL', etc.
+  severity        String   // 'WARNING', 'ERROR', 'CRITICAL'
+
+  description     String   @db.Text
+  violationData   Json     // Context about the violation
+
+  // What triggered it
+  budgetId        String?
+  transactionId   String?
+
+  // Resolution
+  resolved        Boolean  @default(false)
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  resolutionNotes String?  @db.Text
+
+  createdAt       DateTime @default(now())
+
+  // Relations
+  team            Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  rule            AssociationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([ruleId])
+  @@index([violationType])
+  @@index([severity])
+  @@index([resolved])
+  @@map("rule_violations")
+}
+
+model TeamComplianceStatus {
+  id                String   @id @default(cuid())
+  teamId            String   @unique
+
+  complianceScore   Float    // 0-100
+  lastCheckedAt     DateTime @default(now())
+
+  // Breakdown
+  activeViolations  Int      @default(0)
+  warningCount      Int      @default(0)
+  errorCount        Int      @default(0)
+  criticalCount     Int      @default(0)
+
+  // Status
+  status            String   // 'COMPLIANT', 'AT_RISK', 'NON_COMPLIANT'
+
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  team              Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@index([status])
+  @@index([complianceScore])
+  @@map("team_compliance_status")
+}
+
+// ============================================
 // TEAM MODELS (Squadbooks)
 // ============================================
 
@@ -282,6 +408,11 @@ model Team {
   parentInviteTokens ParentInviteToken[]
   associationTeam   AssociationTeam? // Link to association dashboard (optional)
   teamSettings      TeamSettings?
+
+  // Rule Engine relations
+  ruleOverrides      TeamRuleOverride[]
+  violations         RuleViolation[]
+  complianceStatus   TeamComplianceStatus?
 
   @@map("teams")
 }

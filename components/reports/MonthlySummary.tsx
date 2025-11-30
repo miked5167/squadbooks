@@ -17,8 +17,8 @@ export function MonthlySummary() {
 
   // Generate list of last 12 months
   const months = Array.from({ length: 12 }, (_, i) => {
-    const date = new Date()
-    date.setMonth(date.getMonth() - i)
+    const now = new Date()
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
     return {
       value: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
       label: date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
