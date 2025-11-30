@@ -36,6 +36,9 @@ async function main() {
     if (rule.requiredExpenses) {
       console.log(`   Required Expenses:`, JSON.stringify(rule.requiredExpenses, null, 2))
     }
+    if (rule.signingAuthorityComposition) {
+      console.log(`   Signing Authority Composition:`, JSON.stringify(rule.signingAuthorityComposition, null, 2))
+    }
   })
 
   console.log('\n✅ Verification complete!')

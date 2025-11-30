@@ -118,6 +118,23 @@ async function main() {
         'League Registration'
       ],
       isActive: true
+    },
+    {
+      associationId: association.id,
+      ruleType: 'SIGNING_AUTHORITY_COMPOSITION',
+      name: 'GTHL Signing Authority Requirements',
+      description: 'Teams must have 1 team official + 2 parent representatives as signing authorities',
+      config: {
+        description: 'Ensures proper financial oversight per GTHL guidelines'
+      },
+      signingAuthorityComposition: {
+        min_team_officials: 1,
+        min_parent_representatives: 2,
+        min_total: 3,
+        require_finance_experience: true,
+        require_background_checks: false
+      },
+      isActive: true
     }
   ]
 

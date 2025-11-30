@@ -228,6 +228,10 @@ model AssociationRule {
   // For required expense rules
   requiredExpenses Json? // e.g., ["Ice Rental", "Referee Fees"]
 
+  // GTHL Signing Authority Composition (Phase 1.5)
+  signingAuthorityComposition Json? @map("signing_authority_composition")
+  // e.g., { "min_team_officials": 1, "min_parent_representatives": 2, "min_total": 3, "require_finance_experience": true }
+
   // Metadata
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -414,6 +418,9 @@ model Team {
   violations         RuleViolation[]
   complianceStatus   TeamComplianceStatus?
 
+  // GTHL Signing Authority relations (Phase 1.5)
+  signingAuthorities TeamSigningAuthority[]
+
   @@map("teams")
 }
 
@@ -542,6 +549,13 @@ model User {
   // Optional link to association user (for users who have both team and association roles)
   associationUserId String? @map("association_user_id") @db.Uuid
 
+  // GTHL Signing Authority Fields (Phase 1.5)
+  userType                String?   @map("user_type") // 'team_official', 'parent_representative', 'other_parent'
+  isSigningAuthority      Boolean   @default(false) @map("is_signing_authority")
+  hasFinanceExperience    Boolean   @default(false) @map("has_finance_experience")
+  backgroundCheckComplete Boolean   @default(false) @map("background_check_complete")
+  backgroundCheckDate     DateTime? @map("background_check_date") @db.Date
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -551,15 +565,43 @@ model User {
   transactionsCreated    Transaction[]   @relation("TransactionCreator")
   approvalsCreated       Approval[]      @relation("ApprovalCreator")
   approvalsApproved      Approval[]      @relation("Approver")
+  approvalsAssigned      Approval[]      @relation("ApprovalAssignee")
   auditLogs              AuditLog[]
   exports                Export[]
   seasonClosures         SeasonClosure[] @relation("SeasonClosureSubmitter")
   notificationSettings   NotificationSettings[]
+  signingAuthorities     TeamSigningAuthority[]
 
   @@index([teamId])
   @@index([clerkId])
   @@index([associationUserId])
   @@map("users")
+}
+
+model TeamSigningAuthority {
+  id                      String    @id @default(cuid())
+  teamId                  String    @map("team_id")
+  userId                  String    @map("user_id")
+  userType                String    @map("user_type") // 'team_official', 'parent_representative'
+  position                String?   // e.g., 'Head Coach', 'Treasurer', 'Parent Rep'
+  hasFinanceExperience    Boolean   @default(false) @map("has_finance_experience")
+  backgroundCheckComplete Boolean   @default(false) @map("background_check_complete")
+  appointedDate           DateTime  @map("appointed_date") @db.Date
+  removedDate             DateTime? @map("removed_date") @db.Date
+  isActive                Boolean   @default(true) @map("is_active")
+
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId, isActive])
+  @@index([teamId])
+  @@index([userId])
+  @@index([isActive])
+  @@map("team_signing_authorities")
 }
 
 enum CategoryType {
@@ -650,19 +692,25 @@ model Approval {
   approvedAt    DateTime?
   teamId        String
 
+  // GTHL Role-Based Approval Assignment (Phase 1.5)
+  roleRequired  String?        @map("role_required") // 'PARENT_REPRESENTATIVE', 'TEAM_OFFICIAL', 'ANY'
+  assignedTo    String?        @map("assigned_to") // User ID of assigned signing authority
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-  approver    User        @relation("Approver", fields: [approvedBy], references: [id])
-  creator     User        @relation("ApprovalCreator", fields: [createdBy], references: [id])
-  team        Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  transaction    Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  approver       User        @relation("Approver", fields: [approvedBy], references: [id])
+  creator        User        @relation("ApprovalCreator", fields: [createdBy], references: [id])
+  assignedToUser User?       @relation("ApprovalAssignee", fields: [assignedTo], references: [id])
+  team           Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([transactionId])
   @@index([approvedBy])
   @@index([status])
   @@index([teamId])
+  @@index([assignedTo])
   @@map("approvals")
 }
 
