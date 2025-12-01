@@ -13,6 +13,7 @@ export type AssociationSettingsResponse = {
     abbreviation: string | null
     provinceState: string | null
     country: string | null
+    currency: string
     season: string | null
     logoUrl: string | null
     createdAt: Date
@@ -33,6 +34,7 @@ export type UpdateAssociationPayload = {
   abbreviation?: string
   provinceState?: string
   country?: string
+  currency?: string
   season?: string
   logoUrl?: string
 }
@@ -56,6 +58,7 @@ export async function getAssociationSettings(
         abbreviation: true,
         provinceState: true,
         country: true,
+        currency: true,
         season: true,
         logoUrl: true,
         createdAt: true,
@@ -126,6 +129,7 @@ export async function updateAssociation(
     if (data.abbreviation !== undefined) updateData.abbreviation = data.abbreviation
     if (data.provinceState !== undefined) updateData.provinceState = data.provinceState
     if (data.country !== undefined) updateData.country = data.country
+    if (data.currency !== undefined) updateData.currency = data.currency
     if (data.season !== undefined) updateData.season = data.season
     if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl
 

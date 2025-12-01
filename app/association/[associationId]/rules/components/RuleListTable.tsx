@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Shield, CheckCircle2, XCircle, Edit, Trash2, Users } from 'lucide-react'
 import { toggleRuleActive, deleteRule } from '../actions'
 import { useRouter } from 'next/navigation'
+import { RuleForm } from './RuleForm'
 
 interface Rule {
   id: string
@@ -24,11 +25,13 @@ interface Rule {
 interface RuleListTableProps {
   rules: Rule[]
   associationId: string
+  associationCurrency: string
 }
 
-export function RuleListTable({ rules, associationId }: RuleListTableProps) {
+export function RuleListTable({ rules, associationId, associationCurrency }: RuleListTableProps) {
   const router = useRouter()
   const [loading, setLoading] = useState<string | null>(null)
+  const [editingRule, setEditingRule] = useState<Rule | null>(null)
 
   const getRuleTypeDisplay = (ruleType: string) => {
     const types: Record<string, { label: string; color: string }> = {
@@ -103,8 +106,9 @@ export function RuleListTable({ rules, associationId }: RuleListTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
+    <>
+      <div className="overflow-x-auto">
+        <table className="w-full">
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -185,6 +189,7 @@ export function RuleListTable({ rules, associationId }: RuleListTableProps) {
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">
                     <button
+                      onClick={() => setEditingRule(rule)}
                       className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
                       title="Edit rule"
                     >
@@ -206,5 +211,16 @@ export function RuleListTable({ rules, associationId }: RuleListTableProps) {
         </tbody>
       </table>
     </div>
+
+    {editingRule && (
+      <RuleForm
+        associationId={associationId}
+        associationCurrency={associationCurrency}
+        open={!!editingRule}
+        onOpenChange={(open) => !open && setEditingRule(null)}
+        existingRule={editingRule}
+      />
+    )}
+  </>
   )
 }

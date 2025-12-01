@@ -206,12 +206,17 @@ export function groupCategoriesByHeading(categories: CategoryWithHeading[]): Cat
 }
 
 /**
- * Format currency (already exists but included for completeness)
+ * Format currency with optional currency code
+ * @param amount - Amount to format
+ * @param currency - Optional ISO 4217 currency code (defaults to CAD)
  */
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-CA', {
+export function formatCurrency(amount: number, currency: string = 'CAD'): string {
+  // Determine locale based on currency
+  const locale = currency === 'USD' ? 'en-US' : 'en-CA'
+
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'CAD',
+    currency: currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount)

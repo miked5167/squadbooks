@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { updateAssociation, type UpdateAssociationPayload } from '../actions'
+import { SUPPORTED_CURRENCIES, getCurrencyFromCountry } from '@/lib/utils/currency'
 
 interface AssociationSettingsFormProps {
   association: {
@@ -10,6 +11,7 @@ interface AssociationSettingsFormProps {
     abbreviation: string | null
     provinceState: string | null
     country: string | null
+    currency: string
     season: string | null
     logoUrl: string | null
     createdAt: Date
@@ -27,6 +29,7 @@ export default function AssociationSettingsForm({
     abbreviation: association.abbreviation || '',
     provinceState: association.provinceState || '',
     country: association.country || '',
+    currency: association.currency || 'CAD',
     season: association.season || '',
     logoUrl: association.logoUrl || '',
   })
@@ -51,7 +54,17 @@ export default function AssociationSettingsForm({
   }
 
   const handleChange = (field: keyof UpdateAssociationPayload, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData(prev => {
+      const updated = { ...prev, [field]: value }
+
+      // Auto-suggest currency when country changes
+      if (field === 'country' && value) {
+        const suggestedCurrency = getCurrencyFromCountry(value)
+        updated.currency = suggestedCurrency
+      }
+
+      return updated
+    })
   }
 
   return (
@@ -119,6 +132,29 @@ export default function AssociationSettingsForm({
           />
         </div>
 
+        {/* Currency */}
+        <div>
+          <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
+            Currency <span className="text-red-500">*</span>
+          </label>
+          <select
+            id="currency"
+            value={formData.currency || 'CAD'}
+            onChange={(e) => handleChange('currency', e.target.value)}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            {SUPPORTED_CURRENCIES.map((curr) => (
+              <option key={curr.code} value={curr.code}>
+                {curr.code} - {curr.name} ({curr.symbol})
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-gray-500">
+            This will be used as the default currency for all budgets and financial reports
+          </p>
+        </div>
+
         {/* Season */}
         <div>
           <label htmlFor="season" className="block text-sm font-medium text-gray-700 mb-1">
@@ -176,7 +212,7 @@ export default function AssociationSettingsForm({
 
         {/* Last Updated */}
         <div className="pt-2 border-t border-gray-100">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500" suppressHydrationWarning>
             Last updated: {new Date(association.updatedAt).toLocaleString()}
           </p>
         </div>

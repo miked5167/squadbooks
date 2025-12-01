@@ -26,7 +26,9 @@ import {
   AgeDivision,
   CompetitiveLevel,
   PlayerStatus,
-  BankAccountType
+  BankAccountType,
+  BudgetApprovalType,
+  BudgetApprovalStatus
 } from '@prisma/client';
 import { MANDATORY_RECEIPT_THRESHOLD } from '../lib/constants/validation';
 
@@ -239,6 +241,7 @@ async function main() {
   let totalTransactions = 0;
   let totalAlerts = 0;
   let totalAuditLogs = 0;
+  let totalBudgetApprovals = 0;
 
   for (const cfg of TEAM_CONFIGS) {
     console.log(`\n—— Seeding team: ${cfg.name} ——`);
@@ -249,10 +252,12 @@ async function main() {
     totalTransactions += result.transactionsCount;
     totalAlerts += result.alertsCount;
     totalAuditLogs += result.auditLogsCount;
+    totalBudgetApprovals += result.budgetApprovalsCount;
 
     console.log(
       `✅ ${cfg.name}: ${result.playersCount} players, ${result.transactionsCount} transactions ` +
-      `(${result.pendingCount} pending), ${result.alertsCount} alerts, ${result.auditLogsCount} audit logs`
+      `(${result.pendingCount} pending), ${result.alertsCount} alerts, ${result.auditLogsCount} audit logs, ` +
+      `${result.budgetApprovalsCount} budget approvals`
     );
   }
 
@@ -265,6 +270,7 @@ async function main() {
   console.log(`Total Transactions: ${totalTransactions}`);
   console.log(`Total Alerts: ${totalAlerts}`);
   console.log(`Total Audit Logs: ${totalAuditLogs}`);
+  console.log(`Total Budget Approvals: ${totalBudgetApprovals}`);
   console.log('='.repeat(60) + '\n');
 }
 
@@ -363,6 +369,26 @@ async function wipeDemoData() {
       where: { teamId: { in: demoTeamIds } },
     });
     if (delApprovals.count > 0) console.log(`   ✓ Deleted ${delApprovals.count} approvals`);
+  }
+
+  // 4b. Acknowledgments (references BudgetApproval, User) - must delete before BudgetApprovals
+  if (demoTeamIds.length > 0) {
+    const delAcknowledgments = await prisma.acknowledgment.deleteMany({
+      where: {
+        budgetApproval: {
+          teamId: { in: demoTeamIds },
+        },
+      },
+    });
+    if (delAcknowledgments.count > 0) console.log(`   ✓ Deleted ${delAcknowledgments.count} acknowledgments`);
+  }
+
+  // 4c. BudgetApprovals (references Team, User)
+  if (demoTeamIds.length > 0) {
+    const delBudgetApprovals = await prisma.budgetApproval.deleteMany({
+      where: { teamId: { in: demoTeamIds } },
+    });
+    if (delBudgetApprovals.count > 0) console.log(`   ✓ Deleted ${delBudgetApprovals.count} budget approvals`);
   }
 
   // 5. Transactions (references Team, Category, User via createdBy)
@@ -612,6 +638,7 @@ interface SeedTeamResult {
   pendingCount: number;
   alertsCount: number;
   auditLogsCount: number;
+  budgetApprovalsCount: number;
 }
 
 async function seedTeam(associationId: string, cfg: TeamConfig): Promise<SeedTeamResult> {
@@ -679,12 +706,22 @@ async function seedTeam(associationId: string, cfg: TeamConfig): Promise<SeedTea
     transactions
   );
 
+  // Step 14: Create budget approvals
+  const budgetApprovals = await createBudgetApprovals(
+    team.id,
+    cfg,
+    treasurer.id,
+    families,
+    parents
+  );
+
   return {
     playersCount: players.length,
     transactionsCount: transactions.length,
     pendingCount,
     alertsCount: alerts.length,
     auditLogsCount: auditLogs.length,
+    budgetApprovalsCount: budgetApprovals.length,
   };
 }
 
@@ -1704,6 +1741,118 @@ async function createAuditLogs(
   auditLogs.push(settingsLog);
 
   return auditLogs;
+}
+
+// ============================================
+// BUDGET APPROVALS
+// ============================================
+
+async function createBudgetApprovals(
+  teamId: string,
+  cfg: TeamConfig,
+  treasurerId: string,
+  families: any[],
+  parents: any[]
+) {
+  const budgetApprovals: any[] = [];
+
+  // 1. COMPLETED Initial Budget Approval (all families acknowledged)
+  const initialBudgetApproval = await prisma.budgetApproval.create({
+    data: {
+      teamId,
+      season: DEMO_SEASON,
+      budgetTotal: cfg.budgetTotal,
+      approvalType: BudgetApprovalType.INITIAL,
+      description: 'Initial Season Budget for approval',
+      requiredCount: families.length,
+      acknowledgedCount: families.length,
+      status: BudgetApprovalStatus.COMPLETED,
+      createdBy: treasurerId,
+      createdAt: addDays(SEASON_START, 5),
+      completedAt: addDays(SEASON_START, 15),
+      expiresAt: addDays(SEASON_START, 30),
+    },
+  });
+  budgetApprovals.push(initialBudgetApproval);
+
+  // Create acknowledgments for all families (all acknowledged)
+  for (let i = 0; i < families.length; i++) {
+    const family = families[i];
+    const parent = parents[i * 2]; // Use first parent for each family
+    const acknowledgedDate = randomDateBetween(
+      addDays(SEASON_START, 5),
+      addDays(SEASON_START, 15)
+    );
+    await prisma.acknowledgment.create({
+      data: {
+        budgetApprovalId: initialBudgetApproval.id,
+        userId: parent.id,
+        familyName: family.familyName,
+        email: family.primaryEmail,
+        acknowledged: true,
+        acknowledgedAt: acknowledgedDate,
+        viewedAt: acknowledgedDate,
+        ipAddress: `192.168.1.${randomInt(10, 250)}`,
+        userAgent: randomChoice([
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)',
+        ]),
+      },
+    });
+  }
+
+  // Note: Budget revisions removed as per requirements - no voting on mid-season budget changes
+
+  // 3. PENDING Financial Report (recently created, very few acknowledgments)
+  const reportApproval = await prisma.budgetApproval.create({
+    data: {
+      teamId,
+      season: DEMO_SEASON,
+      budgetTotal: cfg.budgetTotal * cfg.percentSpent, // Current spending
+      approvalType: BudgetApprovalType.REPORT,
+      description: 'Monthly Financial Report - January 2026',
+      requiredCount: families.length,
+      acknowledgedCount: Math.floor(families.length * 0.2), // Only 20% acknowledged
+      status: BudgetApprovalStatus.PENDING,
+      createdBy: treasurerId,
+      createdAt: daysAgo(NOW, 3),
+      expiresAt: addDays(NOW, 7), // Due in 1 week
+    },
+  });
+  budgetApprovals.push(reportApproval);
+
+  // Create acknowledgments (20% acknowledged, 80% pending)
+  const reportAckCount = Math.floor(families.length * 0.2);
+  for (let i = 0; i < families.length; i++) {
+    const family = families[i];
+    const parent = parents[i * 2]; // Use first parent for each family
+    const isAcknowledged = i < reportAckCount;
+    const acknowledgedDate = isAcknowledged
+      ? randomDateBetween(daysAgo(NOW, 3), NOW)
+      : null;
+
+    await prisma.acknowledgment.create({
+      data: {
+        budgetApprovalId: reportApproval.id,
+        userId: parent.id,
+        familyName: family.familyName,
+        email: family.primaryEmail,
+        acknowledged: isAcknowledged,
+        acknowledgedAt: acknowledgedDate,
+        viewedAt: acknowledgedDate || daysAgo(NOW, randomInt(0, 3)),
+        ipAddress: `192.168.1.${randomInt(10, 250)}`,
+        userAgent: randomChoice([
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)',
+        ]),
+      },
+    });
+  }
+
+  console.log(`   Created ${budgetApprovals.length} budget approvals with acknowledgments`);
+  return budgetApprovals;
 }
 
 // ============================================

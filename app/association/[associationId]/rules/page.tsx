@@ -33,7 +33,7 @@ export default async function RulesPage({ params }: PageProps) {
               Configure financial governance policies for all teams in {association.name}
             </p>
           </div>
-          <AddRuleButton associationId={associationId} />
+          <AddRuleButton associationId={associationId} associationCurrency={association.currency} />
         </div>
 
         {/* Info Banner */}
@@ -56,6 +56,7 @@ export default async function RulesPage({ params }: PageProps) {
           <RuleListTable
             rules={rules}
             associationId={associationId}
+            associationCurrency={association.currency}
           />
         </Suspense>
       </div>

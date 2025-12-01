@@ -76,7 +76,7 @@ export function AppSidebar() {
   const sidebarContent = (
     <>
       {/* Logo & Team Name Section */}
-      <div className="p-6 border-b border-slate-700">
+      <div className="p-6 border-b border-white/10">
         <Link href="/dashboard" className="flex items-center gap-2 mb-4">
           <div className="w-8 h-8 bg-gradient-to-br from-navy to-navy-medium rounded-lg flex items-center justify-center">
             <span className="text-golden text-lg font-bold">S</span>
@@ -84,7 +84,7 @@ export function AppSidebar() {
           <span className="text-xl font-bold text-white">Squadbooks</span>
         </Link>
         <div className="flex items-center gap-2 text-sm text-slate-300">
-          <div className="w-6 h-6 bg-slate-700 rounded flex items-center justify-center">
+          <div className="w-6 h-6 bg-white/10 rounded flex items-center justify-center">
             <Users className="w-4 h-4 text-slate-300" />
           </div>
           <span className="font-medium text-white truncate">
@@ -114,8 +114,8 @@ export function AppSidebar() {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-200 group',
                     isActive
-                      ? 'bg-slate-700 text-white'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                      ? 'bg-white/10 text-white'
+                      : 'text-slate-300 hover:text-white hover:bg-white/10/50'
                   )}
                 >
                   <Icon
@@ -132,13 +132,13 @@ export function AppSidebar() {
       </nav>
 
       {/* User Profile Section */}
-      <div className="p-4 border-t border-slate-700">
+      <div className="p-4 border-t border-white/10">
         <div className="flex items-center gap-3">
           {mounted && (
             <>
               {DEV_MODE ? (
                 // Dev mode: Show simple avatar
-                <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0">
                   <User className="w-5 h-5 text-slate-300" />
                 </div>
               ) : (
@@ -175,12 +175,12 @@ export function AppSidebar() {
   return (
     <>
       {/* Desktop Sidebar - Hidden on mobile */}
-      <div className="hidden lg:flex flex-col h-screen w-64 bg-slate-800 border-r border-slate-700 fixed left-0 top-0 z-40">
+      <div className="hidden lg:flex flex-col h-screen w-64 bg-gradient-to-br from-navy via-navy-medium to-navy border-r border-white/10 fixed left-0 top-0 z-40">
         {sidebarContent}
       </div>
 
       {/* Mobile Sidebar Content - Used by MobileHeader */}
-      <div className="lg:hidden flex flex-col h-full bg-slate-800">
+      <div className="lg:hidden flex flex-col h-full bg-gradient-to-br from-navy via-navy-medium to-navy">
         {sidebarContent}
       </div>
     </>

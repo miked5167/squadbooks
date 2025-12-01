@@ -21,6 +21,7 @@ model Association {
   abbreviation  String?  @db.VarChar(32)
   provinceState String?  @map("province_state") @db.VarChar(64)
   country       String?  @db.VarChar(64)
+  currency      String   @default("CAD") @db.VarChar(3) // ISO 4217 currency code
   logoUrl       String?  @map("logo_url") @db.VarChar(500)
   season        String?  @db.VarChar(32) // e.g., "2025-2026"
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
@@ -983,7 +984,6 @@ model SeasonClosure {
 
 enum BudgetApprovalType {
   INITIAL          // Start of season budget
-  REVISION         // Mid-season budget change
   REPORT           // Monthly/quarterly report acknowledgment
 }
 

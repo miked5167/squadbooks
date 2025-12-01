@@ -10,6 +10,7 @@ export async function getRulesData(associationId: string) {
         id: true,
         name: true,
         abbreviation: true,
+        currency: true,
       },
     })
 
@@ -71,5 +72,114 @@ export async function deleteRule(ruleId: string) {
   } catch (error) {
     console.error('[deleteRule] Error:', error)
     return { success: false, error: 'Failed to delete rule' }
+  }
+}
+
+export async function createRule(data: {
+  associationId: string
+  ruleType: string
+  name: string
+  description?: string
+  isActive?: boolean
+  config: any
+  approvalTiers?: any
+  requiredExpenses?: any
+  signingAuthorityComposition?: any
+  createdBy?: string
+}) {
+  try {
+    const rule = await prisma.associationRule.create({
+      data: {
+        associationId: data.associationId,
+        ruleType: data.ruleType,
+        name: data.name,
+        description: data.description,
+        isActive: data.isActive ?? true,
+        config: data.config,
+        approvalTiers: data.approvalTiers,
+        requiredExpenses: data.requiredExpenses,
+        signingAuthorityComposition: data.signingAuthorityComposition,
+        createdBy: data.createdBy,
+      },
+      include: {
+        _count: {
+          select: {
+            overrides: true,
+            violations: true,
+          },
+        },
+      },
+    })
+
+    return { success: true, rule }
+  } catch (error) {
+    console.error('[createRule] Error:', error)
+    return { success: false, error: 'Failed to create rule' }
+  }
+}
+
+export async function updateRule(data: {
+  id: string
+  ruleType?: string
+  name?: string
+  description?: string
+  isActive?: boolean
+  config?: any
+  approvalTiers?: any
+  requiredExpenses?: any
+  signingAuthorityComposition?: any
+}) {
+  try {
+    const rule = await prisma.associationRule.update({
+      where: { id: data.id },
+      data: {
+        ruleType: data.ruleType,
+        name: data.name,
+        description: data.description,
+        isActive: data.isActive,
+        config: data.config,
+        approvalTiers: data.approvalTiers,
+        requiredExpenses: data.requiredExpenses,
+        signingAuthorityComposition: data.signingAuthorityComposition,
+      },
+      include: {
+        _count: {
+          select: {
+            overrides: true,
+            violations: true,
+          },
+        },
+      },
+    })
+
+    return { success: true, rule }
+  } catch (error) {
+    console.error('[updateRule] Error:', error)
+    return { success: false, error: 'Failed to update rule' }
+  }
+}
+
+export async function getRule(ruleId: string) {
+  try {
+    const rule = await prisma.associationRule.findUnique({
+      where: { id: ruleId },
+      include: {
+        _count: {
+          select: {
+            overrides: true,
+            violations: true,
+          },
+        },
+      },
+    })
+
+    if (!rule) {
+      return { success: false, error: 'Rule not found' }
+    }
+
+    return { success: true, rule }
+  } catch (error) {
+    console.error('[getRule] Error:', error)
+    return { success: false, error: 'Failed to fetch rule' }
   }
 }

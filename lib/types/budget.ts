@@ -39,11 +39,16 @@ export interface BudgetHeadingGroup {
 
 /**
  * Utility function to format currency from cents to display string
+ * @param cents - Amount in cents to format
+ * @param currency - Optional ISO 4217 currency code (defaults to CAD)
  */
-export function formatCurrency(cents: number): string {
-  return new Intl.NumberFormat('en-CA', {
+export function formatCurrency(cents: number, currency: string = 'CAD'): string {
+  // Determine locale based on currency
+  const locale = currency === 'USD' ? 'en-US' : 'en-CA'
+
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'CAD',
+    currency: currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(cents / 100)
