@@ -1,4 +1,5 @@
 import { AssociationSidebar } from '@/components/association-sidebar'
+import { MobileHeader } from '@/components/MobileHeader'
 
 interface AssociationLayoutProps {
   children: React.ReactNode
@@ -15,8 +16,11 @@ export default async function AssociationLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <MobileHeader title="Command Center">
+        <AssociationSidebar associationId={associationId} />
+      </MobileHeader>
       <AssociationSidebar associationId={associationId} />
-      <main className="ml-64">
+      <main className="ml-0 lg:ml-64">
         {children}
       </main>
     </div>

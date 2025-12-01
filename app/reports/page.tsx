@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth/server-auth'
 import { redirect } from 'next/navigation'
 import { AppSidebar } from '@/components/app-sidebar'
+import { MobileHeader } from '@/components/MobileHeader'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download, Receipt, TrendingUp, Lock } from 'lucide-react'
@@ -30,9 +31,12 @@ export default async function ReportsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
+      <MobileHeader>
+        <AppSidebar />
+      </MobileHeader>
       <AppSidebar />
 
-      <main className="ml-64 px-8 py-8">
+      <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-display-2 text-navy mb-2">Reports</h1>

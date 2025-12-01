@@ -172,7 +172,7 @@ export function NewIncomeForm() {
         </CardHeader>
 
         <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
             {/* Amount */}
             <div className="space-y-2">
               <Label htmlFor="amount">Amount *</Label>

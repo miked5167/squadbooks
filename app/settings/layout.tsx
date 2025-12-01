@@ -9,6 +9,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AppSidebar } from '@/components/app-sidebar'
+import { MobileHeader } from '@/components/MobileHeader'
 import Link from 'next/link'
 import {
   Building2,
@@ -60,9 +61,12 @@ export default async function SettingsLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <MobileHeader>
+        <AppSidebar />
+      </MobileHeader>
       <AppSidebar />
       {/* Header */}
-      <div className="ml-64 bg-white border-b border-gray-200">
+      <div className="ml-0 lg:ml-64 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -82,7 +86,7 @@ export default async function SettingsLayout({
       </div>
 
       {/* Navigation Tabs */}
-      <div className="ml-64 bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+      <div className="ml-0 lg:ml-64 bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex overflow-x-auto">
             <nav className="flex space-x-1 min-w-max py-2" aria-label="Settings navigation">
@@ -153,7 +157,7 @@ export default async function SettingsLayout({
       </div>
 
       {/* Content */}
-      <div className="ml-64 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="ml-0 lg:ml-64 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </div>
     </div>

@@ -12,6 +12,9 @@ import {
   Settings,
   Building2,
   User,
+  Shield,
+  CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -72,6 +75,25 @@ export function AssociationSidebar({ associationId }: AssociationSidebarProps) {
     },
   ]
 
+  // Governance navigation section
+  const governanceNavigation = [
+    {
+      name: 'Rules',
+      href: `/association/${associationId}/rules`,
+      icon: Shield
+    },
+    {
+      name: 'Compliance',
+      href: `/association/${associationId}/compliance`,
+      icon: CheckCircle2
+    },
+    {
+      name: 'Violations',
+      href: `/association/${associationId}/violations`,
+      icon: AlertTriangle
+    },
+  ]
+
   useEffect(() => {
     setMounted(true)
 
@@ -105,8 +127,8 @@ export function AssociationSidebar({ associationId }: AssociationSidebarProps) {
     fetchData()
   }, [associationId])
 
-  return (
-    <div className="flex flex-col h-screen w-64 bg-white border-r border-gray-200 fixed left-0 top-0 z-40">
+  const sidebarContent = (
+    <>
       {/* Logo & Association Name Section */}
       <div className="p-6 border-b border-gray-200">
         <Link href={`/association/${associationId}/overview`} className="flex items-center gap-2 mb-4">
@@ -130,7 +152,8 @@ export function AssociationSidebar({ associationId }: AssociationSidebarProps) {
 
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
-        <div className="space-y-1">
+        {/* Main Navigation */}
+        <div className="space-y-1 mb-6">
           {navigation.map((item) => {
             const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
             const Icon = item.icon
@@ -155,6 +178,41 @@ export function AssociationSidebar({ associationId }: AssociationSidebarProps) {
               </Link>
             )
           })}
+        </div>
+
+        {/* Governance Section */}
+        <div>
+          <div className="px-3 mb-2">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Governance
+            </p>
+          </div>
+          <div className="space-y-1">
+            {governanceNavigation.map((item) => {
+              const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-all duration-200 group',
+                    isActive
+                      ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white'
+                      : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      'w-5 h-5 transition-colors',
+                      isActive ? 'text-white' : 'text-gray-500 group-hover:text-orange-600'
+                    )}
+                  />
+                  <span>{item.name}</span>
+                </Link>
+              )
+            })}
+          </div>
         </div>
       </nav>
 
@@ -196,6 +254,20 @@ export function AssociationSidebar({ associationId }: AssociationSidebarProps) {
           )}
         </div>
       </div>
-    </div>
+    </>
+  )
+
+  return (
+    <>
+      {/* Desktop Sidebar - Hidden on mobile */}
+      <div className="hidden lg:flex flex-col h-screen w-64 bg-white border-r border-gray-200 fixed left-0 top-0 z-40">
+        {sidebarContent}
+      </div>
+
+      {/* Mobile Sidebar Content - Used by MobileHeader */}
+      <div className="lg:hidden flex flex-col h-full bg-white">
+        {sidebarContent}
+      </div>
+    </>
   )
 }

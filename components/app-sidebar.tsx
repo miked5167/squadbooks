@@ -73,8 +73,8 @@ export function AppSidebar() {
     fetchUserData()
   }, [])
 
-  return (
-    <div className="flex flex-col h-screen w-64 bg-slate-800 border-r border-slate-700 fixed left-0 top-0 z-40">
+  const sidebarContent = (
+    <>
       {/* Logo & Team Name Section */}
       <div className="p-6 border-b border-slate-700">
         <Link href="/dashboard" className="flex items-center gap-2 mb-4">
@@ -169,6 +169,20 @@ export function AppSidebar() {
           )}
         </div>
       </div>
-    </div>
+    </>
+  )
+
+  return (
+    <>
+      {/* Desktop Sidebar - Hidden on mobile */}
+      <div className="hidden lg:flex flex-col h-screen w-64 bg-slate-800 border-r border-slate-700 fixed left-0 top-0 z-40">
+        {sidebarContent}
+      </div>
+
+      {/* Mobile Sidebar Content - Used by MobileHeader */}
+      <div className="lg:hidden flex flex-col h-full bg-slate-800">
+        {sidebarContent}
+      </div>
+    </>
   )
 }

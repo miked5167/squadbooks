@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AppSidebar } from '@/components/app-sidebar'
+import { MobileHeader } from '@/components/MobileHeader'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CheckCircle, Loader2 } from 'lucide-react'
@@ -273,8 +274,11 @@ export default function ApprovalsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-cream">
+        <MobileHeader>
+          <AppSidebar />
+        </MobileHeader>
         <AppSidebar />
-        <main className="ml-64 px-8 py-8">
+        <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
           <div className="space-y-4">
             <Skeleton className="h-8 w-64" />
             <Skeleton className="h-12 w-full" />
@@ -287,9 +291,12 @@ export default function ApprovalsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
+      <MobileHeader>
+        <AppSidebar />
+      </MobileHeader>
       <AppSidebar />
 
-      <main className="ml-64 px-8 py-8">
+      <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-display-2 text-navy mb-2">Pending Approvals</h1>

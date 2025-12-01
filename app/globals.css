@@ -9,8 +9,8 @@
   --color-golden: #FFC414;
   --color-hockey-red: #E74C3C;
   --color-meadow: #7CB342;
-  --color-cream: #FFF9E8;
-  --color-lightblue: #EEF6FC;
+  --color-cream: #F8FAFC;
+  --color-lightblue: #F1F5F9;
 
   /* Custom Font Sizes */
   --font-size-display-1: 48px;
@@ -32,8 +32,8 @@
   --golden: #FFC414;
   --hockey-red: #E74C3C;
   --meadow: #7CB342;
-  --cream: #FFF9E8;
-  --lightblue: #EEF6FC;
+  --cream: #F8FAFC;
+  --lightblue: #F1F5F9;
 
   /* Theme variables */
   --radius: 0.625rem;

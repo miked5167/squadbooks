@@ -38,7 +38,11 @@ export async function GET(request: Request) {
     // Get budget overview
     const budgetOverview = await getBudgetOverview(user.teamId, season)
 
-    return NextResponse.json(budgetOverview)
+    // Include teamId in response for budget approval integration
+    return NextResponse.json({
+      ...budgetOverview,
+      teamId: user.teamId,
+    })
   } catch (error) {
     console.error('Failed to fetch budget:', error)
 

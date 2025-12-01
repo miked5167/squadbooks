@@ -32,28 +32,103 @@ export function BudgetAllocationChart({ groups, totalBudget, onSegmentClick }: B
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Horizontal stacked bar - Desktop */}
-        <div className="hidden md:block relative pb-24">
-          <div className="relative h-16 bg-navy/5 rounded-full overflow-hidden shadow-inner">
+        <div className="hidden md:block space-y-4">
+          {/* Flex-based segmented bar */}
+          <div className="relative">
+            <div className="flex h-16 bg-navy/5 rounded-full overflow-hidden shadow-inner">
+              {groups.map((group, index) => {
+                const isFirstSegment = index === 0
+                const isLastSegment = index === groups.length - 1
+                const isHovered = hoveredIndex === index
+
+                return (
+                  <div
+                    key={group.heading}
+                    className="relative transition-all duration-200 ease-out cursor-pointer group"
+                    style={{
+                      flexBasis: `${group.percentOfTotal}%`,
+                      flexGrow: 0,
+                      flexShrink: 0,
+                      minWidth: '40px',
+                      backgroundColor: group.color,
+                      opacity: isHovered ? 0.9 : 1,
+                      transform: isHovered ? 'scale(1.02)' : 'scale(1)',
+                      zIndex: isHovered ? 10 : 1,
+                      // Preserve rounded corners on outer edges
+                      borderTopLeftRadius: isFirstSegment ? '9999px' : '0',
+                      borderBottomLeftRadius: isFirstSegment ? '9999px' : '0',
+                      borderTopRightRadius: isLastSegment ? '9999px' : '0',
+                      borderBottomRightRadius: isLastSegment ? '9999px' : '0',
+                    }}
+                    onClick={() => handleSegmentClick(group.heading)}
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    onTouchStart={() => setHoveredIndex(index)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${group.heading}: ${formatCurrency(group.allocated)}, ${group.percentOfTotal.toFixed(1)}% of total budget. Click to view details.`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        handleSegmentClick(group.heading)
+                      }
+                    }}
+                  >
+                    {/* No labels inside segments - clean look */}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Tooltip - appears above the bar */}
+            {hoveredIndex !== null && (
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full z-20 pointer-events-none">
+                <div className="animate-in fade-in slide-in-from-bottom-2 duration-150">
+                  <div
+                    className="bg-white text-navy rounded-lg p-3 shadow-xl border-2"
+                    style={{ borderColor: groups[hoveredIndex].color }}
+                  >
+                    <div className="font-semibold text-sm mb-1 whitespace-nowrap">
+                      {groups[hoveredIndex].heading}
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-bold text-lg tabular-nums">
+                        {formatCurrency(groups[hoveredIndex].allocated)}
+                      </span>
+                      <span className="text-sm text-navy/60">
+                        ({groups[hoveredIndex].percentOfTotal.toFixed(1)}%)
+                      </span>
+                    </div>
+                  </div>
+                  {/* Tooltip arrow */}
+                  <div
+                    className="w-3 h-3 bg-white border-r-2 border-b-2 rotate-45 absolute left-1/2 -translate-x-1/2 -bottom-1.5"
+                    style={{ borderColor: groups[hoveredIndex].color }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Category chips - Desktop legend with amounts & percentages */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
             {groups.map((group, index) => {
-              const leftOffset = groups
-                .slice(0, index)
-                .reduce((sum, g) => sum + g.percentOfTotal, 0)
+              const isHovered = hoveredIndex === index
 
               return (
                 <div
                   key={group.heading}
-                  className="absolute top-0 h-full transition-all duration-300 ease-out cursor-pointer hover:opacity-90 hover:scale-105"
+                  className="flex items-start gap-3 p-3 rounded-lg border-2 transition-all duration-200 cursor-pointer"
                   style={{
-                    left: `${leftOffset}%`,
-                    width: `${group.percentOfTotal}%`,
-                    backgroundColor: group.color,
+                    backgroundColor: isHovered ? `${group.color}10` : 'transparent',
+                    borderColor: isHovered ? group.color : 'transparent',
                   }}
                   onClick={() => handleSegmentClick(group.heading)}
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   role="button"
                   tabIndex={0}
-                  aria-label={`${group.heading}: ${formatCurrency(group.allocated)}, ${group.percentOfTotal.toFixed(0)}% of total budget. Click to jump to category.`}
+                  aria-label={`${group.heading}: ${formatCurrency(group.allocated)}, ${group.percentOfTotal.toFixed(1)}% of budget`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -61,46 +136,31 @@ export function BudgetAllocationChart({ groups, totalBudget, onSegmentClick }: B
                     }
                   }}
                 >
-                  {/* Dollar amount label (only show if segment is wide enough) */}
-                  {group.percentOfTotal >= 5 && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold text-white drop-shadow-sm tabular-nums">
+                  {/* Colored dot indicator */}
+                  <div
+                    className="w-3 h-3 rounded-full flex-shrink-0 mt-1"
+                    style={{ backgroundColor: group.color }}
+                  />
+
+                  <div className="flex-1 min-w-0">
+                    {/* Category name */}
+                    <div className="text-sm font-semibold text-navy truncate mb-1">
+                      {group.heading}
+                    </div>
+
+                    {/* Amount and percentage */}
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-base font-bold text-navy tabular-nums">
                         {formatCurrency(group.allocated)}
                       </span>
+                      <span className="text-sm text-navy/60 font-medium">
+                        {group.percentOfTotal.toFixed(1)}%
+                      </span>
                     </div>
-                  )}
+                  </div>
                 </div>
               )
             })}
-          </div>
-
-          {/* Tooltip - Positioned absolutely to prevent layout shift */}
-          <div className="absolute top-full left-0 right-0 h-24 pointer-events-none">
-            {hoveredIndex !== null && (
-              <div className="mt-3 animate-in fade-in slide-in-from-top-1 duration-200 pointer-events-auto">
-                <div
-                  className="inline-block bg-navy text-white rounded-lg p-3 shadow-lg cursor-pointer"
-                  style={{ backgroundColor: groups[hoveredIndex].color }}
-                  onClick={() => handleSegmentClick(groups[hoveredIndex].heading)}
-                >
-                  <div className="font-semibold text-sm mb-1">{groups[hoveredIndex].heading}</div>
-                  <div className="text-xs space-y-0.5">
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-bold text-lg tabular-nums">
-                        {formatCurrency(groups[hoveredIndex].allocated)}
-                      </span>
-                      <span className="opacity-90">
-                        ({groups[hoveredIndex].percentOfTotal.toFixed(1)}%)
-                      </span>
-                    </div>
-                    <div className="opacity-90">
-                      Spent: {formatCurrency(groups[hoveredIndex].spent)}
-                    </div>
-                    <div className="opacity-75 italic mt-1">Click to jump to category</div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
@@ -130,38 +190,6 @@ export function BudgetAllocationChart({ groups, totalBudget, onSegmentClick }: B
                   {formatCurrency(group.spent)}
                 </div>
                 <div className="text-xs text-navy/60">spent</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Legend - Desktop */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {groups.map((group, index) => (
-            <div
-              key={group.heading}
-              className="flex items-center gap-2 p-2 rounded-lg hover:bg-cream/50 transition-colors cursor-pointer"
-              onClick={() => handleSegmentClick(group.heading)}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  handleSegmentClick(group.heading)
-                }
-              }}
-            >
-              <div
-                className="w-4 h-4 rounded-full flex-shrink-0"
-                style={{ backgroundColor: group.color }}
-              />
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium text-navy truncate">{group.heading}</div>
-                <div className="text-xs text-navy/60 tabular-nums">
-                  {group.percentOfTotal.toFixed(1)}%
-                </div>
               </div>
             </div>
           ))}

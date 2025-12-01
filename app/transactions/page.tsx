@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { AppSidebar } from '@/components/app-sidebar'
+import { MobileHeader } from '@/components/MobileHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -329,9 +330,12 @@ export default function TransactionsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
+      <MobileHeader>
+        <AppSidebar />
+      </MobileHeader>
       <AppSidebar />
 
-      <main className="ml-64 px-8 py-8">
+      <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
         {/* Page Header */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>

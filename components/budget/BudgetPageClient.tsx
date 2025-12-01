@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -9,7 +10,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { TrendingUp, AlertTriangle, Plus, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { TrendingUp, AlertTriangle, Plus, Loader2, CheckCircle, AlertCircle, ClipboardList } from 'lucide-react'
 import { toast } from 'sonner'
 import { BudgetHealthSummary } from '@/components/dashboard/BudgetHealthSummary'
 import { BudgetAllocationChart } from '@/components/dashboard/BudgetAllocationChart'
@@ -17,11 +19,14 @@ import { CategoryGroup } from '@/components/budget/CategoryGroup'
 import { BudgetFilters, type FilterStatus } from '@/components/budget/BudgetFilters'
 import { CashPositionCards } from '@/components/budget/CashPositionCards'
 import { BudgetPositionCards } from '@/components/budget/BudgetPositionCards'
-import { ProjectedSeasonEndCard } from '@/components/budget/ProjectedSeasonEndCard'
+import { RequestApprovalDialog } from '@/components/budget/RequestApprovalDialog'
 import type { BudgetSummary, BudgetHeadingGroup } from '@/lib/types/budget'
 import { groupCategoriesByHeading, getBudgetStatus, type CategoryWithHeading } from '@/lib/utils/budgetStatus'
 
+type BudgetViewMode = 'budget' | 'cash'
+
 interface BudgetData {
+  teamId: string
   season: string
   totalBudget: number
   totalAllocated: number
@@ -78,6 +83,9 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const [showSpendingOnly, setShowSpendingOnly] = useState(false)
+
+  // View mode state - Budget View is default
+  const [budgetViewMode, setBudgetViewMode] = useState<BudgetViewMode>('budget')
 
   // Financial summary state
   const [financialSummary, setFinancialSummary] = useState<{
@@ -410,66 +418,120 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
 
   return (
     <>
-      {/* Page Header */}
+      {/* Page Header with View Toggle */}
       <div className="mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
             <h1 className="text-display-2 text-navy mb-2">Budget</h1>
             <p className="text-base sm:text-lg text-navy/70">{season || '2024-25 Season'}</p>
           </div>
           {isTreasurer && (
-            <Button
-              className="bg-navy hover:bg-navy-medium text-white"
-              onClick={() => setAddCategoryDialogOpen(true)}
-            >
-              <Plus className="mr-2 w-4 h-4" />
-              Add Category
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Link href="/budget/approvals">
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <ClipboardList className="mr-2 w-4 h-4" />
+                  View Approvals
+                </Button>
+              </Link>
+              <RequestApprovalDialog
+                teamId={budgetData?.teamId || ''}
+                budgetTotal={budgetData?.totalAllocated || 0}
+              />
+              <Button
+                className="bg-navy hover:bg-navy-medium text-white"
+                onClick={() => setAddCategoryDialogOpen(true)}
+              >
+                <Plus className="mr-2 w-4 h-4" />
+                Add Category
+              </Button>
+            </div>
           )}
+        </div>
+
+        {/* View Mode Toggle */}
+        <div className="flex items-center gap-3">
+          <ToggleGroup
+            type="single"
+            value={budgetViewMode}
+            onValueChange={(value) => {
+              if (value) setBudgetViewMode(value as BudgetViewMode)
+            }}
+            className="inline-flex bg-cream rounded-lg p-1 border border-navy/10"
+            role="tablist"
+            aria-label="Budget view mode"
+          >
+            <ToggleGroupItem
+              value="budget"
+              className="px-6 py-2 rounded-md text-sm font-semibold transition-all data-[state=on]:bg-navy data-[state=on]:text-white data-[state=off]:text-navy/70 data-[state=off]:hover:text-navy"
+              role="tab"
+              aria-selected={budgetViewMode === 'budget'}
+              aria-controls="budget-view-content"
+            >
+              Budget View
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="cash"
+              className="px-6 py-2 rounded-md text-sm font-semibold transition-all data-[state=on]:bg-navy data-[state=on]:text-white data-[state=off]:text-navy/70 data-[state=off]:hover:text-navy"
+              role="tab"
+              aria-selected={budgetViewMode === 'cash'}
+              aria-controls="cash-view-content"
+            >
+              Cash View
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
 
-      {/* CASH POSITION - Top Row */}
-      {financialSummary && (
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-navy/70 mb-2 uppercase tracking-wide">Cash Position</h2>
-          <CashPositionCards
-            totalIncome={financialSummary.totalIncome}
-            totalExpenses={financialSummary.totalExpenses}
-            netPosition={financialSummary.netPosition}
-          />
+      {/* BUDGET VIEW - Shows Budget Position */}
+      {budgetViewMode === 'budget' && (
+        <div id="budget-view-content" role="tabpanel" aria-labelledby="budget-view-tab">
+          {/* BUDGET POSITION */}
+          <div className="mb-6">
+            <h2 className="text-base font-semibold text-navy/70 mb-1 uppercase tracking-wide">Budget Position</h2>
+            <p className="text-sm text-navy/60 mb-3">
+              Planned season budget and how your team is tracking against it.
+            </p>
+            <BudgetPositionCards
+              totalBudgeted={totalAllocated}
+              totalSpent={totalSpent}
+              totalRemaining={totalRemaining}
+            />
+          </div>
+
+          {/* Budget Health Summary */}
+          <div className="mb-8">
+            <BudgetHealthSummary
+              summary={budgetSummary}
+              onStatusClick={(status) => {
+                setFilterStatus(status)
+                // Scroll to category breakdown section
+                const categorySection = document.querySelector('[data-category-breakdown]')
+                if (categorySection) {
+                  categorySection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+              }}
+            />
+          </div>
         </div>
       )}
 
-      {/* BUDGET POSITION - Second Row */}
-      <div className="mb-6">
-        <h2 className="text-base font-semibold text-navy/70 mb-2 uppercase tracking-wide">Budget Position</h2>
-        <BudgetPositionCards
-          totalBudgeted={totalAllocated}
-          totalSpent={totalSpent}
-          totalRemaining={totalRemaining}
-        />
-      </div>
-
-      {/* Budget Health Summary and Projected Season-End */}
-      <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <BudgetHealthSummary
-            summary={budgetSummary}
-            onStatusClick={(status) => {
-              setFilterStatus(status)
-              // Scroll to category breakdown section
-              const categorySection = document.querySelector('[data-category-breakdown]')
-              if (categorySection) {
-                categorySection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-              }
-            }}
-          />
+      {/* CASH VIEW - Shows Cash Position */}
+      {budgetViewMode === 'cash' && financialSummary && (
+        <div id="cash-view-content" role="tabpanel" aria-labelledby="cash-view-tab">
+          {/* CASH POSITION */}
+          <div className="mb-8">
+            <h2 className="text-base font-semibold text-navy/70 mb-1 uppercase tracking-wide">Cash Position</h2>
+            <p className="text-sm text-navy/60 mb-3">
+              Actual money received and spent so far this season.
+            </p>
+            <CashPositionCards
+              totalIncome={financialSummary.totalIncome}
+              totalExpenses={financialSummary.totalExpenses}
+              netPosition={financialSummary.netPosition}
+            />
+          </div>
         </div>
-        <div>
-          <ProjectedSeasonEndCard projectedSurplusDeficit={budgetSummary.projectedSurplusDeficit} />
-        </div>
-      </div>
+      )}
 
       {/* Budget Allocation Chart */}
       <div className="mb-8">

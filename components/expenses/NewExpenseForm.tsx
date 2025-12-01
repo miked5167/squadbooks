@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
-import { ArrowLeft, Upload, Loader2 } from 'lucide-react'
+import { ArrowLeft, Upload, Loader2, AlertCircle, CheckCircle2, Info } from 'lucide-react'
+import { validateTransaction } from '@/app/transactions/actions'
 
 export function NewExpenseForm() {
   const router = useRouter()
@@ -26,6 +27,13 @@ export function NewExpenseForm() {
   })
 
   const [receiptFile, setReceiptFile] = useState<File | null>(null)
+
+  // Rule validation state
+  const [validationLoading, setValidationLoading] = useState(false)
+  const [validationResult, setValidationResult] = useState<{
+    requiredApprovals: number
+    tier: { min: number; max: number; approvals: number } | null
+  } | null>(null)
 
   // Fetch expense categories on mount
   useEffect(() => {
@@ -49,6 +57,33 @@ export function NewExpenseForm() {
     }
     fetchCategories()
   }, [])
+
+  // Validate transaction when amount changes
+  useEffect(() => {
+    const amount = parseFloat(formData.amount)
+    if (!isNaN(amount) && amount > 0) {
+      const debounceTimeout = setTimeout(async () => {
+        setValidationLoading(true)
+        try {
+          const result = await validateTransaction(amount, 'EXPENSE')
+          if (result.success) {
+            setValidationResult({
+              requiredApprovals: result.requiredApprovals,
+              tier: result.tier,
+            })
+          }
+        } catch (error) {
+          console.error('Validation error:', error)
+        } finally {
+          setValidationLoading(false)
+        }
+      }, 500) // Debounce for 500ms
+
+      return () => clearTimeout(debounceTimeout)
+    } else {
+      setValidationResult(null)
+    }
+  }, [formData.amount])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -169,7 +204,7 @@ export function NewExpenseForm() {
         </CardHeader>
 
         <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
             {/* Amount */}
             <div className="space-y-2">
               <Label htmlFor="amount">Amount *</Label>
@@ -189,9 +224,45 @@ export function NewExpenseForm() {
                 />
               </div>
               <p className="text-sm text-muted-foreground">
-                Expenses over $200 require president approval
+                Enter the expense amount
               </p>
             </div>
+
+            {/* Approval Requirements Display */}
+            {validationLoading && formData.amount && (
+              <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                <span className="text-sm text-blue-900">Checking approval requirements...</span>
+              </div>
+            )}
+
+            {validationResult && validationResult.requiredApprovals > 0 && (
+              <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <Info className="w-5 h-5 text-orange-600 mt-0.5" />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-orange-900 mb-1">
+                      Approval Required
+                    </h4>
+                    <p className="text-sm text-orange-800 mb-2">
+                      This expense requires <strong>{validationResult.requiredApprovals} approval{validationResult.requiredApprovals > 1 ? 's' : ''}</strong>
+                    </p>
+                    {validationResult.tier && (
+                      <p className="text-xs text-orange-700">
+                        Amount range: ${validationResult.tier.min.toLocaleString()} - ${validationResult.tier.max === 999999 ? '∞' : validationResult.tier.max.toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {validationResult && validationResult.requiredApprovals === 0 && (
+              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                <span className="text-sm text-green-900">No approval required for this amount</span>
+              </div>
+            )}
 
             {/* Category */}
             <div className="space-y-2">

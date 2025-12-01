@@ -421,6 +421,9 @@ model Team {
   // GTHL Signing Authority relations (Phase 1.5)
   signingAuthorities TeamSigningAuthority[]
 
+  // Budget Approval relations
+  budgetApprovals    BudgetApproval[]
+
   @@map("teams")
 }
 
@@ -571,6 +574,8 @@ model User {
   seasonClosures         SeasonClosure[] @relation("SeasonClosureSubmitter")
   notificationSettings   NotificationSettings[]
   signingAuthorities     TeamSigningAuthority[]
+  budgetApprovalsCreated BudgetApproval[] @relation("BudgetApprovalCreator")
+  acknowledgments        Acknowledgment[] @relation("ParentAcknowledgments")
 
   @@index([teamId])
   @@index([clerkId])
@@ -970,4 +975,79 @@ model SeasonClosure {
   @@index([teamId])
   @@index([status])
   @@map("season_closures")
+}
+
+// ============================================
+// BUDGET APPROVAL & ACKNOWLEDGMENT
+// ============================================
+
+enum BudgetApprovalType {
+  INITIAL          // Start of season budget
+  REVISION         // Mid-season budget change
+  REPORT           // Monthly/quarterly report acknowledgment
+}
+
+enum BudgetApprovalStatus {
+  PENDING          // Waiting for acknowledgments
+  COMPLETED        // Required threshold met
+  EXPIRED          // Deadline passed without completion
+  CANCELLED        // Treasurer cancelled request
+}
+
+model BudgetApproval {
+  id              String   @id @default(cuid())
+  teamId          String
+  season          String   // "2025-2026"
+
+  // What's being approved
+  budgetTotal     Decimal  @db.Decimal(10, 2)
+  approvalType    BudgetApprovalType
+  description     String?  @db.Text // "Initial Season Budget" or "Mid-Season Revision"
+
+  // Tracking
+  requiredCount   Int      // Number of families that must acknowledge/approve
+  acknowledgedCount Int    @default(0)
+  status          BudgetApprovalStatus @default(PENDING)
+
+  // Metadata
+  createdBy       String   // Treasurer's user ID
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+  expiresAt       DateTime?  // Optional deadline
+
+  // Relations
+  team            Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  creator         User     @relation("BudgetApprovalCreator", fields: [createdBy], references: [id])
+  acknowledgments Acknowledgment[]
+
+  @@index([teamId, status])
+  @@index([createdAt])
+  @@map("budget_approvals")
+}
+
+model Acknowledgment {
+  id                String   @id @default(cuid())
+  budgetApprovalId  String
+  userId            String   // Parent's user ID
+
+  // Family info (denormalized for reporting)
+  familyName        String
+  email             String
+
+  // Acknowledgment details
+  acknowledged      Boolean  @default(false)
+  acknowledgedAt    DateTime?
+
+  // Audit trail (IMMUTABLE)
+  viewedAt          DateTime @default(now())
+  ipAddress         String?
+  userAgent         String?
+
+  // Relations
+  budgetApproval    BudgetApproval @relation(fields: [budgetApprovalId], references: [id], onDelete: Cascade)
+  user              User     @relation("ParentAcknowledgments", fields: [userId], references: [id])
+
+  @@unique([budgetApprovalId, userId])  // One acknowledgment per parent per approval
+  @@index([budgetApprovalId])
+  @@map("acknowledgments")
 }

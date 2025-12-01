@@ -2,12 +2,14 @@ import { auth } from '@/lib/auth/server-auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { AppSidebar } from '@/components/app-sidebar'
+import { MobileHeader } from '@/components/MobileHeader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { ArrowUpRight, Plus, DollarSign, List, TrendingUp, TrendingDown, Clock } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getFinancialSummary } from '@/lib/db/financial-summary'
+import { ComplianceWidget } from '@/components/dashboard/ComplianceWidget'
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -50,10 +52,13 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-cream">
+      <MobileHeader>
+        <AppSidebar />
+      </MobileHeader>
       <AppSidebar />
 
       {/* Main Content */}
-      <main className="ml-64 px-8 py-8">
+      <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-display-2 text-navy mb-2">Dashboard</h1>
@@ -175,8 +180,9 @@ export default async function DashboardPage() {
           </Card>
         </div>
 
-        {/* Pending Approvals */}
-        <div className="mb-8">
+        {/* Pending Approvals & Compliance - Side by Side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Pending Approvals */}
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
               <CardDescription className="text-navy/60">Pending Approvals</CardDescription>
@@ -197,6 +203,9 @@ export default async function DashboardPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Compliance Widget */}
+          <ComplianceWidget teamId={user.teamId} />
         </div>
 
         {/* Budget Overview Link */}
