@@ -30,6 +30,7 @@ import { RequiredExpensesConfig } from "./rule-configs/RequiredExpensesConfig"
 import { SigningAuthorityConfig } from "./rule-configs/SigningAuthorityConfig"
 import { Badge } from "@/components/ui/badge"
 import { RuleReviewSummary } from "./RuleReviewSummary"
+import { RuleFilters } from "./RuleFilters"
 
 interface RuleFormProps {
   associationId: string
@@ -39,7 +40,7 @@ interface RuleFormProps {
   existingRule?: any // For editing
 }
 
-type FormStep = "type" | "basic" | "config" | "review"
+type FormStep = "type" | "basic" | "filters" | "config" | "review"
 
 export function RuleForm({
   associationId,
@@ -55,6 +56,7 @@ export function RuleForm({
     existingRule?.ruleType || null
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [allowSubmit, setAllowSubmit] = useState(false)
 
   // Initialize form with default values based on rule type
   const getDefaultValues = () => {
@@ -126,6 +128,7 @@ export function RuleForm({
       // Reset to fresh state for new rule
       setStep("type")
       setSelectedType(null)
+      setAllowSubmit(false)
       form.reset({
         name: "",
         description: "",
@@ -183,19 +186,28 @@ export function RuleForm({
 
   const handleNext = () => {
     if (step === "type") setStep("basic")
-    else if (step === "basic") setStep("config")
+    else if (step === "basic") setStep("filters")
+    else if (step === "filters") setStep("config")
     else if (step === "config") setStep("review")
   }
 
   const handleBack = () => {
     if (step === "review") setStep("config")
-    else if (step === "config") setStep("basic")
+    else if (step === "config") setStep("filters")
+    else if (step === "filters") setStep("basic")
     else if (step === "basic") setStep("type")
   }
 
   const onSubmit = async (data: any) => {
+    // Only submit if explicitly allowed (user clicked Create Rule button)
+    if (!allowSubmit) {
+      console.log('Submit prevented - not on review step or button not clicked')
+      return
+    }
+
     try {
       setIsSubmitting(true)
+      setAllowSubmit(false) // Reset flag
 
       const payload = {
         associationId,
@@ -207,6 +219,9 @@ export function RuleForm({
         approvalTiers: data.approvalTiers || null,
         requiredExpenses: data.requiredExpenses || null,
         signingAuthorityComposition: data.signingAuthorityComposition || null,
+        teamTypeFilter: data.teamTypeFilter || null,
+        ageDivisionFilter: data.ageDivisionFilter || null,
+        competitiveLevelFilter: data.competitiveLevelFilter || null,
       }
 
       let result
@@ -297,6 +312,13 @@ export function RuleForm({
           </div>
         )
 
+      case "filters":
+        return (
+          <div className="py-4">
+            <RuleFilters form={form} />
+          </div>
+        )
+
       case "config":
         if (!selectedType) return null
 
@@ -343,6 +365,9 @@ export function RuleForm({
                   approvalTiers={values.approvalTiers}
                   requiredExpenses={values.requiredExpenses}
                   signingAuthorityComposition={values.signingAuthorityComposition}
+                  teamTypeFilter={values.teamTypeFilter}
+                  ageDivisionFilter={values.ageDivisionFilter}
+                  competitiveLevelFilter={values.competitiveLevelFilter}
                   currency={associationCurrency}
                 />
               </div>
@@ -361,6 +386,8 @@ export function RuleForm({
         return "Select Rule Type"
       case "basic":
         return "Basic Information"
+      case "filters":
+        return "Team Targeting"
       case "config":
         return "Configure Rule"
       case "review":
@@ -376,6 +403,8 @@ export function RuleForm({
         return "Choose the type of governance rule you want to create"
       case "basic":
         return "Provide a name and description for this rule"
+      case "filters":
+        return "Select which teams this rule applies to (optional)"
       case "config":
         return "Configure the specific parameters for this rule"
       case "review":
@@ -388,6 +417,7 @@ export function RuleForm({
   const canProceed = () => {
     if (step === "type") return selectedType !== null
     if (step === "basic") return form.getValues("name").length > 0
+    if (step === "filters") return true // Filters are optional
     if (step === "config") return true
     return false
   }
@@ -401,7 +431,21 @@ export function RuleForm({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              // Only submit if on review step
+              if (step === "review") {
+                form.handleSubmit(onSubmit)(e)
+              }
+            }}
+            onKeyDown={(e) => {
+              // Prevent Enter key from submitting unless on review step
+              if (e.key === 'Enter' && step !== 'review') {
+                e.preventDefault()
+              }
+            }}
+          >
             {renderStepContent()}
 
             <DialogFooter className="gap-2 sm:gap-0">
@@ -427,7 +471,11 @@ export function RuleForm({
                   <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
               ) : (
-                <Button type="submit" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  onClick={() => setAllowSubmit(true)}
+                >
                   {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                   {existingRule ? "Update Rule" : "Create Rule"}
                 </Button>

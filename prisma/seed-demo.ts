@@ -237,6 +237,9 @@ async function main() {
   const dashboardConfig = await createDashboardConfig(association.id);
   console.log(`✅ Dashboard config created`);
 
+  const rules = await createAssociationRules(association.id);
+  console.log(`✅ ${rules.length} association rules created`);
+
   let totalPlayers = 0;
   let totalTransactions = 0;
   let totalAlerts = 0;
@@ -525,6 +528,16 @@ async function wipeDemoData() {
     if (delDashboardConfig.count > 0) console.log(`   ✓ Deleted ${delDashboardConfig.count} dashboard configs`);
   }
 
+  // 18.5. AssociationRules (references Association)
+  if (demoAssociation) {
+    const delAssociationRules = await prisma.associationRule.deleteMany({
+      where: {
+        associationId: demoAssociation.id,
+      },
+    });
+    if (delAssociationRules.count > 0) console.log(`   ✓ Deleted ${delAssociationRules.count} association rules`);
+  }
+
   // 19. AssociationTeams (references Association, Team)
   if (demoAssociation) {
     const delAssocTeams = await prisma.associationTeam.deleteMany({
@@ -626,6 +639,178 @@ async function createDashboardConfig(associationId: string) {
       inactivityWarningDays: 21,
     },
   });
+}
+
+// ============================================
+// STEP 2.5: CREATE ASSOCIATION RULES
+// ============================================
+
+async function createAssociationRules(associationId: string) {
+  const rules = [];
+
+  // Rule 1: Max Budget for House League teams
+  const houseBudgetRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'MAX_BUDGET',
+      name: 'House League Budget Cap',
+      description: 'Maximum total budget for House League teams',
+      isActive: true,
+      config: {
+        maxAmount: 15000,
+        currency: 'CAD',
+      },
+      teamTypeFilter: ['HOUSE_LEAGUE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+  });
+  rules.push(houseBudgetRule);
+
+  // Rule 2: Max Budget for Representative teams (AA and above)
+  const repBudgetRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'MAX_BUDGET',
+      name: 'Rep Teams (AA+) Budget Cap',
+      description: 'Maximum total budget for Representative teams at AA level and above',
+      isActive: true,
+      config: {
+        maxAmount: 25000,
+        currency: 'CAD',
+      },
+      teamTypeFilter: ['REPRESENTATIVE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: ['AA', 'AAA'],
+    },
+  });
+  rules.push(repBudgetRule);
+
+  // Rule 3: Max Assessment for all teams (U13 and younger)
+  const youngAssessmentRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'MAX_ASSESSMENT',
+      name: 'U13 and Under Assessment Cap',
+      description: 'Maximum registration fee per player for U13 and younger divisions',
+      isActive: true,
+      config: {
+        maxAmount: 2500,
+        currency: 'CAD',
+      },
+      teamTypeFilter: null,
+      ageDivisionFilter: ['U7', 'U9', 'U11', 'U13'],
+      competitiveLevelFilter: null,
+    },
+  });
+  rules.push(youngAssessmentRule);
+
+  // Rule 4: Max Assessment for older divisions
+  const olderAssessmentRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'MAX_ASSESSMENT',
+      name: 'U15+ Assessment Cap',
+      description: 'Maximum registration fee per player for U15 and U18 divisions',
+      isActive: true,
+      config: {
+        maxAmount: 3500,
+        currency: 'CAD',
+      },
+      teamTypeFilter: null,
+      ageDivisionFilter: ['U15', 'U18'],
+      competitiveLevelFilter: null,
+    },
+  });
+  rules.push(olderAssessmentRule);
+
+  // Rule 5: Max Buyout for all teams
+  const buyoutRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'MAX_BUYOUT',
+      name: 'Fundraising Buyout Cap',
+      description: 'Maximum fundraising buyout amount per family',
+      isActive: true,
+      config: {
+        maxAmount: 500,
+        currency: 'CAD',
+      },
+      teamTypeFilter: null,
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+  });
+  rules.push(buyoutRule);
+
+  // Rule 6: Zero Balance for all Rep teams
+  const zeroBalanceRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'ZERO_BALANCE',
+      name: 'Rep Teams Zero Balance Requirement',
+      description: 'All Representative team budgets must balance to zero',
+      isActive: true,
+      config: {
+        tolerance: 50,
+        requireBalancedBudget: true,
+        currency: 'CAD',
+      },
+      teamTypeFilter: ['REPRESENTATIVE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+  });
+  rules.push(zeroBalanceRule);
+
+  // Rule 7: Approval Tiers for all teams
+  const approvalTiersRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'APPROVAL_TIERS',
+      name: 'Expense Approval Requirements',
+      description: 'Approval requirements based on transaction amount',
+      isActive: true,
+      config: {
+        currency: 'CAD',
+      },
+      approvalTiers: [
+        { min: 0, max: 500, approvals: 1 },
+        { min: 500, max: 2000, approvals: 2 },
+        { min: 2000, max: 999999, approvals: 3 },
+      ],
+      teamTypeFilter: null,
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+  });
+  rules.push(approvalTiersRule);
+
+  // Rule 8: Required Expenses for Rep teams
+  const requiredExpensesRule = await prisma.associationRule.create({
+    data: {
+      associationId,
+      ruleType: 'REQUIRED_EXPENSES',
+      name: 'Rep Teams Mandatory Categories',
+      description: 'Required budget categories for all Representative teams',
+      isActive: true,
+      config: {
+        enforceStrict: true,
+      },
+      requiredExpenses: [
+        'Ice Time & Facilities',
+        'Equipment & Jerseys',
+        'Coaching & Officials',
+        'League & Registration',
+      ],
+      teamTypeFilter: ['REPRESENTATIVE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+  });
+  rules.push(requiredExpensesRule);
+
+  return rules;
 }
 
 // ============================================

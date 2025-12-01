@@ -1,5 +1,39 @@
 import { z } from "zod"
 
+// Team categorization enums (must match Prisma schema)
+export const TeamTypeEnum = z.enum([
+  "HOUSE_LEAGUE",
+  "REPRESENTATIVE",
+  "ADULT_RECREATIONAL",
+  "OTHER",
+])
+
+export const AgeDivisionEnum = z.enum([
+  "U7",
+  "U9",
+  "U11",
+  "U13",
+  "U15",
+  "U18",
+  "OTHER",
+])
+
+export const CompetitiveLevelEnum = z.enum([
+  "AAA",
+  "AA",
+  "A",
+  "BB",
+  "B",
+  "MD",
+  "HOUSE_RECREATIONAL",
+  "NOT_APPLICABLE",
+  "OTHER",
+])
+
+export type TeamType = z.infer<typeof TeamTypeEnum>
+export type AgeDivision = z.infer<typeof AgeDivisionEnum>
+export type CompetitiveLevel = z.infer<typeof CompetitiveLevelEnum>
+
 // Rule type enum
 export const RuleTypeEnum = z.enum([
   "MAX_BUDGET",
@@ -18,6 +52,11 @@ const baseRuleSchema = z.object({
   name: z.string().min(1, "Name is required").max(255, "Name is too long"),
   description: z.string().optional(),
   isActive: z.boolean().default(true),
+  // Category-level targeting (Phase 3.2)
+  // If undefined or empty array, rule applies to ALL teams
+  teamTypeFilter: z.array(TeamTypeEnum).optional(),
+  ageDivisionFilter: z.array(AgeDivisionEnum).optional(),
+  competitiveLevelFilter: z.array(CompetitiveLevelEnum).optional(),
 })
 
 // MAX_BUDGET rule configuration

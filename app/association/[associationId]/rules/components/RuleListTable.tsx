@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Shield, CheckCircle2, XCircle, Edit, Trash2, Users } from 'lucide-react'
+import { Shield, CheckCircle2, XCircle, Edit, Trash2, Users, Target } from 'lucide-react'
 import { toggleRuleActive, deleteRule } from '../actions'
 import { useRouter } from 'next/navigation'
 import { RuleForm } from './RuleForm'
+import { Badge } from '@/components/ui/badge'
+import { TeamType, AgeDivision, CompetitiveLevel } from '@/lib/validations/rule-schemas'
 
 interface Rule {
   id: string
@@ -15,6 +17,10 @@ interface Rule {
   config: any
   approvalTiers: any
   requiredExpenses: any
+  signingAuthorityComposition: any
+  teamTypeFilter: TeamType[] | null
+  ageDivisionFilter: AgeDivision[] | null
+  competitiveLevelFilter: CompetitiveLevel[] | null
   createdAt: Date
   _count: {
     overrides: number
@@ -26,6 +32,35 @@ interface RuleListTableProps {
   rules: Rule[]
   associationId: string
   associationCurrency: string
+}
+
+const teamTypeLabels: Record<TeamType, string> = {
+  HOUSE_LEAGUE: "House League",
+  REPRESENTATIVE: "Rep/Travel",
+  ADULT_RECREATIONAL: "Adult Rec",
+  OTHER: "Other",
+}
+
+const ageDivisionLabels: Record<AgeDivision, string> = {
+  U7: "U7",
+  U9: "U9",
+  U11: "U11",
+  U13: "U13",
+  U15: "U15",
+  U18: "U18",
+  OTHER: "Other",
+}
+
+const competitiveLevelLabels: Record<CompetitiveLevel, string> = {
+  AAA: "AAA",
+  AA: "AA",
+  A: "A",
+  BB: "BB",
+  B: "B",
+  MD: "MD",
+  HOUSE_RECREATIONAL: "House/Rec",
+  NOT_APPLICABLE: "N/A",
+  OTHER: "Other",
 }
 
 export function RuleListTable({ rules, associationId, associationCurrency }: RuleListTableProps) {
@@ -41,6 +76,7 @@ export function RuleListTable({ rules, associationId, associationCurrency }: Rul
       ZERO_BALANCE: { label: 'Zero Balance', color: 'bg-green-100 text-green-800' },
       APPROVAL_TIERS: { label: 'Approval Tiers', color: 'bg-yellow-100 text-yellow-800' },
       REQUIRED_EXPENSES: { label: 'Required Expenses', color: 'bg-indigo-100 text-indigo-800' },
+      SIGNING_AUTHORITY_COMPOSITION: { label: 'Signing Authority', color: 'bg-teal-100 text-teal-800' },
     }
     return types[ruleType] || { label: ruleType, color: 'bg-gray-100 text-gray-800' }
   }
@@ -59,9 +95,60 @@ export function RuleListTable({ rules, associationId, associationCurrency }: Rul
       case 'REQUIRED_EXPENSES':
         const expenses = rule.requiredExpenses as string[]
         return expenses ? `${expenses.length} categories required` : 'Not configured'
+      case 'SIGNING_AUTHORITY_COMPOSITION':
+        return 'GTHL compliance'
       default:
         return 'See details'
     }
+  }
+
+  const getFilterDisplay = (rule: Rule) => {
+    const hasFilters =
+      (rule.teamTypeFilter && rule.teamTypeFilter.length > 0) ||
+      (rule.ageDivisionFilter && rule.ageDivisionFilter.length > 0) ||
+      (rule.competitiveLevelFilter && rule.competitiveLevelFilter.length > 0)
+
+    if (!hasFilters) {
+      return (
+        <div className="flex items-center gap-1.5">
+          <Target className="w-3.5 h-3.5 text-gray-400" />
+          <span className="text-sm text-gray-600">All Teams</span>
+        </div>
+      )
+    }
+
+    const allFilters = [
+      ...(rule.teamTypeFilter || []).map(type => teamTypeLabels[type]),
+      ...(rule.ageDivisionFilter || []).map(div => ageDivisionLabels[div]),
+      ...(rule.competitiveLevelFilter || []).map(level => competitiveLevelLabels[level]),
+    ]
+
+    if (allFilters.length === 0) {
+      return (
+        <div className="flex items-center gap-1.5">
+          <Target className="w-3.5 h-3.5 text-gray-400" />
+          <span className="text-sm text-gray-600">All Teams</span>
+        </div>
+      )
+    }
+
+    // Show first 2 badges, then "+X more" if there are more
+    const displayFilters = allFilters.slice(0, 2)
+    const remainingCount = allFilters.length - 2
+
+    return (
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <Target className="w-3.5 h-3.5 text-blue-600" />
+        {displayFilters.map((label, index) => (
+          <Badge key={index} variant="outline" className="text-xs">
+            {label}
+          </Badge>
+        ))}
+        {remainingCount > 0 && (
+          <span className="text-xs text-gray-500">+{remainingCount} more</span>
+        )}
+      </div>
+    )
   }
 
   const handleToggleActive = async (ruleId: string, currentState: boolean) => {
@@ -121,6 +208,9 @@ export function RuleListTable({ rules, associationId, associationCurrency }: Rul
               Details
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Applies To
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -151,6 +241,9 @@ export function RuleListTable({ rules, associationId, associationCurrency }: Rul
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm text-gray-900">{getRuleDetails(rule)}</p>
+                </td>
+                <td className="px-6 py-4">
+                  {getFilterDisplay(rule)}
                 </td>
                 <td className="px-6 py-4">
                   <button

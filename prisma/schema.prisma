@@ -233,6 +233,12 @@ model AssociationRule {
   signingAuthorityComposition Json? @map("signing_authority_composition")
   // e.g., { "min_team_officials": 1, "min_parent_representatives": 2, "min_total": 3, "require_finance_experience": true }
 
+  // Category-Level Rule Targeting (Phase 3.2)
+  // If null or empty array, rule applies to ALL teams. If specified, rule only applies to teams matching the filter.
+  teamTypeFilter         Json? @map("team_type_filter")          // e.g., ["HOUSE_LEAGUE", "REPRESENTATIVE"]
+  ageDivisionFilter      Json? @map("age_division_filter")       // e.g., ["U13", "U15", "U18"]
+  competitiveLevelFilter Json? @map("competitive_level_filter")  // e.g., ["AA", "AAA"]
+
   // Metadata
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

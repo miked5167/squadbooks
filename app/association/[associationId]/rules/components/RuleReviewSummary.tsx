@@ -1,8 +1,9 @@
 "use client"
 
-import { RuleType } from "@/lib/validations/rule-schemas"
+import { RuleType, TeamType, AgeDivision, CompetitiveLevel } from "@/lib/validations/rule-schemas"
 import { getCurrencySymbol } from "@/lib/utils/currency"
-import { DollarSign, Users, Gift, Scale, CheckCircle, List, Shield } from "lucide-react"
+import { DollarSign, Users, Gift, Scale, CheckCircle, List, Shield, Target } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 interface RuleReviewSummaryProps {
   ruleType: RuleType
@@ -10,7 +11,39 @@ interface RuleReviewSummaryProps {
   approvalTiers?: any[]
   requiredExpenses?: string[]
   signingAuthorityComposition?: any
+  teamTypeFilter?: TeamType[]
+  ageDivisionFilter?: AgeDivision[]
+  competitiveLevelFilter?: CompetitiveLevel[]
   currency: string
+}
+
+const teamTypeLabels: Record<TeamType, string> = {
+  HOUSE_LEAGUE: "House League",
+  REPRESENTATIVE: "Rep/Travel",
+  ADULT_RECREATIONAL: "Adult Rec",
+  OTHER: "Other",
+}
+
+const ageDivisionLabels: Record<AgeDivision, string> = {
+  U7: "U7",
+  U9: "U9",
+  U11: "U11",
+  U13: "U13",
+  U15: "U15",
+  U18: "U18",
+  OTHER: "Other",
+}
+
+const competitiveLevelLabels: Record<CompetitiveLevel, string> = {
+  AAA: "AAA",
+  AA: "AA",
+  A: "A",
+  BB: "BB",
+  B: "B",
+  MD: "MD",
+  HOUSE_RECREATIONAL: "House/Rec",
+  NOT_APPLICABLE: "N/A",
+  OTHER: "Other",
 }
 
 export function RuleReviewSummary({
@@ -19,24 +52,89 @@ export function RuleReviewSummary({
   approvalTiers,
   requiredExpenses,
   signingAuthorityComposition,
+  teamTypeFilter,
+  ageDivisionFilter,
+  competitiveLevelFilter,
   currency,
 }: RuleReviewSummaryProps) {
   const currencySymbol = getCurrencySymbol(currency)
 
+  const hasFilters =
+    (teamTypeFilter && teamTypeFilter.length > 0) ||
+    (ageDivisionFilter && ageDivisionFilter.length > 0) ||
+    (competitiveLevelFilter && competitiveLevelFilter.length > 0)
+
+  const renderFilters = () => {
+    if (!hasFilters) {
+      return (
+        <div className="flex items-center gap-2 pt-3 mt-3 border-t border-gray-200">
+          <Target className="w-4 h-4 text-blue-600" />
+          <span className="text-sm text-gray-600">Applies to:</span>
+          <Badge variant="secondary">All Teams</Badge>
+        </div>
+      )
+    }
+
+    return (
+      <div className="pt-3 mt-3 border-t border-gray-200 space-y-2">
+        <div className="flex items-center gap-2">
+          <Target className="w-4 h-4 text-blue-600" />
+          <span className="text-sm font-medium text-gray-900">Applies to:</span>
+        </div>
+
+        {teamTypeFilter && teamTypeFilter.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 items-center">
+            <span className="text-xs text-gray-600">Type:</span>
+            {teamTypeFilter.map((type) => (
+              <Badge key={type} variant="outline" className="text-xs">
+                {teamTypeLabels[type]}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {ageDivisionFilter && ageDivisionFilter.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 items-center">
+            <span className="text-xs text-gray-600">Age:</span>
+            {ageDivisionFilter.map((division) => (
+              <Badge key={division} variant="outline" className="text-xs">
+                {ageDivisionLabels[division]}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {competitiveLevelFilter && competitiveLevelFilter.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 items-center">
+            <span className="text-xs text-gray-600">Level:</span>
+            {competitiveLevelFilter.map((level) => (
+              <Badge key={level} variant="outline" className="text-xs">
+                {competitiveLevelLabels[level]}
+              </Badge>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
   const renderMaxAmountRule = (label: string, icon: typeof DollarSign) => {
     const Icon = icon
     return (
-      <div className="flex items-start gap-3">
-        <div className="p-2 rounded-lg bg-blue-50">
-          <Icon className="w-5 h-5 text-blue-600" />
+      <div>
+        <div className="flex items-start gap-3">
+          <div className="p-2 rounded-lg bg-blue-50">
+            <Icon className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">{label}</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {currencySymbol}
+              {config.maxAmount?.toLocaleString() || '0'} {currency}
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold text-gray-900">
-            {currencySymbol}
-            {config.maxAmount?.toLocaleString() || '0'} {currency}
-          </p>
-        </div>
+        {renderFilters()}
       </div>
     )
   }
@@ -47,33 +145,39 @@ export function RuleReviewSummary({
 
     case "MAX_ASSESSMENT":
       return (
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-purple-50">
-            <Users className="w-5 h-5 text-purple-600" />
+        <div>
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-purple-50">
+              <Users className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Maximum Assessment per Player</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {currencySymbol}
+                {config.maxAmount?.toLocaleString() || '0'} {currency}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Maximum Assessment per Player</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {currencySymbol}
-              {config.maxAmount?.toLocaleString() || '0'} {currency}
-            </p>
-          </div>
+          {renderFilters()}
         </div>
       )
 
     case "MAX_BUYOUT":
       return (
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-pink-50">
-            <Gift className="w-5 h-5 text-pink-600" />
+        <div>
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-pink-50">
+              <Gift className="w-5 h-5 text-pink-600" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Maximum Buyout per Family</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {currencySymbol}
+                {config.maxAmount?.toLocaleString() || '0'} {currency}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Maximum Buyout per Family</p>
-            <p className="text-2xl font-bold text-gray-900">
-              {currencySymbol}
-              {config.maxAmount?.toLocaleString() || '0'} {currency}
-            </p>
-          </div>
+          {renderFilters()}
         </div>
       )
 
@@ -101,6 +205,7 @@ export function RuleReviewSummary({
               </p>
             </div>
           )}
+          {renderFilters()}
         </div>
       )
 
@@ -137,6 +242,7 @@ export function RuleReviewSummary({
               </tbody>
             </table>
           </div>
+          {renderFilters()}
         </div>
       )
 
@@ -164,6 +270,7 @@ export function RuleReviewSummary({
               ))}
             </ul>
           </div>
+          {renderFilters()}
         </div>
       )
 
@@ -214,6 +321,7 @@ export function RuleReviewSummary({
               </div>
             </div>
           </div>
+          {renderFilters()}
         </div>
       )
 

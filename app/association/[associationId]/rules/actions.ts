@@ -85,6 +85,9 @@ export async function createRule(data: {
   approvalTiers?: any
   requiredExpenses?: any
   signingAuthorityComposition?: any
+  teamTypeFilter?: any
+  ageDivisionFilter?: any
+  competitiveLevelFilter?: any
   createdBy?: string
 }) {
   try {
@@ -99,6 +102,9 @@ export async function createRule(data: {
         approvalTiers: data.approvalTiers,
         requiredExpenses: data.requiredExpenses,
         signingAuthorityComposition: data.signingAuthorityComposition,
+        teamTypeFilter: data.teamTypeFilter || null,
+        ageDivisionFilter: data.ageDivisionFilter || null,
+        competitiveLevelFilter: data.competitiveLevelFilter || null,
         createdBy: data.createdBy,
       },
       include: {
@@ -128,6 +134,9 @@ export async function updateRule(data: {
   approvalTiers?: any
   requiredExpenses?: any
   signingAuthorityComposition?: any
+  teamTypeFilter?: any
+  ageDivisionFilter?: any
+  competitiveLevelFilter?: any
 }) {
   try {
     const rule = await prisma.associationRule.update({
@@ -141,6 +150,9 @@ export async function updateRule(data: {
         approvalTiers: data.approvalTiers,
         requiredExpenses: data.requiredExpenses,
         signingAuthorityComposition: data.signingAuthorityComposition,
+        teamTypeFilter: data.teamTypeFilter,
+        ageDivisionFilter: data.ageDivisionFilter,
+        competitiveLevelFilter: data.competitiveLevelFilter,
       },
       include: {
         _count: {
