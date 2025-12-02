@@ -141,7 +141,7 @@ model AssociationUser {
 ### Unchanged (Reference Files)
 
 These files exist but weren't modified:
-- `association-dashboard/` directory - Source files still intact
+- `association-dashboard/` directory - **[REMOVED December 1, 2025]** All features migrated to `/app/association/[associationId]/`
 - `.env.local` - Production database config
 - `lib/prisma.ts` - Prisma Client singleton (already correct)
 
@@ -269,7 +269,7 @@ git commit -m "Phase 1: Unified database schema for Squadbooks + Association Das
 
 Files modified:
 - prisma/schema.prisma (unified schema)
-- app/association/page.tsx (moved from association-dashboard)
+- app/association/page.tsx (moved from association-dashboard - **[All features fully migrated December 1, 2025]**)
 
 Files created:
 - SCHEMA-MIGRATION-PLAN.md

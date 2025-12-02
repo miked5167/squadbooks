@@ -6,6 +6,15 @@ import Link from 'next/link'
 import { getAlertsData, type NormalizedAlert, type AlertSeverity } from './actions'
 import { SeverityBadge } from '@/app/components/SeverityBadge'
 import { EmptyState } from '@/app/components/EmptyState'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 interface PageProps {
   params: Promise<{
@@ -47,7 +56,7 @@ function getAlertTypeLabel(type: string) {
   return labels[type] || type.replace(/_/g, ' ')
 }
 
-function AlertCard({ alert }: { alert: NormalizedAlert }) {
+function AlertCard({ alert, onResolve }: { alert: NormalizedAlert; onResolve: (alert: NormalizedAlert) => void }) {
   return (
     <div className={`border-2 rounded-lg p-5 ${getSeverityStyles(alert.severity)}`}>
       <div className="flex items-start justify-between mb-3">
@@ -67,12 +76,26 @@ function AlertCard({ alert }: { alert: NormalizedAlert }) {
         <p className="text-xs text-gray-500">
           {new Date(alert.createdAt).toLocaleDateString()} at {new Date(alert.createdAt).toLocaleTimeString()}
         </p>
-        <Link
-          href={alert.link}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          View Team Details →
-        </Link>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onResolve(alert)
+            }}
+            className="text-sm"
+          >
+            Resolve
+          </Button>
+          <Link
+            href={alert.link}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            View Team Details →
+          </Link>
+        </div>
       </div>
     </div>
   )
@@ -117,6 +140,15 @@ export default function AlertsPage({ params }: PageProps) {
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState<FilterType>('ALL')
 
+  // Resolution dialog state
+  const [resolveDialogOpen, setResolveDialogOpen] = useState(false)
+  const [resolvingAlert, setResolvingAlert] = useState<NormalizedAlert | null>(null)
+  const [resolving, setResolving] = useState(false)
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 50
+
   useEffect(() => {
     async function loadParams() {
       const resolvedParams = await params
@@ -137,6 +169,54 @@ export default function AlertsPage({ params }: PageProps) {
     }
     loadData()
   }, [associationId])
+
+  // Function to reload alerts data
+  const reloadAlerts = async () => {
+    if (!associationId) return
+    const data = await getAlertsData(associationId)
+    setAlerts(data.alerts)
+  }
+
+  // Handle resolve alert
+  const handleResolve = async () => {
+    if (!resolvingAlert || !associationId) return
+
+    setResolving(true)
+    try {
+      const response = await fetch(
+        `/api/associations/${associationId}/alerts/${resolvingAlert.id}/resolve`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to resolve alert')
+      }
+
+      // Refresh alerts list
+      await reloadAlerts()
+
+      // Close dialog
+      setResolveDialogOpen(false)
+      setResolvingAlert(null)
+    } catch (err) {
+      console.error('Error resolving alert:', err)
+      alert('Failed to resolve alert. Please try again.')
+    } finally {
+      setResolving(false)
+    }
+  }
+
+  // Handle opening resolve dialog
+  const handleOpenResolveDialog = (alert: NormalizedAlert) => {
+    setResolvingAlert(alert)
+    setResolveDialogOpen(true)
+  }
 
   if (loading) {
     return (
@@ -184,6 +264,17 @@ export default function AlertsPage({ params }: PageProps) {
   const flagsCount = alerts.filter(
     (a) => a.type === 'CRITICAL_HEALTH' || a.type === 'WARNING_HEALTH'
   ).length
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredAlerts.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedAlerts = filteredAlerts.slice(startIndex, endIndex)
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeFilter])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -265,13 +356,115 @@ export default function AlertsPage({ params }: PageProps) {
               : 'There are no alerts matching this filter.'}
           />
         ) : (
-          <div className="grid grid-cols-1 gap-4">
-            {filteredAlerts.map((alert) => (
-              <AlertCard key={alert.id} alert={alert} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-4">
+              {paginatedAlerts.map((alert) => (
+                <AlertCard key={alert.id} alert={alert} onResolve={handleOpenResolveDialog} />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg">
+                <div className="flex flex-1 justify-between sm:hidden">
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
+                      <span className="font-medium">{Math.min(endIndex, filteredAlerts.length)}</span> of{' '}
+                      <span className="font-medium">{filteredAlerts.length}</span> alerts
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      ← Previous
+                    </Button>
+                    <span className="text-sm text-gray-700">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next →
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
+
+      {/* Resolve Alert Dialog */}
+      <Dialog open={resolveDialogOpen} onOpenChange={setResolveDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Resolve Alert</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to resolve this alert? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          {resolvingAlert && (
+            <div className="py-4">
+              <div className="space-y-2">
+                <div>
+                  <span className="text-sm font-medium">Team:</span>{' '}
+                  <span className="text-sm">{resolvingAlert.teamName}</span>
+                </div>
+                <div>
+                  <span className="text-sm font-medium">Alert:</span>{' '}
+                  <span className="text-sm">{resolvingAlert.message}</span>
+                </div>
+                <div>
+                  <span className="text-sm font-medium">Severity:</span>{' '}
+                  <SeverityBadge severity={resolvingAlert.severity} />
+                </div>
+                <div>
+                  <span className="text-sm font-medium">Type:</span>{' '}
+                  <span className="text-sm">{getAlertTypeLabel(resolvingAlert.type)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setResolveDialogOpen(false)}
+              disabled={resolving}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleResolve} disabled={resolving}>
+              {resolving ? 'Resolving...' : 'Resolve Alert'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -1,11 +1,12 @@
 # HuddleBooks Association Command Center - MVP Task Tracker
 
-**Version:** 1.0
+**Version:** 2.0 (Integrated)
 **Start Date:** November 24, 2025
 **MVP Completed:** November 24, 2025
+**Migration to Integrated App:** December 1, 2025
 **Target Beta Launch:** 8 weeks (January 20, 2026)
-**Current Phase:** Phase 5 - Testing & Beta Launch
-**Status:** ✅ MVP Development Complete (100% - 95/95 tasks)
+**Current Phase:** Phase 6 - Production Ready
+**Status:** ✅ MVP Development Complete & Migrated to Integrated App (100%)
 
 ---
 
@@ -32,15 +33,16 @@ A read-only "control tower" dashboard for minor hockey associations to monitor a
 ### Key Architectural Decisions
 1. **Daily Snapshots** - Data refreshed once daily at 3 AM UTC (not real-time)
 2. **Read-Only** - Association cannot edit team data
-3. **Separate Database** - Own Supabase instance, reads from HuddleBooks API
+3. **Integrated App** - All features integrated into main HuddleBooks app at `/app/association/[associationId]/`
 4. **5 MVP Features Only** - Overview, Team List, Team Detail, Alerts, 2 Reports
 
 ### Tech Stack
-- **Frontend:** Next.js 14+, TypeScript, Tailwind CSS, shadcn/ui
-- **Backend:** Next.js API Routes, Supabase PostgreSQL
+- **Frontend:** Next.js 16.0.3, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions, Prisma, Supabase PostgreSQL
 - **Auth:** Clerk (with association roles)
 - **Snapshot Job:** GitHub Actions cron → Supabase Edge Function
-- **PDF Reports:** React-PDF or @react-pdf/renderer
+- **PDF Reports:** @react-pdf/renderer
+- **Location:** `/app/association/[associationId]/` routes (integrated into main app)
 
 ---
 
@@ -843,9 +845,19 @@ const isAtRisk =
 
 **Progress Update:**
 - ✅ **ALL MVP PHASES COMPLETE!** (Phases 0-4)
+- ✅ **MIGRATION TO INTEGRATED APP COMPLETE!** (December 1, 2025)
 - ✅ Infrastructure + Snapshots + Dashboard + Team Detail + Alerts + Reports
-- 📊 **100% of MVP development complete (95/95 tasks)**
-- 🎉 **MVP READY FOR TESTING AND DEPLOYMENT!**
-- 🚀 Next: Phase 5 - Testing, deployment, and beta launch
+- ✅ All features migrated from standalone app to `/app/association/[associationId]/`
+- 📊 **100% of MVP development complete + migration complete**
+- 🎉 **PRODUCTION READY - Integrated into main HuddleBooks app!**
+- 🚀 Next: Beta launch and production deployment
 
-**We built this control tower! 🏒📊 Now let's launch it! 🚀**
+**Migration Notes (December 1, 2025):**
+- Standalone `association-dashboard/` directory has been removed
+- All features now integrated at `/app/association/[associationId]/` routes
+- Enhanced with search, filtering, sorting, and pagination
+- Added Recent Alerts and Teams Needing Attention widgets
+- Red Flags section added to team detail page
+- Transaction filtering and pagination implemented
+
+**We built this control tower and integrated it seamlessly! 🏒📊**

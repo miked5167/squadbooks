@@ -17,7 +17,7 @@ datasource db {
 
 model Association {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String   @db.VarChar(255)
+  name          String   @unique @db.VarChar(255)
   abbreviation  String?  @db.VarChar(32)
   provinceState String?  @map("province_state") @db.VarChar(64)
   country       String?  @db.VarChar(64)
@@ -249,6 +249,7 @@ model AssociationRule {
   overrides     TeamRuleOverride[]
   violations    RuleViolation[]
 
+  @@unique([associationId, name], name: "unique_association_rule_name")
   @@index([associationId])
   @@index([ruleType])
   @@index([isActive])

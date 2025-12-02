@@ -1,14 +1,52 @@
 // prisma/seed-demo.ts
 
 /**
+ * ============================================
  * DEMO SEED SCRIPT FOR SQUADBOOKS + ASSOCIATION COMMAND CENTER
+ * ============================================
  *
  * Creates realistic demo data for Newmarket Minor Hockey Association (2025-2026 season)
  * with 5 teams, complete financials, transactions, alerts, and audit logs.
  *
- * IDEMPOTENT: Running this script multiple times will delete and recreate demo data only.
+ * ============================================
+ * IDEMPOTENT & MODE-BASED SEEDING
+ * ============================================
  *
- * Demo data identification:
+ * This script supports multiple execution modes for flexible development workflows:
+ *
+ * USAGE:
+ *
+ * 1. Full seed (idempotent - safe to run repeatedly):
+ *    npm run seed:demo
+ *
+ *    - Creates or updates association, rules, teams, and all related data
+ *    - Uses upserts for association and rules to avoid duplicates
+ *    - Skips if demo data already exists (unless FORCE_RESEED is set)
+ *
+ * 2. Force full reseed (clean slate):
+ *    FORCE_RESEED=true npm run seed:demo
+ *
+ *    - Deletes ALL existing demo data first
+ *    - Recreates everything from scratch
+ *    - Use with caution!
+ *
+ * 3. Rules-only refresh (fast iteration):
+ *    SEED_MODE=rules-only npm run seed:demo
+ *
+ *    - Only updates association rules (using upserts)
+ *    - Requires association to exist already
+ *    - Perfect for testing rule engine changes
+ *
+ * ENVIRONMENT VARIABLES:
+ *
+ * - SEED_MODE: 'full' (default) | 'rules-only'
+ * - FORCE_RESEED: 'true' | undefined (forces full wipe before seed)
+ *
+ * ============================================
+ * DEMO DATA IDENTIFICATION
+ * ============================================
+ *
+ * All demo data is tagged for safe cleanup:
  * - Association: "Newmarket Minor Hockey Association - Demo Data"
  * - Users: clerkId/clerkUserId starting with "demo_2025_2026_"
  * - Emails: ending with "@demo.huddlebooks.app"
@@ -227,19 +265,71 @@ function receiptUrl(teamCode: string, date: Date): string {
 // ============================================
 
 async function main() {
+  const SEED_MODE = process.env.SEED_MODE ?? 'full'; // 'full' | 'rules-only'
+  const FORCE_RESEED = process.env.FORCE_RESEED === 'true';
+
   console.log('🚀 Starting demo seed for Newmarket Minor Hockey Association (2025-2026)…\n');
+  console.log(`   Mode: ${SEED_MODE}`);
+  console.log(`   Force Reseed: ${FORCE_RESEED}\n`);
 
-  await wipeDemoData();
+  // ============================================
+  // GUARD: Prevent accidental full reseeds
+  // ============================================
+  if (!FORCE_RESEED && SEED_MODE === 'full') {
+    const existing = await prisma.association.findFirst({
+      where: { name: DEMO_ASSOCIATION_NAME },
+    });
 
-  const { association, adminUser } = await createAssociationWithAdmin();
-  console.log(`✅ Association created: ${association.name}`);
+    if (existing) {
+      console.log('✅ Demo data already exists.');
+      console.log('   Use FORCE_RESEED=true for a clean reset');
+      console.log('   Use SEED_MODE=rules-only for targeted rule updates\n');
+      return;
+    }
+  }
 
-  const dashboardConfig = await createDashboardConfig(association.id);
-  console.log(`✅ Dashboard config created`);
+  // ============================================
+  // MODE: rules-only (fast iteration)
+  // ============================================
+  if (SEED_MODE === 'rules-only') {
+    console.log('🔄 SEED_MODE=rules-only: refreshing association rules only…\n');
 
-  const rules = await createAssociationRules(association.id);
-  console.log(`✅ ${rules.length} association rules created`);
+    const association = await prisma.association.findFirst({
+      where: { name: DEMO_ASSOCIATION_NAME },
+    });
 
+    if (!association) {
+      console.log('❌ No demo association found.');
+      console.log('   Run full seed once first: npm run seed:demo\n');
+      return;
+    }
+
+    const rules = await seedRules(association.id);
+    console.log(`✅ ${rules.length} rules refreshed.\n`);
+    return;
+  }
+
+  // ============================================
+  // MODE: full (idempotent or clean slate)
+  // ============================================
+  console.log('🌱 Running full demo seed…\n');
+
+  // Step 1: Optionally wipe if FORCE_RESEED is set
+  if (FORCE_RESEED) {
+    await wipeDemoData();
+  }
+
+  // Step 2: Seed core association data (idempotent via upserts)
+  const { association, adminUser } = await seedAssociation();
+  console.log(`✅ Association: ${association.name}`);
+
+  const dashboardConfig = await seedDashboardConfig(association.id);
+  console.log(`✅ Dashboard config created/updated`);
+
+  const rules = await seedRules(association.id);
+  console.log(`✅ ${rules.length} association rules created/updated`);
+
+  // Step 3: Seed teams (idempotent for teams themselves, not transactional data)
   let totalPlayers = 0;
   let totalTransactions = 0;
   let totalAlerts = 0;
@@ -278,7 +368,7 @@ async function main() {
 }
 
 // ============================================
-// STEP 0: WIPE DEMO DATA
+// STEP 0: WIPE DEMO DATA (only when FORCE_RESEED=true)
 // ============================================
 
 async function wipeDemoData() {
@@ -588,15 +678,28 @@ async function wipeDemoData() {
 }
 
 // ============================================
-// STEP 1: ASSOCIATION + ADMIN
+// SEED FUNCTIONS (IDEMPOTENT VIA UPSERTS)
 // ============================================
 
-async function createAssociationWithAdmin() {
+/**
+ * Seed Association + Admin User (Idempotent)
+ * Uses upsert to create or update the demo association
+ */
+async function seedAssociation() {
   const adminClerkId = generateDemoClerkId();
   const adminEmail = `admin${DEMO_EMAIL_DOMAIN}`;
 
-  const association = await prisma.association.create({
-    data: {
+  // Upsert association
+  const association = await prisma.association.upsert({
+    where: { name: DEMO_ASSOCIATION_NAME },
+    update: {
+      abbreviation: 'NMHA',
+      provinceState: 'Ontario',
+      country: 'Canada',
+      season: DEMO_SEASON,
+      updatedAt: NOW,
+    },
+    create: {
       name: DEMO_ASSOCIATION_NAME,
       abbreviation: 'NMHA',
       provinceState: 'Ontario',
@@ -607,26 +710,58 @@ async function createAssociationWithAdmin() {
     },
   });
 
-  const adminUser = await prisma.associationUser.create({
-    data: {
+  // Find or create admin user
+  let adminUser = await prisma.associationUser.findFirst({
+    where: {
       associationId: association.id,
-      clerkUserId: adminClerkId,
       email: adminEmail,
-      name: 'Association Admin',
-      role: 'association_admin',
-      lastLoginAt: daysAgo(NOW, randomInt(1, 7)),
-      createdAt: SEASON_START,
     },
   });
+
+  if (!adminUser) {
+    adminUser = await prisma.associationUser.create({
+      data: {
+        associationId: association.id,
+        clerkUserId: adminClerkId,
+        email: adminEmail,
+        name: 'Association Admin',
+        role: 'association_admin',
+        lastLoginAt: daysAgo(NOW, randomInt(1, 7)),
+        createdAt: SEASON_START,
+      },
+    });
+  }
 
   return { association, adminUser };
 }
 
-// ============================================
-// STEP 2: DASHBOARD CONFIG
-// ============================================
+/**
+ * Seed Dashboard Config (Idempotent)
+ * Creates or updates the dashboard config for the association
+ */
+async function seedDashboardConfig(associationId: string) {
+  // Check if config exists
+  const existing = await prisma.dashboardConfig.findUnique({
+    where: { associationId },
+  });
 
-async function createDashboardConfig(associationId: string) {
+  if (existing) {
+    // Update existing config
+    return await prisma.dashboardConfig.update({
+      where: { associationId },
+      data: {
+        budgetWarningPct: 80.0,
+        budgetCriticalPct: 95.0,
+        bankWarningDays: 30,
+        bankCriticalDays: 60,
+        approvalsWarningCount: 5,
+        approvalsCriticalCount: 10,
+        inactivityWarningDays: 21,
+      },
+    });
+  }
+
+  // Create new config
   return await prisma.dashboardConfig.create({
     data: {
       associationId,
@@ -641,16 +776,34 @@ async function createDashboardConfig(associationId: string) {
   });
 }
 
-// ============================================
-// STEP 2.5: CREATE ASSOCIATION RULES
-// ============================================
-
-async function createAssociationRules(associationId: string) {
+/**
+ * Seed Association Rules (Idempotent)
+ * Uses upserts to create or update rules based on (associationId, name)
+ */
+async function seedRules(associationId: string) {
   const rules = [];
 
   // Rule 1: Max Budget for House League teams
-  const houseBudgetRule = await prisma.associationRule.create({
-    data: {
+  const houseBudgetRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'House League Budget Cap',
+      },
+    },
+    update: {
+      ruleType: 'MAX_BUDGET',
+      description: 'Maximum total budget for House League teams',
+      isActive: true,
+      config: {
+        maxAmount: 15000,
+        currency: 'CAD',
+      },
+      teamTypeFilter: ['HOUSE_LEAGUE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+    create: {
       associationId,
       ruleType: 'MAX_BUDGET',
       name: 'House League Budget Cap',
@@ -668,8 +821,26 @@ async function createAssociationRules(associationId: string) {
   rules.push(houseBudgetRule);
 
   // Rule 2: Max Budget for Representative teams (AA and above)
-  const repBudgetRule = await prisma.associationRule.create({
-    data: {
+  const repBudgetRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'Rep Teams (AA+) Budget Cap',
+      },
+    },
+    update: {
+      ruleType: 'MAX_BUDGET',
+      description: 'Maximum total budget for Representative teams at AA level and above',
+      isActive: true,
+      config: {
+        maxAmount: 25000,
+        currency: 'CAD',
+      },
+      teamTypeFilter: ['REPRESENTATIVE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: ['AA', 'AAA'],
+    },
+    create: {
       associationId,
       ruleType: 'MAX_BUDGET',
       name: 'Rep Teams (AA+) Budget Cap',
@@ -687,8 +858,26 @@ async function createAssociationRules(associationId: string) {
   rules.push(repBudgetRule);
 
   // Rule 3: Max Assessment for all teams (U13 and younger)
-  const youngAssessmentRule = await prisma.associationRule.create({
-    data: {
+  const youngAssessmentRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'U13 and Under Assessment Cap',
+      },
+    },
+    update: {
+      ruleType: 'MAX_ASSESSMENT',
+      description: 'Maximum registration fee per player for U13 and younger divisions',
+      isActive: true,
+      config: {
+        maxAmount: 2500,
+        currency: 'CAD',
+      },
+      teamTypeFilter: null,
+      ageDivisionFilter: ['U7', 'U9', 'U11', 'U13'],
+      competitiveLevelFilter: null,
+    },
+    create: {
       associationId,
       ruleType: 'MAX_ASSESSMENT',
       name: 'U13 and Under Assessment Cap',
@@ -706,8 +895,26 @@ async function createAssociationRules(associationId: string) {
   rules.push(youngAssessmentRule);
 
   // Rule 4: Max Assessment for older divisions
-  const olderAssessmentRule = await prisma.associationRule.create({
-    data: {
+  const olderAssessmentRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'U15+ Assessment Cap',
+      },
+    },
+    update: {
+      ruleType: 'MAX_ASSESSMENT',
+      description: 'Maximum registration fee per player for U15 and U18 divisions',
+      isActive: true,
+      config: {
+        maxAmount: 3500,
+        currency: 'CAD',
+      },
+      teamTypeFilter: null,
+      ageDivisionFilter: ['U15', 'U18'],
+      competitiveLevelFilter: null,
+    },
+    create: {
       associationId,
       ruleType: 'MAX_ASSESSMENT',
       name: 'U15+ Assessment Cap',
@@ -725,8 +932,26 @@ async function createAssociationRules(associationId: string) {
   rules.push(olderAssessmentRule);
 
   // Rule 5: Max Buyout for all teams
-  const buyoutRule = await prisma.associationRule.create({
-    data: {
+  const buyoutRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'Fundraising Buyout Cap',
+      },
+    },
+    update: {
+      ruleType: 'MAX_BUYOUT',
+      description: 'Maximum fundraising buyout amount per family',
+      isActive: true,
+      config: {
+        maxAmount: 500,
+        currency: 'CAD',
+      },
+      teamTypeFilter: null,
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+    create: {
       associationId,
       ruleType: 'MAX_BUYOUT',
       name: 'Fundraising Buyout Cap',
@@ -744,8 +969,27 @@ async function createAssociationRules(associationId: string) {
   rules.push(buyoutRule);
 
   // Rule 6: Zero Balance for all Rep teams
-  const zeroBalanceRule = await prisma.associationRule.create({
-    data: {
+  const zeroBalanceRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'Rep Teams Zero Balance Requirement',
+      },
+    },
+    update: {
+      ruleType: 'ZERO_BALANCE',
+      description: 'All Representative team budgets must balance to zero',
+      isActive: true,
+      config: {
+        tolerance: 50,
+        requireBalancedBudget: true,
+        currency: 'CAD',
+      },
+      teamTypeFilter: ['REPRESENTATIVE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+    create: {
       associationId,
       ruleType: 'ZERO_BALANCE',
       name: 'Rep Teams Zero Balance Requirement',
@@ -764,8 +1008,30 @@ async function createAssociationRules(associationId: string) {
   rules.push(zeroBalanceRule);
 
   // Rule 7: Approval Tiers for all teams
-  const approvalTiersRule = await prisma.associationRule.create({
-    data: {
+  const approvalTiersRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'Expense Approval Requirements',
+      },
+    },
+    update: {
+      ruleType: 'APPROVAL_TIERS',
+      description: 'Approval requirements based on transaction amount',
+      isActive: true,
+      config: {
+        currency: 'CAD',
+      },
+      approvalTiers: [
+        { min: 0, max: 500, approvals: 1 },
+        { min: 500, max: 2000, approvals: 2 },
+        { min: 2000, max: 999999, approvals: 3 },
+      ],
+      teamTypeFilter: null,
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+    create: {
       associationId,
       ruleType: 'APPROVAL_TIERS',
       name: 'Expense Approval Requirements',
@@ -787,8 +1053,31 @@ async function createAssociationRules(associationId: string) {
   rules.push(approvalTiersRule);
 
   // Rule 8: Required Expenses for Rep teams
-  const requiredExpensesRule = await prisma.associationRule.create({
-    data: {
+  const requiredExpensesRule = await prisma.associationRule.upsert({
+    where: {
+      unique_association_rule_name: {
+        associationId,
+        name: 'Rep Teams Mandatory Categories',
+      },
+    },
+    update: {
+      ruleType: 'REQUIRED_EXPENSES',
+      description: 'Required budget categories for all Representative teams',
+      isActive: true,
+      config: {
+        enforceStrict: true,
+      },
+      requiredExpenses: [
+        'Ice Time & Facilities',
+        'Equipment & Jerseys',
+        'Coaching & Officials',
+        'League & Registration',
+      ],
+      teamTypeFilter: ['REPRESENTATIVE'],
+      ageDivisionFilter: null,
+      competitiveLevelFilter: null,
+    },
+    create: {
       associationId,
       ruleType: 'REQUIRED_EXPENSES',
       name: 'Rep Teams Mandatory Categories',
@@ -814,7 +1103,7 @@ async function createAssociationRules(associationId: string) {
 }
 
 // ============================================
-// STEP 3: SEED TEAM (MAIN ORCHESTRATOR)
+// TEAM SEEDING (from original seed logic)
 // ============================================
 
 interface SeedTeamResult {

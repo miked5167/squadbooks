@@ -172,7 +172,22 @@ export default async function AssociationOverviewPage({ params }: PageProps) {
     notFound()
   }
 
-  const { association, teams } = data
+  const { association, teams, recentAlerts } = data
+
+  // Get teams needing attention (not healthy)
+  const teamsNeedingAttention = teams
+    .filter(t => t.latestSnapshot && t.latestSnapshot.healthStatus !== 'healthy')
+    .sort((a, b) => {
+      // Sort by health score (lower is worse) then by percent used (higher is worse)
+      const scoreA = a.latestSnapshot?.healthScore ?? 100
+      const scoreB = b.latestSnapshot?.healthScore ?? 100
+      if (scoreA !== scoreB) return scoreA - scoreB
+
+      const pctA = a.latestSnapshot?.percentUsed ?? 0
+      const pctB = b.latestSnapshot?.percentUsed ?? 0
+      return pctB - pctA
+    })
+    .slice(0, 5) // Show top 5
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -233,6 +248,120 @@ export default async function AssociationOverviewPage({ params }: PageProps) {
             <p className="text-3xl font-bold text-red-600">
               {teams.filter(t => t.latestSnapshot?.healthStatus === 'critical').length}
             </p>
+          </div>
+        </div>
+
+        {/* Teams Needing Attention */}
+        <div className="mb-8">
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Teams Needing Attention</h2>
+            <p className="text-sm text-gray-600 mb-6">Teams with critical issues or warnings requiring immediate action</p>
+
+            {teamsNeedingAttention.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <svg className="h-12 w-12 text-green-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">All Teams Looking Good!</h3>
+                <p className="text-sm text-gray-600">No teams require immediate attention at this time.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {teamsNeedingAttention.map(team => (
+                  <Link
+                    key={team.id}
+                    href={`/association/${associationId}/teams/${team.id}`}
+                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-gray-900 truncate">{team.teamName}</span>
+                        {team.division && (
+                          <span className="text-sm text-gray-500">• {team.division}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {team.latestSnapshot && (
+                          <HealthBadge
+                            status={team.latestSnapshot.healthStatus}
+                            score={team.latestSnapshot.healthScore}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right ml-4">
+                      {team.latestSnapshot?.percentUsed !== null && (
+                        <div className="text-sm font-medium text-gray-900">
+                          {team.latestSnapshot.percentUsed.toFixed(0)}% used
+                        </div>
+                      )}
+                      {team.lastSyncedAt && (
+                        <div className="text-xs text-gray-500">
+                          Updated {new Date(team.lastSyncedAt).toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Alerts */}
+        <div className="mb-8">
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Recent Alerts</h2>
+                <p className="text-sm text-gray-600">Latest alerts from the past week</p>
+              </div>
+              <Link
+                href={`/association/${associationId}/alerts`}
+                className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                View All
+              </Link>
+            </div>
+
+            {recentAlerts.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <svg className="h-10 w-10 text-green-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm text-gray-600">No recent alerts</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {recentAlerts.map(alert => (
+                  <div
+                    key={alert.id}
+                    className="flex items-start justify-between p-3 rounded-lg border border-gray-200"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
+                          alert.severity === 'critical'
+                            ? 'bg-red-100 text-red-800'
+                            : alert.severity === 'warning'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {alert.severity}
+                        </span>
+                        <span className="text-sm font-medium text-gray-900 truncate">
+                          {alert.teamName || 'Association'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 truncate">{alert.title}</p>
+                    </div>
+                    <div className="text-xs text-gray-500 ml-4 whitespace-nowrap">
+                      {new Date(alert.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

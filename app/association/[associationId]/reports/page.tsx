@@ -28,6 +28,10 @@ export default function ReportsPage({
   const [showTransactions, setShowTransactions] = useState(false)
   const [showAlerts, setShowAlerts] = useState(false)
 
+  // PDF generation loading states
+  const [generatingBoardSummary, setGeneratingBoardSummary] = useState(false)
+  const [generatingCompliance, setGeneratingCompliance] = useState(false)
+
   // Transaction filters
   const [selectedTeam, setSelectedTeam] = useState<string>('all')
   const [selectedStatus, setSelectedStatus] = useState<string>('all')
@@ -64,6 +68,74 @@ export default function ReportsPage({
     } catch (err) {
       console.error('Failed to download CSV:', err)
       alert('Failed to download CSV')
+    }
+  }
+
+  const downloadBoardSummaryPdf = async () => {
+    setGeneratingBoardSummary(true)
+    try {
+      const response = await fetch(
+        `/api/associations/${associationId}/reports/board-summary`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF')
+      }
+
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Board-Summary-${new Date().toISOString().split('T')[0]}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Failed to generate Board Summary PDF:', err)
+      alert('Failed to generate PDF report')
+    } finally {
+      setGeneratingBoardSummary(false)
+    }
+  }
+
+  const downloadCompliancePdf = async () => {
+    setGeneratingCompliance(true)
+    try {
+      const response = await fetch(
+        `/api/associations/${associationId}/reports/compliance-snapshot`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF')
+      }
+
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Compliance-Snapshot-${new Date().toISOString().split('T')[0]}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Failed to generate Compliance PDF:', err)
+      alert('Failed to generate PDF report')
+    } finally {
+      setGeneratingCompliance(false)
     }
   }
 
@@ -136,6 +208,81 @@ export default function ReportsPage({
 
         {/* Report Sections */}
         <div className="space-y-6">
+          {/* PDF Reports Section */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              📊 Executive PDF Reports
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Professional PDF reports ready for board meetings and compliance reviews.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Board Summary PDF */}
+              <div className="bg-white rounded-lg shadow-md p-5">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Board Financial Summary
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Comprehensive financial overview with KPIs, budget totals, and at-risk teams for board meetings.
+                </p>
+                <button
+                  onClick={downloadBoardSummaryPdf}
+                  disabled={generatingBoardSummary}
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {generatingBoardSummary ? (
+                    <>
+                      <span className="animate-spin">⏳</span>
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <span>📄</span>
+                      Download PDF
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Compliance Snapshot PDF */}
+              <div className="bg-white rounded-lg shadow-md p-5">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Compliance Snapshot
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Compliance metrics, active alerts summary, and recommendations for audits and reviews.
+                </p>
+                <button
+                  onClick={downloadCompliancePdf}
+                  disabled={generatingCompliance}
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {generatingCompliance ? (
+                    <>
+                      <span className="animate-spin">⏳</span>
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <span>📄</span>
+                      Download PDF
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* CSV Reports Section Header */}
+          <div className="pt-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              📈 Data Export Reports (CSV)
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Download detailed data in CSV format for analysis and record-keeping.
+            </p>
+          </div>
+
           {/* 1. Season Financial Summary */}
           <SeasonFinancialCard
             data={data.seasonFinancial}

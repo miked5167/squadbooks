@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getTeamDetailData, type NormalizedAlert, type SnapshotHistory } from './actions'
 import type { AlertSeverity } from '../../alerts/actions'
+import { TransactionsSection } from './TransactionsSection'
 
 interface PageProps {
   params: Promise<{
@@ -72,53 +73,6 @@ function BudgetCategoryCard({ category, allocated, spent, remaining, percentUsed
       </div>
       <p className="text-xs text-gray-500 mt-1">{percentage.toFixed(1)}% used</p>
     </div>
-  )
-}
-
-function TransactionRow({ transaction }: { transaction: any }) {
-  const isIncome = transaction.type === 'INCOME'
-  const statusColors = {
-    APPROVED: 'bg-green-100 text-green-800',
-    PENDING: 'bg-yellow-100 text-yellow-800',
-    REJECTED: 'bg-red-100 text-red-800',
-  }
-
-  return (
-    <tr className="border-b border-gray-100 hover:bg-gray-50">
-      <td className="px-4 py-3 text-sm text-gray-900">
-        {new Date(transaction.transactionDate).toLocaleDateString()}
-      </td>
-      <td className="px-4 py-3">
-        <span
-          className="inline-flex items-center gap-2 px-2 py-1 rounded text-xs font-medium"
-          style={{ backgroundColor: transaction.category.color + '20', color: transaction.category.color }}
-        >
-          {transaction.category.heading}
-        </span>
-      </td>
-      <td className="px-4 py-3 text-sm text-gray-900">{transaction.vendor}</td>
-      <td className="px-4 py-3">
-        <div className="flex flex-col gap-1">
-          <span className="text-sm text-gray-600">{transaction.description || '-'}</span>
-          {transaction.missingReceipt && (
-            <span className="inline-flex items-center gap-1 text-xs text-red-600">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              Missing Receipt
-            </span>
-          )}
-        </div>
-      </td>
-      <td className="px-4 py-3">
-        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${statusColors[transaction.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
-          {transaction.status}
-        </span>
-      </td>
-      <td className={`px-4 py-3 text-sm font-semibold text-right ${isIncome ? 'text-green-600' : 'text-gray-900'}`}>
-        {isIncome ? '+' : '-'}${Number(transaction.amount).toLocaleString()}
-      </td>
-    </tr>
   )
 }
 
@@ -353,6 +307,35 @@ export default async function TeamDetailPage({ params }: PageProps) {
           </div>
         )}
 
+        {/* Red Flags */}
+        {latestSnapshot && latestSnapshot.redFlags && Array.isArray(latestSnapshot.redFlags) && latestSnapshot.redFlags.length > 0 && (
+          <div className="bg-white border-2 border-red-200 rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-bold text-red-700 mb-4 flex items-center gap-2">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              Red Flags ({latestSnapshot.redFlags.length})
+            </h2>
+            <div className="space-y-3">
+              {latestSnapshot.redFlags.map((flag: any, index: number) => (
+                <div key={index} className="flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-gray-50">
+                  <span className={`inline-block px-3 py-1 rounded text-xs font-semibold ${
+                    flag.severity === 'critical'
+                      ? 'bg-red-100 text-red-800 border border-red-200'
+                      : 'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                  }`}>
+                    {flag.severity}
+                  </span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm text-gray-900">{flag.code}</p>
+                    <p className="text-sm text-gray-600 mt-1">{flag.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Pending Approvals */}
         {pendingTransactions.length > 0 && (
           <div className="mb-8">
@@ -411,47 +394,8 @@ export default async function TeamDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Recent Transactions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Transactions</h2>
-          {recentTransactions.length > 0 ? (
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Category
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Vendor
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Amount
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {recentTransactions.map(transaction => (
-                    <TransactionRow key={transaction.id} transaction={transaction} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="bg-white border border-gray-200 rounded-lg p-8 text-center text-gray-500">
-              No transactions yet
-            </div>
-          )}
-        </div>
+        {/* All Transactions (with filtering and pagination) */}
+        <TransactionsSection transactions={allTransactions} />
 
         {/* Snapshot History */}
         {snapshotHistory.length > 0 && (

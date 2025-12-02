@@ -61,6 +61,7 @@ export interface TeamDetailData {
     percentUsed: number | null
     pendingApprovals: number | null
     missingReceipts: number | null
+    redFlags: any | null
     snapshotAt: Date
   } | null
   budgetByCategory: Array<{
@@ -190,6 +191,7 @@ export async function getTeamDetailData(
             percentUsed: true,
             pendingApprovals: true,
             missingReceipts: true,
+            redFlags: true,
             snapshotAt: true,
           },
         },

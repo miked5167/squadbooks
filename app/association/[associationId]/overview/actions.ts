@@ -40,6 +40,15 @@ export interface OverviewData {
       snapshotAt: Date
     } | null
   }>
+  recentAlerts: Array<{
+    id: string
+    teamId: string | null
+    teamName: string | null
+    type: string
+    title: string
+    severity: string
+    createdAt: Date
+  }>
 }
 
 export async function getOverviewData(associationId: string): Promise<OverviewData> {
@@ -60,6 +69,7 @@ export async function getOverviewData(associationId: string): Promise<OverviewDa
       return {
         association: null,
         teams: [],
+        recentAlerts: [],
       }
     }
 
@@ -124,15 +134,52 @@ export async function getOverviewData(associationId: string): Promise<OverviewDa
       latestSnapshot: at.snapshots[0] || null,
     }))
 
+    // Fetch recent alerts (last 7 days, up to 10 alerts)
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+    const alerts = await prisma.alert.findMany({
+      where: {
+        associationId,
+        createdAt: {
+          gte: sevenDaysAgo,
+        },
+        resolvedAt: null,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+      include: {
+        team: {
+          select: {
+            teamName: true,
+          },
+        },
+      },
+    })
+
+    const recentAlerts = alerts.map(alert => ({
+      id: alert.id,
+      teamId: alert.associationTeamId,
+      teamName: alert.team?.teamName || null,
+      type: alert.alertType,
+      title: alert.title,
+      severity: alert.severity,
+      createdAt: alert.createdAt,
+    }))
+
     return {
       association,
       teams,
+      recentAlerts,
     }
   } catch (error) {
     console.error('Error fetching overview data:', error)
     return {
       association: null,
       teams: [],
+      recentAlerts: [],
     }
   }
 }
