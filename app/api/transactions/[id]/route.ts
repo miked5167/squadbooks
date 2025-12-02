@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { UpdateTransactionSchema } from '@/lib/validations/transaction'
 import { getTransactionById, updateTransaction, deleteTransaction } from '@/lib/db/transactions'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/transactions/[id]
@@ -10,9 +11,12 @@ import { prisma } from '@/lib/prisma'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Await params (Next.js 15+ requirement)
+    const { id } = await params
+
     // Authenticate user
     const { userId } = await auth()
     if (!userId) {
@@ -30,7 +34,7 @@ export async function GET(
     }
 
     // Get transaction
-    const transaction = await getTransactionById(params.id, user.teamId)
+    const transaction = await getTransactionById(id, user.teamId)
 
     if (!transaction) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
@@ -38,7 +42,7 @@ export async function GET(
 
     return NextResponse.json(transaction, { status: 200 })
   } catch (error) {
-    console.error('GET /api/transactions/[id] error:', error)
+    logger.error('GET /api/transactions/[id] error', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
@@ -52,9 +56,12 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Await params (Next.js 15+ requirement)
+    const { id } = await params
+
     // Authenticate user
     const { userId } = await auth()
     if (!userId) {
@@ -98,7 +105,7 @@ export async function PUT(
     }
 
     // Update transaction
-    const transaction = await updateTransaction(params.id, user.teamId, user.id, validatedData)
+    const transaction = await updateTransaction(id, user.teamId, user.id, validatedData)
 
     return NextResponse.json(
       {
@@ -108,7 +115,7 @@ export async function PUT(
       { status: 200 }
     )
   } catch (error) {
-    console.error('PUT /api/transactions/[id] error:', error)
+    logger.error('PUT /api/transactions/[id] error', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
@@ -122,9 +129,12 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Await params (Next.js 15+ requirement)
+    const { id } = await params
+
     // Authenticate user
     const { userId } = await auth()
     if (!userId) {
@@ -150,14 +160,14 @@ export async function DELETE(
     }
 
     // Delete transaction
-    await deleteTransaction(params.id, user.teamId, user.id)
+    await deleteTransaction(id, user.teamId, user.id)
 
     return NextResponse.json(
       { message: 'Transaction deleted successfully' },
       { status: 200 }
     )
   } catch (error) {
-    console.error('DELETE /api/transactions/[id] error:', error)
+    logger.error('DELETE /api/transactions/[id] error', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }

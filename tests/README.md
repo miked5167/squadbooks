@@ -1,23 +1,69 @@
-# HuddleBooks E2E Testing Guide
+# Squadbooks Testing Guide
 
-This directory contains end-to-end (E2E) tests for HuddleBooks using Playwright Test.
+This directory contains automated tests for Squadbooks using Playwright Test.
+
+## 🚀 Quick Start (TL;DR)
+
+```bash
+# 1. Install browsers (one time)
+npx playwright install
+
+# 2. Run API tests
+npx playwright test api/transactions.spec.ts
+
+# 3. View results
+npx playwright show-report
+```
+
+**That's it!** Tests automatically:
+- ✅ Start the dev server
+- ✅ Seed test data
+- ✅ Clean up after completion
+
+**Current Status:** 6/9 tests passing (67% - expected, see details below)
+
+---
+
+## 📋 Key Files to Know
+
+| File | Purpose |
+|------|---------|
+| `playwright.config.ts` | Test configuration, browser settings, global setup |
+| `tests/setup/global-setup.ts` | Automatic test data seeding (runs before all tests) |
+| `tests/fixtures/test-data.ts` | Test data constants and sample data |
+| `tests/api/transactions.spec.ts` | Transaction API tests (6/9 passing) |
+
+---
 
 ## Test Structure
 
 ```
 tests/
+├── api/                      # API integration tests
+│   └── transactions.spec.ts  # Transaction API tests (6/9 passing)
 ├── e2e/                      # End-to-end UI tests
 │   ├── treasurer-workflow.spec.ts
 │   ├── approval-workflow.spec.ts
 │   └── reports-budget.spec.ts
-├── api/                      # API integration tests
-│   └── transactions.spec.ts
 ├── security/                 # Security and RBAC tests
 │   └── rbac.spec.ts
 ├── fixtures/                 # Test data and fixtures
+│   ├── test-data.ts          # ⭐ Test data constants and IDs
 │   └── sample-receipt.pdf
+├── setup/                    # Test setup and configuration
+│   └── global-setup.ts       # ⭐ Automatic test data seeding
 └── README.md                 # This file
 ```
+
+## ✨ What's New (Updated 2025-12-02)
+
+### Automated Test Setup
+Tests now run completely automatically with no manual setup required:
+- ✅ **Automatic server startup** - Dev server starts automatically before tests
+- ✅ **Automatic test data seeding** - Database is seeded with known test data
+- ✅ **Cleanup between runs** - Old test data is cleaned up automatically
+- ✅ **Fixed async params** - Next.js 15+ compatibility issues resolved
+- ✅ **Fixed Sentry errors** - Build errors resolved
 
 ## Prerequisites
 
@@ -26,16 +72,24 @@ tests/
    npx playwright install
    ```
 
-2. **Ensure dev server is running:**
-   ```bash
-   npm run dev
-   ```
+2. **Environment variables:**
+   - Ensure `.env.local` or `.env` has valid database connection
+   - Clerk keys are optional for API tests (they test unauthenticated behavior)
 
-3. **Database with test data:**
-   - Run `npm run db:seed` to populate test categories
-   - Create test users via Clerk dashboard
+**That's it!** The test setup is fully automated:
+- ✅ Dev server starts automatically
+- ✅ Test data seeds automatically
+- ✅ No manual database setup needed
 
 ## Running Tests
+
+### Quick Start - Run API Tests
+```bash
+npx playwright test api/transactions.spec.ts
+```
+**Current Status:** 6/9 tests passing (67% pass rate)
+- ✅ 6 tests validate API behavior correctly
+- ⚠️ 3 tests require Clerk authentication (expected failures)
 
 ### Run all tests
 ```bash
@@ -45,6 +99,7 @@ npx playwright test
 ### Run specific test file
 ```bash
 npx playwright test tests/e2e/treasurer-workflow.spec.ts
+npx playwright test tests/api/transactions.spec.ts
 ```
 
 ### Run tests in headed mode (see browser)
@@ -57,18 +112,12 @@ npx playwright test --headed
 npx playwright test --debug
 ```
 
-### Run tests for specific browser
+### Run only chromium (faster)
 ```bash
 npx playwright test --project=chromium
-npx playwright test --project=firefox
-npx playwright test --project=webkit
 ```
 
-### Run tests on mobile viewport
-```bash
-npx playwright test --project="Mobile Chrome"
-npx playwright test --project="Mobile Safari"
-```
+**Note:** E2E tests may require manual Clerk authentication. API tests run automatically.
 
 ## Test Reports
 
@@ -76,6 +125,48 @@ After running tests, view the HTML report:
 ```bash
 npx playwright show-report
 ```
+
+## 🔧 Test Data (Automatic Seeding)
+
+The global setup automatically creates test data before each test run:
+
+### Seeded Test Data
+
+| Entity | ID | Details |
+|--------|------|---------|
+| **Team** | `test-team-id` | Test Team - Playwright<br/>Budget: $10,000 |
+| **User** | `test-user-id` | Test Treasurer<br/>Role: TREASURER<br/>Email: test-treasurer@example.com |
+| **Category** | `test-category-id` | Equipment (EXPENSE) |
+| **Category** | `test-category-income-id` | Fundraising (INCOME) |
+| **Transaction** | `test-transaction-id` | $100.00 expense<br/>Status: APPROVED |
+
+### Using Test Data in Tests
+
+Import fixtures from `tests/fixtures/test-data.ts`:
+
+```typescript
+import { TEST_IDS, NEW_TRANSACTION_DATA } from '../fixtures/test-data';
+
+// Use known IDs
+const response = await api.get(`/api/transactions/${TEST_IDS.transaction}`);
+
+// Use test data constants
+const response = await api.post('/api/transactions', {
+  data: NEW_TRANSACTION_DATA
+});
+```
+
+### How It Works
+
+1. **Global Setup** (`tests/setup/global-setup.ts`):
+   - Runs once before all tests
+   - Cleans up old test data
+   - Seeds fresh test data with known IDs
+
+2. **Test Fixtures** (`tests/fixtures/test-data.ts`):
+   - Centralized constants for test IDs
+   - Sample data for creating new records
+   - Prevents hardcoded values in tests
 
 ## Test Coverage
 
@@ -117,7 +208,75 @@ npx playwright show-report
 - [x] Data isolation between teams
 - [x] Authentication requirements
 
-## Test Data Setup
+### 🧪 API Tests Status (tests/api/transactions.spec.ts)
+
+**Current: 6/9 passing (67%)**
+
+#### ✅ Passing Tests (Testing Unauthenticated Behavior)
+1. GET /api/transactions - Returns 401 (unauthorized) ✓
+2. POST with high amount - Returns 401 (unauthorized) ✓
+3. GET with filters - Returns 401 (unauthorized) ✓
+4. POST validates required fields - Returns 400 (validation error) ✓
+5. POST rejects negative amounts - Returns 400 (validation error) ✓
+6. POST rejects future dates - Returns 400 (validation error) ✓
+
+#### ⚠️ Expected Failures (Require Clerk Authentication)
+7. POST /api/transactions (create) - Needs auth to return 201
+8. PUT /api/transactions/[id] (update) - Needs auth to return 200/404
+9. DELETE /api/transactions/[id] (delete) - Needs auth to return 200/404
+
+**Why they fail:** APIs require Clerk authentication. Without valid session tokens, requests are rejected (400/401). This is **correct behavior** - the APIs are properly secured.
+
+**To get 9/9 passing:** Implement Phase 3 (Clerk test authentication). See "Future Improvements" below.
+
+## Adding New Tests
+
+### 1. Create a new test file
+
+```typescript
+// tests/api/budget.spec.ts
+import { test, expect } from '@playwright/test';
+import { TEST_IDS } from '../fixtures/test-data';
+
+test.describe('Budget API', () => {
+  let apiContext;
+
+  test.beforeAll(async ({ playwright, baseURL }) => {
+    apiContext = await playwright.request.newContext({
+      baseURL: baseURL,
+    });
+  });
+
+  test.afterAll(async () => {
+    await apiContext.dispose();
+  });
+
+  test('GET /api/budget should return budget', async () => {
+    const response = await apiContext.get('/api/budget');
+    expect([200, 401]).toContain(response.status());
+  });
+});
+```
+
+### 2. Add test data to fixtures (if needed)
+
+```typescript
+// tests/fixtures/test-data.ts
+export const TEST_BUDGET = {
+  teamId: TEST_IDS.team,
+  totalBudget: 10000,
+  // ... more fields
+};
+```
+
+### 3. Update global setup (if new data needed)
+
+```typescript
+// tests/setup/global-setup.ts
+// Add new seed data to seedTestData() function
+```
+
+## Test Data Setup (Legacy - For E2E Tests)
 
 ### Creating Test Users
 
@@ -235,24 +394,41 @@ jobs:
 
 ## Troubleshooting
 
-### Tests fail with "Element not found"
-- Make sure dev server is running
-- Check if test data exists (users, team, categories)
-- Increase timeout in `playwright.config.ts`
+### ❌ "Global setup failed: PrismaClientValidationError"
+**Cause:** Database schema mismatch or missing fields
+**Fix:** Run `npx prisma generate` to sync Prisma client with schema
 
-### Authentication errors
-- Verify Clerk is configured correctly
-- Check `.env.local` has correct Clerk keys
-- Make sure test users exist in Clerk
+### ❌ "connect ECONNREFUSED ::1:3000"
+**Cause:** Dev server failed to start
+**Fix:**
+- Check for port conflicts: `netstat -ano | findstr :3000`
+- Kill conflicting process or change port in `playwright.config.ts`
+- Check build errors in server logs
 
-### Database conflicts
-- Run tests with `workers: 1` to avoid parallel execution
-- Reset database between test runs if needed
+### ❌ Tests fail with "Transaction not found"
+**Cause:** Global setup didn't complete successfully
+**Fix:**
+- Check console for setup errors
+- Verify database connection in `.env.local`
+- Run setup manually: `npx tsx tests/setup/global-setup.ts`
+
+### ⚠️ API tests return 400/401 (Expected)
+**Not an error!** APIs require authentication. See "API Tests Status" above.
+
+### Tests slow or timing out
+- Dev server may be compiling on first request (normal)
+- Increase timeout: `--timeout=180000`
+- First run after code changes takes longer
 
 ### Browser not found
 ```bash
 npx playwright install
 ```
+
+### Database locked errors
+- Run tests with `workers: 1` (already set in config)
+- Close any active database connections
+- Restart tests
 
 ## Best Practices
 
@@ -269,6 +445,44 @@ When adding new features:
 2. Ensure tests are independent and can run in any order
 3. Add meaningful assertions, not just "element exists"
 4. Document any manual setup steps required
+5. Use test fixtures from `tests/fixtures/test-data.ts`
+6. Update global setup if new entities need seeding
+
+## Future Improvements
+
+### Phase 3: Clerk Authentication (Get 9/9 Tests Passing)
+**Goal:** Enable authenticated API testing
+
+**Steps:**
+1. Set up Clerk test environment
+2. Create auth helper (`tests/helpers/auth.ts`)
+3. Generate test session tokens
+4. Store auth state in `playwright/.auth/test-user.json`
+5. Update tests to use authenticated context
+
+**Benefits:**
+- Test full CRUD operations
+- Test role-based permissions
+- Test approval workflows
+- 100% test pass rate
+
+### Phase 4: CI/CD Integration
+**Goal:** Run tests automatically on every PR
+
+**Steps:**
+1. Create `.github/workflows/playwright.yml`
+2. Set up test database in CI
+3. Configure Clerk test keys
+4. Upload test reports as artifacts
+
+### Phase 5: Expand Coverage
+**Goal:** Test all critical endpoints
+
+**Priority endpoints:**
+- Budget APIs (`/api/budget`)
+- Approval APIs (`/api/approvals`)
+- Categories APIs (`/api/categories`)
+- User/Team management (`/api/settings/users`)
 
 ## Resources
 

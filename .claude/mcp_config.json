@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "n8n": {
+      "command": "C:\\Users\\miked\\AppData\\Roaming\\npm\\n8n-mcp-server.cmd",
+      "env": {
+        "N8N_API_URL": "https://miked5167.app.n8n.cloud/api/v1",
+        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMjE0OTdiNi05OGVkLTQzOGMtYTRmNy1hZTY2OWM1ZGRjOWEiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6IjRmN2Y4YzBkLWE1MWItNDcyZS04NzgxLTk1N2I4NGEyNzYxMiIsImlhdCI6MTc2NDM2NTE1M30.x9y-Ruzc2Iqa37i-8um3r-ES_jVGN30OEyUaLzTe0d0"
+      }
+    }
+  }
+}

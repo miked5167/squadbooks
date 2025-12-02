@@ -1,22 +1,26 @@
 import { test, expect } from '@playwright/test';
+import { TEST_IDS, NEW_TRANSACTION_DATA, HIGH_AMOUNT_TRANSACTION_DATA } from '../fixtures/test-data';
 
 /**
  * API Test: Transaction Endpoints
  * Tests the transaction API endpoints directly
+ *
+ * Note: These tests run without authentication and should expect 401 responses
+ * for protected endpoints. To test authenticated flows, set up Clerk test tokens.
  */
 
 test.describe('Transaction API', () => {
   let apiContext;
   let sessionToken;
 
-  test.beforeAll(async ({ playwright }) => {
-    // Create API context
+  test.beforeAll(async ({ playwright, baseURL }) => {
+    // Create API context using the baseURL from playwright.config.ts
     apiContext = await playwright.request.newContext({
-      baseURL: 'http://localhost:3000',
+      baseURL: baseURL,
     });
 
-    // Note: In real tests, you would authenticate and get a session token
-    // For now, this is a template showing how to test APIs
+    // Note: In real authenticated tests, you would set up Clerk session tokens here
+    // For now, we test unauthenticated behavior and expect 401 responses
   });
 
   test.afterAll(async () => {
@@ -43,17 +47,8 @@ test.describe('Transaction API', () => {
   });
 
   test('POST /api/transactions should create transaction', async () => {
-    const transactionData = {
-      type: 'EXPENSE',
-      amount: 125.50,
-      vendor: 'API Test Vendor',
-      categoryId: 'test-category-id',
-      description: 'Test transaction via API',
-      transactionDate: new Date().toISOString(),
-    };
-
     const response = await apiContext.post('/api/transactions', {
-      data: transactionData,
+      data: NEW_TRANSACTION_DATA,
     });
 
     // Should return 201 (created) or 401 (unauthorized)
@@ -62,22 +57,14 @@ test.describe('Transaction API', () => {
     if (response.status() === 201) {
       const data = await response.json();
       expect(data).toHaveProperty('transaction');
-      expect(data.transaction.vendor).toBe('API Test Vendor');
-      expect(data.transaction.amount).toBe('125.50');
+      expect(data.transaction.vendor).toBe(NEW_TRANSACTION_DATA.vendor);
+      expect(data.transaction.amount).toBe(NEW_TRANSACTION_DATA.amount.toFixed(1));
     }
   });
 
   test('POST /api/transactions with high amount should require approval', async () => {
-    const transactionData = {
-      type: 'EXPENSE',
-      amount: 500.00,
-      vendor: 'High Value Test',
-      categoryId: 'test-category-id',
-      transactionDate: new Date().toISOString(),
-    };
-
     const response = await apiContext.post('/api/transactions', {
-      data: transactionData,
+      data: HIGH_AMOUNT_TRANSACTION_DATA,
     });
 
     if (response.status() === 201) {
@@ -101,14 +88,11 @@ test.describe('Transaction API', () => {
   });
 
   test('PUT /api/transactions/[id] should update transaction', async () => {
-    // Note: Replace with actual transaction ID from your test data
-    const transactionId = 'test-transaction-id';
-
     const updateData = {
       description: 'Updated description',
     };
 
-    const response = await apiContext.put(`/api/transactions/${transactionId}`, {
+    const response = await apiContext.put(`/api/transactions/${TEST_IDS.transaction}`, {
       data: updateData,
     });
 
@@ -122,9 +106,7 @@ test.describe('Transaction API', () => {
   });
 
   test('DELETE /api/transactions/[id] should delete transaction', async () => {
-    const transactionId = 'test-transaction-id';
-
-    const response = await apiContext.delete(`/api/transactions/${transactionId}`);
+    const response = await apiContext.delete(`/api/transactions/${TEST_IDS.transaction}`);
 
     // Should return 200, 404, 401, or 403
     expect([200, 401, 403, 404]).toContain(response.status());
@@ -154,7 +136,7 @@ test.describe('Transaction API', () => {
       type: 'EXPENSE',
       amount: -50.00,
       vendor: 'Test',
-      categoryId: 'test-category-id',
+      categoryId: TEST_IDS.category,
       transactionDate: new Date().toISOString(),
     };
 
@@ -173,7 +155,7 @@ test.describe('Transaction API', () => {
       type: 'EXPENSE',
       amount: 50.00,
       vendor: 'Test',
-      categoryId: 'test-category-id',
+      categoryId: TEST_IDS.category,
       transactionDate: futureDate.toISOString(),
     };
 

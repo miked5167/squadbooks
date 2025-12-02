@@ -162,7 +162,19 @@
       "Bash(n8n-mcp-server:*)",
       "Bash(where:*)",
       "WebFetch(domain:code.claude.com)",
-      "Bash(claude mcp add --transport stdio n8n --env N8N_API_URL=https://miked5167.app.n8n.cloud/api/v1 --env N8N_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMjE0OTdiNi05OGVkLTQzOGMtYTRmNy1hZTY2OWM1ZGRjOWEiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6IjRmN2Y4YzBkLWE1MWItNDcyZS04NzgxLTk1N2I4NGEyNzYxMiIsImlhdCI6MTc2NDM2NTE1M30.x9y-Ruzc2Iqa37i-8um3r-ES_jVGN30OEyUaLzTe0d0 -- n8n-mcp-server)"
+      "Bash(claude mcp add --transport stdio n8n --env N8N_API_URL=https://miked5167.app.n8n.cloud/api/v1 --env N8N_API_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMjE0OTdiNi05OGVkLTQzOGMtYTRmNy1hZTY2OWM1ZGRjOWEiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6IjRmN2Y4YzBkLWE1MWItNDcyZS04NzgxLTk1N2I4NGEyNzYxMiIsImlhdCI6MTc2NDM2NTE1M30.x9y-Ruzc2Iqa37i-8um3r-ES_jVGN30OEyUaLzTe0d0 -- n8n-mcp-server)",
+      "Bash(git restore:*)",
+      "Bash(git log:*)",
+      "Bash(find:*)",
+      "Bash(npx prisma db execute:*)",
+      "Bash(del check-budget-approvals.ts check-teams.ts create-missing-approvals.ts add-families-to-storm.ts)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:help.figma.com)",
+      "Bash(claude mcp add:*)",
+      "Bash(del \"app\\budget\\approvals\\page.tsx\")",
+      "Bash(if exist node_modules.prisma rmdir /s /q node_modules.prisma)",
+      "Bash(npx next dev)",
+      "Bash(npx next dev:*)"
     ],
     "deny": [],
     "ask": []
