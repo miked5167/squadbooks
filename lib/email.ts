@@ -98,12 +98,16 @@ export async function sendApprovalRequestEmail(data: ApprovalEmailData) {
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Date:</td>
           <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${new Date(transactionDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
         </tr>
-        ${description ? `
+        ${
+          description
+            ? `
         <tr>
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px; vertical-align: top;">Description:</td>
           <td style="padding: 8px 0; color: #111827; font-size: 14px;">${description}</td>
         </tr>
-        ` : ''}
+        `
+            : ''
+        }
       </table>
 
     </div>
@@ -225,18 +229,23 @@ export async function sendApprovalStatusEmail(
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Vendor:</td>
           <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${vendor}</td>
         </tr>
-        ${comment ? `
+        ${
+          comment
+            ? `
         <tr>
           <td style="padding: 16px 0 8px; color: #6b7280; font-size: 14px; vertical-align: top; border-top: 1px solid #e5e7eb;">Comment:</td>
           <td style="padding: 16px 0 8px; color: #111827; font-size: 14px; border-top: 1px solid #e5e7eb;">${comment}</td>
         </tr>
-        ` : ''}
+        `
+            : ''
+        }
       </table>
     </div>
 
-    ${approved
-      ? '<p style="margin: 20px 0 0; font-size: 14px; color: #6b7280;">Your transaction has been approved and is now reflected in your team budget.</p>'
-      : '<p style="margin: 20px 0 0; font-size: 14px; color: #6b7280;">If you have questions about this decision, please contact your Assistant Treasurer.</p>'
+    ${
+      approved
+        ? '<p style="margin: 20px 0 0; font-size: 14px; color: #6b7280;">Your transaction has been approved and is now reflected in your team budget.</p>'
+        : '<p style="margin: 20px 0 0; font-size: 14px; color: #6b7280;">If you have questions about this decision, please contact your Assistant Treasurer.</p>'
     }
 
   </div>
@@ -262,9 +271,10 @@ Amount: $${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFra
 Vendor: ${vendor}
 ${comment ? `Comment: ${comment}` : ''}
 
-${approved
-  ? 'Your transaction has been approved and is now reflected in your team budget.'
-  : 'If you have questions about this decision, please contact your Assistant Treasurer.'
+${
+  approved
+    ? 'Your transaction has been approved and is now reflected in your team budget.'
+    : 'If you have questions about this decision, please contact your Assistant Treasurer.'
 }
 
 ---
@@ -321,7 +331,11 @@ export async function sendParentInviteEmail(data: ParentInviteEmailData) {
   } = data
 
   const onboardingUrl = `${APP_URL}/parent-onboarding?token=${inviteToken}`
-  const expiryDate = expiresAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  const expiryDate = expiresAt.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
 
   const subject = `Complete Your Player Information for ${playerFirstName} ${playerLastName} - ${teamName}`
 
@@ -477,7 +491,7 @@ export async function sendBudgetApprovalRequestEmail(data: BudgetApprovalEmailDa
   const typeLabel = {
     INITIAL: 'Initial Budget',
     REVISION: 'Budget Revision',
-    REPORT: 'Budget Report'
+    REPORT: 'Budget Report',
   }[approvalType]
 
   const subject = `Budget Acknowledgment Required - ${teamName}`
@@ -526,18 +540,26 @@ export async function sendBudgetApprovalRequestEmail(data: BudgetApprovalEmailDa
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 35%;">Type:</td>
           <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${typeLabel}</td>
         </tr>
-        ${description ? `
+        ${
+          description
+            ? `
         <tr>
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px; vertical-align: top;">Description:</td>
           <td style="padding: 8px 0; color: #111827; font-size: 14px;">${description}</td>
         </tr>
-        ` : ''}
-        ${deadlineText ? `
+        `
+            : ''
+        }
+        ${
+          deadlineText
+            ? `
         <tr>
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Deadline:</td>
           <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${deadlineText}</td>
         </tr>
-        ` : ''}
+        `
+            : ''
+        }
       </table>
 
     </div>
@@ -559,13 +581,17 @@ export async function sendBudgetApprovalRequestEmail(data: BudgetApprovalEmailDa
       </a>
     </div>
 
-    ${deadlineText ? `
+    ${
+      deadlineText
+        ? `
     <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 6px; padding: 12px 16px; margin: 20px 0;">
       <p style="margin: 0; font-size: 13px; color: #92400e;">
         <strong>⏰ Please acknowledge by ${deadlineText}</strong>
       </p>
     </div>
-    ` : ''}
+    `
+        : ''
+    }
 
     <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; text-align: center;">
       Please review and acknowledge this budget at your earliest convenience.
@@ -656,7 +682,7 @@ export async function sendBudgetApprovalCompletionEmail(data: BudgetCompletionEm
   const typeLabel = {
     INITIAL: 'Initial Budget',
     REVISION: 'Budget Revision',
-    REPORT: 'Budget Report'
+    REPORT: 'Budget Report',
   }[approvalType]
 
   const subject = `Budget Approval Completed - ${teamName}`
@@ -779,6 +805,665 @@ This is an automated notification from Squadbooks
   } catch (error) {
     console.error('Failed to send budget completion email:', error)
     // Don't throw - we don't want to fail the acknowledgment just because email failed
+    return { success: false, error }
+  }
+}
+
+// ========================
+// Pre-Season Budget Emails
+// ========================
+
+export interface PreSeasonBudgetSubmissionEmailData {
+  adminName: string
+  adminEmail: string
+  coachName: string
+  teamName: string
+  season: string
+  totalBudget: number
+  perPlayerCost: number
+  projectedPlayers: number
+  budgetId: string
+  associationName: string
+}
+
+/**
+ * Send budget submission notification to association admin
+ */
+export async function sendPreSeasonBudgetSubmissionEmail(data: PreSeasonBudgetSubmissionEmailData) {
+  const {
+    adminName,
+    adminEmail,
+    coachName,
+    teamName,
+    season,
+    totalBudget,
+    perPlayerCost,
+    projectedPlayers,
+    budgetId,
+    associationName,
+  } = data
+
+  const reviewUrl = `${APP_URL}/association/pre-season-budgets/${budgetId}`
+
+  const subject = `Budget Approval Needed: ${teamName} - ${season}`
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Approval Needed</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Budget Approval Needed</h1>
+    <p style="margin: 10px 0 0; opacity: 0.9; font-size: 14px;">${associationName}</p>
+  </div>
+
+  <!-- Content -->
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+
+    <p style="margin: 0 0 20px; font-size: 16px;">Hi ${adminName},</p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      <strong>${coachName}</strong> has submitted a pre-season budget proposal that requires your review and approval.
+    </p>
+
+    <!-- Budget Details Card -->
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
+
+      <h2 style="margin: 0 0 15px; font-size: 18px; color: #1e3a5f; font-weight: 600;">${teamName}</h2>
+
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 45%;">Season:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${season}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Total Budget:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 16px; font-weight: 700;">$${totalBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Per Player Cost:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 16px; font-weight: 700;">$${perPlayerCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Projected Players:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${projectedPlayers}</td>
+        </tr>
+      </table>
+
+    </div>
+
+    <!-- Info Card -->
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px; color: #1e40af; font-weight: 500;">
+        <strong>Action Required:</strong>
+      </p>
+      <p style="margin: 8px 0 0; font-size: 14px; color: #1e40af;">
+        Please review the detailed budget breakdown and either approve or reject this proposal. Once approved, the coach can share it with prospective parents.
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="text-align: center; margin: 30px 0 20px;">
+      <a href="${reviewUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);">
+        Review Budget Proposal
+      </a>
+    </div>
+
+    <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; text-align: center;">
+      Please review this budget at your earliest convenience.
+    </p>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+    <p style="margin: 0 0 5px;">This is an automated notification from Squadbooks</p>
+    <p style="margin: 0;">© ${new Date().getFullYear()} Squadbooks. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
+`
+
+  const textContent = `
+Budget Approval Needed - ${associationName}
+
+Hi ${adminName},
+
+${coachName} has submitted a pre-season budget proposal that requires your review and approval.
+
+Budget Details:
+--------------
+Team: ${teamName}
+Season: ${season}
+Total Budget: $${totalBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+Per Player Cost: $${perPlayerCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+Projected Players: ${projectedPlayers}
+
+Action Required:
+Please review the detailed budget breakdown and either approve or reject this proposal. Once approved, the coach can share it with prospective parents.
+
+Review budget proposal: ${reviewUrl}
+
+Please review this budget at your earliest convenience.
+
+---
+This is an automated notification from Squadbooks
+© ${new Date().getFullYear()} Squadbooks. All rights reserved.
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: adminEmail,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Pre-season budget submission email sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send pre-season budget submission email:', error)
+    return { success: false, error }
+  }
+}
+
+export interface PreSeasonBudgetApprovalEmailData {
+  coachName: string
+  coachEmail: string
+  teamName: string
+  season: string
+  totalBudget: number
+  perPlayerCost: number
+  publicSlug: string
+  budgetId: string
+}
+
+/**
+ * Send budget approval confirmation to coach
+ */
+export async function sendPreSeasonBudgetApprovalEmail(data: PreSeasonBudgetApprovalEmailData) {
+  const {
+    coachName,
+    coachEmail,
+    teamName,
+    season,
+    totalBudget,
+    perPlayerCost,
+    publicSlug,
+    budgetId,
+  } = data
+
+  const publicUrl = `${APP_URL}/public-budget/${publicSlug}`
+  const budgetUrl = `${APP_URL}/pre-season-budget/${budgetId}`
+
+  const subject = `Budget Approved: ${teamName} - ${season}`
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Approved</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">✓ Budget Approved!</h1>
+    <p style="margin: 10px 0 0; opacity: 0.9; font-size: 14px;">${teamName} - ${season}</p>
+  </div>
+
+  <!-- Content -->
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+
+    <p style="margin: 0 0 20px; font-size: 16px;">Hi ${coachName},</p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      Great news! Your pre-season budget proposal has been <strong>approved</strong> by your association.
+    </p>
+
+    <!-- Budget Summary Card -->
+    <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #047857; font-size: 14px; width: 45%;">Total Budget:</td>
+          <td style="padding: 8px 0; color: #065f46; font-size: 16px; font-weight: 700;">$${totalBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #047857; font-size: 14px;">Per Player Cost:</td>
+          <td style="padding: 8px 0; color: #065f46; font-size: 16px; font-weight: 700;">$${perPlayerCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Next Steps -->
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px; color: #1e40af; font-weight: 500;">
+        <strong>Next Steps:</strong>
+      </p>
+      <ol style="margin: 8px 0 0; padding-left: 20px; font-size: 14px; color: #1e40af;">
+        <li>Share the public budget link with prospective parents</li>
+        <li>Monitor parent interest submissions</li>
+        <li>Once you have enough committed players, activate your team</li>
+      </ol>
+    </div>
+
+    <!-- Public Budget Link -->
+    <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 6px; padding: 16px; margin: 20px 0;">
+      <p style="margin: 0 0 8px; font-size: 14px; color: #92400e; font-weight: 500;">
+        📢 Share this link with parents:
+      </p>
+      <p style="margin: 0; font-size: 13px; color: #92400e; word-break: break-all; font-family: monospace;">
+        ${publicUrl}
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="text-align: center; margin: 30px 0 20px;">
+      <a href="${budgetUrl}" style="display: inline-block; background: #059669; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; margin: 0 5px;">
+        Manage Budget
+      </a>
+      <a href="${publicUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; margin: 0 5px;">
+        View Public Budget
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+    <p style="margin: 0 0 5px;">This is an automated notification from Squadbooks</p>
+    <p style="margin: 0;">© ${new Date().getFullYear()} Squadbooks. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
+`
+
+  const textContent = `
+Budget Approved! - ${teamName} - ${season}
+
+Hi ${coachName},
+
+Great news! Your pre-season budget proposal has been approved by your association.
+
+Budget Summary:
+--------------
+Total Budget: $${totalBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+Per Player Cost: $${perPlayerCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+
+Next Steps:
+1. Share the public budget link with prospective parents
+2. Monitor parent interest submissions
+3. Once you have enough committed players, activate your team
+
+Share this link with parents:
+${publicUrl}
+
+Manage your budget: ${budgetUrl}
+View public budget: ${publicUrl}
+
+---
+This is an automated notification from Squadbooks
+© ${new Date().getFullYear()} Squadbooks. All rights reserved.
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: coachEmail,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Pre-season budget approval email sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send pre-season budget approval email:', error)
+    return { success: false, error }
+  }
+}
+
+export interface PreSeasonBudgetRejectionEmailData {
+  coachName: string
+  coachEmail: string
+  teamName: string
+  season: string
+  rejectionReason?: string
+  budgetId: string
+}
+
+/**
+ * Send budget rejection notification to coach
+ */
+export async function sendPreSeasonBudgetRejectionEmail(data: PreSeasonBudgetRejectionEmailData) {
+  const { coachName, coachEmail, teamName, season, rejectionReason, budgetId } = data
+
+  const budgetUrl = `${APP_URL}/pre-season-budget/${budgetId}`
+
+  const subject = `Budget Revision Needed: ${teamName} - ${season}`
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Revision Needed</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Budget Revision Needed</h1>
+    <p style="margin: 10px 0 0; opacity: 0.9; font-size: 14px;">${teamName} - ${season}</p>
+  </div>
+
+  <!-- Content -->
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+
+    <p style="margin: 0 0 20px; font-size: 16px;">Hi ${coachName},</p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      Your association has reviewed your pre-season budget proposal and has requested some revisions before it can be approved.
+    </p>
+
+    ${
+      rejectionReason
+        ? `
+    <!-- Feedback Card -->
+    <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <p style="margin: 0 0 8px; font-size: 14px; color: #92400e; font-weight: 500;">
+        <strong>Feedback from Association:</strong>
+      </p>
+      <p style="margin: 0; font-size: 14px; color: #92400e;">
+        ${rejectionReason}
+      </p>
+    </div>
+    `
+        : ''
+    }
+
+    <!-- Next Steps -->
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px; color: #1e40af; font-weight: 500;">
+        <strong>Next Steps:</strong>
+      </p>
+      <ol style="margin: 8px 0 0; padding-left: 20px; font-size: 14px; color: #1e40af;">
+        <li>Review the feedback provided by your association</li>
+        <li>Make the necessary adjustments to your budget</li>
+        <li>Resubmit for approval</li>
+      </ol>
+    </div>
+
+    <!-- Action Button -->
+    <div style="text-align: center; margin: 30px 0 20px;">
+      <a href="${budgetUrl}" style="display: inline-block; background: #f59e0b; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);">
+        Edit & Resubmit Budget
+      </a>
+    </div>
+
+    <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; text-align: center;">
+      If you have questions about the requested revisions, please contact your association administrator.
+    </p>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+    <p style="margin: 0 0 5px;">This is an automated notification from Squadbooks</p>
+    <p style="margin: 0;">© ${new Date().getFullYear()} Squadbooks. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
+`
+
+  const textContent = `
+Budget Revision Needed - ${teamName} - ${season}
+
+Hi ${coachName},
+
+Your association has reviewed your pre-season budget proposal and has requested some revisions before it can be approved.
+
+${rejectionReason ? `Feedback from Association:\n${rejectionReason}\n` : ''}
+Next Steps:
+1. Review the feedback provided by your association
+2. Make the necessary adjustments to your budget
+3. Resubmit for approval
+
+Edit and resubmit: ${budgetUrl}
+
+If you have questions about the requested revisions, please contact your association administrator.
+
+---
+This is an automated notification from Squadbooks
+© ${new Date().getFullYear()} Squadbooks. All rights reserved.
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: coachEmail,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Pre-season budget rejection email sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send pre-season budget rejection email:', error)
+    return { success: false, error }
+  }
+}
+
+export interface ParentInterestEmailData {
+  coachName: string
+  coachEmail: string
+  teamName: string
+  season: string
+  parentName: string
+  parentEmail: string
+  parentPhone?: string
+  playerName: string
+  playerAge: number
+  message?: string
+  budgetId: string
+  currentInterestCount: number
+}
+
+/**
+ * Send parent interest notification to coach
+ */
+export async function sendParentInterestEmail(data: ParentInterestEmailData) {
+  const {
+    coachName,
+    coachEmail,
+    teamName,
+    season,
+    parentName,
+    parentEmail,
+    parentPhone,
+    playerName,
+    playerAge,
+    message,
+    budgetId,
+    currentInterestCount,
+  } = data
+
+  const budgetUrl = `${APP_URL}/pre-season-budget/${budgetId}`
+
+  const subject = `New Parent Interest: ${teamName} - ${season}`
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Parent Interest</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">🎉 New Parent Interest!</h1>
+    <p style="margin: 10px 0 0; opacity: 0.9; font-size: 14px;">${teamName} - ${season}</p>
+  </div>
+
+  <!-- Content -->
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+
+    <p style="margin: 0 0 20px; font-size: 16px;">Hi ${coachName},</p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      A parent has expressed interest in your team! You now have <strong>${currentInterestCount} interested ${currentInterestCount === 1 ? 'parent' : 'parents'}</strong>.
+    </p>
+
+    <!-- Parent & Player Details Card -->
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
+
+      <h3 style="margin: 0 0 15px; font-size: 16px; color: #7c3aed; font-weight: 600;">Parent Contact</h3>
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 35%;">Name:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${parentName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Email:</td>
+          <td style="padding: 8px 0; color: #2563eb; font-size: 14px;"><a href="mailto:${parentEmail}" style="color: #2563eb; text-decoration: none;">${parentEmail}</a></td>
+        </tr>
+        ${
+          parentPhone
+            ? `
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Phone:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px;">${parentPhone}</td>
+        </tr>
+        `
+            : ''
+        }
+      </table>
+
+      <h3 style="margin: 20px 0 15px; font-size: 16px; color: #7c3aed; font-weight: 600; border-top: 1px solid #e5e7eb; padding-top: 15px;">Player Information</h3>
+
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 35%;">Player Name:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${playerName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Age:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${playerAge} years old</td>
+        </tr>
+        ${
+          message
+            ? `
+        <tr>
+          <td style="padding: 16px 0 8px; color: #6b7280; font-size: 14px; vertical-align: top; border-top: 1px solid #e5e7eb;">Message:</td>
+          <td style="padding: 16px 0 8px; color: #111827; font-size: 14px; border-top: 1px solid #e5e7eb;">${message}</td>
+        </tr>
+        `
+            : ''
+        }
+      </table>
+
+    </div>
+
+    <!-- Interest Count Badge -->
+    <div style="background: #faf5ff; border: 1px solid #c084fc; border-radius: 8px; padding: 16px; margin: 20px 0; text-align: center;">
+      <div style="font-size: 36px; font-weight: 700; color: #7c3aed;">
+        ${currentInterestCount}
+      </div>
+      <div style="font-size: 14px; color: #6b21a8; font-weight: 500; margin-top: 5px;">
+        Total Interested ${currentInterestCount === 1 ? 'Parent' : 'Parents'}
+      </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px; color: #1e40af; font-weight: 500;">
+        <strong>💡 Tip:</strong>
+      </p>
+      <p style="margin: 8px 0 0; font-size: 14px; color: #1e40af;">
+        Once you have enough committed players, you can activate your team in Squadbooks to begin managing finances and operations.
+      </p>
+    </div>
+
+    <!-- Action Button -->
+    <div style="text-align: center; margin: 30px 0 20px;">
+      <a href="${budgetUrl}" style="display: inline-block; background: #7c3aed; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);">
+        View All Interested Parents
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+    <p style="margin: 0 0 5px;">This is an automated notification from Squadbooks</p>
+    <p style="margin: 0;">© ${new Date().getFullYear()} Squadbooks. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
+`
+
+  const textContent = `
+New Parent Interest! - ${teamName} - ${season}
+
+Hi ${coachName},
+
+A parent has expressed interest in your team! You now have ${currentInterestCount} interested ${currentInterestCount === 1 ? 'parent' : 'parents'}.
+
+Parent Contact:
+--------------
+Name: ${parentName}
+Email: ${parentEmail}
+${parentPhone ? `Phone: ${parentPhone}` : ''}
+
+Player Information:
+------------------
+Player Name: ${playerName}
+Age: ${playerAge} years old
+${message ? `Message: ${message}` : ''}
+
+Total Interested Parents: ${currentInterestCount}
+
+Tip: Once you have enough committed players, you can activate your team in Squadbooks to begin managing finances and operations.
+
+View all interested parents: ${budgetUrl}
+
+---
+This is an automated notification from Squadbooks
+© ${new Date().getFullYear()} Squadbooks. All rights reserved.
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: coachEmail,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Parent interest email sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send parent interest email:', error)
     return { success: false, error }
   }
 }
