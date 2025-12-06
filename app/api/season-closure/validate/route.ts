@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth';
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger'
 import { validateSeasonClosure } from '@/lib/season-closure/validation';
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/season-closure/validate
@@ -49,7 +53,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Validation error:', error);
+    logger.error('Validation error', error as Error);
     return NextResponse.json(
       { error: 'Failed to validate season closure' },
       { status: 500 }

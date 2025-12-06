@@ -5,10 +5,15 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { requireTreasurer } from '@/lib/auth/permissions'
+import { logger } from '@/lib/logger'
 import { teamProfileSchema, teamSettingsSchema } from '@/lib/validations/settings'
+import { logger } from '@/lib/logger'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/settings
@@ -72,7 +77,7 @@ export async function GET() {
       settings,
     })
   } catch (error: any) {
-    console.error('GET /api/settings error:', error)
+    logger.error('GET /api/settings error', error as Error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch settings' },
       { status: error.message?.includes('Forbidden') ? 403 : 500 }
@@ -173,7 +178,7 @@ export async function PUT(request: Request) {
       settings: updatedSettings,
     })
   } catch (error: any) {
-    console.error('PUT /api/settings error:', error)
+    logger.error('PUT /api/settings error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

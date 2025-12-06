@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export async function GET(req: NextRequest) {
   try {
@@ -106,7 +109,7 @@ export async function GET(req: NextRequest) {
       overBudgetCategories: categories.filter((c) => c.variance < 0),
     })
   } catch (error) {
-    console.error('Error generating budget variance report:', error)
+    logger.error('Error generating budget variance report', error as Error)
     return NextResponse.json(
       { error: 'Failed to generate budget variance report' },
       { status: 500 }

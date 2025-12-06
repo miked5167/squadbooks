@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/storage'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/admin/setup-storage-policies
@@ -51,7 +52,7 @@ USING (bucket_id = 'receipts');
       `,
     })
   } catch (error: any) {
-    console.error('Setup storage policies error:', error)
+    logger.error('Setup storage policies error', error as Error)
     return NextResponse.json(
       { error: 'Setup failed', details: error.message },
       { status: 500 }

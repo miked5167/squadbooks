@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getBudgetOverview } from '@/lib/db/budget'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/budget
@@ -44,7 +45,7 @@ export async function GET(request: Request) {
       teamId: user.teamId,
     })
   } catch (error) {
-    console.error('Failed to fetch budget:', error)
+    logger.error('Failed to fetch budget', error as Error)
 
     if (error instanceof Error) {
       return NextResponse.json(

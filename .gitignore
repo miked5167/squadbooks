@@ -24,3 +24,12 @@ Thumbs.db
 scripts/check-mikes-team.ts
 scripts/update-roles.ts
 nul
+
+# Testing
+test-results/
+playwright-report/
+coverage/
+
+# Sentry
+.sentryclirc
+sentry.properties

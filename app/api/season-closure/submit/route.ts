@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth';
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger'
 import { validateSeasonClosure, DEFAULT_POLICY } from '@/lib/season-closure/validation';
+import { logger } from '@/lib/logger'
 import { submitToAssociation } from '@/lib/season-closure/submission';
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/season-closure/submit
@@ -157,7 +162,7 @@ export async function POST(request: Request) {
       message: 'Season closure package submitted successfully',
     });
   } catch (error) {
-    console.error('Submission error:', error);
+    logger.error('Submission error', error as Error);
 
     // Provide more specific error message if available
     const errorMessage =

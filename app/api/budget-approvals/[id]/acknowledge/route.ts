@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export async function POST(
   req: NextRequest,
@@ -84,15 +85,60 @@ export async function POST(
         },
       })
 
-      // TODO: Send email to treasurer if just completed
+      // Send completion email to treasurer if just completed
       if (isComplete) {
-        console.log('Budget approval completed! Would send email to treasurer.')
+        try {
+          // Get treasurer and team details
+          const treasurerAndTeam = await prisma.budgetApproval.findUnique({
+            where: { id: approvalId },
+            include: {
+              creator: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+              team: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          })
+
+          if (treasurerAndTeam?.creator && treasurerAndTeam?.team) {
+            const { sendBudgetApprovalCompletionEmail } = await import('@/lib/email')
+
+            await sendBudgetApprovalCompletionEmail({
+              treasurerName: treasurerAndTeam.creator.name || 'Treasurer',
+              treasurerEmail: treasurerAndTeam.creator.email,
+              teamName: treasurerAndTeam.team.name,
+              budgetTotal: treasurerAndTeam.budgetTotal,
+              approvalType: treasurerAndTeam.approvalType,
+              acknowledgedCount,
+              requiredCount: approval.requiredCount,
+            })
+
+            logger.info('Budget approval completed email sent', {
+              approvalId,
+              treasurerEmail: treasurerAndTeam.creator.email,
+              acknowledgedCount,
+            })
+          }
+        } catch (error) {
+          logger.error('Failed to send budget completion email', error as Error, {
+            approvalId,
+          })
+          // Don't fail the acknowledgment if email fails
+        }
       }
     }
 
     return NextResponse.json(updated)
   } catch (error) {
-    console.error('Error acknowledging budget:', error)
+    logger.error('Error acknowledging budget', error as Error, {
+      approvalId: (await params).id,
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

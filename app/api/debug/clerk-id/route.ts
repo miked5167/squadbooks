@@ -1,5 +1,6 @@
 import { auth, currentUser } from '@/lib/auth/server-auth'
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 
 /**
  * Debug endpoint to get your Clerk user ID
@@ -153,7 +154,7 @@ export async function GET() {
       }
     )
   } catch (error) {
-    console.error('Error fetching Clerk user:', error)
+    logger.error('Error fetching Clerk user', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch user information' },
       { status: 500 }

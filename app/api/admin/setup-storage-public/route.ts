@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -13,7 +14,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 export async function POST() {
   try {
-    console.log('Setting up storage bucket as public...')
+    logger.info('Setting up storage bucket as public')
 
     // Update the receipts bucket to be public
     const { data, error } = await supabase.storage.updateBucket('receipts', {
@@ -29,14 +30,14 @@ export async function POST() {
     })
 
     if (error) {
-      console.error('Error updating bucket:', error)
+      logger.error('Error updating storage bucket', new Error(error.message), { bucket: 'receipts' })
       return NextResponse.json(
         { error: 'Failed to update bucket', details: error.message },
         { status: 500 }
       )
     }
 
-    console.log('✅ Bucket updated successfully')
+    logger.info('Storage bucket updated successfully', { bucket: 'receipts', public: true })
 
     return NextResponse.json({
       success: true,
@@ -50,7 +51,7 @@ export async function POST() {
       note: 'Public bucket - anyone with the link can access files. For MVP testing only.',
     })
   } catch (error: any) {
-    console.error('Setup error:', error)
+    logger.error('Storage setup error', error as Error)
     return NextResponse.json(
       { error: 'Setup failed', details: error.message },
       { status: 500 }

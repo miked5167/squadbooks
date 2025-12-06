@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export async function GET(req: NextRequest) {
   try {
@@ -109,7 +112,7 @@ export async function GET(req: NextRequest) {
       transactionCount: transactions.length,
     })
   } catch (error) {
-    console.error('Error generating monthly summary:', error)
+    logger.error('Error generating monthly summary', error as Error)
     return NextResponse.json(
       { error: 'Failed to generate monthly summary' },
       { status: 500 }

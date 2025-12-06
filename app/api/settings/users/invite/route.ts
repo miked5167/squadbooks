@@ -4,11 +4,17 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { requireTreasurerOnly } from '@/lib/auth/permissions'
+import { logger } from '@/lib/logger'
 import { inviteUserSchema } from '@/lib/validations/settings'
+import { logger } from '@/lib/logger'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 import { clerkClient } from '@clerk/nextjs/server'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/settings/users/invite
@@ -85,7 +91,7 @@ export async function POST(request: Request) {
       user: newUser,
     })
   } catch (error: any) {
-    console.error('POST /api/settings/users/invite error:', error)
+    logger.error('POST /api/settings/users/invite error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

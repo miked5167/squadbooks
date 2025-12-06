@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/server-auth';
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger';
 
 // GET - Validate token and get invitation details
 export async function GET(request: Request) {
@@ -63,7 +64,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Get invitation error:', error);
+    logger.error('Get invitation error', error as Error);
     return NextResponse.json(
       { error: 'Failed to validate invitation' },
       { status: 500 }
@@ -175,7 +176,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Accept invitation error:', error);
+    logger.error('Accept invitation error', error as Error);
     return NextResponse.json(
       { error: 'Failed to accept invitation' },
       { status: 500 }

@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getActivitySummary } from '@/lib/activity/weekly-summary'
 import { detectPotentialIssues } from '@/lib/activity/potential-issues'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -68,7 +69,7 @@ export async function GET(request: NextRequest) {
       issues: issues.slice(0, 10), // Return top 10 issues
     })
   } catch (error) {
-    console.error('Error fetching activity summary:', error)
+    logger.error('Error fetching activity summary', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch activity summary' },
       { status: 500 }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '@/lib/parentInvites';
 
@@ -94,7 +95,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error validating token:', error);
+    logger.error('Error validating token', error as Error);
     return NextResponse.json(
       {
         valid: false,

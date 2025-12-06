@@ -1,16 +1,14 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth/server-auth';
+import { authenticateAdmin } from '@/lib/auth/admin';
 import { getOnboardingFunnelMetrics, getAverageStepDurations } from '@/lib/analytics/funnel-analytics';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const authResult = await authenticateAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
-
-    // TODO: Add admin permission check
-    // For now, allow any authenticated user to view analytics
 
     const { searchParams } = new URL(request.url);
     const daysParam = searchParams.get('days');
@@ -35,7 +33,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Funnel analytics error:', error);
+    logger.error('Funnel analytics error', error as Error);
     return NextResponse.json(
       { error: 'Failed to fetch analytics' },
       { status: 500 }

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/admin/setup-storage
@@ -61,7 +63,7 @@ export async function POST() {
     const { error: policyError } = await supabaseAdmin.rpc('create_storage_policies')
 
     if (policyError && !policyError.message.includes('already exists')) {
-      console.warn('Policy creation warning:', policyError)
+      logger.warn('Policy creation warning:', policyError)
     }
 
     return NextResponse.json(
@@ -73,7 +75,7 @@ export async function POST() {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Storage setup error:', error)
+    logger.error('Storage setup error', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }

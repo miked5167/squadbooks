@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { CreateTransactionSchema, TransactionFilterSchema } from '@/lib/validations/transaction'
 import { createTransaction, getTransactions } from '@/lib/db/transactions'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/transactions
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result, { status: 200 })
   } catch (error) {
-    console.error('GET /api/transactions error:', error)
+    logger.error('GET /api/transactions error', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('POST /api/transactions error:', error)
+    logger.error('POST /api/transactions error', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }

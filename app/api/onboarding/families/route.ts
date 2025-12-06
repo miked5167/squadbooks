@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth';
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger'
 
 export async function POST(request: Request) {
   try {
@@ -70,7 +73,7 @@ export async function POST(request: Request) {
       count: createdFamilies.count,
     });
   } catch (error) {
-    console.error('Family creation error:', error);
+    logger.error('Family creation error', error as Error);
     return NextResponse.json(
       { error: 'Failed to save families' },
       { status: 500 }

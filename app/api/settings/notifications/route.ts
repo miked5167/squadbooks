@@ -5,10 +5,15 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { getCurrentUser } from '@/lib/auth/permissions'
+import { logger } from '@/lib/logger'
 import { notificationSettingsSchema } from '@/lib/validations/settings'
+import { logger } from '@/lib/logger'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/settings/notifications
@@ -45,7 +50,7 @@ export async function GET() {
 
     return NextResponse.json({ settings })
   } catch (error: any) {
-    console.error('GET /api/settings/notifications error:', error)
+    logger.error('GET /api/settings/notifications error', error as Error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch notification settings' },
       { status: error.message?.includes('Unauthorized') ? 401 : 500 }
@@ -87,7 +92,7 @@ export async function PUT(request: Request) {
       settings,
     })
   } catch (error: any) {
-    console.error('PUT /api/settings/notifications error:', error)
+    logger.error('PUT /api/settings/notifications error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

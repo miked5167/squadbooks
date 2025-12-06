@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { DEFAULT_CATEGORIES } from '@/prisma/seed'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/admin/setup-test-data
@@ -8,7 +9,7 @@ import { DEFAULT_CATEGORIES } from '@/prisma/seed'
  */
 export async function POST() {
   try {
-    console.log('🌱 Setting up test data...')
+    logger.info('Setting up test data')
 
     // Create test team
     const team = await prisma.team.create({
@@ -19,7 +20,7 @@ export async function POST() {
         budgetTotal: 10000.00,
       },
     })
-    console.log('✅ Team created:', team.name)
+    logger.info('Team created', { teamName: team.name, teamId: team.id })
 
     // Create test users
     const treasurer = await prisma.user.create({
@@ -31,7 +32,7 @@ export async function POST() {
         teamId: team.id,
       },
     })
-    console.log('✅ Treasurer created:', treasurer.email)
+    logger.info('Treasurer created', { email: treasurer.email, userId: treasurer.id })
 
     const president = await prisma.user.create({
       data: {
@@ -42,7 +43,7 @@ export async function POST() {
         teamId: team.id,
       },
     })
-    console.log('✅ President created:', president.email)
+    logger.info('President created', { email: president.email, userId: president.id })
 
     const parent = await prisma.user.create({
       data: {
@@ -53,7 +54,7 @@ export async function POST() {
         teamId: team.id,
       },
     })
-    console.log('✅ Parent created:', parent.email)
+    logger.info('Parent created', { email: parent.email, userId: parent.id })
 
     // Create categories
     const categories = await Promise.all(
@@ -70,7 +71,7 @@ export async function POST() {
         })
       )
     )
-    console.log(`✅ ${categories.length} categories created`)
+    logger.info('Categories created', { count: categories.length, teamId: team.id })
 
     // Create budget allocations for key categories
     const budgetAllocations = await Promise.all([
@@ -152,7 +153,7 @@ export async function POST() {
         },
       }),
     ])
-    console.log(`✅ ${budgetAllocations.length} budget allocations created`)
+    logger.info('Budget allocations created', { count: budgetAllocations.length, teamId: team.id })
 
     // Create a few sample transactions
     const sampleTransactions = await Promise.all([
@@ -199,7 +200,7 @@ export async function POST() {
         },
       }),
     ])
-    console.log(`✅ ${sampleTransactions.length} sample transactions created`)
+    logger.info('Sample transactions created', { count: sampleTransactions.length, teamId: team.id })
 
     // Create approval for pending transaction
     await prisma.approval.create({
@@ -211,7 +212,7 @@ export async function POST() {
         status: 'PENDING',
       },
     })
-    console.log('✅ Approval created for pending transaction')
+    logger.info('Approval created for pending transaction', { teamId: team.id })
 
     return NextResponse.json(
       {
@@ -259,7 +260,7 @@ export async function POST() {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Error creating test data:', error)
+    logger.error('Error creating test data', error as Error)
     if (error instanceof Error) {
       return NextResponse.json(
         { error: error.message, details: error.stack },
@@ -276,7 +277,7 @@ export async function POST() {
  */
 export async function DELETE() {
   try {
-    console.log('🗑️  Deleting test data...')
+    logger.info('Deleting test data')
 
     // Find test teams
     const testTeams = await prisma.team.findMany({
@@ -299,7 +300,7 @@ export async function DELETE() {
       },
     })
 
-    console.log(`✅ Deleted ${testTeams.length} test team(s)`)
+    logger.info('Deleted test teams', { count: testTeams.length })
 
     return NextResponse.json(
       {
@@ -309,7 +310,7 @@ export async function DELETE() {
       { status: 200 }
     )
   } catch (error) {
-    console.error('Error deleting test data:', error)
+    logger.error('Error deleting test data', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }

@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 
@@ -37,7 +38,7 @@ export async function GET() {
 
     return NextResponse.json(user)
   } catch (error: any) {
-    console.error('GET /api/user/me error:', error)
+    logger.error('GET /api/user/me error', error as Error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch user data' },
       { status: 500 }

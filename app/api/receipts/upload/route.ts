@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 import { uploadReceipt } from '@/lib/storage'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/receipts/upload
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    console.error('POST /api/receipts/upload error:', error)
+    logger.error('POST /api/receipts/upload error', error as Error)
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }

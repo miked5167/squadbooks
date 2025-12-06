@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth';
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger'
 import { createDefaultBudgetAllocations } from '@/lib/onboarding/create-allocations';
+import { logger } from '@/lib/logger'
 
 export async function PATCH(request: Request) {
   try {
@@ -65,7 +69,7 @@ export async function PATCH(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Budget update error:', error);
+    logger.error('Budget update error', error as Error);
     return NextResponse.json(
       { error: 'Failed to update budget' },
       { status: 500 }

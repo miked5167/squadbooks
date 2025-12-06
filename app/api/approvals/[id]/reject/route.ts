@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { rejectTransaction } from '@/lib/db/approvals'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/approvals/[id]/reject
@@ -53,7 +54,7 @@ export async function POST(
       approval,
     })
   } catch (error) {
-    console.error('Failed to reject transaction:', error)
+    logger.error('Failed to reject transaction', error as Error)
 
     if (error instanceof Error) {
       return NextResponse.json(

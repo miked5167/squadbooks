@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { requireTreasurerOnly, canManageUser } from '@/lib/auth/permissions'
 import { updateUserRoleSchema } from '@/lib/validations/settings'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * PATCH /api/settings/users/[id]/role
@@ -86,7 +87,7 @@ export async function PATCH(
       user: updatedUser,
     })
   } catch (error: any) {
-    console.error('PATCH /api/settings/users/[id]/role error:', error)
+    logger.error('PATCH /api/settings/users/[id]/role error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

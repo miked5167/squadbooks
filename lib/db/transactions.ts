@@ -409,11 +409,16 @@ export async function updateTransaction(
       },
     })
   } catch (error) {
-    console.error('Failed to create audit log for transaction update:', error)
+    logger.warn('Failed to create audit log for transaction update', {
+      transactionId: id,
+      error: error instanceof Error ? error.message : String(error),
+    })
     // Don't fail transaction update if audit logging fails
   }
 
-  // TODO: Recalculate budget if amount or category changed
+  // Revalidate budget cache to reflect updated transaction
+  const { revalidateBudgetCache } = await import('@/lib/db/budget')
+  revalidateBudgetCache()
 
   return transaction
 }
@@ -453,7 +458,10 @@ export async function deleteTransaction(id: string, teamId: string, userId: stri
       const { deleteReceipt } = await import('@/lib/storage')
       await deleteReceipt(existing.receiptPath)
     } catch (error) {
-      console.error('Failed to delete receipt:', error)
+      logger.warn('Failed to delete receipt from storage', {
+        receiptPath: existing.receiptPath,
+        error: error instanceof Error ? error.message : String(error),
+      })
       // Continue with transaction deletion even if receipt deletion fails
     }
   }
@@ -478,11 +486,16 @@ export async function deleteTransaction(id: string, teamId: string, userId: stri
       oldValues,
     })
   } catch (error) {
-    console.error('Failed to create audit log for transaction deletion:', error)
+    logger.warn('Failed to create audit log for transaction deletion', {
+      transactionId: transaction.id,
+      error: error instanceof Error ? error.message : String(error),
+    })
     // Don't fail transaction deletion if audit logging fails
   }
 
-  // TODO: Recalculate budget for category
+  // Revalidate budget cache to reflect deleted transaction
+  const { revalidateBudgetCache } = await import('@/lib/db/budget')
+  revalidateBudgetCache()
 
   return transaction
 }

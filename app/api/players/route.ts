@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -79,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(player)
   } catch (error) {
-    console.error('Error creating player:', error)
+    logger.error('Error creating player', error as Error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

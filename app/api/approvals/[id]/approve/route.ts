@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { approveTransaction } from '@/lib/db/approvals'
 import { requiresReceipt } from '@/lib/auth/permissions'
 import { MANDATORY_RECEIPT_THRESHOLD } from '@/lib/constants/validation'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/approvals/[id]/approve
@@ -87,7 +88,7 @@ export async function POST(
       approval: approvedApproval,
     })
   } catch (error) {
-    console.error('Failed to approve transaction:', error)
+    logger.error('Failed to approve transaction', error as Error)
 
     if (error instanceof Error) {
       return NextResponse.json(

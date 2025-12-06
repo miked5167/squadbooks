@@ -7,6 +7,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -219,7 +220,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Error fetching audit logs:', error)
+    logger.error('Error fetching audit logs', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch audit logs' },
       { status: 500 }

@@ -14,6 +14,7 @@ import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer'
 import React from 'react'
+import { logger } from '@/lib/logger'
 
 // PDF Styles
 const styles = StyleSheet.create({
@@ -455,7 +456,7 @@ export async function POST(
       })
     } catch (e) {
       // Report model may not exist in schema, ignore error
-      console.log('Could not save report metadata:', e)
+      logger.info('Could not save report metadata', e as Error)
     }
 
     // Return PDF
@@ -466,7 +467,7 @@ export async function POST(
       },
     })
   } catch (error) {
-    console.error('Error generating compliance snapshot report:', error)
+    logger.error('Error generating compliance snapshot report', error as Error)
     return NextResponse.json({ error: 'Failed to generate report' }, { status: 500 })
   }
 }

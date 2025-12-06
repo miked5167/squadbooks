@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/categories
@@ -37,7 +38,7 @@ export async function GET() {
 
     return NextResponse.json({ categories }, { status: 200 })
   } catch (error) {
-    console.error('GET /api/categories error:', error)
+    logger.error('GET /api/categories error', error as Error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('POST /api/categories error:', error)
+    logger.error('POST /api/categories error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

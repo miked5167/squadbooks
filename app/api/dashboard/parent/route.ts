@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 import { formatTeamLevel } from '@/lib/team-utils'
+import { logger } from '@/lib/logger'
 
 export async function GET(req: NextRequest) {
   try {
@@ -157,7 +158,7 @@ export async function GET(req: NextRequest) {
       financialHealth,
     })
   } catch (error) {
-    console.error('Error fetching parent dashboard:', error)
+    logger.error('Error fetching parent dashboard', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch dashboard data' },
       { status: 500 }

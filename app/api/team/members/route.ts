@@ -4,8 +4,11 @@
  */
 
 import { auth } from '@/lib/auth/server-auth'
+import { logger } from '@/lib/logger'
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -43,7 +46,7 @@ export async function GET() {
 
     return NextResponse.json({ members })
   } catch (error) {
-    console.error('Error fetching team members:', error)
+    logger.error('Error fetching team members', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch team members' },
       { status: 500 }

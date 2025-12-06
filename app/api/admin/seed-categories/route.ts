@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 const DEFAULT_CATEGORIES = [
   // Ice Time & Facilities (Heading 1)
@@ -86,7 +87,7 @@ export async function POST() {
       })),
     })
 
-    console.log(`✅ Created ${categories.count} categories for team ${teamId}`)
+    logger.info(`Created ${categories.count} categories for team ${teamId}`)
 
     return NextResponse.json({
       success: true,
@@ -94,7 +95,7 @@ export async function POST() {
       count: categories.count,
     })
   } catch (error) {
-    console.error('Seed categories error:', error)
+    logger.error('Seed categories error', error as Error)
     return NextResponse.json(
       { error: 'Failed to seed categories', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

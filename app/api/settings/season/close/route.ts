@@ -4,10 +4,15 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { requireTreasurerOnly } from '@/lib/auth/permissions'
+import { logger } from '@/lib/logger'
 import { seasonCloseSchema } from '@/lib/validations/settings'
+import { logger } from '@/lib/logger'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * POST /api/settings/season/close
@@ -75,7 +80,7 @@ export async function POST(request: Request) {
 
       // Note: This would be saved to a SeasonSnapshot model if it exists
       // For now, we'll just log it
-      console.log('Season snapshot created:', snapshot)
+      logger.info('Season snapshot created:', snapshot)
 
       // 2. If creating new season, update team
       if (data.createNewSeason && data.newSeasonName) {
@@ -119,7 +124,7 @@ export async function POST(request: Request) {
       ...result,
     })
   } catch (error: any) {
-    console.error('POST /api/settings/season/close error:', error)
+    logger.error('POST /api/settings/season/close error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

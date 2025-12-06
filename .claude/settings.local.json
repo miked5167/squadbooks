@@ -174,7 +174,14 @@
       "Bash(del \"app\\budget\\approvals\\page.tsx\")",
       "Bash(if exist node_modules.prisma rmdir /s /q node_modules.prisma)",
       "Bash(npx next dev)",
-      "Bash(npx next dev:*)"
+      "Bash(npx next dev:*)",
+      "Bash(del \"app\\settings\\categories\\page.tsx.backup\")",
+      "Bash(npx playwright test:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:unit:*)",
+      "Bash(npx playwright show-report)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(npm run seed:preseason:*)"
     ],
     "deny": [],
     "ask": []

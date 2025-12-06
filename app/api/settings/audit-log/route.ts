@@ -8,10 +8,15 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { requireAuditor } from '@/lib/auth/permissions'
+import { logger } from '@/lib/logger'
 import { auditLogFilterSchema } from '@/lib/validations/settings'
+import { logger } from '@/lib/logger'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/settings/audit-log
@@ -37,8 +42,6 @@ export async function GET(request: Request) {
         : 0,
     })
 
-    // TODO: Uncomment this once AuditLog model is added to Prisma schema
-    /*
     const where: any = {
       teamId: user.teamId,
     }
@@ -91,18 +94,8 @@ export async function GET(request: Request) {
       limit: filters.limit,
       offset: filters.offset,
     })
-    */
-
-    // Temporary mock response until AuditLog model is implemented
-    return NextResponse.json({
-      message: 'Audit log feature not yet implemented - AuditLog model needs to be added to Prisma schema',
-      logs: [],
-      total: 0,
-      limit: filters.limit,
-      offset: filters.offset,
-    })
   } catch (error: any) {
-    console.error('GET /api/settings/audit-log error:', error)
+    logger.error('GET /api/settings/audit-log error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

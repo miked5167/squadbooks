@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/server-auth';
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: Request) {
   try {
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
 
     // Also log to console in development for debugging
     if (process.env.NODE_ENV === 'development') {
-      console.log('[Onboarding Analytics]', {
+      logger.info('[Onboarding Analytics]', {
         userId: userId || 'anonymous',
         step,
         stepName,
@@ -72,7 +73,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Analytics error:', error);
+    logger.error('Analytics error', error as Error);
     // Return success anyway - don't fail the request due to analytics
     return NextResponse.json({ success: true });
   }

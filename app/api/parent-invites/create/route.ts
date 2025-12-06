@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
@@ -131,7 +132,7 @@ export async function POST(req: NextRequest) {
         associationName: user.team.associationName || undefined,
       });
     } catch (emailError) {
-      console.error('Failed to send invitation email:', emailError);
+      logger.error('Failed to send invitation email', emailError as Error);
       // Don't fail the entire request if email fails - the invite is still created
     }
 
@@ -154,7 +155,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error creating parent invite:', error);
+    logger.error('Error creating parent invite', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

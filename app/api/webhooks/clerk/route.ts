@@ -2,6 +2,7 @@ import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export async function POST(req: Request) {
   // Get the headers
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
       'svix-signature': svix_signature,
     }) as WebhookEvent
   } catch (err) {
-    console.error('Error verifying webhook:', err)
+    logger.error('Error verifying webhook', err as Error)
     return new Response('Error occurred', {
       status: 400,
     })
@@ -61,13 +62,13 @@ export async function POST(req: Request) {
       if (!existingUser) {
         // For MVP, we'll need to handle team creation/assignment separately
         // This is a placeholder that will need to be updated
-        console.log('New user signed up:', { id, email, name })
-        console.log('User needs to be assigned to a team through onboarding flow')
+        logger.info('New user signed up', { clerkId: id, email, name })
+        logger.info('User needs team assignment through onboarding', { clerkId: id })
       }
 
       return new Response('Webhook received', { status: 200 })
     } catch (error) {
-      console.error('Error creating user:', error)
+      logger.error('Error creating user from webhook', error as Error, { clerkId: id })
       return new Response('Error creating user', { status: 500 })
     }
   }

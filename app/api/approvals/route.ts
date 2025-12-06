@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getPendingApprovals, getAllApprovals } from '@/lib/db/approvals'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/approvals
@@ -47,7 +48,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ approvals })
   } catch (error) {
-    console.error('Failed to fetch approvals:', error)
+    logger.error('Failed to fetch approvals', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch approvals' },
       { status: 500 }

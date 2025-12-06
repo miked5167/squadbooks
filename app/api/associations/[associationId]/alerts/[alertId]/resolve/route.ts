@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 // Request body schema
 const bodySchema = z.object({
@@ -173,7 +174,7 @@ export async function POST(
       error: null,
     })
   } catch (error) {
-    console.error('Error resolving alert:', error)
+    logger.error('Error resolving alert', error as Error)
     return NextResponse.json(
       {
         data: null,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 const CreateApprovalSchema = z.object({
   teamId: z.string(),
@@ -90,13 +91,49 @@ export async function POST(req: NextRequest) {
       })),
     })
 
-    // TODO: Send emails to all parents using Resend
-    // For now, just log that we would send emails
-    console.log(`Would send budget approval emails to ${parents.length} parents`)
+    // Get team name for email
+    const team = await prisma.team.findUnique({
+      where: { id: validatedData.teamId },
+      select: { name: true },
+    })
+
+    // Send email notifications to all parents
+    const { sendBudgetApprovalRequestEmail } = await import('@/lib/email')
+
+    const emailPromises = parents.map(parent =>
+      sendBudgetApprovalRequestEmail({
+        parentName: parent.name || 'Parent',
+        parentEmail: parent.email,
+        teamName: team?.name || 'Your Team',
+        budgetTotal: validatedData.budgetTotal,
+        approvalType: validatedData.approvalType,
+        description: validatedData.description,
+        deadline: validatedData.expiresAt ? new Date(validatedData.expiresAt) : undefined,
+        approvalId: approval.id,
+      })
+    )
+
+    // Send all emails in parallel, but don't fail the request if emails fail
+    try {
+      await Promise.allSettled(emailPromises)
+      logger.info('Budget approval emails sent', {
+        approvalId: approval.id,
+        parentCount: parents.length,
+        teamId: validatedData.teamId,
+      })
+    } catch (error) {
+      logger.error('Failed to send budget approval emails', error as Error, {
+        approvalId: approval.id,
+        parentCount: parents.length,
+      })
+      // Continue - approval was created successfully even if emails failed
+    }
 
     return NextResponse.json(approval, { status: 201 })
   } catch (error) {
-    console.error('Error creating budget approval:', error)
+    logger.error('Error creating budget approval', error as Error, {
+      teamId: body?.teamId,
+    })
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -145,7 +182,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(approvals)
   } catch (error) {
-    console.error('Error fetching budget approvals:', error)
+    logger.error('Error fetching budget approvals', error as Error, {
+      teamId,
+    })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

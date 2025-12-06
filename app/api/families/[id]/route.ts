@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 export async function PUT(
   request: NextRequest,
@@ -79,7 +80,7 @@ export async function PUT(
 
     return NextResponse.json(updatedFamily)
   } catch (error) {
-    console.error('Error updating family:', error)
+    logger.error('Error updating family', error as Error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

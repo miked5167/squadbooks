@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth';
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma';
+import { logger } from '@/lib/logger'
 import { sendInvitationEmail } from '@/lib/onboarding/send-invitation';
+import { logger } from '@/lib/logger'
 
 export async function POST(request: Request) {
   try {
@@ -78,7 +82,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error('Invitation error:', error);
+    logger.error('Invitation error', error as Error);
     return NextResponse.json(
       { error: 'Failed to send invitation' },
       { status: 500 }

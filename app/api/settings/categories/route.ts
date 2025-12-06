@@ -11,6 +11,7 @@ import { prisma } from '@/lib/prisma'
 import { requireTreasurer } from '@/lib/auth/permissions'
 import { categorySchema, updateCategorySchema } from '@/lib/validations/settings'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/settings/categories
@@ -37,7 +38,7 @@ export async function GET() {
 
     return NextResponse.json({ categories })
   } catch (error: any) {
-    console.error('GET /api/settings/categories error:', error)
+    logger.error('GET /api/settings/categories error', error as Error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch categories' },
       { status: error.message?.includes('Forbidden') ? 403 : 500 }
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
       category,
     })
   } catch (error: any) {
-    console.error('POST /api/settings/categories error:', error)
+    logger.error('POST /api/settings/categories error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -178,7 +179,7 @@ export async function PUT(request: Request) {
       category,
     })
   } catch (error: any) {
-    console.error('PUT /api/settings/categories error:', error)
+    logger.error('PUT /api/settings/categories error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -263,7 +264,7 @@ export async function DELETE(request: Request) {
       message: 'Category deleted successfully',
     })
   } catch (error: any) {
-    console.error('DELETE /api/settings/categories error:', error)
+    logger.error('DELETE /api/settings/categories error', error as Error)
 
     return NextResponse.json(
       { error: error.message || 'Failed to delete category' },

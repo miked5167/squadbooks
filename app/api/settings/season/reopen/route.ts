@@ -4,9 +4,13 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { requireTreasurerOnly } from '@/lib/auth/permissions'
+import { logger } from '@/lib/logger'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 const reopenSchema = z.object({
   seasonName: z.string().min(1, 'Season name is required'),
@@ -79,7 +83,7 @@ export async function POST(request: Request) {
       reopenedSeason: data.seasonName,
     })
   } catch (error: any) {
-    console.error('POST /api/settings/season/reopen error:', error)
+    logger.error('POST /api/settings/season/reopen error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

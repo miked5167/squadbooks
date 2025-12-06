@@ -1,7 +1,11 @@
 import { auth } from '@/lib/auth/server-auth'
+import { logger } from '@/lib/logger'
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { getFinancialSummary } from '@/lib/db/financial-summary'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: Request) {
   try {
@@ -29,7 +33,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(summary)
   } catch (error) {
-    console.error('Failed to fetch financial summary:', error)
+    logger.error('Failed to fetch financial summary', error as Error)
 
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })

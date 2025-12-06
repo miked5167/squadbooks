@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { revalidatePath } from 'next/cache'
 
 /**
  * Budget health status based on spending percentage
@@ -438,5 +439,22 @@ export async function getBudgetStats(
     healthyCount,
     warningCount,
     criticalCount,
+  }
+}
+
+/**
+ * Revalidate budget-related pages after transaction changes
+ * Call this after creating, updating, or deleting transactions to ensure
+ * budget calculations reflect the latest data on next page load
+ */
+export function revalidateBudgetCache(): void {
+  try {
+    revalidatePath('/budget')
+    revalidatePath('/expenses')
+    revalidatePath('/transactions')
+    revalidatePath('/', 'layout') // Revalidate all pages (for dashboard widgets)
+  } catch (error) {
+    logger.error('Failed to revalidate budget cache', error as Error)
+    // Don't throw - budget revalidation failures shouldn't break transactions
   }
 }

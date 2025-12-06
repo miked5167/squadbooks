@@ -34,6 +34,7 @@ model Association {
   reports       Report[]
   config        DashboardConfig?
   rules         AssociationRule[] @relation("AssociationRules")
+  preSeasonBudgets PreSeasonBudget[]
 
   @@map("associations")
 }
@@ -432,6 +433,9 @@ model Team {
   // Budget Approval relations
   budgetApprovals    BudgetApproval[]
 
+  // Pre-Season Budget relation
+  sourcePreSeasonBudget PreSeasonBudget? @relation("PreSeasonBudgetActivated")
+
   @@map("teams")
 }
 
@@ -640,6 +644,7 @@ model Category {
   team              Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
   transactions      Transaction[]
   budgetAllocations BudgetAllocation[]
+  preSeasonAllocations PreSeasonAllocation[]
 
   @@index([teamId])
   @@map("categories")
@@ -1057,4 +1062,119 @@ model Acknowledgment {
   @@unique([budgetApprovalId, userId])  // One acknowledgment per parent per approval
   @@index([budgetApprovalId])
   @@map("acknowledgments")
+}
+
+// ============================================
+// PRE-SEASON BUDGET BUILDER
+// ============================================
+
+enum PreSeasonBudgetStatus {
+  DRAFT                 // Coach editing
+  SUBMITTED             // Awaiting association approval
+  APPROVED              // Association approved, public
+  REJECTED              // Association rejected
+  ACTIVATED             // Team created
+  CANCELLED             // Coach cancelled
+}
+
+model PreSeasonBudget {
+  id                    String   @id @default(cuid())
+
+  // Team info (team doesn't exist yet)
+  proposedTeamName      String
+  proposedSeason        String   // "2025-2026"
+  teamType              String?  // "HOUSE_LEAGUE", "COMPETITIVE", etc.
+  ageDivision           String?  // "U10", "U12", etc.
+  competitiveLevel      String?
+
+  // Budget details
+  totalBudget           Decimal  @db.Decimal(10, 2)
+  projectedPlayers      Int      // Expected roster size
+  perPlayerCost         Decimal  @db.Decimal(10, 2) @default(0)
+
+  // Ownership
+  createdByClerkId      String   // Coach who created it
+  associationId         String?  @db.Uuid // Link to association
+
+  // Status workflow
+  status                PreSeasonBudgetStatus @default(DRAFT)
+
+  // Association approval
+  associationApprovedAt DateTime?
+  associationApprovedBy String?  // Association admin clerkId
+  associationNotes      String?  @db.Text
+
+  // Public sharing
+  publicSlug            String   @unique // For public URL
+  viewCount             Int      @default(0)
+
+  // Activation
+  activatedAt           DateTime?
+  activatedTeamId       String?  @unique // Points to created Team
+
+  // Relations
+  allocations           PreSeasonAllocation[]
+  parentInterests       ParentInterest[]
+  activatedTeam         Team? @relation("PreSeasonBudgetActivated", fields: [activatedTeamId], references: [id])
+  association           Association? @relation(fields: [associationId], references: [id])
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([createdByClerkId])
+  @@index([associationId])
+  @@index([status])
+  @@index([publicSlug])
+  @@map("pre_season_budgets")
+}
+
+model PreSeasonAllocation {
+  id                    String @id @default(cuid())
+  preSeasonBudgetId     String
+  categoryId            String
+  allocated             Decimal @db.Decimal(10, 2)
+  notes                 String? @db.Text
+
+  budget                PreSeasonBudget @relation(fields: [preSeasonBudgetId], references: [id], onDelete: Cascade)
+  category              Category @relation(fields: [categoryId], references: [id])
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([preSeasonBudgetId, categoryId])
+  @@index([preSeasonBudgetId])
+  @@index([categoryId])
+  @@map("pre_season_allocations")
+}
+
+model ParentInterest {
+  id                    String @id @default(cuid())
+  preSeasonBudgetId     String
+
+  // Parent info (not a User yet)
+  parentName            String
+  email                 String
+  phone                 String?
+  playerName            String
+  playerAge             Int?
+
+  // Acknowledgment
+  acknowledged          Boolean @default(false)
+  acknowledgedAt        DateTime?
+
+  // Audit trail
+  ipAddress             String?
+  userAgent             String?
+
+  // Notes from parent
+  comments              String? @db.Text
+
+  budget                PreSeasonBudget @relation(fields: [preSeasonBudgetId], references: [id], onDelete: Cascade)
+
+  createdAt             DateTime @default(now())
+
+  @@unique([preSeasonBudgetId, email])
+  @@index([preSeasonBudgetId, acknowledged])
+  @@index([email])
+  @@map("parent_interests")
 }

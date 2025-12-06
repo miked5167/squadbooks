@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth/server-auth'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createOrUpdateBudgetAllocation, deleteBudgetAllocation } from '@/lib/db/budget'
+import { logger } from '@/lib/logger'
 
 /**
  * PUT /api/budget/[categoryId]
@@ -83,7 +84,7 @@ export async function PUT(
       budgetAllocation,
     })
   } catch (error) {
-    console.error('Failed to update budget allocation:', error)
+    logger.error('Failed to update budget allocation', error as Error)
 
     if (error instanceof Error) {
       return NextResponse.json(
@@ -146,7 +147,7 @@ export async function DELETE(
       message: 'Budget allocation deleted successfully',
     })
   } catch (error) {
-    console.error('Failed to delete budget allocation:', error)
+    logger.error('Failed to delete budget allocation', error as Error)
 
     if (error instanceof Error) {
       return NextResponse.json(

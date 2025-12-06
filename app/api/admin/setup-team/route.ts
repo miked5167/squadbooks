@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@/lib/auth/server-auth'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 
 const DEFAULT_CATEGORIES = [
   // Ice Time & Facilities (Heading 1)
@@ -69,7 +70,7 @@ export async function POST() {
 
     // If user doesn't exist or doesn't have a team, create them
     if (!dbUser || !dbUser.teamId) {
-      console.log('Creating team and user...')
+      logger.info('Creating team and user', { userId })
 
       // Create team
       team = await prisma.team.create({
@@ -81,7 +82,7 @@ export async function POST() {
         },
       })
 
-      console.log(`✅ Created team: ${team.name} (${team.id})`)
+      logger.info('Team created', { teamName: team.name, teamId: team.id })
 
       // Create or update user
       if (!dbUser) {
@@ -94,17 +95,17 @@ export async function POST() {
             teamId: team.id,
           },
         })
-        console.log(`✅ Created user: ${dbUser.name} (${dbUser.id})`)
+        logger.info('User created', { userName: dbUser.name, userId: dbUser.id, teamId: team.id })
       } else {
         dbUser = await prisma.user.update({
           where: { id: dbUser.id },
           data: { teamId: team.id },
         })
-        console.log(`✅ Updated user with team: ${dbUser.name}`)
+        logger.info('User updated with team', { userName: dbUser.name, userId: dbUser.id, teamId: team.id })
       }
     } else {
       team = dbUser.team!
-      console.log(`✅ User already has team: ${team.name}`)
+      logger.info('User already has team', { teamName: team.name, teamId: team.id })
     }
 
     // Check if categories already exist
@@ -132,7 +133,7 @@ export async function POST() {
       })),
     })
 
-    console.log(`✅ Created ${categories.count} categories for team ${team.id}`)
+    logger.info('Categories created for team', { count: categories.count, teamId: team.id })
 
     return NextResponse.json({
       success: true,
@@ -144,7 +145,7 @@ export async function POST() {
       categoriesCount: categories.count,
     })
   } catch (error) {
-    console.error('Setup team error:', error)
+    logger.error('Setup team error', error as Error)
     return NextResponse.json(
       { error: 'Failed to setup team', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

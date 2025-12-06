@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireTreasurerOnly, canManageUser } from '@/lib/auth/permissions'
 import { z } from 'zod'
+import { logger } from '@/lib/logger'
 
 const deactivateSchema = z.object({
   isActive: z.boolean(),
@@ -90,7 +91,7 @@ export async function PATCH(
       user: updatedUser,
     })
   } catch (error: any) {
-    console.error('PATCH /api/settings/users/[id]/deactivate error:', error)
+    logger.error('PATCH /api/settings/users/[id]/deactivate error', error as Error)
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

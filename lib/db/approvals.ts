@@ -210,11 +210,16 @@ export async function approveTransaction(
       },
     })
   } catch (error) {
-    console.error('Failed to create audit log for approval:', error)
+    logger.warn('Failed to create audit log for approval', {
+      approvalId,
+      error: error instanceof Error ? error.message : String(error),
+    })
     // Don't fail the approval if audit logging fails
   }
 
-  // TODO: Recalculate budget impact
+  // Revalidate budget cache to reflect approved transaction (moves from pending to spent)
+  const { revalidateBudgetCache } = await import('@/lib/db/budget')
+  revalidateBudgetCache()
 
   return updatedApproval
 }

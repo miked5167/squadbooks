@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateToken, markTokenAsUsed, markPlayerAsCompleted } from '@/lib/parentInvites';
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error completing onboarding:', error);
+    logger.error('Error completing onboarding', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

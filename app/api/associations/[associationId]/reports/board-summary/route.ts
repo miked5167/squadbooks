@@ -11,6 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
 import { Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer'
 import React from 'react'
@@ -395,7 +396,7 @@ export async function POST(
       })
     } catch (e) {
       // Report model may not exist in schema, ignore error
-      console.log('Could not save report metadata:', e)
+      logger.info('Could not save report metadata', e as Error)
     }
 
     // Return PDF
@@ -406,7 +407,7 @@ export async function POST(
       },
     })
   } catch (error) {
-    console.error('Error generating board summary report:', error)
+    logger.error('Error generating board summary report', error as Error)
     return NextResponse.json(
       { error: 'Failed to generate report' },
       { status: 500 }

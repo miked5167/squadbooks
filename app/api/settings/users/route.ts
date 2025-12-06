@@ -4,8 +4,11 @@
  */
 
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
+import { logger } from '@/lib/logger'
 import { requireTreasurerOnly } from '@/lib/auth/permissions'
+import { logger } from '@/lib/logger'
 
 /**
  * GET /api/settings/users
@@ -36,7 +39,7 @@ export async function GET() {
 
     return NextResponse.json({ users })
   } catch (error: any) {
-    console.error('GET /api/settings/users error:', error)
+    logger.error('GET /api/settings/users error', error as Error)
     return NextResponse.json(
       { error: error.message || 'Failed to fetch users' },
       { status: error.message?.includes('Forbidden') ? 403 : 500 }
