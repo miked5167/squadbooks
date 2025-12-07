@@ -38,12 +38,19 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50">
       <td className="px-4 py-3 text-sm text-gray-900">
-        {new Date(transaction.transactionDate).toLocaleDateString()}
+        {new Date(transaction.transactionDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })}
       </td>
       <td className="px-4 py-3">
         <span
-          className="inline-flex items-center gap-2 px-2 py-1 rounded text-xs font-medium"
-          style={{ backgroundColor: transaction.category.color + '20', color: transaction.category.color }}
+          className="inline-flex items-center gap-2 rounded px-2 py-1 text-xs font-medium"
+          style={{
+            backgroundColor: transaction.category.color + '20',
+            color: transaction.category.color,
+          }}
         >
           {transaction.category.heading}
         </span>
@@ -54,8 +61,12 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
           <span className="text-sm text-gray-600">{transaction.description || '-'}</span>
           {transaction.missingReceipt && (
             <span className="inline-flex items-center gap-1 text-xs text-red-600">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
               </svg>
               Missing Receipt
             </span>
@@ -63,11 +74,15 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
         </div>
       </td>
       <td className="px-4 py-3">
-        <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${statusColors[transaction.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
+        <span
+          className={`inline-block rounded px-2 py-1 text-xs font-medium ${statusColors[transaction.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}
+        >
           {transaction.status}
         </span>
       </td>
-      <td className={`px-4 py-3 text-sm font-semibold text-right ${isIncome ? 'text-green-600' : 'text-gray-900'}`}>
+      <td
+        className={`px-4 py-3 text-right text-sm font-semibold ${isIncome ? 'text-green-600' : 'text-gray-900'}`}
+      >
         {isIncome ? '+' : '-'}${Number(transaction.amount).toLocaleString()}
       </td>
     </tr>
@@ -81,7 +96,7 @@ export function TransactionsSection({ transactions }: TransactionsSectionProps) 
   const itemsPerPage = 25
 
   // Filter transactions
-  const filteredTransactions = transactions.filter((tx) => {
+  const filteredTransactions = transactions.filter(tx => {
     const matchesType = typeFilter === 'all' || tx.type === typeFilter
     const matchesStatus = statusFilter === 'all' || tx.status === statusFilter
     return matchesType && matchesStatus
@@ -100,13 +115,13 @@ export function TransactionsSection({ transactions }: TransactionsSectionProps) 
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">All Transactions</h2>
+      <h2 className="mb-4 text-xl font-bold text-gray-900">All Transactions</h2>
 
       {/* Filters */}
       <div className="mb-4 flex flex-wrap gap-4">
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Type</p>
-          <Tabs value={typeFilter} onValueChange={(value) => setTypeFilter(value as TransactionType)}>
+          <p className="mb-2 text-sm font-medium text-gray-700">Type</p>
+          <Tabs value={typeFilter} onValueChange={value => setTypeFilter(value as TransactionType)}>
             <TabsList>
               <TabsTrigger value="all">All Types</TabsTrigger>
               <TabsTrigger value="EXPENSE">Expenses</TabsTrigger>
@@ -116,8 +131,11 @@ export function TransactionsSection({ transactions }: TransactionsSectionProps) 
         </div>
 
         <div>
-          <p className="text-sm font-medium text-gray-700 mb-2">Status</p>
-          <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as TransactionStatus)}>
+          <p className="mb-2 text-sm font-medium text-gray-700">Status</p>
+          <Tabs
+            value={statusFilter}
+            onValueChange={value => setStatusFilter(value as TransactionStatus)}
+          >
             <TabsList>
               <TabsTrigger value="all">All Status</TabsTrigger>
               <TabsTrigger value="PENDING">Pending</TabsTrigger>
@@ -131,31 +149,31 @@ export function TransactionsSection({ transactions }: TransactionsSectionProps) 
       {/* Transactions Table */}
       {paginatedTransactions.length > 0 ? (
         <>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Date
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Category
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Vendor
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Description
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Amount
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 bg-white">
                 {paginatedTransactions.map(transaction => (
                   <TransactionRow key={transaction.id} transaction={transaction} />
                 ))}
@@ -167,7 +185,8 @@ export function TransactionsSection({ transactions }: TransactionsSectionProps) 
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-4">
               <div className="text-sm text-gray-600">
-                Showing {startIndex + 1} to {Math.min(endIndex, filteredTransactions.length)} of {filteredTransactions.length} transactions
+                Showing {startIndex + 1} to {Math.min(endIndex, filteredTransactions.length)} of{' '}
+                {filteredTransactions.length} transactions
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -194,8 +213,8 @@ export function TransactionsSection({ transactions }: TransactionsSectionProps) 
           )}
         </>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-          <p className="text-gray-500 mb-2">No transactions found</p>
+        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
+          <p className="mb-2 text-gray-500">No transactions found</p>
           {(typeFilter !== 'all' || statusFilter !== 'all') && (
             <Button
               variant="outline"

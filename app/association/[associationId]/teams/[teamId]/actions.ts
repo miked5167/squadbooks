@@ -1,9 +1,7 @@
 'use server'
 
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import type { AlertSeverity } from '../../alerts/actions'
-
-const prisma = new PrismaClient()
 
 export interface NormalizedAlert {
   id: string
@@ -236,7 +234,7 @@ export async function getTeamDetailData(
 
     // Calculate spent and remaining per category
     const budgetByCategory = await Promise.all(
-      budgetAllocations.map(async (allocation) => {
+      budgetAllocations.map(async allocation => {
         const transactions = await prisma.transaction.findMany({
           where: {
             teamId: teamInternalId,
@@ -249,10 +247,7 @@ export async function getTeamDetailData(
           },
         })
 
-        const spent = transactions.reduce(
-          (sum, t) => sum + Number(t.amount),
-          0
-        )
+        const spent = transactions.reduce((sum, t) => sum + Number(t.amount), 0)
         const allocated = Number(allocation.allocated)
         const remaining = allocated - spent
         const percentUsed = allocated > 0 ? (spent / allocated) * 100 : 0
@@ -268,78 +263,86 @@ export async function getTeamDetailData(
     )
 
     // Fetch ALL transactions for comprehensive table
-    const allTransactions = await prisma.transaction.findMany({
-      where: {
-        teamId: teamInternalId,
-      },
-      orderBy: {
-        transactionDate: 'desc',
-      },
-      select: {
-        id: true,
-        type: true,
-        status: true,
-        amount: true,
-        vendor: true,
-        description: true,
-        receiptUrl: true,
-        transactionDate: true,
-        createdAt: true,
-        category: {
-          select: {
-            heading: true,
-            color: true,
+    const allTransactions = await prisma.transaction
+      .findMany({
+        where: {
+          teamId: teamInternalId,
+        },
+        orderBy: {
+          transactionDate: 'desc',
+        },
+        select: {
+          id: true,
+          type: true,
+          status: true,
+          amount: true,
+          vendor: true,
+          description: true,
+          receiptUrl: true,
+          transactionDate: true,
+          createdAt: true,
+          category: {
+            select: {
+              heading: true,
+              color: true,
+            },
+          },
+          creator: {
+            select: {
+              name: true,
+              email: true,
+            },
           },
         },
-        creator: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
-    }).then(txns => txns.map(t => ({
-      ...t,
-      missingReceipt: !t.receiptUrl
-    })))
+      })
+      .then(txns =>
+        txns.map(t => ({
+          ...t,
+          missingReceipt: !t.receiptUrl,
+        }))
+      )
 
     // Fetch recent approved transactions
-    const recentTransactions = await prisma.transaction.findMany({
-      where: {
-        teamId: teamInternalId,
-        status: 'APPROVED',
-      },
-      orderBy: {
-        transactionDate: 'desc',
-      },
-      take: 10,
-      select: {
-        id: true,
-        type: true,
-        status: true,
-        amount: true,
-        vendor: true,
-        description: true,
-        receiptUrl: true,
-        transactionDate: true,
-        createdAt: true,
-        category: {
-          select: {
-            heading: true,
-            color: true,
+    const recentTransactions = await prisma.transaction
+      .findMany({
+        where: {
+          teamId: teamInternalId,
+          status: 'APPROVED',
+        },
+        orderBy: {
+          transactionDate: 'desc',
+        },
+        take: 10,
+        select: {
+          id: true,
+          type: true,
+          status: true,
+          amount: true,
+          vendor: true,
+          description: true,
+          receiptUrl: true,
+          transactionDate: true,
+          createdAt: true,
+          category: {
+            select: {
+              heading: true,
+              color: true,
+            },
+          },
+          creator: {
+            select: {
+              name: true,
+              email: true,
+            },
           },
         },
-        creator: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
-    }).then(txns => txns.map(t => ({
-      ...t,
-      missingReceipt: !t.receiptUrl
-    })))
+      })
+      .then(txns =>
+        txns.map(t => ({
+          ...t,
+          missingReceipt: !t.receiptUrl,
+        }))
+      )
 
     // Fetch pending transactions
     const pendingTransactions = await prisma.transaction.findMany({
@@ -439,7 +442,9 @@ export async function getTeamDetailData(
     }
 
     // 3. Missing receipts
-    const missingReceiptTxns = allTransactions.filter(t => t.missingReceipt && t.status === 'APPROVED').slice(0, 5)
+    const missingReceiptTxns = allTransactions
+      .filter(t => t.missingReceipt && t.status === 'APPROVED')
+      .slice(0, 5)
     for (const txn of missingReceiptTxns) {
       alerts.push({
         id: `receipt-${txn.id}`,
@@ -482,7 +487,11 @@ export async function getTeamDetailData(
         })
       }
 
-      if (latestSnapshot.percentUsed !== null && latestSnapshot.percentUsed >= 90 && latestSnapshot.percentUsed <= 100) {
+      if (
+        latestSnapshot.percentUsed !== null &&
+        latestSnapshot.percentUsed >= 90 &&
+        latestSnapshot.percentUsed <= 100
+      ) {
         alerts.push({
           id: `budget-high-${associationTeam.id}`,
           teamId: associationTeam.id,
@@ -499,19 +508,64 @@ export async function getTeamDetailData(
     // Sort alerts by createdAt descending
     alerts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
+    // Convert Decimal values to numbers for client components (required by Next.js)
+    const transformedAssociationTeam = associationTeam
+      ? {
+          ...associationTeam,
+          team: associationTeam.team
+            ? {
+                ...associationTeam.team,
+                budgetTotal: Number(associationTeam.team.budgetTotal),
+              }
+            : null,
+        }
+      : null
+
+    const transformedLatestSnapshot = latestSnapshot
+      ? {
+          ...latestSnapshot,
+          budgetTotal:
+            latestSnapshot.budgetTotal !== null ? Number(latestSnapshot.budgetTotal) : null,
+          spent: latestSnapshot.spent !== null ? Number(latestSnapshot.spent) : null,
+          remaining: latestSnapshot.remaining !== null ? Number(latestSnapshot.remaining) : null,
+          percentUsed:
+            latestSnapshot.percentUsed !== null ? Number(latestSnapshot.percentUsed) : null,
+        }
+      : null
+
+    const transformedAllTransactions = allTransactions.map(t => ({
+      ...t,
+      amount: Number(t.amount),
+    }))
+
+    const transformedRecentTransactions = recentTransactions.map(t => ({
+      ...t,
+      amount: Number(t.amount),
+    }))
+
+    const transformedPendingTransactions = pendingTransactions.map(t => ({
+      ...t,
+      amount: Number(t.amount),
+    }))
+
     return {
       association,
-      associationTeam,
-      latestSnapshot: latestSnapshot || null,
+      associationTeam: transformedAssociationTeam,
+      latestSnapshot: transformedLatestSnapshot,
       budgetByCategory,
-      allTransactions,
-      recentTransactions,
-      pendingTransactions,
+      allTransactions: transformedAllTransactions,
+      recentTransactions: transformedRecentTransactions,
+      pendingTransactions: transformedPendingTransactions,
       alerts,
       snapshotHistory,
     }
   } catch (error) {
     console.error('Error fetching team detail data:', error)
+    console.error('Error details:', {
+      name: (error as Error).name,
+      message: (error as Error).message,
+      stack: (error as Error).stack,
+    })
     return {
       association: null,
       associationTeam: null,

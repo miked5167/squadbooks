@@ -1,9 +1,7 @@
 'use server'
 
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import { isDemoMode } from '@/app/lib/demoMode'
-
-const prisma = new PrismaClient()
 
 // Response types
 export type AssociationSettingsResponse = {
@@ -16,6 +14,9 @@ export type AssociationSettingsResponse = {
     currency: string
     season: string | null
     logoUrl: string | null
+    preSeasonBudgetDeadline: Date | null
+    preSeasonBudgetsRequired: number | null
+    preSeasonBudgetAutoApprove: boolean
     createdAt: Date
     updatedAt: Date
   }
@@ -37,6 +38,9 @@ export type UpdateAssociationPayload = {
   currency?: string
   season?: string
   logoUrl?: string
+  preSeasonBudgetDeadline?: string
+  preSeasonBudgetsRequired?: string
+  preSeasonBudgetAutoApprove?: boolean
 }
 
 // Valid role values (based on schema comments)
@@ -61,6 +65,9 @@ export async function getAssociationSettings(
         currency: true,
         season: true,
         logoUrl: true,
+        preSeasonBudgetDeadline: true,
+        preSeasonBudgetsRequired: true,
+        preSeasonBudgetAutoApprove: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -132,6 +139,21 @@ export async function updateAssociation(
     if (data.currency !== undefined) updateData.currency = data.currency
     if (data.season !== undefined) updateData.season = data.season
     if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl
+
+    // Pre-season budget configuration
+    if (data.preSeasonBudgetDeadline !== undefined) {
+      updateData.preSeasonBudgetDeadline = data.preSeasonBudgetDeadline
+        ? new Date(data.preSeasonBudgetDeadline)
+        : null
+    }
+    if (data.preSeasonBudgetsRequired !== undefined) {
+      updateData.preSeasonBudgetsRequired = data.preSeasonBudgetsRequired
+        ? parseInt(data.preSeasonBudgetsRequired, 10)
+        : null
+    }
+    if (data.preSeasonBudgetAutoApprove !== undefined) {
+      updateData.preSeasonBudgetAutoApprove = data.preSeasonBudgetAutoApprove
+    }
 
     // Perform the update
     await prisma.association.update({

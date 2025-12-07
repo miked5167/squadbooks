@@ -14,6 +14,9 @@ interface AssociationSettingsFormProps {
     currency: string
     season: string | null
     logoUrl: string | null
+    preSeasonBudgetDeadline: Date | null
+    preSeasonBudgetsRequired: number | null
+    preSeasonBudgetAutoApprove: boolean
     createdAt: Date
     updatedAt: Date
   }
@@ -32,6 +35,11 @@ export default function AssociationSettingsForm({
     currency: association.currency || 'CAD',
     season: association.season || '',
     logoUrl: association.logoUrl || '',
+    preSeasonBudgetDeadline: association.preSeasonBudgetDeadline
+      ? new Date(association.preSeasonBudgetDeadline).toISOString().slice(0, 16)
+      : '',
+    preSeasonBudgetsRequired: association.preSeasonBudgetsRequired?.toString() || '',
+    preSeasonBudgetAutoApprove: association.preSeasonBudgetAutoApprove,
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -68,83 +76,83 @@ export default function AssociationSettingsForm({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Association Settings</h2>
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <h2 className="mb-4 text-xl font-bold text-gray-900">Association Settings</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
             Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             id="name"
             value={formData.name || ''}
-            onChange={(e) => handleChange('name', e.target.value)}
+            onChange={e => handleChange('name', e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         {/* Abbreviation */}
         <div>
-          <label htmlFor="abbreviation" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="abbreviation" className="mb-1 block text-sm font-medium text-gray-700">
             Abbreviation
           </label>
           <input
             type="text"
             id="abbreviation"
             value={formData.abbreviation || ''}
-            onChange={(e) => handleChange('abbreviation', e.target.value)}
+            onChange={e => handleChange('abbreviation', e.target.value)}
             maxLength={32}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         {/* Province / State */}
         <div>
-          <label htmlFor="provinceState" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="provinceState" className="mb-1 block text-sm font-medium text-gray-700">
             Province / State
           </label>
           <input
             type="text"
             id="provinceState"
             value={formData.provinceState || ''}
-            onChange={(e) => handleChange('provinceState', e.target.value)}
+            onChange={e => handleChange('provinceState', e.target.value)}
             maxLength={64}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         {/* Country */}
         <div>
-          <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="country" className="mb-1 block text-sm font-medium text-gray-700">
             Country
           </label>
           <input
             type="text"
             id="country"
             value={formData.country || ''}
-            onChange={(e) => handleChange('country', e.target.value)}
+            onChange={e => handleChange('country', e.target.value)}
             maxLength={64}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         {/* Currency */}
         <div>
-          <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="currency" className="mb-1 block text-sm font-medium text-gray-700">
             Currency <span className="text-red-500">*</span>
           </label>
           <select
             id="currency"
             value={formData.currency || 'CAD'}
-            onChange={(e) => handleChange('currency', e.target.value)}
+            onChange={e => handleChange('currency', e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
-            {SUPPORTED_CURRENCIES.map((curr) => (
+            {SUPPORTED_CURRENCIES.map(curr => (
               <option key={curr.code} value={curr.code}>
                 {curr.code} - {curr.name} ({curr.symbol})
               </option>
@@ -157,33 +165,106 @@ export default function AssociationSettingsForm({
 
         {/* Season */}
         <div>
-          <label htmlFor="season" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="season" className="mb-1 block text-sm font-medium text-gray-700">
             Season
           </label>
           <input
             type="text"
             id="season"
             value={formData.season || ''}
-            onChange={(e) => handleChange('season', e.target.value)}
+            onChange={e => handleChange('season', e.target.value)}
             maxLength={32}
             placeholder="e.g., 2025-2026"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
         </div>
 
         {/* Logo URL */}
         <div>
-          <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="logoUrl" className="mb-1 block text-sm font-medium text-gray-700">
             Logo URL
           </label>
           <input
             type="url"
             id="logoUrl"
             value={formData.logoUrl || ''}
-            onChange={(e) => handleChange('logoUrl', e.target.value)}
+            onChange={e => handleChange('logoUrl', e.target.value)}
             placeholder="https://..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
+        </div>
+
+        {/* Pre-Season Budget Configuration Section */}
+        <div className="border-t border-gray-200 pt-6">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+            Pre-Season Budget Configuration
+          </h3>
+          <div className="space-y-4">
+            {/* Budget Submission Deadline */}
+            <div>
+              <label
+                htmlFor="preSeasonBudgetDeadline"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Budget Submission Deadline
+              </label>
+              <input
+                type="datetime-local"
+                id="preSeasonBudgetDeadline"
+                value={formData.preSeasonBudgetDeadline || ''}
+                onChange={e => handleChange('preSeasonBudgetDeadline', e.target.value)}
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Teams must submit their pre-season budgets before this date
+              </p>
+            </div>
+
+            {/* Number of Budgets Required */}
+            <div>
+              <label
+                htmlFor="preSeasonBudgetsRequired"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Number of Budget Submissions Required
+              </label>
+              <input
+                type="number"
+                id="preSeasonBudgetsRequired"
+                value={formData.preSeasonBudgetsRequired || ''}
+                onChange={e => handleChange('preSeasonBudgetsRequired', e.target.value)}
+                min="0"
+                placeholder="Leave empty for no requirement"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Number of budget submissions each team must submit (leave empty to not enforce)
+              </p>
+            </div>
+
+            {/* Auto-Approve Budgets */}
+            <div>
+              <label className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="preSeasonBudgetAutoApprove"
+                  checked={formData.preSeasonBudgetAutoApprove}
+                  onChange={e =>
+                    setFormData(prev => ({ ...prev, preSeasonBudgetAutoApprove: e.target.checked }))
+                  }
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <div>
+                  <span className="text-sm font-medium text-gray-700">
+                    Auto-approve submitted budgets
+                  </span>
+                  <p className="text-xs text-gray-500">
+                    Automatically approve pre-season budgets when teams submit them
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
         </div>
 
         {/* Submit Button */}
@@ -191,7 +272,7 @@ export default function AssociationSettingsForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-400"
           >
             {isSubmitting ? 'Saving...' : 'Save Changes'}
           </button>
@@ -200,10 +281,10 @@ export default function AssociationSettingsForm({
         {/* Message */}
         {message && (
           <div
-            className={`mt-4 p-3 rounded-md ${
+            className={`mt-4 rounded-md p-3 ${
               message.type === 'success'
-                ? 'bg-green-50 text-green-800 border border-green-200'
-                : 'bg-red-50 text-red-800 border border-red-200'
+                ? 'border border-green-200 bg-green-50 text-green-800'
+                : 'border border-red-200 bg-red-50 text-red-800'
             }`}
           >
             {message.text}
@@ -211,7 +292,7 @@ export default function AssociationSettingsForm({
         )}
 
         {/* Last Updated */}
-        <div className="pt-2 border-t border-gray-100">
+        <div className="border-t border-gray-100 pt-2">
           <p className="text-xs text-gray-500" suppressHydrationWarning>
             Last updated: {new Date(association.updatedAt).toLocaleString()}
           </p>

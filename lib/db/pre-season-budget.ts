@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { Prisma, PreSeasonBudgetStatus } from '@prisma/client'
+import type { Prisma, PreSeasonBudgetStatus } from '@prisma/client'
 import { customAlphabet } from 'nanoid'
 import slugify from 'slugify'
 import type {
@@ -115,10 +115,7 @@ export async function getPreSeasonBudget(id: string, clerkId: string) {
 /**
  * List all budgets created by a user
  */
-export async function listUserBudgets(
-  clerkId: string,
-  status?: PreSeasonBudgetStatus
-) {
+export async function listUserBudgets(clerkId: string, status?: PreSeasonBudgetStatus) {
   const where: Prisma.PreSeasonBudgetWhereInput = {
     createdByClerkId: clerkId,
   }
@@ -142,6 +139,56 @@ export async function listUserBudgets(
   })
 
   return budgets
+}
+
+/**
+ * Get association requirements and user's submission status
+ */
+export async function getBudgetRequirements(associationId: string, clerkId: string) {
+  const association = await prisma.association.findUnique({
+    where: { id: associationId },
+    select: {
+      preSeasonBudgetDeadline: true,
+      preSeasonBudgetsRequired: true,
+      preSeasonBudgetAutoApprove: true,
+    },
+  })
+
+  if (!association) {
+    throw new Error('Association not found')
+  }
+
+  // Count user's submitted/approved budgets for this association
+  const submittedCount = await prisma.preSeasonBudget.count({
+    where: {
+      associationId,
+      createdByClerkId: clerkId,
+      status: {
+        in: ['SUBMITTED', 'APPROVED', 'ACTIVATED'],
+      },
+    },
+  })
+
+  const hasDeadline = !!association.preSeasonBudgetDeadline
+  const isPastDeadline = hasDeadline
+    ? new Date() > new Date(association.preSeasonBudgetDeadline!)
+    : false
+
+  const requirementsMet = association.preSeasonBudgetsRequired
+    ? submittedCount >= association.preSeasonBudgetsRequired
+    : true // No requirement = always met
+
+  return {
+    deadline: association.preSeasonBudgetDeadline,
+    requiredCount: association.preSeasonBudgetsRequired,
+    submittedCount,
+    autoApprove: association.preSeasonBudgetAutoApprove,
+    hasDeadline,
+    isPastDeadline,
+    requirementsMet,
+    canSubmitMore:
+      !isPastDeadline && (association.preSeasonBudgetsRequired === null || !requirementsMet),
+  }
 }
 
 /**
@@ -197,11 +244,7 @@ export async function updateBudgetDetails(
 /**
  * Update category allocations for a pre-season budget
  */
-export async function updateAllocations(
-  id: string,
-  clerkId: string,
-  data: UpdateAllocationsInput
-) {
+export async function updateAllocations(id: string, clerkId: string, data: UpdateAllocationsInput) {
   // Get budget and check authorization
   const budget = await prisma.preSeasonBudget.findUnique({
     where: { id },
@@ -235,7 +278,7 @@ export async function updateAllocations(
   }
 
   // Update allocations in a transaction
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async tx => {
     // Delete existing allocations
     await tx.preSeasonAllocation.deleteMany({
       where: { preSeasonBudgetId: id },
@@ -243,7 +286,7 @@ export async function updateAllocations(
 
     // Create new allocations
     await tx.preSeasonAllocation.createMany({
-      data: data.allocations.map((allocation) => ({
+      data: data.allocations.map(allocation => ({
         preSeasonBudgetId: id,
         categoryId: allocation.categoryId,
         allocated: allocation.allocated,
@@ -264,6 +307,12 @@ export async function submitForApproval(id: string, clerkId: string) {
     where: { id },
     include: {
       allocations: true,
+      association: {
+        select: {
+          preSeasonBudgetDeadline: true,
+          preSeasonBudgetAutoApprove: true,
+        },
+      },
     },
   })
 
@@ -279,30 +328,66 @@ export async function submitForApproval(id: string, clerkId: string) {
     throw new Error('Can only submit budgets in DRAFT or REJECTED status')
   }
 
+  // Check deadline enforcement
+  if (budget.association?.preSeasonBudgetDeadline) {
+    const now = new Date()
+    const deadline = new Date(budget.association.preSeasonBudgetDeadline)
+    if (now > deadline) {
+      throw new Error(
+        `Budget submission deadline has passed (${deadline.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })})`
+      )
+    }
+  }
+
   // Validate allocations exist and total matches budget
   if (budget.allocations.length === 0) {
     throw new Error('Cannot submit budget without category allocations')
   }
 
-  const totalAllocated = budget.allocations.reduce(
-    (sum, a) => sum + Number(a.allocated),
-    0
-  )
+  const totalAllocated = budget.allocations.reduce((sum, a) => sum + Number(a.allocated), 0)
   const budgetTotal = Number(budget.totalBudget)
 
   if (Math.abs(totalAllocated - budgetTotal) > 0.01) {
     throw new Error('Total allocations must equal total budget before submitting')
   }
 
-  // Update status to SUBMITTED
+  // Determine status based on auto-approve setting
+  const shouldAutoApprove = budget.association?.preSeasonBudgetAutoApprove || false
+  const newStatus = shouldAutoApprove ? 'APPROVED' : 'SUBMITTED'
+
+  // Generate public slug if auto-approving
+  let publicSlug: string | undefined
+  if (shouldAutoApprove) {
+    publicSlug = generatePublicSlug(
+      budget.proposedTeamName,
+      budget.ageDivision,
+      budget.proposedSeason
+    )
+  }
+
+  // Update status
   const updated = await prisma.preSeasonBudget.update({
     where: { id },
     data: {
-      status: 'SUBMITTED',
+      status: newStatus,
+      ...(shouldAutoApprove && {
+        associationApprovedAt: new Date(),
+        associationApprovedBy: 'AUTO_APPROVED',
+        associationNotes: 'Automatically approved based on association settings',
+        publicSlug,
+      }),
     },
   })
 
-  // TODO: Send email notification to association admin
+  // TODO: Send email notification
+  // - If auto-approved: send approval email to coach with public link
+  // - If pending: send notification to association admin
 
   return updated
 }
@@ -394,11 +479,7 @@ export async function listAssociationBudgets(
 /**
  * Approve a pre-season budget
  */
-export async function approveBudget(
-  id: string,
-  adminClerkId: string,
-  notes?: string
-) {
+export async function approveBudget(id: string, adminClerkId: string, notes?: string) {
   const budget = await prisma.preSeasonBudget.findUnique({
     where: { id },
     select: {
@@ -419,11 +500,9 @@ export async function approveBudget(
   }
 
   // Generate public slug if not already set
-  const publicSlug = budget.publicSlug || generatePublicSlug(
-    budget.proposedTeamName,
-    budget.ageDivision,
-    budget.proposedSeason
-  )
+  const publicSlug =
+    budget.publicSlug ||
+    generatePublicSlug(budget.proposedTeamName, budget.ageDivision, budget.proposedSeason)
 
   const updated = await prisma.preSeasonBudget.update({
     where: { id },
@@ -444,11 +523,7 @@ export async function approveBudget(
 /**
  * Reject a pre-season budget
  */
-export async function rejectBudget(
-  id: string,
-  adminClerkId: string,
-  notes: string
-) {
+export async function rejectBudget(id: string, adminClerkId: string, notes: string) {
   const budget = await prisma.preSeasonBudget.findUnique({
     where: { id },
     select: {
@@ -680,7 +755,7 @@ export async function activateBudget(
   }
 
   // Create team and related records in a transaction
-  const result = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async tx => {
     // Create Team
     const team = await tx.team.create({
       data: {
@@ -695,7 +770,7 @@ export async function activateBudget(
 
     // Copy budget allocations
     await tx.budgetAllocation.createMany({
-      data: budget.allocations.map((allocation) => ({
+      data: budget.allocations.map(allocation => ({
         teamId: team.id,
         categoryId: allocation.categoryId,
         season: budget.proposedSeason,
@@ -705,7 +780,7 @@ export async function activateBudget(
 
     // Create Family records from parent interests
     const families = await Promise.all(
-      budget.parentInterests.map((interest) =>
+      budget.parentInterests.map(interest =>
         tx.family.create({
           data: {
             teamId: team.id,

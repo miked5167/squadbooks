@@ -53,16 +53,16 @@ export default function UsersManagementTable({ users }: UsersManagementTableProp
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Association Users</h2>
+    <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <h2 className="mb-4 text-xl font-bold text-gray-900">Association Users</h2>
 
       {/* Message */}
       {message && (
         <div
-          className={`mb-4 p-3 rounded-md ${
+          className={`mb-4 rounded-md p-3 ${
             message.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
+              ? 'border border-green-200 bg-green-50 text-green-800'
+              : 'border border-red-200 bg-red-50 text-red-800'
           }`}
         >
           {message.text}
@@ -71,9 +71,9 @@ export default function UsersManagementTable({ users }: UsersManagementTableProp
 
       {/* Users Table */}
       {users.length === 0 ? (
-        <div className="text-center py-12 text-gray-400">
+        <div className="py-12 text-center text-gray-400">
           <svg
-            className="mx-auto h-12 w-12 mb-4"
+            className="mx-auto mb-4 h-12 w-12"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -85,7 +85,7 @@ export default function UsersManagementTable({ users }: UsersManagementTableProp
               d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
             />
           </svg>
-          <p className="text-lg font-medium text-gray-900 mb-1">No association users yet</p>
+          <p className="mb-1 text-lg font-medium text-gray-900">No association users yet</p>
           <p className="text-sm text-gray-500">
             Users will be added when they are invited to the association
           </p>
@@ -95,25 +95,25 @@ export default function UsersManagementTable({ users }: UsersManagementTableProp
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Name
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Email
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Role
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Last Login
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Member Since
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {users.map(user => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-4 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
@@ -126,11 +126,11 @@ export default function UsersManagementTable({ users }: UsersManagementTableProp
                   <td className="px-4 py-4 whitespace-nowrap">
                     <select
                       value={user.role.toLowerCase()}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      onChange={e => handleRoleChange(user.id, e.target.value)}
                       disabled={updatingUserId === user.id}
-                      className="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
                     >
-                      {ROLES.map((role) => (
+                      {ROLES.map(role => (
                         <option key={role.value} value={role.value}>
                           {role.label}
                         </option>
@@ -139,15 +139,24 @@ export default function UsersManagementTable({ users }: UsersManagementTableProp
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-600">
-                      {user.lastLoginAt
-                        ? new Date(user.lastLoginAt).toLocaleDateString()
-                        : <span className="text-gray-400 italic">Never</span>
-                      }
+                      {user.lastLoginAt ? (
+                        new Date(user.lastLoginAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        })
+                      ) : (
+                        <span className="text-gray-400 italic">Never</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-600">
-                      {new Date(user.createdAt).toLocaleDateString()}
+                      {new Date(user.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      })}
                     </div>
                   </td>
                 </tr>
@@ -159,7 +168,7 @@ export default function UsersManagementTable({ users }: UsersManagementTableProp
 
       {/* Info Note */}
       {users.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="mt-4 border-t border-gray-100 pt-4">
           <p className="text-xs text-gray-500">
             Note: User invitations and role management will be expanded in future releases.
           </p>

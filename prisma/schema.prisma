@@ -27,6 +27,11 @@ model Association {
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
+  // Pre-Season Budget Configuration
+  preSeasonBudgetDeadline     DateTime? @map("pre_season_budget_deadline") @db.Timestamptz
+  preSeasonBudgetsRequired    Int?      @map("pre_season_budgets_required") // Number of budget submissions required per team (null = not enforced)
+  preSeasonBudgetAutoApprove  Boolean   @default(false) @map("pre_season_budget_auto_approve")
+
   // Relations
   users         AssociationUser[]
   teams         AssociationTeam[]
