@@ -275,7 +275,7 @@ export function CategoryAllocator({ data, onChange }: CategoryAllocatorProps) {
                     value={percentage}
                     className="h-1"
                     style={{
-                      // @ts-ignore
+                      // @ts-expect-error - CSS custom property
                       '--progress-background': category.color,
                     }}
                   />
