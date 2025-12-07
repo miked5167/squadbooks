@@ -40,7 +40,7 @@ const DEMO_USERS: DemoUser[] = [
     isAssociation: true,
     associationId: '2a98f680-97df-4215-8209-12806863c5ea', // Newmarket Minor Hockey Association
   },
-  // U13 AA Storm
+  // U13 AA Storm (18 players = 4 staff + 36 parents: IDs 2-41)
   {
     id: 'cmig8gd1o0000tg4om4ddrqta-treasurer',
     name: 'U13 AA Storm',
@@ -60,16 +60,16 @@ const DEMO_USERS: DemoUser[] = [
   {
     id: 'cmig8gd1o0000tg4om4ddrqta-parent',
     name: 'U13 AA Storm',
-    userId: 'demo_2025_2026_000004',
+    userId: 'demo_2025_2026_000006',
     userName: 'U13 AA Storm Parent',
     division: 'U13 AA',
     role: 'Parent',
   },
-  // U15 A Thunder
+  // U15 A Thunder (16 players = 4 staff + 32 parents: IDs 42-77)
   {
     id: 'cmig8ilgv00gntg4oky4n5lfu-treasurer',
     name: 'U15 A Thunder',
-    userId: 'demo_2025_2026_000041',
+    userId: 'demo_2025_2026_000042',
     userName: 'U15 A Thunder Treasurer',
     division: 'U15 A',
     role: 'Treasurer',
@@ -77,7 +77,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     id: 'cmig8ilgv00gntg4oky4n5lfu-assistant',
     name: 'U15 A Thunder',
-    userId: 'demo_2025_2026_000042',
+    userId: 'demo_2025_2026_000043',
     userName: 'U15 A Thunder Asst Treasurer',
     division: 'U15 A',
     role: 'Assistant Treasurer',
@@ -85,16 +85,16 @@ const DEMO_USERS: DemoUser[] = [
   {
     id: 'cmig8ilgv00gntg4oky4n5lfu-parent',
     name: 'U15 A Thunder',
-    userId: 'demo_2025_2026_000043',
+    userId: 'demo_2025_2026_000046',
     userName: 'U15 A Thunder Parent',
     division: 'U15 A',
     role: 'Parent',
   },
-  // U11 AAA Lightning
+  // U11 AAA Lightning (17 players = 4 staff + 34 parents: IDs 78-115)
   {
     id: 'cmig8kspb00wytg4oz4mz59f4-treasurer',
     name: 'U11 AAA Lightning',
-    userId: 'demo_2025_2026_000076',
+    userId: 'demo_2025_2026_000078',
     userName: 'U11 AAA Lightning Treasurer',
     division: 'U11 AAA',
     role: 'Treasurer',
@@ -102,7 +102,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     id: 'cmig8kspb00wytg4oz4mz59f4-assistant',
     name: 'U11 AAA Lightning',
-    userId: 'demo_2025_2026_000077',
+    userId: 'demo_2025_2026_000079',
     userName: 'U11 AAA Lightning Asst Treasurer',
     division: 'U11 AAA',
     role: 'Assistant Treasurer',
@@ -110,7 +110,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     id: 'cmig8kspb00wytg4oz4mz59f4-parent',
     name: 'U11 AAA Lightning',
-    userId: 'demo_2025_2026_000078',
+    userId: 'demo_2025_2026_000082',
     userName: 'U11 AAA Lightning Parent',
     division: 'U11 AAA',
     role: 'Parent',
@@ -307,7 +307,7 @@ export function TeamSwitcher() {
   }
 
   return (
-    <div className="fixed right-6 bottom-6 z-50">
+    <div className="fixed left-6 top-6 z-50">
       {/* User Switcher Button */}
       <div className="relative">
         <button
@@ -343,7 +343,7 @@ export function TeamSwitcher() {
 
             {/* Menu */}
             <div
-              className={`absolute right-0 bottom-full mb-2 ${activeTab === 'scenarios' ? 'w-[500px]' : 'w-80'} z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-2xl`}
+              className={`absolute left-0 top-full mt-2 ${activeTab === 'scenarios' ? 'w-[500px]' : 'w-80'} z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-2xl`}
             >
               {/* Header with Tabs */}
               <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">

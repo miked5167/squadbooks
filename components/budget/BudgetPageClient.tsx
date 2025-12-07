@@ -422,7 +422,7 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
-            <h1 className="text-display-2 text-navy mb-2">Budget</h1>
+            <h1 className="text-3xl font-bold text-navy mb-2">Budget</h1>
             <p className="text-base sm:text-lg text-navy/70">{season || '2024-25 Season'}</p>
           </div>
           {isTreasurer && (

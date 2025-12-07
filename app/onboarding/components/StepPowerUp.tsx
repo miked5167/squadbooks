@@ -13,7 +13,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle2, Users, Building2 } from 'lucide-react';
+import { CheckCircle2, Users, Building2, Trash2 } from 'lucide-react';
+import { PlaidLinkButton } from '@/components/banking/PlaidLinkButton';
+import { TransactionImportModal } from '@/components/banking/TransactionImportModal';
+import type { BankAccount, PlaidTransaction, ExchangeTokenResponse, PlaidLinkOnSuccessMetadata } from '@/lib/types/banking';
 
 interface StepPowerUpProps {
   teamId: string;
@@ -27,6 +30,10 @@ export function StepPowerUp({ teamId, teamName, onComplete, onSkip, onBack }: St
   const { toast } = useToast();
   const [approverAdded, setApproverAdded] = useState(false);
   const [bankConnected, setBankConnected] = useState(false);
+  const [bankAccount, setBankAccount] = useState<BankAccount | null>(null);
+  const [accessToken, setAccessToken] = useState<string>('');
+  const [itemId, setItemId] = useState<string>('');
+  const [showTransactionImport, setShowTransactionImport] = useState(false);
 
   const [approverData, setApproverData] = useState({
     email: '',
@@ -34,6 +41,7 @@ export function StepPowerUp({ teamId, teamName, onComplete, onSkip, onBack }: St
     role: 'PRESIDENT' as const,
   });
   const [sendingInvite, setSendingInvite] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const handleAddApprover = async () => {
     if (!approverData.email || !approverData.name) {
@@ -76,13 +84,63 @@ export function StepPowerUp({ teamId, teamName, onComplete, onSkip, onBack }: St
     }
   };
 
-  const handleConnectBank = async () => {
-    // TODO: Implement Plaid Link
-    // For MVP, we can stub this and show a "Coming soon" message
-    toast({
-      title: 'Bank connection coming soon',
-      description: "We're adding bank integration in the next update. You can add expenses manually for now.",
-    });
+  const handleBankConnectSuccess = async (
+    data: ExchangeTokenResponse & { accessToken: string },
+    metadata: PlaidLinkOnSuccessMetadata
+  ) => {
+    console.log('🏒 Bank connected successfully!', { data, metadata });
+
+    // Store the first account
+    if (data.accounts && data.accounts.length > 0) {
+      setBankAccount(data.accounts[0]);
+      setBankConnected(true);
+      setAccessToken(data.accessToken);
+      setItemId(data.itemId);
+
+      // Store access token and account data in sessionStorage for demo
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('plaid_access_token', data.accessToken);
+        sessionStorage.setItem('plaid_accounts', JSON.stringify(data.accounts));
+        sessionStorage.setItem('plaid_item_id', data.itemId);
+      }
+
+      // Show transaction import modal
+      setShowTransactionImport(true);
+    }
+  };
+
+  const handleImportComplete = (importedCount: number) => {
+    console.log(`✅ Imported ${importedCount} transactions`);
+  };
+
+  const handleResetDemo = async () => {
+    setIsResetting(true);
+    try {
+      const response = await fetch('/api/dev/reset-demo-transactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reset demo transactions');
+      }
+
+      const result = await response.json();
+
+      toast({
+        title: 'Demo Reset Complete',
+        description: result.message || `Deleted ${result.deleted} imported transactions`,
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Reset Failed',
+        description: error instanceof Error ? error.message : 'Failed to reset demo data',
+      });
+    } finally {
+      setIsResetting(false);
+    }
   };
 
   return (
@@ -236,13 +294,47 @@ export function StepPowerUp({ teamId, teamName, onComplete, onSkip, onBack }: St
                 </div>
               </div>
 
-              <Button
-                onClick={handleConnectBank}
-                variant="outline"
-                className="w-full"
-              >
-                Connect Bank Account
-              </Button>
+              {!bankConnected ? (
+                <PlaidLinkButton
+                  onSuccess={handleBankConnectSuccess}
+                  buttonText="Connect Bank Account"
+                  buttonVariant="outline"
+                  className="w-full"
+                />
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-center py-4">
+                    <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto mb-3" />
+                    <p className="font-medium">{bankAccount?.accountName}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {bankAccount?.institutionName} •••• {bankAccount?.mask}
+                    </p>
+                    <p className="text-sm font-medium mt-2">
+                      Balance: ${bankAccount?.currentBalance.toFixed(2)}
+                    </p>
+                  </div>
+
+                  {/* Demo Reset Button - Only show in dev mode */}
+                  {process.env.NEXT_PUBLIC_DEV_MODE === 'true' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-destructive hover:bg-destructive/10"
+                      onClick={handleResetDemo}
+                      disabled={isResetting}
+                    >
+                      {isResetting ? (
+                        <>Resetting...</>
+                      ) : (
+                        <>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Reset Demo Transactions
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              )}
 
               <p className="text-xs text-muted-foreground text-center">
                 You can always connect your bank later from Settings
@@ -275,6 +367,19 @@ export function StepPowerUp({ teamId, teamName, onComplete, onSkip, onBack }: St
           Finish Setup →
         </Button>
       </div>
+
+      {/* Transaction Import Modal */}
+      {bankAccount && accessToken && itemId && (
+        <TransactionImportModal
+          isOpen={showTransactionImport}
+          onClose={() => setShowTransactionImport(false)}
+          accessToken={accessToken}
+          itemId={itemId}
+          bankAccount={bankAccount}
+          teamId={teamId}
+          onImportComplete={handleImportComplete}
+        />
+      )}
     </div>
   );
 }

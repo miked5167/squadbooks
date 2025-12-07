@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
-import { logger } from '@/lib/logger'
+import { logger } from '@/lib/logger';
 import { auth } from '@/lib/auth/server-auth';
-import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma';
-import { logger } from '@/lib/logger'
 import { sendInvitationEmail } from '@/lib/onboarding/send-invitation';
-import { logger } from '@/lib/logger'
 
 export async function POST(request: Request) {
   try {

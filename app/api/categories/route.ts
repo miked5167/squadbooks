@@ -6,7 +6,7 @@ import { logger } from '@/lib/logger'
 
 /**
  * GET /api/categories
- * Get all categories for the user's team
+ * Get all categories for the user's team, or default categories if no team assigned
  */
 export async function GET() {
   try {
@@ -22,19 +22,49 @@ export async function GET() {
       select: { teamId: true },
     })
 
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
+    let categories
 
-    // Get categories for team
-    const categories = await prisma.category.findMany({
-      where: { teamId: user.teamId },
-      orderBy: [
-        { heading: 'asc' },
-        { sortOrder: 'asc' },
-        { name: 'asc' },
-      ],
-    })
+    // If user exists and has a team, get team-specific categories
+    if (user?.teamId) {
+      categories = await prisma.category.findMany({
+        where: { teamId: user.teamId },
+        orderBy: [
+          { heading: 'asc' },
+          { sortOrder: 'asc' },
+          { name: 'asc' },
+        ],
+      })
+    } else {
+      // If user doesn't exist or has no team (e.g., creating pre-season budget),
+      // return categories from the main Veritas Hockey team as templates
+      // This allows coaches to see the standard category structure before team creation
+      const templateTeam = await prisma.team.findFirst({
+        where: { name: 'Veritas Hockey' },
+        select: { id: true },
+      })
+
+      if (templateTeam) {
+        categories = await prisma.category.findMany({
+          where: { teamId: templateTeam.id },
+          orderBy: [
+            { heading: 'asc' },
+            { sortOrder: 'asc' },
+            { name: 'asc' },
+          ],
+        })
+      } else {
+        // Fallback: return any default categories if Veritas Hockey team not found
+        categories = await prisma.category.findMany({
+          where: { isDefault: true },
+          take: 20,
+          orderBy: [
+            { heading: 'asc' },
+            { sortOrder: 'asc' },
+            { name: 'asc' },
+          ],
+        })
+      }
+    }
 
     return NextResponse.json({ categories }, { status: 200 })
   } catch (error) {

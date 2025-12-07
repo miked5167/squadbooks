@@ -441,6 +441,9 @@ model Team {
   // Pre-Season Budget relation
   sourcePreSeasonBudget PreSeasonBudget? @relation("PreSeasonBudgetActivated")
 
+  // Bank Connection relations (Plaid)
+  bankConnections    BankConnection[]
+
   @@map("teams")
 }
 
@@ -682,6 +685,13 @@ model Transaction {
   createdBy       String
   deletedAt       DateTime?
 
+  // Plaid Integration Fields
+  plaidTransactionId String?  @unique // Plaid's unique transaction ID
+  plaidAccountId     String?           // Which Plaid account this came from
+  isImported         Boolean  @default(false) // Track imported vs manual transactions
+  importedAt         DateTime?         // When it was imported
+  importSource       String?           // "PLAID", "MANUAL", etc.
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -696,6 +706,8 @@ model Transaction {
   @@index([createdBy])
   @@index([transactionDate])
   @@index([status])
+  @@index([plaidTransactionId])
+  @@index([isImported])
   @@map("transactions")
 }
 
@@ -934,6 +946,41 @@ model NotificationSettings {
   @@index([userId])
   @@index([teamId])
   @@map("notification_settings")
+}
+
+// ============================================
+// BANK CONNECTIONS (Plaid Integration)
+// ============================================
+
+model BankConnection {
+  id     String @id @default(cuid())
+  teamId String
+
+  // Plaid Credentials (TODO: Encrypt accessToken in production)
+  accessToken     String   @db.Text // Plaid access token for this connection
+  itemId          String            // Plaid item ID
+  plaidAccountId  String            // Which Plaid account to sync
+
+  // Display Information
+  institutionName String            // e.g., "First Platypus Bank"
+  accountName     String            // e.g., "Plaid Checking"
+  accountMask     String?           // Last 4 digits, e.g., "0000"
+  accountType     String?           // "depository", "credit", etc.
+
+  // Sync Tracking
+  lastSyncedAt    DateTime?         // When transactions were last fetched
+  isActive        Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, itemId])
+  @@index([teamId])
+  @@index([itemId])
+  @@map("bank_connections")
 }
 
 // ============================================

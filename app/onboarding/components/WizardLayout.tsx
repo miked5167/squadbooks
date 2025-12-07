@@ -1,6 +1,7 @@
 import { Progress } from '@/components/ui/progress';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/Logo';
 
 interface WizardLayoutProps {
   currentStep: number;
@@ -24,7 +25,7 @@ export function WizardLayout({ currentStep, totalSteps, children }: WizardLayout
       <aside className="lg:w-80 bg-navy border-r border-navy-medium p-8 lg:min-h-screen">
         {/* Logo/Brand */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-white">Squadbooks</h2>
+          <Logo variant="full" className="mb-2" />
           <p className="text-sm text-white/70 mt-2">
             Set up your team in 4 quick steps.
           </p>

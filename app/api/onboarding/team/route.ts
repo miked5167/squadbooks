@@ -1,11 +1,8 @@
 import { NextResponse } from 'next/server';
-import { logger } from '@/lib/logger'
+import { logger } from '@/lib/logger';
 import { auth } from '@/lib/auth/server-auth';
-import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma';
-import { logger } from '@/lib/logger'
 import { createDefaultCategories } from '@/lib/onboarding/create-categories';
-import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';

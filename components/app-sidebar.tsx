@@ -16,6 +16,8 @@ import {
   User,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { Logo } from '@/components/Logo'
+import { DevModeSidebarSwitcher } from '@/components/dev/DevModeSidebarSwitcher'
 
 const DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
 
@@ -77,11 +79,8 @@ export function AppSidebar() {
     <>
       {/* Logo & Team Name Section */}
       <div className="p-6 border-b border-white/10">
-        <Link href="/dashboard" className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 bg-gradient-to-br from-navy to-navy-medium rounded-lg flex items-center justify-center">
-            <span className="text-golden text-lg font-bold">S</span>
-          </div>
-          <span className="text-xl font-bold text-white">Squadbooks</span>
+        <Link href="/dashboard" className="mb-4 block">
+          <Logo variant="full" />
         </Link>
         <div className="flex items-center gap-2 text-sm text-slate-300">
           <div className="w-6 h-6 bg-white/10 rounded flex items-center justify-center">
@@ -130,6 +129,9 @@ export function AppSidebar() {
             })}
         </div>
       </nav>
+n      {/* Dev Mode Switcher */}
+      <DevModeSidebarSwitcher />
+
 
       {/* User Profile Section */}
       <div className="p-4 border-t border-white/10">

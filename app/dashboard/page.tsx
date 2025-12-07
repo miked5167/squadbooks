@@ -31,6 +31,9 @@ export default async function DashboardPage() {
   // Check if user is treasurer (authorized to create transactions)
   const isTreasurer = user.role === 'TREASURER' || user.role === 'ASSISTANT_TREASURER'
 
+  // Check if user is a parent
+  const isParent = user.role === 'PARENT'
+
   // Get comprehensive financial summary
   const financialSummary = await getFinancialSummary(user.teamId)
 
@@ -61,7 +64,7 @@ export default async function DashboardPage() {
       <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-display-2 text-navy mb-2">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-navy mb-2">Dashboard</h1>
           <p className="text-lg text-navy/70">Welcome to your team financial dashboard</p>
         </div>
 
@@ -99,19 +102,21 @@ export default async function DashboardPage() {
             </>
           )}
 
-          <Link
-            href="/transactions"
-            className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-navy/20"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="w-12 h-12 bg-navy/10 rounded-lg flex items-center justify-center group-hover:bg-navy/20 transition-colors">
-                <List className="w-6 h-6 text-navy" />
+          {!isParent && (
+            <Link
+              href="/transactions"
+              className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-navy/20"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-12 h-12 bg-navy/10 rounded-lg flex items-center justify-center group-hover:bg-navy/20 transition-colors">
+                  <List className="w-6 h-6 text-navy" />
+                </div>
+                <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-navy group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </div>
-              <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-navy group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-            </div>
-            <h3 className="text-lg font-semibold text-navy mb-1">View Transactions</h3>
-            <p className="text-sm text-navy/60">See all team financial activity</p>
-          </Link>
+              <h3 className="text-lg font-semibold text-navy mb-1">View Transactions</h3>
+              <p className="text-sm text-navy/60">See all team financial activity</p>
+            </Link>
+          )}
         </div>
 
         {/* Financial Summary - 3 Cards */}
@@ -119,7 +124,7 @@ export default async function DashboardPage() {
           {/* Total Income Card */}
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60">Total Income</CardDescription>
+              <CardDescription className="text-navy/60 font-semibold">Total Income</CardDescription>
               <CardTitle className="text-3xl text-green-600">
                 ${financialSummary.totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </CardTitle>
@@ -135,7 +140,7 @@ export default async function DashboardPage() {
           {/* Total Expenses vs Budget Card */}
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60">Total Expenses</CardDescription>
+              <CardDescription className="text-navy/60 font-semibold">Total Expenses</CardDescription>
               <CardTitle className="text-3xl text-navy">
                 ${financialSummary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </CardTitle>
@@ -156,7 +161,7 @@ export default async function DashboardPage() {
           {/* Net Position Card */}
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60">Net Position</CardDescription>
+              <CardDescription className="text-navy/60 font-semibold">Net Position</CardDescription>
               <CardTitle className={`text-3xl ${isNetPositive ? 'text-green-600' : 'text-red-600'}`}>
                 {isNetPositive ? '+' : ''}${financialSummary.netPosition.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </CardTitle>
@@ -185,7 +190,7 @@ export default async function DashboardPage() {
           {/* Pending Approvals */}
           <Card className="border-0 shadow-card">
             <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60">Pending Approvals</CardDescription>
+              <CardDescription className="text-navy/60 font-semibold">Pending Approvals</CardDescription>
               <CardTitle className="text-3xl text-golden">{pendingApprovalsCount}</CardTitle>
             </CardHeader>
             <CardContent>

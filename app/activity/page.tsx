@@ -15,11 +15,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ActivityFeed } from '@/components/activity/activity-feed'
 import { EventDetailsDrawer } from '@/components/activity/event-details-drawer'
-import { WeeklySummaryCard } from '@/components/activity/weekly-summary-card'
-import { PotentialIssuesCard } from '@/components/activity/potential-issues-card'
 import { groupAuditLogsByDay, type AuditLogWithUser, type GroupedAuditLogs } from '@/lib/activity/grouping'
-import type { ActivitySummary } from '@/lib/activity/weekly-summary'
-import type { PotentialIssue } from '@/lib/activity/potential-issues'
 import type { ActivityFilters } from '@/components/activity/activity-filters'
 
 // Import ActivityFiltersBar without SSR to prevent hydration issues with Radix Select
@@ -33,8 +29,6 @@ export default function ActivityPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [logs, setLogs] = useState<AuditLogWithUser[]>([])
   const [groupedLogs, setGroupedLogs] = useState<GroupedAuditLogs[]>([])
-  const [summary, setSummary] = useState<ActivitySummary | null>(null)
-  const [issues, setIssues] = useState<PotentialIssue[]>([])
   const [teamMembers, setTeamMembers] = useState<{ id: string; name: string }[]>([])
   const [selectedEvent, setSelectedEvent] = useState<AuditLogWithUser | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -72,27 +66,6 @@ export default function ActivityPage() {
       fetchTeamMembers()
     }
   }, [userId])
-
-  // Fetch summary and issues
-  useEffect(() => {
-    async function fetchSummary() {
-      try {
-        const period = filters.dateRange === 'today' ? 'day' : filters.dateRange === '30days' ? 'month' : 'week'
-        const response = await fetch(`/api/activity/summary?period=${period}`)
-        if (response.ok) {
-          const data = await response.json()
-          setSummary(data.summary)
-          setIssues(data.issues || [])
-        }
-      } catch (error) {
-        console.error('Error fetching summary:', error)
-      }
-    }
-
-    if (userId) {
-      fetchSummary()
-    }
-  }, [userId, filters.dateRange])
 
   // Fetch audit logs with filters
   useEffect(() => {
@@ -183,20 +156,10 @@ export default function ActivityPage() {
       <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-display-2 text-navy mb-2">Activity & Audit</h1>
+          <h1 className="text-3xl font-bold text-navy mb-2">Activity & Audit</h1>
           <p className="text-lg text-navy/70">
             Monitor team activity, track changes, and maintain oversight
           </p>
-        </div>
-
-        {/* Weekly Summary */}
-        <div className="mb-6">
-          <WeeklySummaryCard summary={summary!} isLoading={!summary} />
-        </div>
-
-        {/* Potential Issues */}
-        <div className="mb-6">
-          <PotentialIssuesCard issues={issues} isLoading={!summary} />
         </div>
 
         {/* Activity Feed */}

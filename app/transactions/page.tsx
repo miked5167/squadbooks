@@ -76,6 +76,7 @@ export default function TransactionsPage() {
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [mounted, setMounted] = useState(false)
+  const [userRole, setUserRole] = useState<string | null>(null)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -105,6 +106,17 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     setMounted(true)
+    // Fetch user role
+    fetch('/api/user/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.role) {
+          setUserRole(data.role)
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch user role:', err)
+      })
   }, [])
 
   // Read categoryId from URL on mount
@@ -296,6 +308,9 @@ export default function TransactionsPage() {
   }
 
   // Generate approval summary text
+  // Check if user can create transactions (only treasurers, not parents)
+  const canCreateTransactions = userRole === 'TREASURER' || userRole === 'ASSISTANT_TREASURER'
+
   function getApprovalSummary(transaction: Transaction): string | null {
     if (!transaction.approvals || transaction.approvals.length === 0) {
       return null
@@ -339,23 +354,25 @@ export default function TransactionsPage() {
         {/* Page Header */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-display-2 text-navy mb-2">Transactions</h1>
+            <h1 className="text-3xl font-bold text-navy mb-2">Transactions</h1>
             <p className="text-lg text-navy/70">View and manage all financial transactions</p>
           </div>
-          <div className="flex gap-3">
-            <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
-              <Link href="/expenses/new">
-                <Plus className="mr-2 w-4 h-4" />
-                New Expense
-              </Link>
-            </Button>
-            <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-              <Link href="/income/new">
-                <Plus className="mr-2 w-4 h-4" />
-                New Income
-              </Link>
-            </Button>
-          </div>
+          {canCreateTransactions && (
+            <div className="flex gap-3">
+              <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+                <Link href="/expenses/new">
+                  <Plus className="mr-2 w-4 h-4" />
+                  New Expense
+                </Link>
+              </Button>
+              <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+                <Link href="/income/new">
+                  <Plus className="mr-2 w-4 h-4" />
+                  New Income
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Filters */}
@@ -463,24 +480,28 @@ export default function TransactionsPage() {
               <CardTitle className="text-navy mb-2">No transactions found</CardTitle>
               <CardDescription className="mb-6 max-w-sm mx-auto">
                 {transactions.length === 0
-                  ? 'Get started by creating your first expense or income'
+                  ? canCreateTransactions
+                    ? 'Get started by creating your first expense or income'
+                    : 'No transactions have been created yet'
                   : 'No transactions match your current filters'}
               </CardDescription>
               {transactions.length === 0 ? (
-                <div className="flex gap-3 justify-center">
-                  <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
-                    <Link href="/expenses/new">
-                      <Plus className="mr-2 w-4 h-4" />
-                      New Expense
-                    </Link>
-                  </Button>
-                  <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-                    <Link href="/income/new">
-                      <Plus className="mr-2 w-4 h-4" />
-                      New Income
-                    </Link>
-                  </Button>
-                </div>
+                canCreateTransactions ? (
+                  <div className="flex gap-3 justify-center">
+                    <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+                      <Link href="/expenses/new">
+                        <Plus className="mr-2 w-4 h-4" />
+                        New Expense
+                      </Link>
+                    </Button>
+                    <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+                      <Link href="/income/new">
+                        <Plus className="mr-2 w-4 h-4" />
+                        New Income
+                      </Link>
+                    </Button>
+                  </div>
+                ) : null
               ) : (
                 <Button
                   variant="outline"

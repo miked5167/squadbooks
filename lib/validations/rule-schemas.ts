@@ -43,6 +43,7 @@ export const RuleTypeEnum = z.enum([
   "APPROVAL_TIERS",
   "REQUIRED_EXPENSES",
   "SIGNING_AUTHORITY_COMPOSITION",
+  "CATEGORY_ALLOCATION_LIMIT",
 ])
 
 export type RuleType = z.infer<typeof RuleTypeEnum>
@@ -172,6 +173,19 @@ export const signingAuthorityRuleSchema = baseRuleSchema.extend({
   ),
 })
 
+// CATEGORY_ALLOCATION_LIMIT rule configuration
+const categoryAllocationLimitSchema = z.object({
+  categoryName: z.string().min(1, "Category name is required"),
+  maxAmount: z.number().positive("Maximum allocation must be positive"),
+  currency: z.string().default("CAD"),
+  applyToPreSeasonBudgets: z.boolean().default(true),
+})
+
+export const categoryAllocationLimitRuleSchema = baseRuleSchema.extend({
+  ruleType: z.literal("CATEGORY_ALLOCATION_LIMIT"),
+  config: categoryAllocationLimitSchema,
+})
+
 // Union of all rule schemas
 export const ruleSchema = z.discriminatedUnion("ruleType", [
   maxBudgetRuleSchema,
@@ -181,6 +195,7 @@ export const ruleSchema = z.discriminatedUnion("ruleType", [
   approvalTiersRuleSchema,
   requiredExpensesRuleSchema,
   signingAuthorityRuleSchema,
+  categoryAllocationLimitRuleSchema,
 ])
 
 export type RuleFormData = z.infer<typeof ruleSchema>
@@ -236,5 +251,11 @@ export const ruleTypeMetadata: Record<
     description: "GTHL signing authority composition requirements",
     icon: "Shield",
     color: "teal",
+  },
+  CATEGORY_ALLOCATION_LIMIT: {
+    label: "Category Allocation Limit",
+    description: "Set maximum allocation limits for specific budget categories",
+    icon: "Tag",
+    color: "cyan",
   },
 }

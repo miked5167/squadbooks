@@ -18,7 +18,8 @@ import {
   Shield,
   Bell,
   ScrollText,
-  Calendar
+  Calendar,
+  Landmark
 } from 'lucide-react'
 
 export default async function SettingsLayout({
@@ -114,6 +115,14 @@ export default async function SettingsLayout({
               >
                 <FolderTree className="w-4 h-4" />
                 <span className="hidden sm:inline">Budget & Categories</span>
+              </Link>
+
+              <Link
+                href="/settings/bank-accounts"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-md hover:bg-gray-100 transition-colors text-navy/70 hover:text-navy"
+              >
+                <Landmark className="w-4 h-4" />
+                <span className="hidden sm:inline">Bank Accounts</span>
               </Link>
 
               <Link
