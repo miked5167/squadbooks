@@ -28,18 +28,19 @@ model Association {
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   // Pre-Season Budget Configuration
-  preSeasonBudgetDeadline     DateTime? @map("pre_season_budget_deadline") @db.Timestamptz
-  preSeasonBudgetsRequired    Int?      @map("pre_season_budgets_required") // Number of budget submissions required per team (null = not enforced)
-  preSeasonBudgetAutoApprove  Boolean   @default(false) @map("pre_season_budget_auto_approve")
+  preSeasonBudgetDeadline    DateTime? @map("pre_season_budget_deadline") @db.Timestamptz
+  preSeasonBudgetsRequired   Int?      @map("pre_season_budgets_required") // Number of budget submissions required per team (null = not enforced)
+  preSeasonBudgetAutoApprove Boolean   @default(false) @map("pre_season_budget_auto_approve")
 
   // Relations
-  users         AssociationUser[]
-  teams         AssociationTeam[]
-  alerts        Alert[]
-  reports       Report[]
-  config        DashboardConfig?
-  rules         AssociationRule[] @relation("AssociationRules")
+  users            AssociationUser[]
+  teams            AssociationTeam[]
+  alerts           Alert[]
+  reports          Report[]
+  config           DashboardConfig?
+  rules            AssociationRule[] @relation("AssociationRules")
   preSeasonBudgets PreSeasonBudget[]
+  reportSchedules  ReportSchedule[]
 
   @@map("associations")
 }
@@ -47,7 +48,7 @@ model Association {
 model AssociationUser {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   associationId String    @map("association_id") @db.Uuid
-  clerkUserId   String    @unique @map("clerk_user_id") @db.VarChar(255)
+  clerkUserId   String    @map("clerk_user_id") @db.VarChar(255)
   email         String    @db.VarChar(255)
   name          String?   @db.VarChar(255)
   role          String    @db.VarChar(32) // 'association_admin', 'board_member', 'auditor'
@@ -55,45 +56,46 @@ model AssociationUser {
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
 
   // Relations
-  association   Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
-  reports       Report[]
-  alertsResolved Alert[]   @relation("AlertResolvedBy")
-  teamUsers     User[]     // Link to team users who also have association access
+  association    Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  reports        Report[]
+  alertsResolved Alert[]     @relation("AlertResolvedBy")
+  teamUsers      User[] // Link to team users who also have association access
 
+  @@unique([clerkUserId, associationId], name: "unique_user_per_association")
   @@map("association_users")
 }
 
 model AssociationTeam {
-  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationId     String    @map("association_id") @db.Uuid
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId String @map("association_id") @db.Uuid
 
   // Link to Team model (changed from external string to internal CUID reference)
-  teamId            String?   @map("team_id") // CUID reference to Team.id, nullable for legacy teams
-  teamName          String    @map("team_name") @db.VarChar(255)
-  division          String?   @db.VarChar(64)
-  season            String?   @db.VarChar(32)
+  teamId   String? @map("team_id") // CUID reference to Team.id, nullable for legacy teams
+  teamName String  @map("team_name") @db.VarChar(255)
+  division String? @db.VarChar(64)
+  season   String? @db.VarChar(32)
 
   // OAuth / connection
-  apiAccessToken    String?   @map("api_access_token") @db.Text
-  tokenExpiresAt    DateTime? @map("token_expires_at") @db.Timestamptz
-  connectedAt       DateTime? @map("connected_at") @db.Timestamptz
-  lastSyncedAt      DateTime? @map("last_synced_at") @db.Timestamptz
+  apiAccessToken String?   @map("api_access_token") @db.Text
+  tokenExpiresAt DateTime? @map("token_expires_at") @db.Timestamptz
+  connectedAt    DateTime? @map("connected_at") @db.Timestamptz
+  lastSyncedAt   DateTime? @map("last_synced_at") @db.Timestamptz
 
   // State
-  isActive          Boolean   @default(true) @map("is_active")
+  isActive Boolean @default(true) @map("is_active")
 
   // Treasurer info (read-only mirror)
-  treasurerName     String?   @map("treasurer_name") @db.VarChar(255)
-  treasurerEmail    String?   @map("treasurer_email") @db.VarChar(255)
+  treasurerName  String? @map("treasurer_name") @db.VarChar(255)
+  treasurerEmail String? @map("treasurer_email") @db.VarChar(255)
 
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   // Relations
-  association       Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
-  team              Team?       @relation(fields: [teamId], references: [id])
-  snapshots         TeamFinancialSnapshot[]
-  alerts            Alert[]
+  association Association             @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  team        Team?                   @relation(fields: [teamId], references: [id])
+  snapshots   TeamFinancialSnapshot[]
+  alerts      Alert[]
 
   @@unique([teamId]) // Each team can only belong to one association
   @@unique([associationId, teamId])
@@ -102,20 +104,20 @@ model AssociationTeam {
 }
 
 model TeamFinancialSnapshot {
-  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationTeamId     String    @map("association_team_id") @db.Uuid
+  id                String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationTeamId String @map("association_team_id") @db.Uuid
 
-  snapshotAt            DateTime  @default(now()) @map("snapshot_at") @db.Timestamptz
+  snapshotAt DateTime @default(now()) @map("snapshot_at") @db.Timestamptz
 
   // Health
-  healthStatus          String    @map("health_status") @db.VarChar(16) // 'healthy', 'needs_attention', 'at_risk'
-  healthScore           Int?      @map("health_score")
+  healthStatus String @map("health_status") @db.VarChar(16) // 'healthy', 'needs_attention', 'at_risk'
+  healthScore  Int?   @map("health_score")
 
   // Budget figures
-  budgetTotal           Decimal?  @map("budget_total") @db.Decimal(10, 2)
-  spent                 Decimal?  @db.Decimal(10, 2)
-  remaining             Decimal?  @db.Decimal(10, 2)
-  percentUsed           Decimal?  @map("percent_used") @db.Decimal(5, 2)
+  budgetTotal Decimal? @map("budget_total") @db.Decimal(10, 2)
+  spent       Decimal? @db.Decimal(10, 2)
+  remaining   Decimal? @db.Decimal(10, 2)
+  percentUsed Decimal? @map("percent_used") @db.Decimal(5, 2)
 
   // Operational metrics
   pendingApprovals      Int?      @map("pending_approvals")
@@ -125,93 +127,152 @@ model TeamFinancialSnapshot {
   lastActivityAt        DateTime? @map("last_activity_at") @db.Timestamptz
 
   // Flags
-  redFlags              Json?     @map("red_flags")
+  redFlags Json? @map("red_flags")
 
-  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   // Relations
-  team                  AssociationTeam @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
+  team AssociationTeam @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
 
   @@index([associationTeamId, snapshotAt(sort: Desc)], name: "idx_snapshots_team_time")
   @@map("team_financial_snapshots")
 }
 
 model Alert {
-  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationId     String    @map("association_id") @db.Uuid
-  associationTeamId String    @map("association_team_id") @db.Uuid
+  id                String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId     String @map("association_id") @db.Uuid
+  associationTeamId String @map("association_team_id") @db.Uuid
 
-  alertType         String    @map("alert_type") @db.VarChar(64)
-  severity          String    @db.VarChar(16) // 'warning', 'critical'
+  alertType String @map("alert_type") @db.VarChar(64)
+  severity  String @db.VarChar(16) // 'warning', 'critical'
 
-  title             String    @db.VarChar(255)
-  description       String?   @db.Text
+  title       String  @db.VarChar(255)
+  description String? @db.Text
 
-  status            String    @default("active") @db.VarChar(16) // 'active', 'resolved'
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  resolvedAt        DateTime? @map("resolved_at") @db.Timestamptz
-  resolvedBy        String?   @map("resolved_by") @db.Uuid
+  status     String    @default("active") @db.VarChar(16) // 'active', 'resolved'
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  resolvedAt DateTime? @map("resolved_at") @db.Timestamptz
+  resolvedBy String?   @map("resolved_by") @db.Uuid
 
-  lastTriggeredAt   DateTime  @default(now()) @map("last_triggered_at") @db.Timestamptz
+  lastTriggeredAt DateTime @default(now()) @map("last_triggered_at") @db.Timestamptz
 
-  notes             String?   @db.Text
+  notes String? @db.Text
 
   // Relations
-  association       Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
-  team              AssociationTeam @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
-  resolver          AssociationUser? @relation("AlertResolvedBy", fields: [resolvedBy], references: [id])
+  association Association      @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  team        AssociationTeam  @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
+  resolver    AssociationUser? @relation("AlertResolvedBy", fields: [resolvedBy], references: [id])
 
-  @@index([associationId, status, severity, createdAt(sort: Desc)], name: "idx_alerts_active")
   @@unique([associationTeamId, alertType, status], name: "uq_active_alert")
+  @@index([associationId, status, severity, createdAt(sort: Desc)], name: "idx_alerts_active")
   @@map("alerts")
 }
 
 model Report {
-  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationId   String    @map("association_id") @db.Uuid
-  generatedBy     String    @map("generated_by") @db.Uuid
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId String @map("association_id") @db.Uuid
+  generatedBy   String @map("generated_by") @db.Uuid
 
-  reportType      String    @map("report_type") @db.VarChar(32)
-  dateRangeStart  DateTime? @map("date_range_start") @db.Date
-  dateRangeEnd    DateTime? @map("date_range_end") @db.Date
+  reportType     String    @map("report_type") @db.VarChar(32)
+  dateRangeStart DateTime? @map("date_range_start") @db.Date
+  dateRangeEnd   DateTime? @map("date_range_end") @db.Date
 
-  fileUrl         String?   @map("file_url") @db.VarChar(500)
-  generatedAt     DateTime  @default(now()) @map("generated_at") @db.Timestamptz
+  fileUrl     String?  @map("file_url") @db.VarChar(500)
+  generatedAt DateTime @default(now()) @map("generated_at") @db.Timestamptz
 
   // Relations
-  association     Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
-  generator       AssociationUser @relation(fields: [generatedBy], references: [id])
+  association Association     @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  generator   AssociationUser @relation(fields: [generatedBy], references: [id])
 
   @@index([associationId, reportType, generatedAt(sort: Desc)], name: "idx_reports_association_type_time")
   @@map("reports")
 }
 
 model DashboardConfig {
-  id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationId           String   @unique @map("association_id") @db.Uuid
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId String @unique @map("association_id") @db.Uuid
 
   // Budget thresholds
-  budgetWarningPct        Decimal  @default(80.0) @map("budget_warning_pct") @db.Decimal(5, 2)
-  budgetCriticalPct       Decimal  @default(95.0) @map("budget_critical_pct") @db.Decimal(5, 2)
+  budgetWarningPct  Decimal @default(80.0) @map("budget_warning_pct") @db.Decimal(5, 2)
+  budgetCriticalPct Decimal @default(95.0) @map("budget_critical_pct") @db.Decimal(5, 2)
 
   // Bank reconciliation thresholds (days)
-  bankWarningDays         Int      @default(30) @map("bank_warning_days")
-  bankCriticalDays        Int      @default(60) @map("bank_critical_days")
+  bankWarningDays  Int @default(30) @map("bank_warning_days")
+  bankCriticalDays Int @default(60) @map("bank_critical_days")
 
   // Pending approvals thresholds
-  approvalsWarningCount   Int      @default(5) @map("approvals_warning_count")
-  approvalsCriticalCount  Int      @default(10) @map("approvals_critical_count")
+  approvalsWarningCount  Int @default(5) @map("approvals_warning_count")
+  approvalsCriticalCount Int @default(10) @map("approvals_critical_count")
 
   // Inactivity threshold (days)
-  inactivityWarningDays   Int      @default(21) @map("inactivity_warning_days")
+  inactivityWarningDays Int @default(21) @map("inactivity_warning_days")
 
-  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt               DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  // Budget Update & Reporting Policy
+  requireParentReapprovalOnBudgetChange Boolean @default(true) @map("require_parent_reapproval_on_budget_change")
+
+  // Parent reapproval triggers
+  parentReapprovalTotalBudgetChangeAmount  Decimal? @map("parent_reapproval_total_budget_change_amount") @db.Decimal(10, 2)
+  parentReapprovalTotalBudgetChangePercent Decimal? @map("parent_reapproval_total_budget_change_percent") @db.Decimal(5, 2)
+  parentReapprovalCategoryChangeAmount     Decimal? @map("parent_reapproval_category_change_amount") @db.Decimal(10, 2)
+  parentReapprovalCategoryChangePercent    Decimal? @map("parent_reapproval_category_change_percent") @db.Decimal(5, 2)
+  parentReapprovalAlwaysIceFacilities      Boolean  @default(false) @map("parent_reapproval_always_ice_facilities")
+
+  // Association budget reports
+  requireAssociationBudgetReports  Boolean @default(false) @map("require_association_budget_reports")
+  associationBudgetReportFrequency String? @map("association_budget_report_frequency") @db.VarChar(32) // "monthly"|"quarterly"|"midseason_yearend"|"yearend_only"
+  associationBudgetReportDueDay    Int?    @map("association_budget_report_due_day") // 1-28
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   // Relations
-  association             Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  association Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
 
   @@map("dashboard_config")
+}
+
+model ReportSchedule {
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId String @map("association_id") @db.Uuid
+
+  // Recipient configuration
+  recipient ReportRecipient
+
+  // Schedule configuration
+  scheduleType ScheduleType
+
+  // Recurring schedule settings (used when scheduleType = RECURRING or HYBRID)
+  recurringFrequency RecurringFrequency? @map("recurring_frequency")
+  dueDay             Int?                @map("due_day") // 1-28, day of month/quarter when report is due
+
+  // Specific dates (used when scheduleType = SPECIFIC_DATES or HYBRID)
+  specificDates Json? @map("specific_dates") // Array of ISO date strings
+
+  // Content requirements
+  requireBudgetVsActual    Boolean @default(true) @map("require_budget_vs_actual")
+  requireBudgetChanges     Boolean @default(false) @map("require_budget_changes")
+  requireCategoryBreakdown Boolean @default(true) @map("require_category_breakdown")
+  requireNarrative         Boolean @default(false) @map("require_narrative")
+
+  // Narrative configuration
+  narrativeMinLength Int?  @map("narrative_min_length")
+  narrativePrompts   Json? @map("narrative_prompts") // Array of strings
+
+  // Status
+  isActive Boolean @default(true) @map("is_active")
+
+  // Metadata
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  association Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+
+  @@index([associationId])
+  @@index([recipient])
+  @@index([scheduleType])
+  @@index([isActive])
+  @@map("report_schedules")
 }
 
 // ============================================
@@ -219,18 +280,18 @@ model DashboardConfig {
 // ============================================
 
 model AssociationRule {
-  id            String   @id @default(cuid())
-  associationId String   @db.Uuid
-  ruleType      String   // 'MAX_BUDGET', 'MAX_ASSESSMENT', 'MAX_BUYOUT', 'APPROVAL_TIERS', 'ZERO_BALANCE', 'REQUIRED_EXPENSES'
+  id            String  @id @default(cuid())
+  associationId String  @db.Uuid
+  ruleType      String // 'MAX_BUDGET', 'MAX_ASSESSMENT', 'MAX_BUYOUT', 'APPROVAL_TIERS', 'ZERO_BALANCE', 'REQUIRED_EXPENSES'
   name          String
-  description   String?  @db.Text
-  isActive      Boolean  @default(true)
+  description   String? @db.Text
+  isActive      Boolean @default(true)
 
   // Flexible configuration stored as JSON
-  config        Json     // e.g., { "maxAmount": 20000, "currency": "CAD" }
+  config Json // e.g., { "maxAmount": 20000, "currency": "CAD" }
 
   // For approval tier rules
-  approvalTiers Json?    // e.g., [{ "min": 0, "max": 100, "approvals": 0 }, { "min": 100, "max": 500, "approvals": 1 }]
+  approvalTiers Json? // e.g., [{ "min": 0, "max": 100, "approvals": 0 }, { "min": 100, "max": 500, "approvals": 1 }]
 
   // For required expense rules
   requiredExpenses Json? // e.g., ["Ice Rental", "Referee Fees"]
@@ -241,19 +302,19 @@ model AssociationRule {
 
   // Category-Level Rule Targeting (Phase 3.2)
   // If null or empty array, rule applies to ALL teams. If specified, rule only applies to teams matching the filter.
-  teamTypeFilter         Json? @map("team_type_filter")          // e.g., ["HOUSE_LEAGUE", "REPRESENTATIVE"]
-  ageDivisionFilter      Json? @map("age_division_filter")       // e.g., ["U13", "U15", "U18"]
-  competitiveLevelFilter Json? @map("competitive_level_filter")  // e.g., ["AA", "AAA"]
+  teamTypeFilter         Json? @map("team_type_filter") // e.g., ["HOUSE_LEAGUE", "REPRESENTATIVE"]
+  ageDivisionFilter      Json? @map("age_division_filter") // e.g., ["U13", "U15", "U18"]
+  competitiveLevelFilter Json? @map("competitive_level_filter") // e.g., ["AA", "AAA"]
 
   // Metadata
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  createdBy     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
 
   // Relations
-  association   Association @relation("AssociationRules", fields: [associationId], references: [id], onDelete: Cascade)
-  overrides     TeamRuleOverride[]
-  violations    RuleViolation[]
+  association Association        @relation("AssociationRules", fields: [associationId], references: [id], onDelete: Cascade)
+  overrides   TeamRuleOverride[]
+  violations  RuleViolation[]
 
   @@unique([associationId, name], name: "unique_association_rule_name")
   @@index([associationId])
@@ -263,24 +324,24 @@ model AssociationRule {
 }
 
 model TeamRuleOverride {
-  id              String   @id @default(cuid())
-  teamId          String
-  ruleId          String
+  id     String @id @default(cuid())
+  teamId String
+  ruleId String
 
-  overrideReason  String   @db.Text
-  overrideConfig  Json     // The override values
+  overrideReason String @db.Text
+  overrideConfig Json // The override values
 
-  approvedBy      String?
-  approvedAt      DateTime?
-  expiresAt       DateTime?
+  approvedBy String?
+  approvedAt DateTime?
+  expiresAt  DateTime?
 
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  team            Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  rule            AssociationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  team Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  rule AssociationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
 
   @@index([teamId])
   @@index([ruleId])
@@ -289,31 +350,31 @@ model TeamRuleOverride {
 }
 
 model RuleViolation {
-  id              String   @id @default(cuid())
-  teamId          String
-  ruleId          String
+  id     String @id @default(cuid())
+  teamId String
+  ruleId String
 
-  violationType   String   // 'BUDGET_EXCEEDED', 'ASSESSMENT_TOO_HIGH', 'MISSING_APPROVAL', etc.
-  severity        String   // 'WARNING', 'ERROR', 'CRITICAL'
+  violationType String // 'BUDGET_EXCEEDED', 'ASSESSMENT_TOO_HIGH', 'MISSING_APPROVAL', etc.
+  severity      String // 'WARNING', 'ERROR', 'CRITICAL'
 
-  description     String   @db.Text
-  violationData   Json     // Context about the violation
+  description   String @db.Text
+  violationData Json // Context about the violation
 
   // What triggered it
-  budgetId        String?
-  transactionId   String?
+  budgetId      String?
+  transactionId String?
 
   // Resolution
-  resolved        Boolean  @default(false)
+  resolved        Boolean   @default(false)
   resolvedAt      DateTime?
   resolvedBy      String?
-  resolutionNotes String?  @db.Text
+  resolutionNotes String?   @db.Text
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   // Relations
-  team            Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  rule            AssociationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  team Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  rule AssociationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
 
   @@index([teamId])
   @@index([ruleId])
@@ -324,25 +385,25 @@ model RuleViolation {
 }
 
 model TeamComplianceStatus {
-  id                String   @id @default(cuid())
-  teamId            String   @unique
+  id     String @id @default(cuid())
+  teamId String @unique
 
-  complianceScore   Float    // 0-100
-  lastCheckedAt     DateTime @default(now())
+  complianceScore Float // 0-100
+  lastCheckedAt   DateTime @default(now())
 
   // Breakdown
-  activeViolations  Int      @default(0)
-  warningCount      Int      @default(0)
-  errorCount        Int      @default(0)
-  criticalCount     Int      @default(0)
+  activeViolations Int @default(0)
+  warningCount     Int @default(0)
+  errorCount       Int @default(0)
+  criticalCount    Int @default(0)
 
   // Status
-  status            String   // 'COMPLIANT', 'AT_RISK', 'NON_COMPLIANT'
+  status String // 'COMPLIANT', 'AT_RISK', 'NON_COMPLIANT'
 
-  updatedAt         DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   // Relations
-  team              Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([teamId])
   @@index([status])
@@ -383,9 +444,174 @@ enum CompetitiveLevel {
   OTHER
 }
 
+enum ReportRecipient {
+  PARENTS
+  ASSOCIATION
+  BOTH
+}
+
+enum ScheduleType {
+  RECURRING
+  SPECIFIC_DATES
+  HYBRID
+}
+
+enum RecurringFrequency {
+  MONTHLY
+  QUARTERLY
+  BIANNUAL
+  ANNUAL
+}
+
+// ============================================
+// TEAM SEASON LIFECYCLE
+// Add these sections to schema.prisma after RecurringFrequency enum
+// ============================================
+
+enum TeamSeasonState {
+  SETUP // Initial team setup, no budget yet
+  BUDGET_DRAFT // Treasurer creating/editing budget
+  BUDGET_REVIEW // Budget submitted to coach for review
+  TEAM_APPROVED // Coach approved budget
+  PRESENTED // Budget presented to parents
+  LOCKED // Parent threshold met, budget locked
+  ACTIVE // Season active, transactions allowed
+  CLOSEOUT // Closeout initiated
+  ARCHIVED // Season archived, no modifications allowed
+}
+
+enum TeamSeasonAction {
+  START_BUDGET // SETUP → BUDGET_DRAFT
+  SUBMIT_BUDGET_FOR_REVIEW // BUDGET_DRAFT → BUDGET_REVIEW
+  REQUEST_BUDGET_CHANGES // BUDGET_REVIEW → BUDGET_DRAFT
+  APPROVE_BUDGET // BUDGET_REVIEW → TEAM_APPROVED
+  PRESENT_BUDGET // TEAM_APPROVED → PRESENTED
+  PROPOSE_BUDGET_UPDATE // PRESENTED/LOCKED/ACTIVE → BUDGET_REVIEW (creates new version)
+  LOCK_BUDGET // PRESENTED → LOCKED (system/internal)
+  START_SEASON // LOCKED → ACTIVE
+  INITIATE_CLOSEOUT // ACTIVE → CLOSEOUT
+  FINALIZE_ARCHIVE // CLOSEOUT → ARCHIVED
+}
+
+// Team Season Instance - canonical lifecycle tracker for each team season
+model TeamSeason {
+  id            String @id @default(cuid())
+  teamId        String
+  associationId String @db.Uuid
+
+  // Season identification
+  seasonLabel String // "2024-2025"
+  seasonStart DateTime @db.Date
+  seasonEnd   DateTime @db.Date
+
+  // Canonical lifecycle state
+  state          TeamSeasonState @default(SETUP)
+  stateUpdatedAt DateTime        @default(now()) @map("state_updated_at")
+
+  // Budget version references (from Budget model)
+  presentedVersionId String? @map("presented_version_id") // BudgetVersion.id that's presented to parents
+  lockedVersionId    String? @map("locked_version_id") // BudgetVersion.id that's locked
+
+  // Lifecycle timestamps
+  activeAt   DateTime? @map("active_at") @db.Timestamptz
+  closedAt   DateTime? @map("closed_at") @db.Timestamptz
+  archivedAt DateTime? @map("archived_at") @db.Timestamptz
+
+  // Policy snapshot (immutable for this season)
+  policySnapshotId String? @map("policy_snapshot_id")
+
+  // Rollup helpers
+  lastActivityAt                    DateTime? @map("last_activity_at") @db.Timestamptz
+  eligibleFamiliesCount             Int?      @map("eligible_families_count")
+  approvalsCountForPresentedVersion Int?      @map("approvals_count_for_presented_version")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  team           Team                    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  policySnapshot TeamPolicySnapshot?     @relation(fields: [policySnapshotId], references: [id])
+  stateChanges   TeamSeasonStateChange[]
+
+  @@unique([teamId, seasonLabel])
+  @@index([teamId])
+  @@index([associationId])
+  @@index([state])
+  @@index([seasonLabel])
+  @@index([lastActivityAt])
+  @@map("team_seasons")
+}
+
+// Immutable policy snapshot for each team season
+model TeamPolicySnapshot {
+  id            String @id @default(cuid())
+  associationId String @db.Uuid
+
+  // Snapshot timestamp
+  snapshotAt DateTime @default(now()) @map("snapshot_at") @db.Timestamptz
+
+  // Association policy settings (snapshot from DashboardConfig)
+  budgetWarningPct  Decimal? @map("budget_warning_pct") @db.Decimal(5, 2)
+  budgetCriticalPct Decimal? @map("budget_critical_pct") @db.Decimal(5, 2)
+
+  // Parent reapproval triggers
+  requireParentReapprovalOnBudgetChange    Boolean  @default(true) @map("require_parent_reapproval_on_budget_change")
+  parentReapprovalTotalBudgetChangeAmount  Decimal? @map("parent_reapproval_total_budget_change_amount") @db.Decimal(10, 2)
+  parentReapprovalTotalBudgetChangePercent Decimal? @map("parent_reapproval_total_budget_change_percent") @db.Decimal(5, 2)
+  parentReapprovalCategoryChangeAmount     Decimal? @map("parent_reapproval_category_change_amount") @db.Decimal(10, 2)
+  parentReapprovalCategoryChangePercent    Decimal? @map("parent_reapproval_category_change_percent") @db.Decimal(5, 2)
+
+  // Transaction approval thresholds (from TeamSettings)
+  dualApprovalThreshold Decimal? @map("dual_approval_threshold") @db.Decimal(10, 2)
+
+  // Association rules snapshot (JSON)
+  rulesSnapshot Json? @map("rules_snapshot")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  teamSeasons TeamSeason[]
+
+  @@index([associationId])
+  @@index([snapshotAt])
+  @@map("team_policy_snapshots")
+}
+
+// Audit trail for team season state transitions
+model TeamSeasonStateChange {
+  id           String @id @default(cuid())
+  teamSeasonId String @map("team_season_id")
+
+  // Transition details
+  fromState TeamSeasonState? @map("from_state")
+  toState   TeamSeasonState  @map("to_state")
+  action    TeamSeasonAction
+
+  // Actor (user or system)
+  actorUserId String? @map("actor_user_id") // null for system actions
+  actorType   String  @map("actor_type") // "USER" or "SYSTEM"
+
+  // Context
+  metadata Json? // Additional context (versionId, reasons, etc.)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  teamSeason TeamSeason @relation(fields: [teamSeasonId], references: [id], onDelete: Cascade)
+
+  @@index([teamSeasonId])
+  @@index([createdAt])
+  @@index([action])
+  @@map("team_season_state_changes")
+}
+
+// ============================================
+// ============================================
+// teamSeasons TeamSeason[]
+
 model Team {
-  id               String            @id @default(cuid())
-  name             String
+  id   String @id @default(cuid())
+  name String
 
   // New structured fields
   teamType         TeamType?
@@ -393,69 +619,75 @@ model Team {
   competitiveLevel CompetitiveLevel?
 
   // Legacy field (deprecated, kept for backwards compatibility)
-  level            String?           // "U8", "U10", "U13", etc.
+  level String? // "U8", "U10", "U13", etc.
 
-  season           String            // "2024-2025"
-  budgetTotal      Decimal           @db.Decimal(10, 2)
+  season      String // "2024-2025"
+  budgetTotal Decimal @db.Decimal(10, 2)
 
   // Team Profile Settings
-  logoUrl          String?
-  associationName  String?
-  seasonStartDate  DateTime?         @db.Date
-  seasonEndDate    DateTime?         @db.Date
-  contactName      String?
-  contactEmail     String?
-  contactPhone     String?
+  logoUrl         String?
+  associationName String?
+  seasonStartDate DateTime? @db.Date
+  seasonEndDate   DateTime? @db.Date
+  contactName     String?
+  contactEmail    String?
+  contactPhone    String?
 
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  users             User[]
-  categories        Category[]
-  transactions      Transaction[]
-  budgetAllocations BudgetAllocation[]
-  bankAccounts      BankAccount[]
-  auditLogs         AuditLog[]
-  exports           Export[]
-  approvals         Approval[]
-  invitations       Invitation[]
-  seasonClosures    SeasonClosure[]
-  families          Family[]
-  players           Player[]
+  users              User[]
+  categories         Category[]
+  transactions       Transaction[]
+  bankAccounts       BankAccount[]
+  auditLogs          AuditLog[]
+  exports            Export[]
+  approvals          Approval[]
+  invitations        Invitation[]
+  seasonClosures     SeasonClosure[]
+  families           Family[]
+  players            Player[]
   parentInviteTokens ParentInviteToken[]
-  associationTeam   AssociationTeam? // Link to association dashboard (optional)
-  teamSettings      TeamSettings?
+  associationTeam    AssociationTeam? // Link to association dashboard (optional)
+  teamSettings       TeamSettings?
+  budgetEnvelopes    BudgetEnvelope[]
 
   // Rule Engine relations
-  ruleOverrides      TeamRuleOverride[]
-  violations         RuleViolation[]
-  complianceStatus   TeamComplianceStatus?
+  ruleOverrides    TeamRuleOverride[]
+  violations       RuleViolation[]
+  complianceStatus TeamComplianceStatus?
 
   // GTHL Signing Authority relations (Phase 1.5)
   signingAuthorities TeamSigningAuthority[]
 
-  // Budget Approval relations
-  budgetApprovals    BudgetApproval[]
+  // Budget Approval relations (legacy)
+  budgetApprovals BudgetApproval[]
+
+  // Budget Versioning Workflow
+  budgets Budget[]
 
   // Pre-Season Budget relation
   sourcePreSeasonBudget PreSeasonBudget? @relation("PreSeasonBudgetActivated")
 
   // Bank Connection relations (Plaid)
-  bankConnections    BankConnection[]
+  bankConnections BankConnection[]
+
+  // Team Season Lifecycle
+  teamSeasons TeamSeason[]
 
   @@map("teams")
 }
 
 model Family {
-  id             String   @id @default(cuid())
-  teamId         String
-  familyName     String
+  id         String @id @default(cuid())
+  teamId     String
+  familyName String
 
   // Primary Guardian
-  primaryName    String?  // Guardian/parent name
-  primaryEmail   String
-  primaryPhone   String?
+  primaryName  String? // Guardian/parent name
+  primaryEmail String
+  primaryPhone String?
 
   // Secondary Guardian (Optional)
   secondaryName  String?
@@ -468,18 +700,19 @@ model Family {
   emergencyContactPhone    String?
 
   // Medical Information
-  medicalNotes             String?  @db.Text
-  allergies                String?  @db.Text
+  medicalNotes String? @db.Text
+  allergies    String? @db.Text
 
   // Address (optional future expansion)
-  address                  String?  @db.Text
+  address String? @db.Text
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  team    Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  players Player[]
+  team            Team                    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  players         Player[]
+  budgetApprovals BudgetVersionApproval[] // Approvals for budget versions
 
   @@index([teamId])
   @@map("families")
@@ -499,15 +732,15 @@ enum OnboardingStatus {
 }
 
 model Player {
-  id           String        @id @default(cuid())
+  id           String       @id @default(cuid())
   teamId       String
   familyId     String?
   firstName    String
   lastName     String
   jerseyNumber String?
   position     String?
-  dateOfBirth  DateTime?     @db.Date
-  status       PlayerStatus  @default(ACTIVE)
+  dateOfBirth  DateTime?    @db.Date
+  status       PlayerStatus @default(ACTIVE)
 
   // Parent onboarding tracking
   onboardingStatus OnboardingStatus @default(NOT_INVITED)
@@ -519,9 +752,9 @@ model Player {
   updatedAt DateTime @updatedAt
 
   // Relations
-  team           Team                @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  family         Family?             @relation(fields: [familyId], references: [id], onDelete: SetNull)
-  inviteTokens   ParentInviteToken[]
+  team         Team                @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  family       Family?             @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  inviteTokens ParentInviteToken[]
 
   @@index([teamId])
   @@index([familyId])
@@ -530,15 +763,15 @@ model Player {
 }
 
 model ParentInviteToken {
-  id         String    @id @default(cuid())
-  playerId   String
-  familyId   String
-  teamId     String
-  tokenHash  String    @unique
-  expiresAt  DateTime
-  usedAt     DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        String    @id @default(cuid())
+  playerId  String
+  familyId  String
+  teamId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   // Relations
   player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
@@ -561,13 +794,13 @@ enum UserRole {
 }
 
 model User {
-  id      String   @id @default(cuid())
-  clerkId String   @unique
-  email   String   @unique
-  name    String
-  role    UserRole @default(PARENT)
-  teamId  String
-  isActive Boolean @default(true)
+  id       String   @id @default(cuid())
+  clerkId  String   @unique
+  email    String   @unique
+  name     String
+  role     UserRole @default(PARENT)
+  teamId   String
+  isActive Boolean  @default(true)
 
   // Optional link to association user (for users who have both team and association roles)
   associationUserId String? @map("association_user_id") @db.Uuid
@@ -583,19 +816,20 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  team                   Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  associationUser        AssociationUser? @relation(fields: [associationUserId], references: [id])
-  transactionsCreated    Transaction[]   @relation("TransactionCreator")
-  approvalsCreated       Approval[]      @relation("ApprovalCreator")
-  approvalsApproved      Approval[]      @relation("Approver")
-  approvalsAssigned      Approval[]      @relation("ApprovalAssignee")
+  team                   Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  associationUser        AssociationUser?       @relation(fields: [associationUserId], references: [id])
+  transactionsCreated    Transaction[]          @relation("TransactionCreator")
+  approvalsCreated       Approval[]             @relation("ApprovalCreator")
+  approvalsApproved      Approval[]             @relation("Approver")
+  approvalsAssigned      Approval[]             @relation("ApprovalAssignee")
   auditLogs              AuditLog[]
   exports                Export[]
-  seasonClosures         SeasonClosure[] @relation("SeasonClosureSubmitter")
+  seasonClosures         SeasonClosure[]        @relation("SeasonClosureSubmitter")
   notificationSettings   NotificationSettings[]
   signingAuthorities     TeamSigningAuthority[]
-  budgetApprovalsCreated BudgetApproval[] @relation("BudgetApprovalCreator")
-  acknowledgments        Acknowledgment[] @relation("ParentAcknowledgments")
+  budgetApprovalsCreated BudgetApproval[]       @relation("BudgetApprovalCreator")
+  acknowledgments        Acknowledgment[]       @relation("ParentAcknowledgments")
+  envelopesCreated       BudgetEnvelope[]       @relation("EnvelopeCreator")
 
   @@index([teamId])
   @@index([clerkId])
@@ -608,15 +842,15 @@ model TeamSigningAuthority {
   teamId                  String    @map("team_id")
   userId                  String    @map("user_id")
   userType                String    @map("user_type") // 'team_official', 'parent_representative'
-  position                String?   // e.g., 'Head Coach', 'Treasurer', 'Parent Rep'
+  position                String? // e.g., 'Head Coach', 'Treasurer', 'Parent Rep'
   hasFinanceExperience    Boolean   @default(false) @map("has_finance_experience")
   backgroundCheckComplete Boolean   @default(false) @map("background_check_complete")
   appointedDate           DateTime  @map("appointed_date") @db.Date
   removedDate             DateTime? @map("removed_date") @db.Date
   isActive                Boolean   @default(true) @map("is_active")
 
-  createdAt               DateTime  @default(now()) @map("created_at")
-  updatedAt               DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
@@ -634,11 +868,71 @@ enum CategoryType {
   INCOME
 }
 
+// ============================================
+// 2-LAYER CATEGORY MODEL
+// ============================================
+
+enum DisplayCategoryType {
+  EXPENSE_ROLLUP // Expense categories shown in allocation charts
+  INCOME_ROLLUP // Income categories shown in funding sources
+}
+
+// Display Categories: Parent-friendly rollups shown in UI charts
+model DisplayCategory {
+  id        String              @id @default(cuid())
+  name      String // e.g., "Ice & Facilities"
+  slug      String              @unique // e.g., "ice-facilities"
+  sortOrder Int
+  type      DisplayCategoryType @default(EXPENSE_ROLLUP)
+  color     String              @default("#3B82F6") // Color for charts
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  systemCategories SystemCategory[]
+
+  @@map("display_categories")
+}
+
+enum SystemCategoryType {
+  INCOME
+  EXPENSE
+}
+
+// System Categories: Internal canonical categories for accounting, approvals, benchmarks
+model SystemCategory {
+  id                String             @id @default(cuid())
+  name              String // e.g., "Practice Ice", "Game Ice"
+  slug              String             @unique // e.g., "practice-ice"
+  type              SystemCategoryType
+  displayCategoryId String? // Required for EXPENSE, null for INCOME
+  isCommon          Boolean            @default(true) // Recommended for most teams
+  isDiscouraged     Boolean            @default(false) // For "Other/Misc" categories
+  preauthEligible   Boolean            @default(false) // For future pre-authorization routing
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  displayCategory      DisplayCategory?      @relation(fields: [displayCategoryId], references: [id])
+  budgetAllocations    BudgetAllocation[]
+  preSeasonAllocations PreSeasonAllocation[]
+  transactions         Transaction[]
+  budgetEnvelopes      BudgetEnvelope[]
+
+  @@index([displayCategoryId])
+  @@index([type])
+  @@index([slug])
+  @@map("system_categories")
+}
+
+// Legacy Category model (deprecated, kept for backward compatibility during migration)
 model Category {
   id        String       @id @default(cuid())
   teamId    String
   name      String
-  heading   String       // "Ice Time", "Equipment", etc.
+  heading   String // "Ice Time", "Equipment", etc.
   color     String       @default("#3B82F6")
   type      CategoryType @default(EXPENSE)
   sortOrder Int          @default(0)
@@ -648,11 +942,12 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
-  team              Team               @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  transactions      Transaction[]
-  budgetAllocations BudgetAllocation[]
+  // Legacy relations (for migration compatibility)
+  team                 Team                  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  transactions         Transaction[]
+  budgetAllocations    BudgetAllocation[]
   preSeasonAllocations PreSeasonAllocation[]
+  budgetEnvelopes      BudgetEnvelope[]
 
   @@index([teamId])
   @@map("categories")
@@ -667,47 +962,57 @@ enum TransactionStatus {
   DRAFT
   PENDING
   APPROVED
+  APPROVED_AUTOMATIC // Auto-approved via envelope or under threshold
   REJECTED
 }
 
 model Transaction {
-  id              String            @id @default(cuid())
-  teamId          String
-  type            TransactionType
-  status          TransactionStatus @default(DRAFT)
-  amount          Decimal           @db.Decimal(10, 2)
-  categoryId      String
-  vendor          String
-  description     String?           @db.Text
-  transactionDate DateTime
-  receiptUrl      String?
-  receiptPath     String? // Storage path for file deletion
-  createdBy       String
-  deletedAt       DateTime?
+  id               String            @id @default(cuid())
+  teamId           String
+  type             TransactionType
+  status           TransactionStatus @default(DRAFT)
+  amount           Decimal           @db.Decimal(10, 2)
+  categoryId       String // Legacy category reference, will be migrated to systemCategoryId
+  systemCategoryId String? // Nullable during migration, will be required after
+  vendor           String
+  description      String?           @db.Text
+  transactionDate  DateTime
+  receiptUrl       String?
+  receiptPath      String? // Storage path for file deletion
+  createdBy        String
+  deletedAt        DateTime?
 
   // Plaid Integration Fields
-  plaidTransactionId String?  @unique // Plaid's unique transaction ID
-  plaidAccountId     String?           // Which Plaid account this came from
-  isImported         Boolean  @default(false) // Track imported vs manual transactions
-  importedAt         DateTime?         // When it was imported
-  importSource       String?           // "PLAID", "MANUAL", etc.
+  plaidTransactionId String?   @unique // Plaid's unique transaction ID
+  plaidAccountId     String? // Which Plaid account this came from
+  isImported         Boolean   @default(false) // Track imported vs manual transactions
+  importedAt         DateTime? // When it was imported
+  importSource       String? // "PLAID", "MANUAL", etc.
+
+  // Pre-Authorized Envelope Tracking
+  envelopeId     String? // Link to BudgetEnvelope if auto-approved
+  approvalReason String? @db.Text // Why it was auto-approved or requires approval
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  team      Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  category  Category   @relation(fields: [categoryId], references: [id])
-  creator   User       @relation("TransactionCreator", fields: [createdBy], references: [id])
-  approvals Approval[]
+  team           Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  category       Category        @relation(fields: [categoryId], references: [id]) // Legacy relation
+  systemCategory SystemCategory? @relation(fields: [systemCategoryId], references: [id])
+  creator        User            @relation("TransactionCreator", fields: [createdBy], references: [id])
+  approvals      Approval[]
+  envelope       BudgetEnvelope? @relation(fields: [envelopeId], references: [id])
 
   @@index([teamId])
-  @@index([categoryId])
+  @@index([categoryId]) // Legacy index
+  @@index([systemCategoryId])
   @@index([createdBy])
   @@index([transactionDate])
   @@index([status])
   @@index([plaidTransactionId])
   @@index([isImported])
+  @@index([envelopeId])
   @@map("transactions")
 }
 
@@ -728,8 +1033,8 @@ model Approval {
   teamId        String
 
   // GTHL Role-Based Approval Assignment (Phase 1.5)
-  roleRequired  String?        @map("role_required") // 'PARENT_REPRESENTATIVE', 'TEAM_OFFICIAL', 'ANY'
-  assignedTo    String?        @map("assigned_to") // User ID of assigned signing authority
+  roleRequired String? @map("role_required") // 'PARENT_REPRESENTATIVE', 'TEAM_OFFICIAL', 'ANY'
+  assignedTo   String? @map("assigned_to") // User ID of assigned signing authority
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -749,24 +1054,232 @@ model Approval {
   @@map("approvals")
 }
 
-model BudgetAllocation {
-  id         String  @id @default(cuid())
-  teamId     String
-  categoryId String
-  season     String // "2024-2025"
-  allocated  Decimal @db.Decimal(10, 2)
+// ============================================
+// BUDGET VERSIONING & APPROVAL WORKFLOW
+// ============================================
+
+enum BudgetStatus {
+  DRAFT // Treasurer is editing
+  REVIEW // Submitted to coach for review
+  TEAM_APPROVED // Coach approved
+  PRESENTED // Presented to parents for acknowledgement
+  APPROVED // Threshold met, ready to lock
+  LOCKED // Final, immutable
+}
+
+enum ThresholdMode {
+  COUNT // Lock when >= N families approve
+  PERCENT // Lock when >= X% of families approve
+}
+
+// Main Budget entity - tracks overall budget lifecycle
+model Budget {
+  id     String @id @default(cuid())
+  teamId String
+  season String // "2024-2025"
+
+  // Status tracking
+  status                 BudgetStatus @default(DRAFT)
+  currentVersionNumber   Int          @default(1)
+  presentedVersionNumber Int? // Which version is currently presented to parents
+
+  // Metadata
+  createdBy String // User ID of creator (treasurer)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Locked state
+  lockedAt DateTime?
+  lockedBy String? // User ID who triggered the lock (or system)
+
+  // Relations
+  team            Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  versions        BudgetVersion[]
+  thresholdConfig BudgetThresholdConfig?
+  envelopes       BudgetEnvelope[]
+
+  @@unique([teamId, season])
+  @@index([teamId])
+  @@index([status])
+  @@index([season])
+  @@map("budgets")
+}
+
+// Budget threshold configuration - can be set at team or association level
+model BudgetThresholdConfig {
+  id       String @id @default(cuid())
+  budgetId String @unique
+
+  // Threshold settings
+  mode             ThresholdMode @default(PERCENT)
+  countThreshold   Int? // Required if mode = COUNT
+  percentThreshold Decimal?      @db.Decimal(5, 2) // Required if mode = PERCENT (e.g., 80.00 for 80%)
+
+  // Eligible families tracking
+  eligibleFamilyCount Int @default(0) // Updated when roster changes
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id])
+  budget Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
-  @@unique([teamId, categoryId, season])
-  @@index([teamId])
-  @@index([categoryId])
+  @@map("budget_threshold_configs")
+}
+
+// Budget Version - each edit creates a new version
+model BudgetVersion {
+  id            String @id @default(cuid())
+  budgetId      String
+  versionNumber Int // 1, 2, 3, etc.
+
+  // Total budget for this version
+  totalBudget Decimal @db.Decimal(10, 2)
+
+  // Change tracking
+  changeSummary String? @db.Text // Required when versionNumber > 1
+
+  // Metadata
+  createdBy String // User ID of creator
+  createdAt DateTime @default(now())
+
+  // Coach approval for this version
+  coachApprovedAt DateTime?
+  coachApprovedBy String? // User ID of coach
+  coachNotes      String?   @db.Text
+
+  // Relations
+  budget      Budget                  @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  allocations BudgetAllocation[]
+  approvals   BudgetVersionApproval[]
+
+  @@unique([budgetId, versionNumber])
+  @@index([budgetId])
+  @@index([versionNumber])
+  @@map("budget_versions")
+}
+
+// Category allocations for a specific budget version
+model BudgetAllocation {
+  id               String  @id @default(cuid())
+  budgetVersionId  String? // Nullable during migration
+  systemCategoryId String? // Nullable during migration, will be required after
+  allocated        Decimal @db.Decimal(10, 2)
+  notes            String? @db.Text
+
+  // Legacy fields for migration (will be removed after migration)
+  categoryId String? // Legacy category reference, will be removed after migration
+  teamId     String?
+  season     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  budgetVersion  BudgetVersion?  @relation(fields: [budgetVersionId], references: [id], onDelete: Cascade)
+  category       Category?       @relation(fields: [categoryId], references: [id]) // Legacy relation
+  systemCategory SystemCategory? @relation(fields: [systemCategoryId], references: [id])
+
+  @@index([budgetVersionId])
+  @@index([systemCategoryId])
+  @@index([categoryId]) // Legacy index for migration
+  @@index([teamId, season]) // Legacy index for migration
   @@map("budget_allocations")
+}
+
+// Parent/Family approval for a specific budget version
+model BudgetVersionApproval {
+  id              String @id @default(cuid())
+  budgetVersionId String
+  familyId        String
+
+  // Acknowledgement details
+  acknowledgedAt DateTime @default(now())
+  acknowledgedBy String // User ID of parent who acknowledged
+
+  // Optional feedback
+  comment      String? @db.Text
+  hasQuestions Boolean @default(false)
+
+  // Audit trail
+  ipAddress String?
+  userAgent String?
+
+  // Relations
+  budgetVersion BudgetVersion @relation(fields: [budgetVersionId], references: [id], onDelete: Cascade)
+  family        Family        @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@unique([budgetVersionId, familyId]) // One approval per family per version
+  @@index([budgetVersionId])
+  @@index([familyId])
+  @@index([acknowledgedAt])
+  @@map("budget_version_approvals")
+}
+
+// ============================================
+// PRE-AUTHORIZED BUDGET ENVELOPES
+// ============================================
+
+enum PeriodType {
+  SEASON_WIDE // Cap applies to entire season
+  MONTHLY // Cap resets monthly
+}
+
+enum VendorMatchType {
+  EXACT // Vendor name must match exactly
+  CONTAINS // Vendor name must contain the match string
+  ANY // Any vendor allowed (no restriction)
+}
+
+model BudgetEnvelope {
+  id               String  @id @default(cuid())
+  teamId           String
+  budgetId         String // Link to the LOCKED budget
+  categoryId       String // Legacy category reference, will be migrated to systemCategoryId
+  systemCategoryId String? // Nullable during migration, will be required after
+
+  // Vendor matching constraints (optional but recommended)
+  vendorMatchType VendorMatchType @default(ANY)
+  vendorMatch     String?         @db.VarChar(255) // Vendor name or pattern to match
+
+  // Spending caps
+  capAmount  Decimal    @db.Decimal(10, 2) // Maximum total amount for this envelope
+  periodType PeriodType @default(SEASON_WIDE)
+
+  // Date range constraints (optional)
+  startDate DateTime? @db.Date
+  endDate   DateTime? @db.Date
+
+  // Approval threshold override (optional)
+  // If set, transactions within envelope must still be <= this amount to auto-approve
+  // This prevents abuse where someone creates one huge transaction
+  maxSingleTransaction Decimal? @db.Decimal(10, 2)
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Metadata
+  createdBy     String // User ID of creator (usually treasurer)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deactivatedAt DateTime?
+  deactivatedBy String? // User ID who deactivated it
+
+  // Relations
+  team           Team            @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  budget         Budget          @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category       Category        @relation(fields: [categoryId], references: [id]) // Legacy relation
+  systemCategory SystemCategory? @relation(fields: [systemCategoryId], references: [id])
+  creator        User            @relation("EnvelopeCreator", fields: [createdBy], references: [id])
+  transactions   Transaction[]
+
+  @@unique([budgetId, categoryId, vendorMatch], name: "unique_envelope_per_category_vendor")
+  @@index([teamId])
+  @@index([budgetId])
+  @@index([categoryId]) // Legacy index
+  @@index([systemCategoryId])
+  @@index([isActive])
+  @@map("budget_envelopes")
 }
 
 // ============================================
@@ -809,13 +1322,13 @@ enum BankAccountType {
 }
 
 model BankAccount {
-  id              String          @id @default(cuid())
-  teamId          String
-  accountName     String
-  accountType     BankAccountType
-  lastFour        String
-  currentBalance  Decimal         @db.Decimal(10, 2)
-  isActive        Boolean         @default(true)
+  id             String          @id @default(cuid())
+  teamId         String
+  accountName    String
+  accountType    BankAccountType
+  lastFour       String
+  currentBalance Decimal         @db.Decimal(10, 2)
+  isActive       Boolean         @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -829,13 +1342,13 @@ model BankAccount {
 }
 
 model BankTransaction {
-  id                String   @id @default(cuid())
-  bankAccountId     String
-  date              DateTime
-  description       String
-  amount            Decimal  @db.Decimal(10, 2)
-  transactionId     String? // Link to Transaction if matched
-  isReconciled      Boolean  @default(false)
+  id            String   @id @default(cuid())
+  bankAccountId String
+  date          DateTime
+  description   String
+  amount        Decimal  @db.Decimal(10, 2)
+  transactionId String? // Link to Transaction if matched
+  isReconciled  Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -907,10 +1420,10 @@ model TeamSettings {
   dualApprovalThreshold Decimal @default(200.00) @db.Decimal(10, 2)
 
   // Transaction Rules
-  receiptRequired          Boolean  @default(true)
-  allowSelfReimbursement   Boolean  @default(false)
-  duplicateDetectionEnabled Boolean @default(true)
-  allowedPaymentMethods    String[] @default(["CASH", "CHEQUE", "E_TRANSFER"])
+  receiptRequired           Boolean  @default(true)
+  allowSelfReimbursement    Boolean  @default(false)
+  duplicateDetectionEnabled Boolean  @default(true)
+  allowedPaymentMethods     String[] @default(["CASH", "CHEQUE", "E_TRANSFER"])
 
   // Duplicate detection window (days)
   duplicateDetectionWindow Int @default(7)
@@ -930,11 +1443,11 @@ model NotificationSettings {
   teamId String
 
   // Email notification preferences
-  newExpenseSubmitted     Boolean @default(true)
-  approvalRequired        Boolean @default(true)
-  budgetThresholdWarning  Boolean @default(true)
-  missingReceiptReminder  Boolean @default(true)
-  monthlySummary          Boolean @default(false)
+  newExpenseSubmitted    Boolean @default(true)
+  approvalRequired       Boolean @default(true)
+  budgetThresholdWarning Boolean @default(true)
+  missingReceiptReminder Boolean @default(true)
+  monthlySummary         Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -957,19 +1470,19 @@ model BankConnection {
   teamId String
 
   // Plaid Credentials (TODO: Encrypt accessToken in production)
-  accessToken     String   @db.Text // Plaid access token for this connection
-  itemId          String            // Plaid item ID
-  plaidAccountId  String            // Which Plaid account to sync
+  accessToken    String @db.Text // Plaid access token for this connection
+  itemId         String // Plaid item ID
+  plaidAccountId String // Which Plaid account to sync
 
   // Display Information
-  institutionName String            // e.g., "First Platypus Bank"
-  accountName     String            // e.g., "Plaid Checking"
-  accountMask     String?           // Last 4 digits, e.g., "0000"
-  accountType     String?           // "depository", "credit", etc.
+  institutionName String // e.g., "First Platypus Bank"
+  accountName     String // e.g., "Plaid Checking"
+  accountMask     String? // Last 4 digits, e.g., "0000"
+  accountType     String? // "depository", "credit", etc.
 
   // Sync Tracking
-  lastSyncedAt    DateTime?         // When transactions were last fetched
-  isActive        Boolean  @default(true)
+  lastSyncedAt DateTime? // When transactions were last fetched
+  isActive     Boolean   @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -988,53 +1501,53 @@ model BankConnection {
 // ============================================
 
 enum SeasonClosureStatus {
-  DRAFT        // Treasurer is preparing closure
-  VALIDATING   // Validation is running / in progress
-  READY        // Validation passed; ready to submit
-  SUBMITTED    // Package generated + sent
+  DRAFT // Treasurer is preparing closure
+  VALIDATING // Validation is running / in progress
+  READY // Validation passed; ready to submit
+  SUBMITTED // Package generated + sent
   ACKNOWLEDGED // Association confirmed receipt
-  ARCHIVED     // Historical record
+  ARCHIVED // Historical record
 }
 
 model SeasonClosure {
-  id        String   @id @default(cuid())
-  teamId    String
-  season    String   // e.g. "2024-2025"
+  id     String @id @default(cuid())
+  teamId String
+  season String // e.g. "2024-2025"
 
   // Status
-  status    SeasonClosureStatus @default(DRAFT)
+  status SeasonClosureStatus @default(DRAFT)
 
   // Validation flags (snapshot at time of submission)
-  budgetBalanced         Boolean @default(false)
+  budgetBalanced          Boolean @default(false)
   allTransactionsApproved Boolean @default(false)
-  allReceiptsPresent     Boolean @default(false)
-  bankReconciled         Boolean @default(false)
+  allReceiptsPresent      Boolean @default(false)
+  bankReconciled          Boolean @default(false)
 
   // Financial summary (snapshot values)
-  totalIncome            Decimal  @db.Decimal(10, 2) @default(0)
-  totalExpenses          Decimal  @db.Decimal(10, 2) @default(0)
-  finalBalance           Decimal  @db.Decimal(10, 2) @default(0)
+  totalIncome   Decimal @default(0) @db.Decimal(10, 2)
+  totalExpenses Decimal @default(0) @db.Decimal(10, 2)
+  finalBalance  Decimal @default(0) @db.Decimal(10, 2)
 
   // Policy snapshot (JSON copy of association rules / thresholds at closure time)
-  policySnapshot         Json?
+  policySnapshot Json?
 
   // Submission details
-  associationEmail       String?
-  submittedAt            DateTime?
-  submittedBy            String?  // User ID of treasurer
-  packageUrl             String?  // Storage URL for the ZIP
+  associationEmail String?
+  submittedAt      DateTime?
+  submittedBy      String? // User ID of treasurer
+  packageUrl       String? // Storage URL for the ZIP
 
   // Acknowledgement from association (optional)
-  acknowledgedAt         DateTime?
-  acknowledgedBy         String?  // Name/email of association contact
+  acknowledgedAt DateTime?
+  acknowledgedBy String? // Name/email of association contact
 
   // Metadata
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relationships
-  team                   Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  submitter              User?    @relation("SeasonClosureSubmitter", fields: [submittedBy], references: [id])
+  team      Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  submitter User? @relation("SeasonClosureSubmitter", fields: [submittedBy], references: [id])
 
   @@unique([teamId, season])
   @@index([teamId])
@@ -1047,41 +1560,41 @@ model SeasonClosure {
 // ============================================
 
 enum BudgetApprovalType {
-  INITIAL          // Start of season budget
-  REPORT           // Monthly/quarterly report acknowledgment
+  INITIAL // Start of season budget
+  REPORT // Monthly/quarterly report acknowledgment
 }
 
 enum BudgetApprovalStatus {
-  PENDING          // Waiting for acknowledgments
-  COMPLETED        // Required threshold met
-  EXPIRED          // Deadline passed without completion
-  CANCELLED        // Treasurer cancelled request
+  PENDING // Waiting for acknowledgments
+  COMPLETED // Required threshold met
+  EXPIRED // Deadline passed without completion
+  CANCELLED // Treasurer cancelled request
 }
 
 model BudgetApproval {
-  id              String   @id @default(cuid())
-  teamId          String
-  season          String   // "2025-2026"
+  id     String @id @default(cuid())
+  teamId String
+  season String // "2025-2026"
 
   // What's being approved
-  budgetTotal     Decimal  @db.Decimal(10, 2)
-  approvalType    BudgetApprovalType
-  description     String?  @db.Text // "Initial Season Budget" or "Mid-Season Revision"
+  budgetTotal  Decimal            @db.Decimal(10, 2)
+  approvalType BudgetApprovalType
+  description  String?            @db.Text // "Initial Season Budget" or "Mid-Season Revision"
 
   // Tracking
-  requiredCount   Int      // Number of families that must acknowledge/approve
-  acknowledgedCount Int    @default(0)
-  status          BudgetApprovalStatus @default(PENDING)
+  requiredCount     Int // Number of families that must acknowledge/approve
+  acknowledgedCount Int                  @default(0)
+  status            BudgetApprovalStatus @default(PENDING)
 
   // Metadata
-  createdBy       String   // Treasurer's user ID
-  createdAt       DateTime @default(now())
-  completedAt     DateTime?
-  expiresAt       DateTime?  // Optional deadline
+  createdBy   String // Treasurer's user ID
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+  expiresAt   DateTime? // Optional deadline
 
   // Relations
-  team            Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  creator         User     @relation("BudgetApprovalCreator", fields: [createdBy], references: [id])
+  team            Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  creator         User             @relation("BudgetApprovalCreator", fields: [createdBy], references: [id])
   acknowledgments Acknowledgment[]
 
   @@index([teamId, status])
@@ -1090,28 +1603,28 @@ model BudgetApproval {
 }
 
 model Acknowledgment {
-  id                String   @id @default(cuid())
-  budgetApprovalId  String
-  userId            String   // Parent's user ID
+  id               String @id @default(cuid())
+  budgetApprovalId String
+  userId           String // Parent's user ID
 
   // Family info (denormalized for reporting)
-  familyName        String
-  email             String
+  familyName String
+  email      String
 
   // Acknowledgment details
-  acknowledged      Boolean  @default(false)
-  acknowledgedAt    DateTime?
+  acknowledged   Boolean   @default(false)
+  acknowledgedAt DateTime?
 
   // Audit trail (IMMUTABLE)
-  viewedAt          DateTime @default(now())
-  ipAddress         String?
-  userAgent         String?
+  viewedAt  DateTime @default(now())
+  ipAddress String?
+  userAgent String?
 
   // Relations
-  budgetApproval    BudgetApproval @relation(fields: [budgetApprovalId], references: [id], onDelete: Cascade)
-  user              User     @relation("ParentAcknowledgments", fields: [userId], references: [id])
+  budgetApproval BudgetApproval @relation(fields: [budgetApprovalId], references: [id], onDelete: Cascade)
+  user           User           @relation("ParentAcknowledgments", fields: [userId], references: [id])
 
-  @@unique([budgetApprovalId, userId])  // One acknowledgment per parent per approval
+  @@unique([budgetApprovalId, userId]) // One acknowledgment per parent per approval
   @@index([budgetApprovalId])
   @@map("acknowledgments")
 }
@@ -1121,57 +1634,57 @@ model Acknowledgment {
 // ============================================
 
 enum PreSeasonBudgetStatus {
-  DRAFT                 // Coach editing
-  SUBMITTED             // Awaiting association approval
-  APPROVED              // Association approved, public
-  REJECTED              // Association rejected
-  ACTIVATED             // Team created
-  CANCELLED             // Coach cancelled
+  DRAFT // Coach editing
+  SUBMITTED // Awaiting association approval
+  APPROVED // Association approved, public
+  REJECTED // Association rejected
+  ACTIVATED // Team created
+  CANCELLED // Coach cancelled
 }
 
 model PreSeasonBudget {
-  id                    String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Team info (team doesn't exist yet)
-  proposedTeamName      String
-  proposedSeason        String   // "2025-2026"
-  teamType              String?  // "HOUSE_LEAGUE", "COMPETITIVE", etc.
-  ageDivision           String?  // "U10", "U12", etc.
-  competitiveLevel      String?
+  proposedTeamName String
+  proposedSeason   String // "2025-2026"
+  teamType         String? // "HOUSE_LEAGUE", "COMPETITIVE", etc.
+  ageDivision      String? // "U10", "U12", etc.
+  competitiveLevel String?
 
   // Budget details
-  totalBudget           Decimal  @db.Decimal(10, 2)
-  projectedPlayers      Int      // Expected roster size
-  perPlayerCost         Decimal  @db.Decimal(10, 2) @default(0)
+  totalBudget      Decimal @db.Decimal(10, 2)
+  projectedPlayers Int // Expected roster size
+  perPlayerCost    Decimal @default(0) @db.Decimal(10, 2)
 
   // Ownership
-  createdByClerkId      String   // Coach who created it
-  associationId         String?  @db.Uuid // Link to association
+  createdByClerkId String // Coach who created it
+  associationId    String? @db.Uuid // Link to association
 
   // Status workflow
-  status                PreSeasonBudgetStatus @default(DRAFT)
+  status PreSeasonBudgetStatus @default(DRAFT)
 
   // Association approval
   associationApprovedAt DateTime?
-  associationApprovedBy String?  // Association admin clerkId
-  associationNotes      String?  @db.Text
+  associationApprovedBy String? // Association admin clerkId
+  associationNotes      String?   @db.Text
 
   // Public sharing
-  publicSlug            String   @unique // For public URL
-  viewCount             Int      @default(0)
+  publicSlug String @unique // For public URL
+  viewCount  Int    @default(0)
 
   // Activation
-  activatedAt           DateTime?
-  activatedTeamId       String?  @unique // Points to created Team
+  activatedAt     DateTime?
+  activatedTeamId String?   @unique // Points to created Team
 
   // Relations
-  allocations           PreSeasonAllocation[]
-  parentInterests       ParentInterest[]
-  activatedTeam         Team? @relation("PreSeasonBudgetActivated", fields: [activatedTeamId], references: [id])
-  association           Association? @relation(fields: [associationId], references: [id])
+  allocations     PreSeasonAllocation[]
+  parentInterests ParentInterest[]
+  activatedTeam   Team?                 @relation("PreSeasonBudgetActivated", fields: [activatedTeamId], references: [id])
+  association     Association?          @relation(fields: [associationId], references: [id])
 
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([createdByClerkId])
   @@index([associationId])
@@ -1181,52 +1694,72 @@ model PreSeasonBudget {
 }
 
 model PreSeasonAllocation {
-  id                    String @id @default(cuid())
-  preSeasonBudgetId     String
-  categoryId            String
-  allocated             Decimal @db.Decimal(10, 2)
-  notes                 String? @db.Text
+  id                String  @id @default(cuid())
+  preSeasonBudgetId String
+  categoryId        String // Legacy category reference, will be migrated to systemCategoryId
+  systemCategoryId  String? // Nullable during migration, will be required after
+  allocated         Decimal @db.Decimal(10, 2)
+  notes             String? @db.Text
 
-  budget                PreSeasonBudget @relation(fields: [preSeasonBudgetId], references: [id], onDelete: Cascade)
-  category              Category @relation(fields: [categoryId], references: [id])
+  budget         PreSeasonBudget @relation(fields: [preSeasonBudgetId], references: [id], onDelete: Cascade)
+  category       Category        @relation(fields: [categoryId], references: [id]) // Legacy relation
+  systemCategory SystemCategory? @relation(fields: [systemCategoryId], references: [id])
 
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([preSeasonBudgetId, categoryId])
   @@index([preSeasonBudgetId])
-  @@index([categoryId])
+  @@index([categoryId]) // Legacy index
+  @@index([systemCategoryId])
   @@map("pre_season_allocations")
 }
 
 model ParentInterest {
-  id                    String @id @default(cuid())
-  preSeasonBudgetId     String
+  id                String @id @default(cuid())
+  preSeasonBudgetId String
 
   // Parent info (not a User yet)
-  parentName            String
-  email                 String
-  phone                 String?
-  playerName            String
-  playerAge             Int?
+  parentName String
+  email      String
+  phone      String?
+  playerName String
+  playerAge  Int?
 
   // Acknowledgment
-  acknowledged          Boolean @default(false)
-  acknowledgedAt        DateTime?
+  acknowledged   Boolean   @default(false)
+  acknowledgedAt DateTime?
 
   // Audit trail
-  ipAddress             String?
-  userAgent             String?
+  ipAddress String?
+  userAgent String?
 
   // Notes from parent
-  comments              String? @db.Text
+  comments String? @db.Text
 
-  budget                PreSeasonBudget @relation(fields: [preSeasonBudgetId], references: [id], onDelete: Cascade)
+  budget PreSeasonBudget @relation(fields: [preSeasonBudgetId], references: [id], onDelete: Cascade)
 
-  createdAt             DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([preSeasonBudgetId, email])
   @@index([preSeasonBudgetId, acknowledged])
   @@index([email])
   @@map("parent_interests")
+}
+
+// ============================================
+// MARKETING & WAITLIST
+// ============================================
+
+model WaitlistSignup {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  source    String? // Where they signed up from (e.g., "landing_hero", "footer")
+  ipAddress String? @map("ip_address")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([email])
+  @@index([createdAt])
+  @@map("waitlist_signups")
 }

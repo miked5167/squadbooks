@@ -26,7 +26,7 @@ export default async function BudgetPage() {
   const isTreasurer = user.role === 'TREASURER' || user.role === 'ASSISTANT_TREASURER'
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-gray-50">
       <MobileHeader>
         <AppSidebar />
       </MobileHeader>

@@ -1467,3 +1467,153 @@ This is an automated notification from Squadbooks
     return { success: false, error }
   }
 }
+
+// ========================
+// Waitlist Emails
+// ========================
+
+/**
+ * Send welcome email to waitlist signups
+ */
+export async function sendWaitlistWelcomeEmail(email: string) {
+  const dashboardUrl = `${APP_URL}/dashboard`
+  const subject = 'Welcome to Squadbooks! 🎉'
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Squadbooks</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%); color: white; padding: 40px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="margin: 0; font-size: 28px; font-weight: 600;">Welcome to Squadbooks! 🎉</h1>
+    <p style="margin: 15px 0 0; opacity: 0.95; font-size: 16px;">Thanks for joining our community</p>
+  </div>
+
+  <!-- Content -->
+  <div style="background: #ffffff; padding: 40px 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+
+    <p style="margin: 0 0 20px; font-size: 16px;">Hi there,</p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      Thanks for signing up for Squadbooks! We're excited to help you <strong>master your team's finances</strong>.
+    </p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      Squadbooks makes it simple to track expenses, manage budgets, and keep your sports team organized—no accounting degree required.
+    </p>
+
+    <!-- Features -->
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 25px; margin: 25px 0;">
+      <h2 style="margin: 0 0 20px; font-size: 18px; color: #1e3a5f; font-weight: 600;">What you can do with Squadbooks:</h2>
+
+      <div style="margin-bottom: 15px;">
+        <div style="display: inline-block; width: 24px; height: 24px; background: #10b981; border-radius: 50%; text-align: center; vertical-align: middle; margin-right: 10px;">
+          <span style="color: white; font-weight: bold; line-height: 24px; font-size: 14px;">✓</span>
+        </div>
+        <span style="font-size: 15px; color: #111827; vertical-align: middle;"><strong>Track expenses</strong> with easy receipt uploads</span>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <div style="display: inline-block; width: 24px; height: 24px; background: #10b981; border-radius: 50%; text-align: center; vertical-align: middle; margin-right: 10px;">
+          <span style="color: white; font-weight: bold; line-height: 24px; font-size: 14px;">✓</span>
+        </div>
+        <span style="font-size: 15px; color: #111827; vertical-align: middle;"><strong>Manage budgets</strong> by category</span>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <div style="display: inline-block; width: 24px; height: 24px; background: #10b981; border-radius: 50%; text-align: center; vertical-align: middle; margin-right: 10px;">
+          <span style="color: white; font-weight: bold; line-height: 24px; font-size: 14px;">✓</span>
+        </div>
+        <span style="font-size: 15px; color: #111827; vertical-align: middle;"><strong>Approve transactions</strong> with dual approval workflow</span>
+      </div>
+
+      <div>
+        <div style="display: inline-block; width: 24px; height: 24px; background: #10b981; border-radius: 50%; text-align: center; vertical-align: middle; margin-right: 10px;">
+          <span style="color: white; font-weight: bold; line-height: 24px; font-size: 14px;">✓</span>
+        </div>
+        <span style="font-size: 15px; color: #111827; vertical-align: middle;"><strong>Generate reports</strong> for transparency</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 25px 0; border-radius: 4px;">
+      <p style="margin: 0 0 10px; font-size: 15px; color: #1e40af; font-weight: 600;">
+        Ready to get started?
+      </p>
+      <p style="margin: 0; font-size: 14px; color: #1e40af;">
+        We'll be in touch soon with updates, tips, and resources to help you make the most of Squadbooks.
+      </p>
+    </div>
+
+    <!-- Action Button -->
+    <div style="text-align: center; margin: 35px 0 25px;">
+      <a href="${dashboardUrl}" style="display: inline-block; background: #f59e0b; color: white; padding: 16px 48px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);">
+        Explore Squadbooks
+      </a>
+    </div>
+
+    <p style="margin: 25px 0 0; font-size: 14px; color: #6b7280; text-align: center;">
+      Have questions? Just reply to this email—we'd love to hear from you!
+    </p>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+    <p style="margin: 0 0 5px;">This is an automated message from Squadbooks</p>
+    <p style="margin: 0;">© ${new Date().getFullYear()} Squadbooks. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
+`
+
+  const textContent = `
+Welcome to Squadbooks!
+
+Hi there,
+
+Thanks for signing up for Squadbooks! We're excited to help you master your team's finances.
+
+Squadbooks makes it simple to track expenses, manage budgets, and keep your sports team organized—no accounting degree required.
+
+What you can do with Squadbooks:
+✓ Track expenses with easy receipt uploads
+✓ Manage budgets by category
+✓ Approve transactions with dual approval workflow
+✓ Generate reports for transparency
+
+Ready to get started?
+We'll be in touch soon with updates, tips, and resources to help you make the most of Squadbooks.
+
+Explore Squadbooks: ${dashboardUrl}
+
+Have questions? Just reply to this email—we'd love to hear from you!
+
+---
+This is an automated message from Squadbooks
+© ${new Date().getFullYear()} Squadbooks. All rights reserved.
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Waitlist welcome email sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send waitlist welcome email:', error)
+    return { success: false, error }
+  }
+}

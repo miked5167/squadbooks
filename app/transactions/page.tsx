@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, FileText, ExternalLink, Loader2, Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, X, Eye, ChevronLeft, ChevronRight, Info } from 'lucide-react'
+import { Plus, FileText, Loader2, Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, X, Eye, ChevronLeft, ChevronRight, Info } from 'lucide-react'
 import { toast } from 'sonner'
 import { ReceiptViewer } from '@/components/ReceiptViewer'
 import { TransactionDetailsDrawer } from '@/components/transactions/transaction-details-drawer'
@@ -132,16 +132,19 @@ export default function TransactionsPage() {
       setCurrentPage(1) // Reset to page 1 when filter changes
       fetchTransactions(1)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, mounted])
 
   useEffect(() => {
     if (mounted) {
       fetchTransactions(currentPage)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage])
 
   useEffect(() => {
     filterTransactions()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactions, typeFilter, categoryFilter, searchQuery])
 
   async function fetchTransactions(page: number = currentPage) {
@@ -359,13 +362,13 @@ export default function TransactionsPage() {
           </div>
           {canCreateTransactions && (
             <div className="flex gap-3">
-              <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+              <Button asChild className="bg-red-600 hover:bg-red-700 text-white">
                 <Link href="/expenses/new">
                   <Plus className="mr-2 w-4 h-4" />
                   New Expense
                 </Link>
               </Button>
-              <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+              <Button asChild className="bg-green-600 hover:bg-green-700 text-white">
                 <Link href="/income/new">
                   <Plus className="mr-2 w-4 h-4" />
                   New Income
@@ -488,13 +491,13 @@ export default function TransactionsPage() {
               {transactions.length === 0 ? (
                 canCreateTransactions ? (
                   <div className="flex gap-3 justify-center">
-                    <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
+                    <Button asChild className="bg-red-600 hover:bg-red-700 text-white">
                       <Link href="/expenses/new">
                         <Plus className="mr-2 w-4 h-4" />
                         New Expense
                       </Link>
                     </Button>
-                    <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
+                    <Button asChild className="bg-green-600 hover:bg-green-700 text-white">
                       <Link href="/income/new">
                         <Plus className="mr-2 w-4 h-4" />
                         New Income

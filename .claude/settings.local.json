@@ -204,7 +204,22 @@
       "Bash(lib/assistant/permissions.ts)",
       "Bash(lib/assistant/tools.ts)",
       "Bash(lib/assistant/knowledge-base.ts)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(mkdir:*)",
+      "Bash(NUL)",
+      "Bash(node reset-association.js:*)",
+      "Bash(node check-associations.js:*)",
+      "Bash(node list-associations.js:*)",
+      "Bash(node check-duplicates.js:*)",
+      "Bash(Stop-Process -Force)",
+      "Bash(Write-Host 'Killed all Node processes'\" & timeout /t 2 >nul\")",
+      "Bash(node check-user.js:*)",
+      "Bash(del:*)",
+      "Bash(node check-report-schedules.js:*)",
+      "Bash(npx prisma studio:*)",
+      "Bash(prisma/schema.prisma.temp)",
+      "Bash(prisma/schema.prisma.new)",
+      "Bash(npx prisma:*)"
     ],
     "deny": [],
     "ask": []

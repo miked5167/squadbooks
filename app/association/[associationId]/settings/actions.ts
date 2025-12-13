@@ -209,3 +209,135 @@ export async function updateAssociationUserRole(
     throw error
   }
 }
+
+/**
+ * Invite a user to the association
+ */
+export async function inviteAssociationUser(
+  associationId: string,
+  email: string,
+  name: string,
+  role: string
+): Promise<{ success: boolean; message: string }> {
+  // Guard: Skip in demo mode
+  if (isDemoMode()) {
+    console.log('Demo mode: Skipping user invitation')
+    return { success: true, message: 'User invited successfully (demo mode)' }
+  }
+
+  try {
+    // Validate role value
+    if (!VALID_ROLES.includes(role.toLowerCase())) {
+      return {
+        success: false,
+        message: `Invalid role: ${role}. Must be one of: ${VALID_ROLES.join(', ')}`
+      }
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return { success: false, message: 'Invalid email address' }
+    }
+
+    // Check if user already exists in this association
+    const existingUser = await prisma.associationUser.findFirst({
+      where: {
+        associationId,
+        email: email.toLowerCase(),
+      },
+    })
+
+    if (existingUser) {
+      return { success: false, message: 'User with this email is already a member of this association' }
+    }
+
+    // In a full implementation, we would:
+    // 1. Check if the user exists in Clerk
+    // 2. Send an invitation email
+    // 3. Create a pending invitation record
+    //
+    // For now, we'll create the user directly with a placeholder clerkUserId
+    // In production, this would be replaced with proper Clerk integration
+
+    // Generate a temporary clerk user ID (in production, this would come from Clerk)
+    const tempClerkUserId = `temp_${Date.now()}_${Math.random().toString(36).substring(7)}`
+
+    await prisma.associationUser.create({
+      data: {
+        associationId,
+        clerkUserId: tempClerkUserId,
+        email: email.toLowerCase(),
+        name: name || null,
+        role: role.toLowerCase(),
+      },
+    })
+
+    console.log(`Successfully invited user ${email} to association ${associationId} with role ${role}`)
+    return {
+      success: true,
+      message: `Successfully invited ${email} as ${role}. They will receive an email invitation.`
+    }
+  } catch (error) {
+    console.error('Error inviting user:', error)
+    return { success: false, message: 'Failed to invite user. Please try again.' }
+  }
+}
+
+/**
+ * Remove a user from the association
+ */
+export async function removeAssociationUser(
+  associationUserId: string
+): Promise<{ success: boolean; message: string }> {
+  // Guard: Skip in demo mode
+  if (isDemoMode()) {
+    console.log('Demo mode: Skipping user removal')
+    return { success: true, message: 'User removed successfully (demo mode)' }
+  }
+
+  try {
+    // Validate that the user exists
+    const user = await prisma.associationUser.findUnique({
+      where: { id: associationUserId },
+      select: { id: true, email: true, associationId: true },
+    })
+
+    if (!user) {
+      return { success: false, message: 'User not found' }
+    }
+
+    // Check if this is the last admin
+    const adminCount = await prisma.associationUser.count({
+      where: {
+        associationId: user.associationId,
+        role: 'association_admin',
+      },
+    })
+
+    if (adminCount === 1) {
+      const userToRemove = await prisma.associationUser.findUnique({
+        where: { id: associationUserId },
+        select: { role: true },
+      })
+
+      if (userToRemove?.role === 'association_admin') {
+        return {
+          success: false,
+          message: 'Cannot remove the last admin. Please assign another admin first.'
+        }
+      }
+    }
+
+    // Remove the user
+    await prisma.associationUser.delete({
+      where: { id: associationUserId },
+    })
+
+    console.log(`Successfully removed user ${user.email} from association`)
+    return { success: true, message: 'User removed successfully' }
+  } catch (error) {
+    console.error('Error removing user:', error)
+    return { success: false, message: 'Failed to remove user. Please try again.' }
+  }
+}

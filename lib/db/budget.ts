@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
+import { logger } from '@/lib/logger'
 
 /**
  * Budget health status based on spending percentage
@@ -66,7 +67,7 @@ export async function calculateCategorySpending(
   const result = await prisma.transaction.aggregate({
     where: {
       teamId,
-      categoryId,
+      systemCategoryId: categoryId,
       type: 'EXPENSE',
       status: 'APPROVED',
       deletedAt: null,
@@ -90,7 +91,7 @@ export async function calculateCategoryPending(
   const result = await prisma.transaction.aggregate({
     where: {
       teamId,
-      categoryId,
+      systemCategoryId: categoryId,
       type: 'EXPENSE',
       status: 'PENDING',
       deletedAt: null,
@@ -132,33 +133,41 @@ export async function getBudgetOverview(
       season: currentSeason,
     },
     include: {
-      category: {
+      systemCategory: {
         select: {
           id: true,
           name: true,
-          heading: true,
-          color: true,
-          sortOrder: true,
+          displayCategory: {
+            select: {
+              name: true,
+              color: true,
+              sortOrder: true,
+            },
+          },
         },
       },
     },
     orderBy: {
-      category: {
-        sortOrder: 'asc',
+      systemCategory: {
+        displayCategory: {
+          sortOrder: 'asc',
+        },
       },
     },
   })
 
   // Batch fetch all spending and pending amounts in 2 queries
-  const categoryIds = budgetAllocations.map((a) => a.categoryId)
+  const categoryIds = budgetAllocations
+    .map((a) => a.systemCategoryId)
+    .filter((id): id is string => id !== null)
 
   const [spentByCategory, pendingByCategory] = await Promise.all([
     // Get all APPROVED spending grouped by category
     prisma.transaction.groupBy({
-      by: ['categoryId'],
+      by: ['systemCategoryId'],
       where: {
         teamId,
-        categoryId: { in: categoryIds },
+        systemCategoryId: { in: categoryIds },
         type: 'EXPENSE',
         status: 'APPROVED',
         deletedAt: null,
@@ -169,10 +178,10 @@ export async function getBudgetOverview(
     }),
     // Get all PENDING spending grouped by category
     prisma.transaction.groupBy({
-      by: ['categoryId'],
+      by: ['systemCategoryId'],
       where: {
         teamId,
-        categoryId: { in: categoryIds },
+        systemCategoryId: { in: categoryIds },
         type: 'EXPENSE',
         status: 'PENDING',
         deletedAt: null,
@@ -185,40 +194,42 @@ export async function getBudgetOverview(
 
   // Create lookup maps for fast access
   const spentMap = new Map(
-    spentByCategory.map((item) => [item.categoryId, Number(item._sum.amount || 0)])
+    spentByCategory.map((item) => [item.systemCategoryId!, Number(item._sum.amount || 0)])
   )
   const pendingMap = new Map(
-    pendingByCategory.map((item) => [item.categoryId, Number(item._sum.amount || 0)])
+    pendingByCategory.map((item) => [item.systemCategoryId!, Number(item._sum.amount || 0)])
   )
 
   // Calculate spending for each category
-  const categoryBudgets: CategoryBudget[] = budgetAllocations.map((allocation) => {
-    const spent = spentMap.get(allocation.categoryId) || 0
-    const pending = pendingMap.get(allocation.categoryId) || 0
+  const categoryBudgets: CategoryBudget[] = budgetAllocations
+    .filter((allocation) => allocation.systemCategory && allocation.systemCategoryId)
+    .map((allocation) => {
+      const spent = spentMap.get(allocation.systemCategoryId!) || 0
+      const pending = pendingMap.get(allocation.systemCategoryId!) || 0
 
-    const allocated = Number(allocation.allocated)
-    const remaining = allocated - spent
-    const percentage = allocated > 0 ? (spent / allocated) * 100 : 0
-    const projectedSpent = spent + pending
-    const projectedPercentage = allocated > 0 ? (projectedSpent / allocated) * 100 : 0
-    const health = calculateBudgetHealth(percentage)
-    const projectedHealth = calculateBudgetHealth(projectedPercentage)
+      const allocated = Number(allocation.allocated)
+      const remaining = allocated - spent
+      const percentage = allocated > 0 ? (spent / allocated) * 100 : 0
+      const projectedSpent = spent + pending
+      const projectedPercentage = allocated > 0 ? (projectedSpent / allocated) * 100 : 0
+      const health = calculateBudgetHealth(percentage)
+      const projectedHealth = calculateBudgetHealth(projectedPercentage)
 
-    return {
-      categoryId: allocation.category.id,
-      categoryName: allocation.category.name,
-      categoryHeading: allocation.category.heading,
-      categoryColor: allocation.category.color,
-      allocated,
-      spent,
-      pending,
-      remaining,
-      percentage,
-      projectedPercentage,
-      health,
-      projectedHealth,
-    }
-  })
+      return {
+        categoryId: allocation.systemCategory!.id,
+        categoryName: allocation.systemCategory!.name,
+        categoryHeading: allocation.systemCategory!.displayCategory?.name || 'Uncategorized',
+        categoryColor: allocation.systemCategory!.displayCategory?.color || '#6B7280',
+        allocated,
+        spent,
+        pending,
+        remaining,
+        percentage,
+        projectedPercentage,
+        health,
+        projectedHealth,
+      }
+    })
 
   // Calculate totals
   const totalAllocated = categoryBudgets.reduce((sum, cat) => sum + cat.allocated, 0)

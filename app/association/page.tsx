@@ -186,17 +186,20 @@ export default async function OverviewPage() {
   }
 
   // Get user's association
-  const associationUser = await prisma.associationUser.findUnique({
+  const associationUser = await prisma.associationUser.findFirst({
     where: {
       clerkUserId: userId,
     },
     include: {
       association: true,
     },
+    orderBy: {
+      createdAt: 'asc', // Get the first association they joined
+    },
   })
 
   if (!associationUser || !associationUser.association) {
-    redirect('/sign-in')
+    redirect('/association/onboarding')
   }
 
   const association = associationUser.association

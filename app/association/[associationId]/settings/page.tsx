@@ -94,7 +94,7 @@ export default async function AssociationSettingsPage({ params }: PageProps) {
 
           {/* Right Column - Users & Roles */}
           <div>
-            <UsersManagementTable users={users} />
+            <UsersManagementTable users={users} associationId={associationId} />
           </div>
         </div>
       </div>

@@ -36,11 +36,36 @@ export async function validateTransaction(amount: number, type: 'INCOME' | 'EXPE
       }
     }
 
-    // Validate transaction
+    // Validate transaction against association rules
     const result = await ruleEngine.validateTransaction(user.teamId, {
       amount,
       type,
     })
+
+    // If no association rules found, check basic dual approval threshold
+    if (result.requiredApprovals === 0 && type === 'EXPENSE') {
+      const teamSettings = await prisma.teamSettings.findUnique({
+        where: { teamId: user.teamId },
+        select: {
+          dualApprovalEnabled: true,
+          dualApprovalThreshold: true
+        },
+      })
+
+      const threshold = teamSettings ? Number(teamSettings.dualApprovalThreshold) : 200
+
+      if (teamSettings?.dualApprovalEnabled !== false && amount >= threshold) {
+        return {
+          success: true,
+          requiredApprovals: 1,
+          tier: {
+            min: threshold,
+            max: 999999,
+            approvals: 1
+          },
+        }
+      }
+    }
 
     return {
       success: true,

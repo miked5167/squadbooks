@@ -3,13 +3,25 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { AppSidebar } from '@/components/app-sidebar'
 import { MobileHeader } from '@/components/MobileHeader'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { ArrowUpRight, Plus, DollarSign, List, TrendingUp, TrendingDown, Clock } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  DollarSign,
+  TrendingUp,
+  Clock,
+  ShieldCheck,
+  ArrowRight,
+  PiggyBank,
+} from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getFinancialSummary } from '@/lib/db/financial-summary'
-import { ComplianceWidget } from '@/components/dashboard/ComplianceWidget'
+import { KpiCard } from '@/components/dashboard/KpiCard'
+import { QuickActionsCard } from '@/components/dashboard/QuickActionsCard'
+import { BudgetCategoryList } from '@/components/dashboard/BudgetCategoryList'
+import { TransactionsPreviewTable } from '@/components/dashboard/TransactionsPreviewTable'
+import { ParentDashboard } from '@/components/dashboard/ParentDashboard'
+import { getTeamCompliance } from '@/app/transactions/actions'
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -45,6 +57,66 @@ export default async function DashboardPage() {
     },
   })
 
+  // Fetch budget allocations with category info for budget performance
+  const budgetAllocations = await prisma.budgetAllocation.findMany({
+    where: {
+      teamId: user.teamId,
+      season: user.team?.season,
+    },
+    include: {
+      category: true,
+    },
+    orderBy: {
+      allocated: 'desc',
+    },
+  })
+
+  // Calculate spent per category
+  const categorySpending = new Map<string, number>()
+  financialSummary.expensesByCategory.forEach((expense) => {
+    categorySpending.set(expense.categoryId, expense.amount)
+  })
+
+  // Format budget data for component
+  const budgetCategories = budgetAllocations.map((allocation) => ({
+    id: allocation.categoryId,
+    name: allocation.category.name,
+    spent: categorySpending.get(allocation.categoryId) || 0,
+    budget: Number(allocation.allocated),
+  }))
+
+  // Fetch recent transactions (last 10)
+  const recentTransactions = await prisma.transaction.findMany({
+    where: {
+      teamId: user.teamId,
+      deletedAt: null,
+    },
+    include: {
+      category: true,
+    },
+    orderBy: {
+      transactionDate: 'desc',
+    },
+    take: 10,
+  })
+
+  // Format transactions for preview table
+  const formattedTransactions = recentTransactions.map((tx) => ({
+    id: tx.id,
+    transactionDate: tx.transactionDate,
+    vendor: tx.vendor,
+    categoryName: tx.category.name,
+    amount: Number(tx.amount),
+    type: tx.type,
+    status: tx.status,
+    receiptUrl: tx.receiptUrl,
+  }))
+
+  // Get compliance data
+  const complianceResult = await getTeamCompliance()
+  const complianceScore = complianceResult.score || 100
+  const complianceStatus = complianceResult.status || 'COMPLIANT'
+
   // Calculate expense percentage vs budget
   const expensePercentage =
     financialSummary.budgetedExpensesTotal > 0
@@ -53,8 +125,64 @@ export default async function DashboardPage() {
 
   const isNetPositive = financialSummary.netPosition >= 0
 
+  // Determine budget burn status
+  const budgetBurnStatus =
+    expensePercentage >= 90
+      ? 'destructive'
+      : expensePercentage >= 75
+      ? 'warning'
+      : 'success'
+
+  const complianceBadgeVariant =
+    complianceStatus === 'COMPLIANT'
+      ? 'success'
+      : complianceStatus === 'AT_RISK'
+      ? 'warning'
+      : 'destructive'
+
+  // If parent user, show parent-specific dashboard
+  if (isParent) {
+    // Fetch treasurer contact info for parents
+    const treasurer = await prisma.user.findFirst({
+      where: {
+        teamId: user.teamId,
+        role: 'TREASURER',
+      },
+      select: {
+        name: true,
+        email: true,
+      },
+    })
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <MobileHeader>
+          <AppSidebar />
+        </MobileHeader>
+        <AppSidebar />
+
+        {/* Main Content */}
+        <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
+          <ParentDashboard
+            teamName={user.team?.name || 'Your Team'}
+            season={user.team?.season || '2024-2025'}
+            totalIncome={financialSummary.totalIncome}
+            totalExpenses={financialSummary.totalExpenses}
+            netPosition={financialSummary.netPosition}
+            budgetTotal={financialSummary.budgetedExpensesTotal}
+            categories={budgetCategories}
+            transactions={formattedTransactions}
+            treasurerName={treasurer?.name}
+            treasurerEmail={treasurer?.email}
+          />
+        </main>
+      </div>
+    )
+  }
+
+  // Treasurer/Staff Dashboard
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-gray-50">
       <MobileHeader>
         <AppSidebar />
       </MobileHeader>
@@ -63,230 +191,193 @@ export default async function DashboardPage() {
       {/* Main Content */}
       <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-navy mb-2">Dashboard</h1>
-          <p className="text-lg text-navy/70">Welcome to your team financial dashboard</p>
-        </div>
-
-        {/* Quick Actions */}
-        <div className={`grid grid-cols-1 ${isTreasurer ? 'md:grid-cols-3' : 'md:grid-cols-1'} gap-6 mb-8`}>
-          {isTreasurer && (
-            <>
-              <Link
-                href="/expenses/new"
-                className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-meadow/20"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-12 h-12 bg-meadow/10 rounded-lg flex items-center justify-center group-hover:bg-meadow/20 transition-colors">
-                    <Plus className="w-6 h-6 text-meadow" />
-                  </div>
-                  <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-meadow group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                </div>
-                <h3 className="text-lg font-semibold text-navy mb-1">Add Expense</h3>
-                <p className="text-sm text-navy/60">Record a new team expense with receipt</p>
-              </Link>
-
-              <Link
-                href="/income/new"
-                className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-golden/20"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-12 h-12 bg-golden/10 rounded-lg flex items-center justify-center group-hover:bg-golden/20 transition-colors">
-                    <DollarSign className="w-6 h-6 text-golden" />
-                  </div>
-                  <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-golden group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                </div>
-                <h3 className="text-lg font-semibold text-navy mb-1">Add Income</h3>
-                <p className="text-sm text-navy/60">Record registration fees, donations, or sponsorships</p>
-              </Link>
-            </>
-          )}
-
+        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-navy mb-1">Dashboard</h1>
+            <p className="text-base text-navy/60">{user.team?.name || 'Your Team'}</p>
+          </div>
           {!isParent && (
-            <Link
-              href="/transactions"
-              className="group bg-white p-6 rounded-lg shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-navy/20"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-12 h-12 bg-navy/10 rounded-lg flex items-center justify-center group-hover:bg-navy/20 transition-colors">
-                  <List className="w-6 h-6 text-navy" />
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-navy/30 group-hover:text-navy group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-              </div>
-              <h3 className="text-lg font-semibold text-navy mb-1">View Transactions</h3>
-              <p className="text-sm text-navy/60">See all team financial activity</p>
-            </Link>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm" className="border-navy/20">
+                <Link href="/transactions">View Transactions</Link>
+              </Button>
+              {isTreasurer && (
+                <>
+                  <Button asChild variant="outline" size="sm" className="border-navy/20">
+                    <Link href="/income/new">Add Income</Link>
+                  </Button>
+                  <Button asChild size="sm" className="bg-navy hover:bg-navy-medium text-white">
+                    <Link href="/expenses/new">Add Expense</Link>
+                  </Button>
+                </>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Financial Summary - 3 Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Total Income Card */}
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60 font-semibold">Total Income</CardDescription>
-              <CardTitle className="text-3xl text-green-600">
-                ${financialSummary.totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-1 text-sm">
-                <TrendingUp className="w-4 h-4 text-green-600" />
-                <span className="text-navy/70">Registration, fundraising, sponsorships</span>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Financial Health Overview - 4 KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+          <KpiCard
+            title="Cash Position"
+            value={`${isNetPositive ? '+' : ''}$${Math.abs(financialSummary.netPosition).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            subtitle="Income minus expenses"
+            icon={DollarSign}
+            trend={{
+              value: isNetPositive ? 'Positive balance' : 'Deficit',
+              isPositive: isNetPositive,
+            }}
+            badge={{
+              label: isNetPositive ? 'Healthy' : 'Deficit',
+              variant: isNetPositive ? 'success' : 'warning',
+            }}
+          />
 
-          {/* Total Expenses vs Budget Card */}
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60 font-semibold">Total Expenses</CardDescription>
-              <CardTitle className="text-3xl text-navy">
-                ${financialSummary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Progress value={expensePercentage} className="h-2" />
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-navy/70">{expensePercentage.toFixed(1)}% of budget</span>
-                  <span className="text-navy/70 font-medium">
-                    ${financialSummary.budgetedExpensesTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} budgeted
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <KpiCard
+            title="Budget Burn"
+            value={`$${financialSummary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            subtitle={`of $${financialSummary.budgetedExpensesTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} budgeted`}
+            icon={PiggyBank}
+            trend={{
+              value: `${expensePercentage.toFixed(1)}% used`,
+            }}
+            badge={{
+              label:
+                expensePercentage >= 90
+                  ? 'High'
+                  : expensePercentage >= 75
+                  ? 'Moderate'
+                  : 'On Track',
+              variant: budgetBurnStatus,
+            }}
+          />
 
-          {/* Net Position Card */}
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60 font-semibold">Net Position</CardDescription>
-              <CardTitle className={`text-3xl ${isNetPositive ? 'text-green-600' : 'text-red-600'}`}>
-                {isNetPositive ? '+' : ''}${financialSummary.netPosition.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-1 text-sm">
-                {isNetPositive ? (
-                  <>
-                    <TrendingUp className="w-4 h-4 text-green-600" />
-                    <span className="text-navy/70">Positive cash position</span>
-                  </>
-                ) : (
-                  <>
-                    <TrendingDown className="w-4 h-4 text-red-600" />
-                    <span className="text-navy/70">Deficit position</span>
-                  </>
-                )}
-              </div>
-              <p className="text-xs text-navy/50 mt-1">Income minus expenses for this season</p>
-            </CardContent>
-          </Card>
+          <KpiCard
+            title="Pending Approvals"
+            value={pendingApprovalsCount}
+            subtitle={pendingApprovalsCount === 1 ? 'transaction' : 'transactions'}
+            icon={Clock}
+            trend={
+              pendingApprovalsCount > 0
+                ? {
+                    value: 'Requires review',
+                  }
+                : undefined
+            }
+            badge={
+              pendingApprovalsCount > 0
+                ? {
+                    label: 'Action Needed',
+                    variant: 'warning',
+                  }
+                : undefined
+            }
+          />
+
+          <KpiCard
+            title="Compliance"
+            value={`${complianceScore}/100`}
+            subtitle="Association rules"
+            icon={ShieldCheck}
+            trend={{
+              value:
+                complianceStatus === 'COMPLIANT'
+                  ? 'Fully compliant'
+                  : complianceStatus === 'AT_RISK'
+                  ? 'At risk'
+                  : 'Non-compliant',
+              isPositive: complianceStatus === 'COMPLIANT',
+            }}
+            badge={{
+              label:
+                complianceStatus === 'COMPLIANT'
+                  ? 'Compliant'
+                  : complianceStatus === 'AT_RISK'
+                  ? 'At Risk'
+                  : 'Non-Compliant',
+              variant: complianceBadgeVariant,
+            }}
+          />
         </div>
 
-        {/* Pending Approvals & Compliance - Side by Side */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Pending Approvals */}
-          <Card className="border-0 shadow-card">
-            <CardHeader className="pb-2">
-              <CardDescription className="text-navy/60 font-semibold">Pending Approvals</CardDescription>
-              <CardTitle className="text-3xl text-golden">{pendingApprovalsCount}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-1 text-sm">
-                <Clock className="w-4 h-4 text-golden" />
-                <span className="text-navy/70">Awaiting review</span>
-              </div>
-              {pendingApprovalsCount > 0 && (
-                <Button asChild className="mt-4 w-full bg-golden hover:bg-golden/90 text-navy">
-                  <Link href="/approvals">
-                    Review Approvals
-                    <ArrowUpRight className="ml-2 w-4 h-4" />
-                  </Link>
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+        {/* Middle Grid - Budget Performance + Quick Actions/Approvals */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+          {/* Budget Performance - 8 cols on desktop */}
+          <div className="lg:col-span-8">
+            <BudgetCategoryList categories={budgetCategories} />
+          </div>
 
-          {/* Compliance Widget */}
-          <ComplianceWidget teamId={user.teamId} />
-        </div>
+          {/* Right Column - Quick Actions + Approvals/Compliance - 4 cols on desktop */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Quick Actions */}
+            <QuickActionsCard isTreasurer={isTreasurer} />
 
-        {/* Budget Overview Link */}
-        <Card className="border-0 shadow-card mb-8">
-          <CardHeader>
-            <CardTitle className="text-navy">Budget Management</CardTitle>
-            <CardDescription>Track category-level spending vs budget</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="w-full bg-navy hover:bg-navy-medium text-white">
-              <Link href="/budget">
-                View Full Budget Breakdown
-                <ArrowUpRight className="ml-2 w-4 h-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card className="border-0 shadow-card">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="text-navy">Recent Transactions</CardTitle>
-                <CardDescription>Your team's latest financial activity</CardDescription>
-              </div>
-              <Button asChild variant="outline" className="border-navy/20 text-navy hover:bg-navy/5">
-                <Link href="/transactions">View All</Link>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {financialSummary.totalIncome === 0 && financialSummary.totalExpenses === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-navy/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="w-8 h-8 text-navy/40" />
-                </div>
-                <h3 className="text-lg font-semibold text-navy mb-2">No transactions yet</h3>
-                <p className="text-navy/60 mb-6 max-w-sm mx-auto">
-                  {isTreasurer
-                    ? 'Create your first expense or income to get started tracking your team\'s finances'
-                    : 'No financial activity to display yet'}
-                </p>
-                {isTreasurer && (
-                  <div className="flex gap-3 justify-center">
-                    <Button asChild className="bg-meadow hover:bg-meadow/90 text-white">
-                      <Link href="/expenses/new">
-                        <Plus className="mr-2 w-4 h-4" />
-                        Add Expense
-                      </Link>
-                    </Button>
-                    <Button asChild className="bg-golden hover:bg-golden/90 text-navy">
-                      <Link href="/income/new">
-                        <Plus className="mr-2 w-4 h-4" />
-                        Add Income
-                      </Link>
-                    </Button>
+            {/* Pending Approvals Card (if any) */}
+            {pendingApprovalsCount > 0 && (
+              <Card className="border-0 shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    Approvals Needed
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-2xl font-bold text-golden">{pendingApprovalsCount}</p>
+                    <p className="text-sm text-navy/60">
+                      {pendingApprovalsCount === 1 ? 'transaction' : 'transactions'} awaiting
+                      review
+                    </p>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-sm text-navy/70">
-                  You have {financialSummary.expensesByCategory.length} expense categories and{' '}
-                  {financialSummary.incomeByCategory.length} income categories with activity.
-                </p>
-                <Button asChild className="w-full bg-navy hover:bg-navy-medium text-white">
-                  <Link href="/transactions">
-                    View All Transactions
-                    <ArrowUpRight className="ml-2 w-4 h-4" />
-                  </Link>
-                </Button>
-              </div>
+                  <Button
+                    asChild
+                    className="w-full bg-golden hover:bg-golden/90 text-navy font-semibold"
+                  >
+                    <Link href="/approvals">
+                      Review Approvals
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
             )}
-          </CardContent>
-        </Card>
+
+            {/* Compliance Quick Card */}
+            {complianceStatus !== 'COMPLIANT' && (
+              <Card className="border-0 shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4" />
+                    Compliance Alert
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-navy/70">Status</span>
+                    <Badge variant={complianceBadgeVariant}>
+                      {complianceStatus === 'AT_RISK' ? 'At Risk' : 'Non-Compliant'}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-navy/60">
+                    {complianceResult.violations?.length || 0} active{' '}
+                    {(complianceResult.violations?.length || 0) === 1 ? 'violation' : 'violations'}
+                  </p>
+                  <Button asChild variant="outline" className="w-full border-navy/20" size="sm">
+                    <Link href="/compliance">
+                      View Details
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Transactions - Full Width */}
+        <TransactionsPreviewTable
+          transactions={formattedTransactions}
+          isTreasurer={isTreasurer}
+        />
       </main>
     </div>
   )

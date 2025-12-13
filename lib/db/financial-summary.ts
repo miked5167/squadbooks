@@ -52,8 +52,8 @@ export async function getFinancialSummary(
       },
       select: {
         amount: true,
-        categoryId: true,
-        category: {
+        systemCategoryId: true,
+        systemCategory: {
           select: {
             id: true,
             name: true,
@@ -71,8 +71,8 @@ export async function getFinancialSummary(
       },
       select: {
         amount: true,
-        categoryId: true,
-        category: {
+        systemCategoryId: true,
+        systemCategory: {
           select: {
             id: true,
             name: true,
@@ -116,12 +116,13 @@ export async function getFinancialSummary(
   // Group income by category
   const incomeMap = new Map<string, { name: string; amount: number }>()
   incomeTransactions.forEach((transaction) => {
-    const existing = incomeMap.get(transaction.categoryId)
+    if (!transaction.systemCategoryId || !transaction.systemCategory) return
+    const existing = incomeMap.get(transaction.systemCategoryId)
     if (existing) {
       existing.amount += Number(transaction.amount)
     } else {
-      incomeMap.set(transaction.categoryId, {
-        name: transaction.category.name,
+      incomeMap.set(transaction.systemCategoryId, {
+        name: transaction.systemCategory.name,
         amount: Number(transaction.amount),
       })
     }
@@ -136,12 +137,13 @@ export async function getFinancialSummary(
   // Group expenses by category
   const expenseMap = new Map<string, { name: string; amount: number }>()
   expenseTransactions.forEach((transaction) => {
-    const existing = expenseMap.get(transaction.categoryId)
+    if (!transaction.systemCategoryId || !transaction.systemCategory) return
+    const existing = expenseMap.get(transaction.systemCategoryId)
     if (existing) {
       existing.amount += Number(transaction.amount)
     } else {
-      expenseMap.set(transaction.categoryId, {
-        name: transaction.category.name,
+      expenseMap.set(transaction.systemCategoryId, {
+        name: transaction.systemCategory.name,
         amount: Number(transaction.amount),
       })
     }

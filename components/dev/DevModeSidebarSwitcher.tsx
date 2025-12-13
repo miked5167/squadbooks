@@ -39,7 +39,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // U13 AA Storm
   {
-    id: 'cmig8gd1o0000tg4om4ddrqta-treasurer',
+    id: 'cminhmzhi000gtgpcgvw5ogk9-treasurer',
     name: 'U13 AA Storm',
     userId: 'demo_2025_2026_000002',
     userName: 'U13 AA Storm Treasurer',
@@ -47,7 +47,7 @@ const DEMO_USERS: DemoUser[] = [
     role: 'Treasurer',
   },
   {
-    id: 'cmig8gd1o0000tg4om4ddrqta-assistant',
+    id: 'cminhmzhi000gtgpcgvw5ogk9-assistant',
     name: 'U13 AA Storm',
     userId: 'demo_2025_2026_000003',
     userName: 'U13 AA Storm Asst Treasurer',
@@ -55,7 +55,7 @@ const DEMO_USERS: DemoUser[] = [
     role: 'Assistant Treasurer',
   },
   {
-    id: 'cmig8gd1o0000tg4om4ddrqta-parent',
+    id: 'cminhmzhi000gtgpcgvw5ogk9-parent',
     name: 'U13 AA Storm',
     userId: 'demo_2025_2026_000006',
     userName: 'U13 AA Storm Parent',
@@ -64,7 +64,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // U15 A Thunder
   {
-    id: 'cmig8ilgv00gntg4oky4n5lfu-treasurer',
+    id: 'cminhpyqi00mttgpco9bi7upp-treasurer',
     name: 'U15 A Thunder',
     userId: 'demo_2025_2026_000042',
     userName: 'U15 A Thunder Treasurer',
@@ -72,7 +72,7 @@ const DEMO_USERS: DemoUser[] = [
     role: 'Treasurer',
   },
   {
-    id: 'cmig8ilgv00gntg4oky4n5lfu-assistant',
+    id: 'cminhpyqi00mttgpco9bi7upp-assistant',
     name: 'U15 A Thunder',
     userId: 'demo_2025_2026_000043',
     userName: 'U15 A Thunder Asst Treasurer',
@@ -80,7 +80,7 @@ const DEMO_USERS: DemoUser[] = [
     role: 'Assistant Treasurer',
   },
   {
-    id: 'cmig8ilgv00gntg4oky4n5lfu-parent',
+    id: 'cminhpyqi00mttgpco9bi7upp-parent',
     name: 'U15 A Thunder',
     userId: 'demo_2025_2026_000046',
     userName: 'U15 A Thunder Parent',
@@ -89,7 +89,7 @@ const DEMO_USERS: DemoUser[] = [
   },
   // U11 AAA Lightning
   {
-    id: 'cmig8kspb00wytg4oz4mz59f4-treasurer',
+    id: 'cminhsu9d0188tgpc5wngdamd-treasurer',
     name: 'U11 AAA Lightning',
     userId: 'demo_2025_2026_000078',
     userName: 'U11 AAA Lightning Treasurer',
@@ -97,7 +97,7 @@ const DEMO_USERS: DemoUser[] = [
     role: 'Treasurer',
   },
   {
-    id: 'cmig8kspb00wytg4oz4mz59f4-assistant',
+    id: 'cminhsu9d0188tgpc5wngdamd-assistant',
     name: 'U11 AAA Lightning',
     userId: 'demo_2025_2026_000079',
     userName: 'U11 AAA Lightning Asst Treasurer',
@@ -105,7 +105,7 @@ const DEMO_USERS: DemoUser[] = [
     role: 'Assistant Treasurer',
   },
   {
-    id: 'cmig8kspb00wytg4oz4mz59f4-parent',
+    id: 'cminhsu9d0188tgpc5wngdamd-parent',
     name: 'U11 AAA Lightning',
     userId: 'demo_2025_2026_000082',
     userName: 'U11 AAA Lightning Parent',
@@ -259,6 +259,63 @@ export function DevModeSidebarSwitcher() {
     }
   }
 
+  const resetAssociation = async () => {
+    if (!confirm('This will delete the association and all its data. You can then go through onboarding again. Continue?')) return
+    setLoading('reset-association')
+    try {
+      let associationId = currentUser.associationId || '2a98f680-97df-4215-8209-12806863c5ea'
+      if (!isValidUUID(associationId)) {
+        associationId = '2a98f680-97df-4215-8209-12806863c5ea'
+        toast.info('Using default association')
+      }
+      const response = await fetch(`/api/dev/reset-association?associationId=${associationId}`, {
+        method: 'DELETE',
+      })
+      const data = await response.json()
+      if (response.ok) {
+        toast.success(data.message || 'Association reset successfully')
+        setTimeout(() => {
+          window.location.href = '/association/onboarding'
+        }, 1000)
+      } else {
+        toast.error(data.error || 'Failed to reset association')
+      }
+    } catch (error) {
+      toast.error('An error occurred')
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  const resetTeamOnboarding = async () => {
+    // Don't allow resetting if viewing as association admin
+    if (currentUser.isAssociation) {
+      toast.error('Please switch to a team user first')
+      return
+    }
+    if (!confirm('This will delete the team and all its data. You can then go through team onboarding again. Continue?')) return
+    setLoading('reset-team-onboarding')
+    try {
+      const teamId = currentUser.id.split('-')[0]
+      const response = await fetch(`/api/dev/reset-team-onboarding?teamId=${teamId}`, {
+        method: 'DELETE',
+      })
+      const data = await response.json()
+      if (response.ok) {
+        toast.success(data.message || 'Team reset successfully')
+        setTimeout(() => {
+          window.location.href = '/onboarding'
+        }, 1000)
+      } else {
+        toast.error(data.error || 'Failed to reset team')
+      }
+    } catch (error) {
+      toast.error('An error occurred')
+    } finally {
+      setLoading(null)
+    }
+  }
+
   if (!isDevMode) return null
 
   return (
@@ -351,6 +408,36 @@ export function DevModeSidebarSwitcher() {
                     <Trash2 className="h-3 w-3 text-orange-400" />
                   )}
                   <span className="text-xs text-slate-200">Reset Rules</span>
+                </div>
+              </button>
+
+              <button
+                onClick={resetAssociation}
+                disabled={loading === 'reset-association'}
+                className="w-full px-2 py-2 rounded bg-red-500/10 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  {loading === 'reset-association' ? (
+                    <Loader2 className="h-3 w-3 animate-spin text-red-400" />
+                  ) : (
+                    <Building2 className="h-3 w-3 text-red-400" />
+                  )}
+                  <span className="text-xs text-slate-200">Reset Association</span>
+                </div>
+              </button>
+
+              <button
+                onClick={resetTeamOnboarding}
+                disabled={loading === 'reset-team-onboarding'}
+                className="w-full px-2 py-2 rounded bg-yellow-500/10 hover:bg-yellow-500/20 disabled:opacity-50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  {loading === 'reset-team-onboarding' ? (
+                    <Loader2 className="h-3 w-3 animate-spin text-yellow-400" />
+                  ) : (
+                    <Users className="h-3 w-3 text-yellow-400" />
+                  )}
+                  <span className="text-xs text-slate-200">Reset Team Onboarding</span>
                 </div>
               </button>
 

@@ -4,6 +4,9 @@ import { CreateTransactionSchema, TransactionFilterSchema } from '@/lib/validati
 import { createTransaction, getTransactions } from '@/lib/db/transactions'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
+import { areTransactionsAllowed } from '@/lib/services/team-season-lifecycle'
+import { autoActivateOnFirstTransaction } from '@/lib/services/team-season-auto-transitions'
+import { createTeamSeasonWithSnapshot } from '@/lib/services/team-policy-snapshot'
 
 /**
  * GET /api/transactions
@@ -103,8 +106,95 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid category' }, { status: 400 })
     }
 
+    // Get team and current season
+    const team = await prisma.team.findUnique({
+      where: { id: user.teamId },
+      select: {
+        id: true,
+        season: true,
+        seasonStartDate: true,
+        seasonEndDate: true,
+        associationTeam: {
+          select: {
+            associationId: true,
+          },
+        },
+      },
+    })
+
+    if (!team) {
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 })
+    }
+
+    // Check lifecycle state - only allow transactions in LOCKED, ACTIVE, or CLOSEOUT states
+    if (team.season && team.associationTeam?.associationId) {
+      // Get or create team season
+      let teamSeason = await prisma.teamSeason.findUnique({
+        where: {
+          teamId_seasonLabel: {
+            teamId: user.teamId,
+            seasonLabel: team.season,
+          },
+        },
+      })
+
+      // Create team season if it doesn't exist
+      if (!teamSeason && team.seasonStartDate && team.seasonEndDate) {
+        const teamSeasonId = await createTeamSeasonWithSnapshot(
+          user.teamId,
+          team.associationTeam.associationId,
+          team.season,
+          team.seasonStartDate,
+          team.seasonEndDate
+        )
+
+        teamSeason = await prisma.teamSeason.findUnique({
+          where: { id: teamSeasonId },
+        })
+      }
+
+      // Check if transactions are allowed in current state
+      if (teamSeason && !areTransactionsAllowed(teamSeason.state)) {
+        const stateMessages: Record<string, string> = {
+          SETUP: 'Team season is in setup. Complete team setup before creating transactions.',
+          BUDGET_DRAFT: 'Budget is still in draft. Submit budget for review before creating transactions.',
+          BUDGET_REVIEW: 'Budget is under review. Wait for budget approval before creating transactions.',
+          TEAM_APPROVED: 'Budget is approved but not yet presented to parents. Present budget to parents before creating transactions.',
+          PRESENTED: 'Waiting for parent approvals. Transactions will be allowed once budget is locked.',
+          ARCHIVED: 'Season is archived. Transactions cannot be created for archived seasons.',
+        }
+
+        const message =
+          stateMessages[teamSeason.state] ||
+          `Transactions are not allowed in current season state: ${teamSeason.state}`
+
+        return NextResponse.json(
+          {
+            error: 'Transaction not allowed',
+            message,
+            currentState: teamSeason.state,
+          },
+          { status: 403 }
+        )
+      }
+    }
+
     // Create transaction
     const result = await createTransaction(validatedData, user.teamId, user.id)
+
+    // Auto-activate season on first transaction (LOCKED → ACTIVE)
+    if (team.season && team.associationTeam?.associationId) {
+      try {
+        await autoActivateOnFirstTransaction(user.teamId, team.season)
+      } catch (error) {
+        // Log error but don't fail transaction creation
+        logger.warn('Failed to auto-activate season on first transaction', {
+          teamId: user.teamId,
+          season: team.season,
+          error: error instanceof Error ? error.message : String(error),
+        })
+      }
+    }
 
     return NextResponse.json(
       {

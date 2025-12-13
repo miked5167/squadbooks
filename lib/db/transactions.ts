@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { TransactionType, TransactionStatus, Prisma } from '@prisma/client'
 import type { CreateTransactionInput, UpdateTransactionInput, TransactionFilter } from '@/lib/validations/transaction'
+import { logger } from '@/lib/logger'
 
 /**
  * Business Logic: Determine if a transaction requires approval
@@ -33,16 +34,33 @@ export async function createTransaction(
 ) {
   const { type, amount, categoryId, vendor, description, transactionDate, receiptUrl } = data
 
-  // Determine initial status based on approval requirements
-  const needsApproval = await requiresApproval(type as TransactionType, amount, teamId)
-  const status: TransactionStatus = needsApproval ? 'PENDING' : 'APPROVED'
+  // Get team's approval threshold
+  const teamSettings = await prisma.teamSettings.findUnique({
+    where: { teamId },
+    select: { dualApprovalThreshold: true },
+  })
+  const approvalThreshold = Number(teamSettings?.dualApprovalThreshold || 200)
 
-  // Create transaction
+  // Use envelope routing logic to determine status and approval requirements
+  const { routeTransaction } = await import('@/lib/services/envelope-matcher')
+  const routingDecision = await routeTransaction(
+    {
+      amount,
+      categoryId,
+      vendor,
+      transactionDate: new Date(transactionDate),
+      teamId,
+      type: type as "INCOME" | "EXPENSE",
+    },
+    approvalThreshold
+  )
+
+  // Create transaction with routing decision
   const transaction = await prisma.transaction.create({
     data: {
       teamId,
       type: type as TransactionType,
-      status,
+      status: routingDecision.status,
       amount,
       categoryId,
       vendor,
@@ -50,6 +68,8 @@ export async function createTransaction(
       transactionDate: new Date(transactionDate),
       receiptUrl,
       createdBy: userId,
+      envelopeId: routingDecision.envelopeId,
+      approvalReason: routingDecision.approvalReason,
     },
     include: {
       category: true,
@@ -65,7 +85,7 @@ export async function createTransaction(
   })
 
   // If approval required, create approval record and send email
-  if (needsApproval) {
+  if (routingDecision.requiresApprovalRecords) {
     // CRITICAL: Determine appropriate approver based on creator's role
     // If creator is assistant treasurer, assign to treasurer and vice versa
     const creatorRole = transaction.creator.role
@@ -152,7 +172,7 @@ export async function createTransaction(
 
   return {
     transaction,
-    approvalRequired: needsApproval,
+    approvalRequired: routingDecision.requiresApprovalRecords,
   }
 }
 

@@ -27,7 +27,7 @@ export function ExcelUpload({ existingFamilies, onImport, onCancel }: ExcelUploa
   const [parsed, setParsed] = useState(false);
   const [validFamilies, setValidFamilies] = useState<Family[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
-  const [validationErrors, setValidationErrors] = useState<any[]>([]);
+  const [validationErrors, setValidationErrors] = useState<Array<{ rowNumber: number; errors: string[] }>>([]);
   const [hasDuplicates, setHasDuplicates] = useState(false);
   const [duplicateEmails, setDuplicateEmails] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +61,7 @@ export function ExcelUpload({ existingFamilies, onImport, onCancel }: ExcelUploa
 
       // Show warnings but continue
       if (warnings.length > 0) {
-        console.log('Excel parse warnings:', warnings);
+        // Warnings logged but processing continues
       }
 
       // Get existing emails to check for duplicates
@@ -133,7 +133,7 @@ export function ExcelUpload({ existingFamilies, onImport, onCancel }: ExcelUploa
 
   return (
     <Dialog open onOpenChange={() => onCancel()} modal>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col z-50 bg-white">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col z-[9999] bg-white">
         <DialogHeader>
           <DialogTitle>Import Team Roster from Excel</DialogTitle>
           <DialogDescription>

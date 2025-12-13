@@ -1,5 +1,6 @@
 /**
  * Budget type definitions for TeamTreasure dashboard components
+ * Updated for 2-layer category model (DisplayCategory + SystemCategory)
  */
 
 export interface BudgetCategory {
@@ -18,7 +19,8 @@ export interface BudgetCategory {
 
 export interface BudgetSummary {
   totalBudget: number // in cents
-  totalSpent: number // in cents
+  totalSpent: number // in cents (EXPENSE only)
+  totalIncome: number // in cents (INCOME only)
   totalRemaining: number // in cents
   percentUsed: number
   categoriesOnTrack: number
@@ -29,11 +31,21 @@ export interface BudgetSummary {
   lastUpdated: Date
 }
 
+// Display category group for budget allocation visualization
 export interface BudgetHeadingGroup {
-  heading: string
+  heading: string // Display category name (e.g., "Ice & Facilities")
   color: string
-  allocated: number // in cents
-  spent: number // in cents
+  allocated: number // in cents (EXPENSE only)
+  spent: number // in cents (EXPENSE only)
+  percentOfTotal: number
+}
+
+// Funding source for income visualization
+export interface FundingSource {
+  systemCategoryId: string
+  name: string // System category name (e.g., "Player/Team Fees")
+  budgeted: number // in cents
+  received: number // in cents
   percentOfTotal: number
 }
 

@@ -14,7 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ArrowDownCircle, ArrowUpCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { categorizeTransactions, getCategorizationStats } from '@/lib/services/transaction-categorizer';
+import { categorizeTransactions } from '@/lib/services/transaction-categorizer';
 import type { PlaidTransaction, CategorySuggestion, BankAccount } from '@/lib/types/banking';
 import { formatCurrency } from '@/lib/utils/formatters';
 
@@ -51,6 +51,7 @@ export function TransactionImportModal({
     if (isOpen && accessToken) {
       fetchTransactions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, accessToken]);
 
   const fetchTransactions = async () => {
@@ -60,9 +61,9 @@ export function TransactionImportModal({
       const endDate = new Date().toISOString().split('T')[0]; // Today
       const startDate = lastSyncedAt
         ? new Date(lastSyncedAt).toISOString().split('T')[0]
-        : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 7 days ago
+        : new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 90 days ago for initial import
 
-      console.log(`📅 Fetching transactions from ${startDate} to ${endDate}`);
+      // Fetching transactions for date range
 
       const response = await fetch('/api/plaid/transactions', {
         method: 'POST',
@@ -95,7 +96,7 @@ export function TransactionImportModal({
         );
         setSelectedIds(autoSelected);
 
-        console.log('📊 Transaction Import Stats:', getCategorizationStats(txs, categorized));
+        // Transaction categorization complete
       } else if (data.note) {
         // Transactions not ready yet
         toast({
@@ -255,7 +256,7 @@ export function TransactionImportModal({
             )}
             {!lastSyncedAt && (
               <span className="block mt-1 text-xs">
-                Initial import - fetching last 7 days of transactions
+                Initial import - fetching last 90 days of transactions
               </span>
             )}
           </DialogDescription>

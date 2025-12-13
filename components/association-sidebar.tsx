@@ -17,6 +17,8 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { DevModeSidebarSwitcher } from '@/components/dev/DevModeSidebarSwitcher'
+import { UserButton } from '@clerk/nextjs'
 
 const DEV_MODE = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
 
@@ -216,6 +218,9 @@ export function AssociationSidebar({ associationId }: AssociationSidebarProps) {
         </div>
       </nav>
 
+      {/* Dev Mode Switcher */}
+      <DevModeSidebarSwitcher />
+
       {/* User Profile Section */}
       <div className="p-4 border-t border-white/10">
         <div className="flex items-center gap-3">
@@ -228,19 +233,14 @@ export function AssociationSidebar({ associationId }: AssociationSidebarProps) {
                 </div>
               ) : (
                 // Production: Show Clerk UserButton
-                (() => {
-                  const { UserButton } = require('@clerk/nextjs')
-                  return (
-                    <UserButton
-                      afterSignOutUrl="/"
-                      appearance={{
-                        elements: {
-                          avatarBox: 'w-10 h-10',
-                        },
-                      }}
-                    />
-                  )
-                })()
+                <UserButton
+                  afterSignOutUrl="/"
+                  appearance={{
+                    elements: {
+                      avatarBox: 'w-10 h-10',
+                    },
+                  }}
+                />
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-white truncate">
