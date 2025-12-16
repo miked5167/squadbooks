@@ -17,12 +17,12 @@ import { BudgetStatusBadge } from '@/components/budget/BudgetStatusBadge'
 import { VersionBadge } from '@/components/budget/VersionBadge'
 import { BudgetAllocationsTable } from '@/components/budget/BudgetAllocationsTable'
 import { CoachReviewActions } from '@/components/budget/CoachReviewActions'
-import { BudgetStatus, Role } from '@prisma/client'
+import { BudgetStatus, UserRole } from '@prisma/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertCircle } from 'lucide-react'
 
 // Roles that can review budgets
-const COACH_ROLES = [Role.PRESIDENT, Role.BOARD_MEMBER]
+const COACH_ROLES = [UserRole.PRESIDENT, UserRole.BOARD_MEMBER]
 
 export default async function CoachBudgetReviewPage({
   params,
@@ -65,7 +65,7 @@ export default async function CoachBudgetReviewPage({
         <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-navy mb-2">Budget Not Found</h2>
-            <p className="text-navy/60 mb-6">The budget you're looking for doesn't exist.</p>
+            <p className="text-navy/60 mb-6">The budget you&apos;re looking for doesn&apos;t exist.</p>
             <Button asChild>
               <Link href="/budget">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -171,13 +171,13 @@ export default async function CoachBudgetReviewPage({
               <div className="space-y-2 text-sm text-blue-800">
                 <p><strong>If you approve:</strong></p>
                 <ul className="list-disc list-inside ml-4 space-y-1">
-                  <li>Budget will move to "Team Approved" status</li>
+                  <li>Budget will move to &quot;Team Approved&quot; status</li>
                   <li>Treasurer can then present it to parents</li>
                   <li>You can optionally add notes about your approval</li>
                 </ul>
                 <p className="mt-3"><strong>If you request changes:</strong></p>
                 <ul className="list-disc list-inside ml-4 space-y-1">
-                  <li>Budget will return to "Draft" status</li>
+                  <li>Budget will return to &quot;Draft&quot; status</li>
                   <li>Treasurer will be notified of your requested changes</li>
                   <li>You must provide notes explaining what needs to change</li>
                 </ul>

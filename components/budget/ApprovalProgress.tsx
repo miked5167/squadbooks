@@ -5,7 +5,8 @@
  */
 
 import { Progress } from '@/components/ui/progress'
-import { ApprovalProgress as ApprovalProgressType, ThresholdMode } from '@/lib/types/budget-workflow'
+import type { ApprovalProgress as ApprovalProgressType} from '@/lib/types/budget-workflow';
+import { ThresholdMode } from '@/lib/types/budget-workflow'
 import { CheckCircle2, Users, TrendingUp } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import { RuleType, RuleFormData, ruleSchema } from "@/lib/validations/rule-schemas"
+import type { RuleType} from "@/lib/validations/rule-schemas";
+import { RuleFormData, ruleSchema } from "@/lib/validations/rule-schemas"
 import { createRule, updateRule } from "../actions"
 import {
   Dialog,

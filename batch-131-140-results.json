@@ -1,0 +1,114 @@
+[
+  {
+    "association": "Gananoque Islanders",
+    "location": "Gananoque, ON",
+    "website": "https://ganminorhockey.com",
+    "success": true,
+    "url": "https://ganminorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHAD HAFFIE",
+      "email": "president@ganminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MICHELLE BROWN",
+      "email": "Treasurer@ganminorhockey.com"
+    }
+  },
+  {
+    "association": "Gananoque Royals",
+    "location": "Gananoque, ON",
+    "website": "https://ganroyals.ca",
+    "success": true,
+    "url": "https://ganroyals.ca/Staff/1003/",
+    "totalContacts": 10,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "SAMANTHA KELLY",
+      "email": "president@ganroyals.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TOM LINDSAY",
+      "email": "vicepresident@ganroyals.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "LINN SIGUR",
+      "email": "treasurer@ganroyals.ca"
+    }
+  },
+  {
+    "association": "George Bell Titans",
+    "location": "Toronto, ON",
+    "website": "https://www.gbha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Georgian Bay Islanders",
+    "location": "Midland, ON",
+    "website": "https://georgianbayminorhockey.ca",
+    "success": true,
+    "url": "https://georgianbayminorhockey.ca/Staff/1003/",
+    "totalContacts": 28,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DUANE HOMICK",
+      "email": "president@georgianbayminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DAVE CURRIE",
+      "email": "vicepresident@georgianbayminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DOUG BECKETT",
+      "email": "treasurer@georgianbayminorhockey.ca"
+    }
+  },
+  {
+    "association": "Georgian Shores Lightning",
+    "location": "Meaford, ON",
+    "website": "https://georgianshoreshockey.ca",
+    "success": true,
+    "url": "https://georgianshoreshockey.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK CRONIN",
+      "email": "president@gsmha.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JASON BOUWMAN",
+      "email": "vicepresident@gsmha.net"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "SARAH CLARKE",
+      "email": "treasurer@gsmha.net"
+    }
+  },
+  {
+    "association": "Georgina Golden Hawks",
+    "location": "Keswick, ON",
+    "website": "https://georginagirlshockey.com",
+    "success": true,
+    "url": "https://georginagirlshockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ANDREA FILBY",
+      "email": "afilby@rogers.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MICHELLE MOFFATT",
+      "email": "georginahawkstreasurer@gmail.com"
+    }
+  }
+]

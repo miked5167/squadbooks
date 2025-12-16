@@ -1,0 +1,140 @@
+[
+  {
+    "association": "Georgian Bay Islanders",
+    "location": "Midland, ON",
+    "website": "https://georgianbayminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://georgianbayminorhockey.ca/Staff/1003/",
+    "totalContacts": 28,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DUANE HOMICK",
+      "email": "president@georgianbayminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DAVE CURRIE",
+      "email": "vicepresident@georgianbayminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DOUG BECKETT",
+      "email": "treasurer@georgianbayminorhockey.ca"
+    }
+  },
+  {
+    "association": "Georgian Shores Lightning",
+    "location": "Meaford, ON",
+    "website": "https://georgianshoreshockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://georgianshoreshockey.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK CRONIN",
+      "email": "president@gsmha.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JASON BOUWMAN",
+      "email": "vicepresident@gsmha.net"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "SARAH CLARKE",
+      "email": "treasurer@gsmha.net"
+    }
+  },
+  {
+    "association": "Gloucester Dragons",
+    "location": "Gloucester, ON",
+    "website": "https://gloucesterminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Goulbourn Stingers",
+    "location": "Stittsville, ON",
+    "website": "https://goulbournhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Grey Highlands Hawks",
+    "location": "Flesherton, ON",
+    "website": "https://greyhighlandsminorhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Grimsby Peach Kings",
+    "location": "Grimsby, ON",
+    "website": "https://grimsbyminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Guelph Gryphons",
+    "location": "Guelph, ON",
+    "website": "https://guelphminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": true,
+    "url": "https://guelphminorhockey.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JAMIE BAGGIO",
+      "email": "president@guelphminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT",
+      "name": "CHRIS STE. CROIX",
+      "email": "vicepresident@guelphminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ERIN APPLEBY",
+      "email": "treasurer@guelphminorhockey.com"
+    }
+  },
+  {
+    "association": "Haldimand County Huskies",
+    "location": "Haldimand County, ON",
+    "website": "https://haldimandminorhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Haliburton County Huskies",
+    "location": "Haliburton, ON",
+    "website": "https://haliburtonhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Hamilton Huskies",
+    "location": "Hamilton, ON",
+    "website": "https://hamiltonminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  }
+]

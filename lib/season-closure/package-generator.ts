@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { SeasonPackage, SeasonSummary } from './types';
+import type { SeasonPackage, SeasonSummary } from './types';
 import {
   generateFinalBudgetPDF,
   generateTransactionHistoryPDF,

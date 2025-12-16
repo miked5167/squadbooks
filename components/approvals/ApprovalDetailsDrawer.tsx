@@ -26,7 +26,7 @@ import {
   AlertTriangle,
   Upload,
 } from 'lucide-react'
-import { PendingApprovalWithRisk } from '@/lib/types/approvals'
+import type { PendingApprovalWithRisk } from '@/lib/types/approvals'
 import { getRiskBadgeClass } from '@/lib/utils/approval-risk'
 import { ReceiptViewer } from '@/components/ReceiptViewer'
 import { ReceiptUpload } from '@/components/ReceiptUpload'

@@ -157,7 +157,7 @@ export default function AcceptInvitationPage() {
               <div>
                 <CardTitle>Welcome to the team!</CardTitle>
                 <CardDescription className="mt-1">
-                  You've successfully joined {invitation?.team.name}
+                  You&apos;ve successfully joined {invitation?.team.name}
                 </CardDescription>
               </div>
             </div>
@@ -191,7 +191,7 @@ export default function AcceptInvitationPage() {
                 <Users className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <CardTitle>You're invited!</CardTitle>
+                <CardTitle>You&apos;re invited!</CardTitle>
                 <CardDescription className="mt-1">
                   Join {invitation.team.name}
                 </CardDescription>

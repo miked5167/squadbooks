@@ -12,7 +12,7 @@ import { getApprovalProgress } from '@/lib/budget-workflow/threshold'
 import { AppSidebar } from '@/components/app-sidebar'
 import { MobileHeader } from '@/components/MobileHeader'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Edit, DollarSign, TrendingDown, Wallet, ActivitySquare } from 'lucide-react'
+import { ArrowLeft, Edit, DollarSign, TrendingDown, Wallet, ActivitySquare, Users } from 'lucide-react'
 import Link from 'next/link'
 import { BudgetStatusBadge } from '@/components/budget/BudgetStatusBadge'
 import { VersionBadge } from '@/components/budget/VersionBadge'
@@ -72,7 +72,7 @@ export default async function TreasurerBudgetDetailPage({
         <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-navy mb-2">Budget Not Found</h2>
-            <p className="text-navy/60 mb-6">The budget you're looking for doesn't exist.</p>
+            <p className="text-navy/60 mb-6">The budget you&apos;re looking for doesn&apos;t exist.</p>
             <Button asChild>
               <Link href="/budget">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -359,7 +359,11 @@ export default async function TreasurerBudgetDetailPage({
                     <SubmitForReviewButton budgetId={budget.id} />
                   )}
                   {canPresentToParents && (
-                    <PresentToParentsButton budgetId={budget.id} />
+                    <PresentToParentsButton
+                      budgetId={budget.id}
+                      versionNumber={currentVersion.versionNumber}
+                      userId={user.id}
+                    />
                   )}
                   {canProposeUpdate && (
                     <ProposeUpdateButton
@@ -368,8 +372,14 @@ export default async function TreasurerBudgetDetailPage({
                     />
                   )}
                   {budget.status === BudgetStatus.PRESENTED && progress && (
-                    <div className="pt-2">
+                    <div className="pt-2 space-y-2">
                       <ApprovalProgress progress={progress} showCard={false} size="sm" />
+                      <Button asChild variant="outline" size="sm" className="w-full">
+                        <Link href="/budget/approvals">
+                          <Users className="mr-2 h-4 w-4" />
+                          View Parent Acknowledgments
+                        </Link>
+                      </Button>
                     </div>
                   )}
                 </div>

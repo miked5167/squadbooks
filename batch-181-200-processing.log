@@ -1,0 +1,199 @@
+================================================================================
+BATCH 181-200 EXTRACTION
+Using best practices: Playwright + 3s wait + card selectors
+================================================================================
+
+Processing 20 associations...
+
+
+================================================================================
+[1/20] Niagara Falls Rapids
+Location: Niagara Falls, ON | Girls Only
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[2/20] Niagara North Stars
+Location: St Catharines, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[3/20] Niagara-On-The-Lake Wolves
+Location: Niagara-on-the-Lake, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[4/20] Nickel City Cubs
+Location: Val Caron, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[5/20] Nipigon Elks
+Location: Nipigon, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[6/20] Norfolk Hericanes
+Location: Simcoe, ON | Girls Only
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[7/20] Norfolk Knights
+Location: Port Dover, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[8/20] North Bay Junior Lakers
+Location: North Bay, ON | Girls Only
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[9/20] North Bay Trappers
+Location: North Bay, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[10/20] North Bay Trappers AAA
+Location: North Bay, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[11/20] North Central Predators
+Location: Orillia, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[12/20] North Channel Lightning
+Location: Desbarats, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[13/20] North Dundas Demons
+Location: Winchester, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[14/20] North Durham Blades
+Location: Uxbridge, ON | Girls Only
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[15/20] North Durham Warriors
+Location: Uxbridge, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[16/20] North End Flames
+Location: Thunder Bay, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[17/20] North Halton Twisters
+Location: Georgetown, ON | Girls Only
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[18/20] North London Nationals
+Location: London, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[19/20] North Middlesex Jr Stars
+Location: Parkhill, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+================================================================================
+[20/20] North Shore Whitecaps
+Location: Bowmanville, ON
+================================================================================
+No website URL provided, searching Google...
+  ✗ No website found via Google search
+
+✗ FAILED: No website found
+
+
+================================================================================
+BATCH 181-200 SUMMARY
+================================================================================
+Total Processed: 20
+Successful: 0 (0.0%)
+Failed: 20
+
+✓ Results saved to:
+  - batch-181-200-results.csv
+  - batch-181-200-results.json

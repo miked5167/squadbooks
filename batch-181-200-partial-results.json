@@ -1,0 +1,353 @@
+[
+  {
+    "association": "Niagara Falls Rapids",
+    "location": "Niagara Falls, ON | Girls Only",
+    "actualName": "Niagara Falls Minor Hockey Association",
+    "website": "https://hockeyniagara.com",
+    "success": true,
+    "president": {
+      "name": "Gary Giajnorio",
+      "email": "nfmha1@gmail.com"
+    },
+    "vp": {
+      "name": "Jim Davidson",
+      "email": "vphockey@hockeyniagara.com"
+    },
+    "treasurer": {
+      "name": "Nancy Kuusela",
+      "email": "nancykuusela@outlook.com"
+    }
+  },
+  {
+    "association": "Niagara North Stars",
+    "location": "St Catharines, ON",
+    "website": "https://niagaranorthstars.ca",
+    "success": true,
+    "president": {
+      "name": "Paul Di Francesco",
+      "email": "pauldifran11@gmail.com"
+    },
+    "vp": {
+      "name": "Jim Craig",
+      "email": "vphockey@niagaranorthstars.ca"
+    },
+    "treasurer": {
+      "name": "Peter Partridge",
+      "email": "treasurer@niagaranorthstars.ca"
+    }
+  },
+  {
+    "association": "Niagara-On-The-Lake Wolves",
+    "location": "Niagara-on-the-Lake, ON",
+    "actualName": "NOTL Hockey",
+    "website": "https://notlhockey.com",
+    "success": true,
+    "president": {
+      "name": "Pete Flynn",
+      "email": "oflynner16@yahoo.com"
+    },
+    "vp": {
+      "name": "Gary Friesen",
+      "email": "gary@notlchiropractic.com"
+    },
+    "treasurer": {
+      "name": "Phil Leboudec",
+      "email": "pleboudec@cogeco.ca"
+    }
+  },
+  {
+    "association": "Nickel City Cubs",
+    "location": "Val Caron, ON",
+    "actualName": "Nickel City Hockey Association",
+    "website": "https://nickelcityhockey.ca",
+    "success": true,
+    "president": {
+      "name": "Valerie Villeneuve",
+      "email": "vvilleneuve24@gmail.com"
+    },
+    "vp": {
+      "name": "Justin Lemieux",
+      "role": "1st Vice President",
+      "email": "jlemieux17@gmail.com"
+    },
+    "treasurer": {
+      "name": "Elliott Richardson",
+      "email": "erichardson@remax.net"
+    }
+  },
+  {
+    "association": "Nipigon Elks",
+    "location": "Nipigon, ON",
+    "success": false,
+    "error": "No executive contact information found - only general OMHA contacts and Facebook post"
+  },
+  {
+    "association": "North Bay Trappers",
+    "location": "North Bay, ON",
+    "actualName": "North Bay Trappers AAA",
+    "website": "https://northbaytrappers.ca",
+    "success": true,
+    "president": {
+      "name": "Mark Lockhart",
+      "email": "nbaaatrappers@gmail.com"
+    },
+    "vp": {
+      "name": "Kris Anello",
+      "email": null
+    },
+    "treasurer": {
+      "name": "Mike Brideau",
+      "email": null
+    },
+    "notes": "VP and Treasurer names found but emails not publicly listed"
+  },
+  {
+    "association": "Norfolk Hericanes",
+    "location": "Simcoe, ON | Girls Only",
+    "actualName": "Norfolk Girls Hockey",
+    "website": "https://norfolkhericanes.com",
+    "success": true,
+    "president": {
+      "name": "Bernie Gillis",
+      "email": "bgillis17@live.com"
+    },
+    "vp": {
+      "name": "Tanya Mychajluk",
+      "email": "tanyastravel@icloud.com"
+    },
+    "treasurer": {
+      "name": "Brenda Colibaba",
+      "email": "treasurer@norfolkhericanes.com"
+    }
+  },
+  {
+    "association": "Norfolk Knights",
+    "location": "Port Dover, ON",
+    "actualName": "Norfolk Minor Hockey Association",
+    "website": "https://norfolkminorhockey.ca",
+    "success": true,
+    "president": {
+      "name": "Taylor Buck",
+      "email": "President@norfolkminorhockey.ca"
+    },
+    "vp": {
+      "name": "John Van Kessel",
+      "role": "1st Vice President",
+      "email": "1stVicePresident@norfolkminorhockey.ca"
+    },
+    "treasurer": {
+      "name": "Tyler Arps",
+      "email": "Treasurer@norfolkminorhockey.ca"
+    }
+  },
+  {
+    "association": "North Bay Junior Lakers",
+    "location": "North Bay, ON | Girls Only",
+    "actualName": "North Bay & District Girls Hockey Association",
+    "website": "https://nbgha.com",
+    "success": true,
+    "president": {
+      "name": "Kiara Jefferies",
+      "email": "vp@nbgha.com"
+    },
+    "vp": {
+      "name": "Melissa Mackey",
+      "email": "vicepresident@nbgha.com"
+    },
+    "treasurer": {
+      "name": "Kayla Restoule",
+      "email": "treasurer@nbgha.com"
+    }
+  },
+  {
+    "association": "North Bay Trappers AAA",
+    "location": "North Bay, ON",
+    "website": "https://northbaytrappers.ca",
+    "success": true,
+    "president": {
+      "name": "Mark Lockhart",
+      "email": "nbaaatrappers@gmail.com"
+    },
+    "vp": {
+      "name": "Kris Anello",
+      "email": null
+    },
+    "treasurer": {
+      "name": "Mike Brideau",
+      "email": null
+    },
+    "notes": "VP and Treasurer emails not publicly listed"
+  },
+  {
+    "association": "North Central Predators",
+    "location": "Orillia, ON",
+    "actualName": "North Central Predators AAA",
+    "website": "https://northcentralpredators.com",
+    "success": true,
+    "president": {
+      "name": "Roger Crandell",
+      "email": "president@northcentralpredators.com"
+    },
+    "vp": {
+      "name": "Rich Foshay",
+      "email": "vicepresident@northcentralpredators.com"
+    },
+    "treasurer": {
+      "name": "Brad Scott",
+      "email": "treasurer@northcentralpredators.com"
+    }
+  },
+  {
+    "association": "North Channel Lightning",
+    "location": "Desbarats, ON",
+    "success": false,
+    "error": "Website connection issues - proxy errors, unable to load pages"
+  },
+  {
+    "association": "North Dundas Demons",
+    "location": "Winchester, ON",
+    "website": "https://www.northdundasminorhockey.com",
+    "success": true,
+    "president": {
+      "name": "Nic Hubble",
+      "email": null
+    },
+    "vp": {
+      "name": "Brodie Lutz",
+      "email": null
+    },
+    "treasurer": {
+      "name": "Mike Elshof",
+      "email": null
+    },
+    "notes": "Executive contact emails not publicly listed - contact form only"
+  },
+  {
+    "association": "North Durham Blades",
+    "location": "Uxbridge, ON | Girls Only",
+    "actualName": "North Durham Minor Hockey (Blades division)",
+    "website": "https://northdurhamhockey.ca",
+    "success": true,
+    "president": {
+      "name": "Janna Guido",
+      "email": "president@northdurhamhockey.ca"
+    },
+    "vp": {
+      "name": "Dave Mounsteven",
+      "email": "vicepresident@northdurhamhockey.ca"
+    },
+    "treasurer": {
+      "name": "Jeff Durward",
+      "email": "treasurer@northdurhamhockey.ca"
+    }
+  },
+  {
+    "association": "North Durham Warriors",
+    "location": "Uxbridge, ON",
+    "actualName": "North Durham Minor Hockey (Warriors division)",
+    "website": "https://northdurhamhockey.ca",
+    "success": true,
+    "president": {
+      "name": "Janna Guido",
+      "email": "president@northdurhamhockey.ca"
+    },
+    "vp": {
+      "name": "Dave Mounsteven",
+      "email": "vicepresident@northdurhamhockey.ca"
+    },
+    "treasurer": {
+      "name": "Jeff Durward",
+      "email": "treasurer@northdurhamhockey.ca"
+    }
+  },
+  {
+    "association": "North End Flames",
+    "location": "Thunder Bay, ON",
+    "actualName": "Port Arthur Minor Hockey Association - North End Flames",
+    "website": "https://pamha.ca",
+    "success": true,
+    "president": {
+      "name": "Nuala Wieckowski",
+      "email": "northend-flames@pamha.ca"
+    },
+    "notes": "Sub-organization under PAMHA. VP and Treasurer info not separately listed for this club."
+  },
+  {
+    "association": "North Halton Twisters",
+    "location": "Georgetown, ON | Girls Only",
+    "actualName": "North Halton Girls Hockey Association",
+    "website": "https://nhgha.com",
+    "success": true,
+    "president": {
+      "name": "Matt Condotta",
+      "email": "president@nhgha.com"
+    },
+    "vp": {
+      "name": "Letitia McDougall",
+      "role": "Vice President",
+      "email": "vp1@nhgha.com"
+    },
+    "treasurer": {
+      "name": "Lorraine Pereira",
+      "email": "treasurer@nhgha.com"
+    },
+    "notes": "Also has 2nd VP: Steve Abel (vp2@nhgha.com)"
+  },
+  {
+    "association": "North London Nationals",
+    "location": "London, ON",
+    "actualName": "North London Sports Association Inc.",
+    "website": "https://northlondonhockey.ca",
+    "success": true,
+    "president": {
+      "name": "Matt Biderman",
+      "email": "mbiderman17@gmail.com"
+    },
+    "vp": {
+      "name": "Jay Dillman",
+      "email": "jaydillman@gmail.com"
+    },
+    "treasurer": {
+      "name": "Steve Wilkinson",
+      "email": "treasurer@northlondonhockey.ca"
+    }
+  },
+  {
+    "association": "North Middlesex Jr Stars",
+    "location": "Parkhill, ON",
+    "actualName": "North Middlesex & District Minor Hockey Association",
+    "website": "https://northmiddlesexhockey.com",
+    "success": true,
+    "president": {
+      "name": "Dustin Bayliss",
+      "email": "dustin.bayliss@icloud.com"
+    },
+    "vp": {
+      "name": "Mike Read",
+      "email": "mike@glpinc.ca"
+    },
+    "treasurer": {
+      "name": "Andrew Geiger",
+      "email": "ageiger@glpinc.ca"
+    }
+  },
+  {
+    "association": "North Shore Whitecaps",
+    "location": "Bowmanville, ON",
+    "actualName": "North Shore Whitecaps AAA Minor Hockey Association",
+    "website": "https://whitecapsaaahockey.com",
+    "success": true,
+    "president": {
+      "name": "Cheryl Littlejohn",
+      "email": "president@whitecapsaaahockey.com"
+    },
+    "vp": {
+      "name": "Taylor Collins",
+      "email": "info@whitecapsaaahockey.com"
+    },
+    "treasurer": {
+      "name": "Jennifer Williamson",
+      "email": "treasurer@whitecapsaaahockey.com"
+    }
+  }
+]

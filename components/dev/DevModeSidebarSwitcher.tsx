@@ -57,7 +57,7 @@ const DEMO_USERS: DemoUser[] = [
   {
     id: 'cminhmzhi000gtgpcgvw5ogk9-parent',
     name: 'U13 AA Storm',
-    userId: 'demo_2025_2026_000006',
+    userId: 'demo_2025_2026_000008',
     userName: 'U13 AA Storm Parent',
     division: 'U13 AA',
     role: 'Parent',

@@ -1,9 +1,11 @@
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { getRulesData } from './actions'
 import { RuleListTable } from './components/RuleListTable'
 import { AddRuleButton } from './components/AddRuleButton'
-import { Shield, Info } from 'lucide-react'
+import { Shield, Info, Settings } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface PageProps {
   params: Promise<{
@@ -33,7 +35,15 @@ export default async function RulesPage({ params }: PageProps) {
               Configure financial governance policies for all teams in {association.name}
             </p>
           </div>
-          <AddRuleButton associationId={associationId} associationCurrency={association.currency} />
+          <div className="flex items-center gap-3">
+            <Link href={`/association/${associationId}/governance`}>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                Workflow & Approval Settings
+              </Button>
+            </Link>
+            <AddRuleButton associationId={associationId} associationCurrency={association.currency} />
+          </div>
         </div>
 
         {/* Info Banner */}
@@ -44,7 +54,8 @@ export default async function RulesPage({ params }: PageProps) {
             <p className="text-blue-700">
               Rules defined here are automatically enforced across all teams. Teams cannot submit
               budgets or transactions that violate active rules. You can grant team-specific overrides
-              when exceptions are needed.
+              when exceptions are needed. For budget approval workflow and parent acknowledgment settings,
+              use the <strong>Workflow & Approval Settings</strong> button above.
             </p>
           </div>
         </div>

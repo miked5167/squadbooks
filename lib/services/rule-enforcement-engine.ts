@@ -1,7 +1,7 @@
 // /lib/services/rule-enforcement-engine.ts
 
 import { prisma } from '@/lib/prisma'
-import { AssociationRule, RuleViolation } from '@prisma/client'
+import type { AssociationRule, RuleViolation } from '@prisma/client'
 
 // ============================================================================
 // TYPE DEFINITIONS

@@ -24,9 +24,11 @@ import { toast } from 'sonner'
 
 interface PresentToParentsButtonProps {
   budgetId: string
+  versionNumber: number
+  userId: string
 }
 
-export function PresentToParentsButton({ budgetId }: PresentToParentsButtonProps) {
+export function PresentToParentsButton({ budgetId, versionNumber, userId }: PresentToParentsButtonProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -35,14 +37,16 @@ export function PresentToParentsButton({ budgetId }: PresentToParentsButtonProps
     setIsSubmitting(true)
 
     try {
-      const result = await presentToParents(budgetId)
+      const result = await presentToParents({ budgetId, versionNumber, userId })
 
       if (!result.success) {
         toast.error(result.error?.message || 'Failed to present to parents')
         return
       }
 
-      toast.success('Budget presented to parents! They can now view and acknowledge it.')
+      // House league teams get auto-approved
+      const successMessage = result.message || 'Budget presented to parents! They can now view and acknowledge it.'
+      toast.success(successMessage)
       setIsOpen(false)
       router.refresh()
     } catch (error) {

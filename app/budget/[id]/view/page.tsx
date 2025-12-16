@@ -62,7 +62,7 @@ export default async function ParentBudgetViewPage({
         <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-navy mb-2">Budget Not Found</h2>
-            <p className="text-navy/60 mb-6">The budget you're looking for doesn't exist.</p>
+            <p className="text-navy/60 mb-6">The budget you&apos;re looking for doesn&apos;t exist.</p>
             <Button asChild>
               <Link href="/budget">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -383,7 +383,7 @@ export default async function ParentBudgetViewPage({
             {familyApproval && (
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-sm font-medium text-green-900 mb-1">
-                  ✓ You've Acknowledged This Budget
+                  ✓ You&apos;ve Acknowledged This Budget
                 </p>
                 <p className="text-sm text-green-700">
                   Thank you for reviewing and approving the budget. You acknowledged this on{' '}

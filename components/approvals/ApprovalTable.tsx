@@ -19,7 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { PendingApprovalWithRisk, ApprovalSort } from '@/lib/types/approvals'
+import type { PendingApprovalWithRisk, ApprovalSort } from '@/lib/types/approvals'
 import { getRiskBadgeClass } from '@/lib/utils/approval-risk'
 import { cn } from '@/lib/utils'
 

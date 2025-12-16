@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Bracebridge",
+    "location": "Bracebridge, ON",
+    "website": "https://southmuskokaminorhockey.ca",
+    "staffPage": "https://southmuskokaminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate South Muskoka",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Brant County",
+    "location": "Brant County, ON",
+    "website": "https://brantcountyminorhockey.ca",
+    "staffPage": "https://brantcountyminorhockey.ca/Staff/1003/",
+    "notes": "CSV has 1st VP and 2nd VP via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Brantford 99ers",
+    "location": "Brantford, ON",
+    "website": "https://brantfordminorhockey.com",
+    "staffPage": "https://brantfordminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Blind River Thunder",
+    "location": "Blind River, ON",
+    "website": "https://blindriverminorhockey.ca",
+    "staffPage": "https://blindriverminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Blyth-Brussels Crusaders",
+    "location": "Blyth-Brussels, ON",
+    "website": "https://blythbrusselsminorhockey.ca",
+    "staffPage": "https://blythbrusselsminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Bancroft Jets",
+    "location": "Bancroft, ON",
+    "website": "https://bancroftjets.com",
+    "staffPage": "https://bancroftjets.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Belleville Jr Bulls",
+    "location": "Belleville, ON",
+    "website": "https://bellevilleminorhockey.ca",
+    "staffPage": "https://bellevilleminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Ayr Flames",
+    "location": "Ayr, ON",
+    "website": "https://ayrminorhockey.com",
+    "staffPage": "https://ayrminorhockey.com/Staff/1003/",
+    "notes": "CSV has VP Admin and VP Hockey Ops via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Ausable Valley Coyotes",
+    "location": "Parkhill, ON",
+    "website": "https://ausablevalleyhockey.ca",
+    "staffPage": "https://ausablevalleyhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Arran-Elderslie Ice Dogs",
+    "location": "Paisley, ON",
+    "website": "https://aemha.ca",
+    "staffPage": "https://aemha.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  }
+]

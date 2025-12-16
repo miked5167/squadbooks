@@ -12,6 +12,19 @@ import {
   type TransactionDetailRow,
   type AlertReportRow,
 } from './actions'
+import { BudgetApprovalStatusTable, type BudgetApprovalRow } from '@/components/association/BudgetApprovalStatusTable'
+import { CheckCircle, Clock, AlertCircle, TrendingUp } from 'lucide-react'
+
+interface BudgetApprovalData {
+  summary: {
+    totalApprovals: number
+    completedCount: number
+    completionRate: number
+    pendingCount: number
+    expiredCount: number
+  }
+  teamApprovals: BudgetApprovalRow[]
+}
 
 export default function ReportsPage({
   params,
@@ -23,10 +36,15 @@ export default function ReportsPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Budget approval data
+  const [budgetApprovalData, setBudgetApprovalData] = useState<BudgetApprovalData | null>(null)
+  const [budgetApprovalsLoading, setBudgetApprovalsLoading] = useState(true)
+
   // View toggles
   const [showSeasonFinancial, setShowSeasonFinancial] = useState(false)
   const [showTransactions, setShowTransactions] = useState(false)
   const [showAlerts, setShowAlerts] = useState(false)
+  const [showBudgetApprovals, setShowBudgetApprovals] = useState(true)
 
   // PDF generation loading states
   const [generatingBoardSummary, setGeneratingBoardSummary] = useState(false)
@@ -48,7 +66,22 @@ export default function ReportsPage({
       }
     }
     loadData()
+    loadBudgetApprovals()
   }, [associationId])
+
+  async function loadBudgetApprovals() {
+    try {
+      const response = await fetch(`/api/associations/${associationId}/reports/budget-approvals`)
+      if (response.ok) {
+        const data = await response.json()
+        setBudgetApprovalData(data)
+      }
+    } catch (err) {
+      console.error('Failed to load budget approvals:', err)
+    } finally {
+      setBudgetApprovalsLoading(false)
+    }
+  }
 
   const downloadCsv = async (
     filename: string,
@@ -208,6 +241,86 @@ export default function ReportsPage({
 
         {/* Report Sections */}
         <div className="space-y-6">
+        {/* Budget Approval Status Section */}
+        {!budgetApprovalsLoading && budgetApprovalData && budgetApprovalData.teamApprovals.length > 0 && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-6 border border-amber-200">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              🎯 Budget Approval Status
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Track budget approvals and acknowledgments across all teams.
+            </p>
+
+            {/* Summary KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{budgetApprovalData.summary.pendingCount}</p>
+                    <p className="text-xs text-gray-600">Pending</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{budgetApprovalData.summary.completedCount}</p>
+                    <p className="text-xs text-gray-600">Completed</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{budgetApprovalData.summary.expiredCount}</p>
+                    <p className="text-xs text-gray-600">Expired</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">{budgetApprovalData.summary.completionRate}%</p>
+                    <p className="text-xs text-gray-600">Completion Rate</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Toggle Button */}
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => setShowBudgetApprovals(!showBudgetApprovals)}
+                className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 text-sm font-medium"
+              >
+                {showBudgetApprovals ? 'Hide Details' : 'View Details'}
+              </button>
+            </div>
+
+            {/* Budget Approval Table */}
+            {showBudgetApprovals && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <BudgetApprovalStatusTable approvals={budgetApprovalData.teamApprovals} />
+              </div>
+            )}
+          </div>
+        )}
+
           {/* PDF Reports Section */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
             <h2 className="text-xl font-bold text-gray-900 mb-4">

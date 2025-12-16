@@ -1,5 +1,5 @@
 // HuddleBooks AI Assistant Types
-import { UserRole } from '@prisma/client'
+import type { UserRole } from '@prisma/client'
 import { z } from 'zod'
 
 // ============================================

@@ -73,7 +73,7 @@ export function BulkActionDialog({
             )}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-navy/70 font-medium">
-            You're about to {action} <strong className="text-navy">{count}</strong> transaction{count > 1 ? 's' : ''} totalling{' '}
+            You&apos;re about to {action} <strong className="text-navy">{count}</strong> transaction{count > 1 ? 's' : ''} totalling{' '}
             <strong className="text-navy">
               ${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </strong>

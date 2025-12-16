@@ -1,4 +1,4 @@
-import { PendingApproval, PendingApprovalWithRisk, RiskLevel } from '../types/approvals'
+import type { PendingApproval, PendingApprovalWithRisk, RiskLevel } from '../types/approvals'
 import { MANDATORY_RECEIPT_THRESHOLD } from '../constants/validation'
 
 // Default threshold amount - transactions above this require approval

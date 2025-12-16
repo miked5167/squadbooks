@@ -90,11 +90,11 @@ export function StepBudget({
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">What's your season budget?</h1>
+        <h1 className="text-3xl font-bold mb-2">What&apos;s your season budget?</h1>
         <p className="text-muted-foreground">
           {hasRoster
             ? `Based on your ${familyCount} ${familyCount === 1 ? 'family' : 'families'}`
-            : "We'll help you estimate based on your team size"}
+            : "We&apos;ll help you estimate based on your team size"}
         </p>
       </div>
 
@@ -225,7 +225,7 @@ export function StepBudget({
       {/* Category Note */}
       <div className="mt-8 p-4 bg-muted rounded-lg">
         <p className="text-sm text-muted-foreground text-center">
-          We'll set up budget categories based on typical hockey expenses.
+          We&apos;ll set up budget categories based on typical hockey expenses.
           You can adjust these anytime from your dashboard.
         </p>
       </div>

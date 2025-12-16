@@ -6,7 +6,7 @@ import { toggleRuleActive, deleteRule } from '../actions'
 import { useRouter } from 'next/navigation'
 import { RuleForm } from './RuleForm'
 import { Badge } from '@/components/ui/badge'
-import { TeamType, AgeDivision, CompetitiveLevel } from '@/lib/validations/rule-schemas'
+import type { TeamType, AgeDivision, CompetitiveLevel } from '@/lib/validations/rule-schemas'
 
 interface Rule {
   id: string

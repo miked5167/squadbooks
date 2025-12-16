@@ -6,10 +6,11 @@
  * Provides association-level visibility into team season lifecycle states.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { getAssociationTeamSeasonRollup, getTeamSeasonStats } from '@/lib/db/team-season-rollup'
-import { TeamSeasonState } from '@prisma/client'
+import type { TeamSeasonState } from '@prisma/client'
 
 export async function GET(
   request: NextRequest,

@@ -1,5 +1,10 @@
 import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
+import bundleAnalyzer from '@next/bundle-analyzer'
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
 
 const nextConfig: NextConfig = {
   typescript: {
@@ -12,6 +17,11 @@ const nextConfig: NextConfig = {
         hostname: '**.supabase.co',
       },
     ],
+    formats: ['image/avif', 'image/webp'],
+  },
+  compress: true,
+  experimental: {
+    // Turbopack is enabled via --turbo flag in package.json
   },
 }
 
@@ -31,5 +41,7 @@ const sentryWebpackPluginOptions = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
 }
 
-// Wrap the config with Sentry
-export default withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+// Wrap the config with Sentry and Bundle Analyzer
+export default withBundleAnalyzer(
+  withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+)

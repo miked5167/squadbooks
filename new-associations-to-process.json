@@ -1,0 +1,2147 @@
+[
+  {
+    "name": "Ajax Pickering Raiders",
+    "location": "Ajax, ON",
+    "league": "LHL , OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Akwesasne Wolves",
+    "location": "Akwesasne, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "Alexandria Glens",
+    "location": "Alexandria, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "Almaguin Gazelles",
+    "location": "Sundridge, ON | Girls Only",
+    "league": "nan"
+  },
+  {
+    "name": "Ancaster Avalanche",
+    "location": "Ancaster, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Avenue Road Ducks",
+    "location": "North York, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Ayr Rockets",
+    "location": "Ayr, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Baltimore Ice Dogs",
+    "location": "Baltimore, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Barrie Colts AAA",
+    "location": "Barrie, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Barrie Sharks",
+    "location": "Barrie, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Beeton Stingers",
+    "location": "Beeton, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Belleville Bearcats",
+    "location": "Belleville, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Belmont Blazers",
+    "location": "Belmont, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "BioSteel Sports Academy",
+    "location": "Windsor, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Bluewater Hawks",
+    "location": "Strathroy, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Brampton 45s",
+    "location": "Brampton, ON",
+    "league": "OMHA , TCMHL"
+  },
+  {
+    "name": "Brampton Canadettes",
+    "location": "Brampton, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Brant Battalion",
+    "location": "Paris, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Brantford Ice Cats",
+    "location": "Brantford, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Brockville Angels",
+    "location": "Brockville, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Brockville Jr Braves",
+    "location": "Brockville, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "Burlington Barracudas",
+    "location": "Burlington, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Burlington Bulldogs",
+    "location": "Burlington, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Burlington Eagles",
+    "location": "Burlington, ON",
+    "league": "OMHA , OMHA-AAA , TCMHL"
+  },
+  {
+    "name": "Burlington Raiders",
+    "location": "Burlington, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "CIHA Voyageurs",
+    "location": "Rockland, ON",
+    "league": "CSSHL , HEO"
+  },
+  {
+    "name": "Caledon Coyotes",
+    "location": "Caledon, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Cambridge Roadrunners",
+    "location": "Cambridge, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Carleton Place Cyclones",
+    "location": "Carleton Place, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Casselman-Embrun IceDogs",
+    "location": "Casselman, ON",
+    "league": "OBMHL"
+  },
+  {
+    "name": "Central York Panthers",
+    "location": "Aurora, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Chapleau Huskies",
+    "location": "Chapleau, ON",
+    "league": "NEOHA"
+  },
+  {
+    "name": "Char-Lan Rebels",
+    "location": "Williamstown, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "Chatham Kent Crush",
+    "location": "Chatham, ON | Girls Only",
+    "league": "OWHL-S , WOGHL"
+  },
+  {
+    "name": "Chatham-Kent Cyclones",
+    "location": "Chatham, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Chatsworth (TCDMHA) Rebels",
+    "location": "Chatsworth, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Clarence Rockland Crush",
+    "location": "Clarence-Rockland, ON",
+    "league": "OBMHL"
+  },
+  {
+    "name": "Cochrane",
+    "location": "Cochrane, ON",
+    "league": "NEOHA , NOHA"
+  },
+  {
+    "name": "Colborne Fire Hawks",
+    "location": "Colborne, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Cornwall Typhoons",
+    "location": "Cornwall, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Cumberland Jr Grads",
+    "location": "Cumberland, ON",
+    "league": "HEO , OBMHL"
+  },
+  {
+    "name": "Don Mills Flyers",
+    "location": "North York, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Dryden Paperkings",
+    "location": "Dryden, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Dundalk Storm",
+    "location": "Dundalk, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "East York Bulldogs",
+    "location": "Toronto, ON",
+    "league": "NYHL"
+  },
+  {
+    "name": "Eastern Ontario Wild",
+    "location": "Casselman, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Fort Erie Jr Meteors",
+    "location": "Fort Erie, ON",
+    "league": "NDHL , OMHA"
+  },
+  {
+    "name": "Fort William Canadiens",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Fort William Hurricanes",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Georgina Blaze",
+    "location": "Keswick, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Geraldton Goldminers",
+    "location": "Geraldton, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Glancaster Bombers",
+    "location": "Glanbrook, ON",
+    "league": "OMHA , TCMHL"
+  },
+  {
+    "name": "Glengarry Highlanders",
+    "location": "Alexandria, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Gloucester Centre Cougars",
+    "location": "Gloucester, ON",
+    "league": "GHA"
+  },
+  {
+    "name": "Gloucester Rangers",
+    "location": "Orleans, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Gloucester/Orleans Blues",
+    "location": "Orleans, ON",
+    "league": "OBMHL"
+  },
+  {
+    "name": "Goderich Sailors",
+    "location": "Goderich, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Goulding Park Rangers",
+    "location": "North York, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Grand River Mustangs",
+    "location": "Fergus, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Grand Valley Twisters",
+    "location": "Grand Valley, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Greater Toronto Capitals",
+    "location": "Etobicoke, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Grey Bruce Highlanders",
+    "location": "Markdale, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Grey Highlands Shooting Stars",
+    "location": "Markdale, ON | Girls Only",
+    "league": "WOAA"
+  },
+  {
+    "name": "Guelph Jr Gryphons",
+    "location": "Guelph, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Hagersville Hawks",
+    "location": "Hagersville, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Haldimand River Kings",
+    "location": "Cayuga, ON",
+    "league": "NDHL , OMHA"
+  },
+  {
+    "name": "Haldimand Rivercats",
+    "location": "Caledonia, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Halton Hills Thunder",
+    "location": "Georgetown, ON",
+    "league": "OMHA , TCMHL"
+  },
+  {
+    "name": "Halton Hurricanes",
+    "location": "Milton, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Hamilton Hawks",
+    "location": "Hamilton, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Hamilton Steel",
+    "location": "Hamilton, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Hearst HLK",
+    "location": "Hearst, ON",
+    "league": "NEOHA , NOHA"
+  },
+  {
+    "name": "Heartland Dragons",
+    "location": "Mississauga, ON",
+    "league": "MHL"
+  },
+  {
+    "name": "Hespeler Shamrocks",
+    "location": "Hespeler, ON",
+    "league": "OMHA , TCMHL"
+  },
+  {
+    "name": "Highland Storm",
+    "location": "Haliburton, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Hill Academy",
+    "location": "Caledon, ON",
+    "league": "PPHL"
+  },
+  {
+    "name": "Hillcrest Canadiens",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Honeywood Hurricanes",
+    "location": "Honeywood, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Hornepayne Bears",
+    "location": "Hornepayne, ON",
+    "league": "NOHA"
+  },
+  {
+    "name": "Howick Hornets",
+    "location": "Gorrie, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Humber Valley Sharks",
+    "location": "Toronto, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Humberview Huskies",
+    "location": "Weston, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Huntsville Otters",
+    "location": "Huntsville, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Huntsville Sting",
+    "location": "Huntsville, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Huron Heat",
+    "location": "Clinton, ON | Girls Only",
+    "league": "OWHL-S , WOGHL"
+  },
+  {
+    "name": "Huron-Bruce Blizzard",
+    "location": "Lucknow, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Huron-Perth Lakers",
+    "location": "Stratford, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Ignace",
+    "location": "Ignace, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Ilderton Jets",
+    "location": "Ilderton, ON",
+    "league": "OMHA , SHL-CA , WOGHL"
+  },
+  {
+    "name": "Ingersoll Express",
+    "location": "Ingersoll, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Innisfil Winterhawks",
+    "location": "Innisfil, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Iroquois Falls Eskimos",
+    "location": "Iroquois Falls, ON",
+    "league": "NEOHA , NOHA"
+  },
+  {
+    "name": "KC Sabres",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Kanata Blazers",
+    "location": "Kanata, ON",
+    "league": "HEO , OBMHL"
+  },
+  {
+    "name": "Kanata Rangers",
+    "location": "Kanata, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Kapuskasing Ice Hawks",
+    "location": "Kapuskasing, ON",
+    "league": "NDMHL , NOHA"
+  },
+  {
+    "name": "Kapuskasing Jaguars",
+    "location": "Kapuskasing, ON | Girls Only",
+    "league": "OWHA"
+  },
+  {
+    "name": "Kawartha Coyotes",
+    "location": "Lindsay, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Keene Wolverines",
+    "location": "Keene, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Kemptville Royals",
+    "location": "Kemptville, ON",
+    "league": "OWHL-E , UCMHL"
+  },
+  {
+    "name": "Kenora Thistles",
+    "location": "Kenora, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Kent Cobras",
+    "location": "Chatham, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Kincardine Kinucks",
+    "location": "Kincardine, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "King Rebellion",
+    "location": "Nobleton, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Kingston Canadians",
+    "location": "Kingston, ON",
+    "league": "LHL , OMHA"
+  },
+  {
+    "name": "Kingston Ice Wolves",
+    "location": "Kingston, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Kingston Jr Gaels",
+    "location": "Kingston, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Kirkland Lake Blue Devils",
+    "location": "Kirkland Lake, ON",
+    "league": "NEOHA , NOHA"
+  },
+  {
+    "name": "Kitchener Jr Rangers",
+    "location": "Kitchener, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Kitchener Lady Rangers",
+    "location": "Kitchener, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "LPC Wild",
+    "location": "Mississauga, ON",
+    "league": "MHL"
+  },
+  {
+    "name": "LaSalle Sabres",
+    "location": "LaSalle, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Lac Seul",
+    "location": "Frenchmen's Head, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Lake Erie North Stars",
+    "location": "Kingsville, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Lake of the Woods Canucks",
+    "location": "Kenora, ON | Girls Only",
+    "league": "nan"
+  },
+  {
+    "name": "Lakefield Chiefs",
+    "location": "Lakefield, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Lakeshore Lightning",
+    "location": "Lakeshore, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Lambeth Lancers",
+    "location": "Lambeth, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Lambton Attack",
+    "location": "Petrolia, ON | Girls Only",
+    "league": "OWHL-S , WOGHL"
+  },
+  {
+    "name": "Lambton Shores Predators",
+    "location": "Lambton Shores, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Langton Leafs",
+    "location": "Langton, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Leaside Flames",
+    "location": "Toronto, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Leeds Chargers",
+    "location": "Athens, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "Leitrim Hawks",
+    "location": "Leitrim, ON",
+    "league": "GHA , OBMHL"
+  },
+  {
+    "name": "Lincoln Blades",
+    "location": "Lincoln, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Lindsay Lynx",
+    "location": "Lindsay, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Lindsay Muskies",
+    "location": "Lindsay, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Listowel Cyclones",
+    "location": "Listowel, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "London Bandits",
+    "location": "London, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "London Devilettes",
+    "location": "London, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "London Jr Knights",
+    "location": "London, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "London Jr Mustangs",
+    "location": "London, ON",
+    "league": "MHAO , OMHA , SHL-CA"
+  },
+  {
+    "name": "Longlac Timberwolves",
+    "location": "Longlac, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Loyalist Jets",
+    "location": "Amherstview, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Lucan Irish",
+    "location": "Lucan, ON",
+    "league": "OMHA , SHL-CA , WOGHL"
+  },
+  {
+    "name": "Manitoulin Panthers",
+    "location": "Little Current, ON",
+    "league": "NDMHL , NOHA"
+  },
+  {
+    "name": "Manitouwadge Copper Kings",
+    "location": "Manitouwadge, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Manvers Mustangs",
+    "location": "Manvers, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Marathon Mercs",
+    "location": "Marathon, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Mariposa Lightning",
+    "location": "Little Britain, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Markham Islanders",
+    "location": "Markham, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Markham Majors",
+    "location": "Markham, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Markham Waxers",
+    "location": "Markham, ON",
+    "league": "OMHA , OMHA-AAA , YSMHL"
+  },
+  {
+    "name": "Markham-Stouffville Stars",
+    "location": "Markham, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Meadowvale Hawks",
+    "location": "Mississauga, ON",
+    "league": "MHL"
+  },
+  {
+    "name": "Mid-Huron Huskies",
+    "location": "Clinton, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Midland Centennials",
+    "location": "Midland, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Midwest 49ers",
+    "location": "Hanover, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Millbrook Stars",
+    "location": "Millbrook, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Milton Winterhawks",
+    "location": "Milton, ON",
+    "league": "OMHA , TCMHL"
+  },
+  {
+    "name": "Mimico Canadians",
+    "location": "Etobicoke, ON",
+    "league": "MHL , NYHL"
+  },
+  {
+    "name": "Minto Mad Dogs",
+    "location": "Minto, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Mississauga Beast",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Mississauga Hurricanes",
+    "location": "Mississauga, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Mississauga Jets",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Mississauga North Stars",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Mississauga Rattlers",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Mississauga Rebels",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Mississauga Senators",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Mississauga Terriers",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Mississippi Thunder Kings",
+    "location": "Mississippi Mills, ON",
+    "league": "OBMHL"
+  },
+  {
+    "name": "Mitchell Meteors",
+    "location": "Mitchell, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Mooretown Jr Flags",
+    "location": "Mooretown, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Mooretown Lady Flags",
+    "location": "Mooretown, ON | Girls Only",
+    "league": "OWHL-S , WOGHL"
+  },
+  {
+    "name": "Moosonee",
+    "location": "Moosonee, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Mt Brydges Cougars",
+    "location": "Mt Brydges, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Mt Forest Rams",
+    "location": "Mount Forest, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Muskoka Rock",
+    "location": "Port Carling, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Muskrat Voyageurs",
+    "location": "Cobden, ON",
+    "league": "UOVMHL"
+  },
+  {
+    "name": "NGS Braves",
+    "location": "Maxville, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "Napanee Crunch",
+    "location": "Napanee, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Napanee Stars",
+    "location": "Napanee, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Neebing Hawks",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Nepean Raiders",
+    "location": "Nepean, ON",
+    "league": "HEO , OBMHL"
+  },
+  {
+    "name": "Nepean Wildcats",
+    "location": "Nepean, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "New Hamburg Huskies",
+    "location": "New Hamburg, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "New Tecumseth IceCats",
+    "location": "Alliston, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Newcastle Stars",
+    "location": "Newcastle, ON",
+    "league": "EOMHL , OMHA , VDMHL"
+  },
+  {
+    "name": "Newmarket Renegades",
+    "location": "Newmarket, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Niagara Falls Canucks",
+    "location": "Niagara Falls, ON",
+    "league": "NDHL , OMHA , TCMHL"
+  },
+  {
+    "name": "Niagara Falls Rapids",
+    "location": "Niagara Falls, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Niagara North Stars",
+    "location": "St Catharines, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Niagara-On-The-Lake Wolves",
+    "location": "Niagara-on-the-Lake, ON",
+    "league": "NDHL , OMHA"
+  },
+  {
+    "name": "Nickel City Cubs",
+    "location": "Val Caron, ON",
+    "league": "NDMHL , NOHA , NOHLAAA"
+  },
+  {
+    "name": "Nipigon Elks",
+    "location": "Nipigon, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Norfolk Hericanes",
+    "location": "Simcoe, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Norfolk Knights",
+    "location": "Port Dover, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "North Bay Junior Lakers",
+    "location": "North Bay, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "North Bay Trappers",
+    "location": "North Bay, ON",
+    "league": "NDHL-N , NDMHL , NOHA"
+  },
+  {
+    "name": "North Bay Trappers AAA",
+    "location": "North Bay, ON",
+    "league": "NOHA , NOHLAAA"
+  },
+  {
+    "name": "North Central Predators",
+    "location": "Orillia, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "North Channel Lightning",
+    "location": "Desbarats, ON",
+    "league": "nan"
+  },
+  {
+    "name": "North Dundas Demons",
+    "location": "Winchester, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "North Durham Blades",
+    "location": "Uxbridge, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "North Durham Warriors",
+    "location": "Uxbridge, ON",
+    "league": "LHL , OMHA"
+  },
+  {
+    "name": "North End Flames",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "North Halton Twisters",
+    "location": "Georgetown, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "North London Nationals",
+    "location": "London, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "North Middlesex Jr Stars",
+    "location": "Parkhill, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "North Shore Whitecaps",
+    "location": "Bowmanville, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "North Simcoe Capitals",
+    "location": "Midland, ON | Girls Only",
+    "league": "nan"
+  },
+  {
+    "name": "North Toronto",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "North York Knights",
+    "location": "North York, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "North York Rangers",
+    "location": "North York, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "North York Storm",
+    "location": "Toronto, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Northumberland Nighthawks",
+    "location": "Cobourg, ON",
+    "league": "LHL , OMHA"
+  },
+  {
+    "name": "Norwest Stars",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Norwood Hornets",
+    "location": "Norwood, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Oakridge Aeros",
+    "location": "London, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Oakville Hornets",
+    "location": "Oakville, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Oakville Rangers",
+    "location": "Oakville, ON",
+    "league": "OMHA , OMHA-AAA , TCMHL"
+  },
+  {
+    "name": "Okanagan Hockey Ontario",
+    "location": "Whitby, ON",
+    "league": "CSSHL"
+  },
+  {
+    "name": "Ontario Hockey Academy",
+    "location": "Cornwall, ON",
+    "league": "CSSHL , HEO , PPHL"
+  },
+  {
+    "name": "Orangeville Flyers",
+    "location": "Orangeville, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Orangeville Tigers",
+    "location": "Orangeville, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Orillia Hawks",
+    "location": "Orillia, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Orillia Terriers",
+    "location": "Orillia, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Orleans Rush",
+    "location": "Orleans, ON",
+    "league": "GHA"
+  },
+  {
+    "name": "Oro Thunder",
+    "location": "Oro, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Orono Leafs",
+    "location": "Orono, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Osgoode Rideau Senators",
+    "location": "Osgoode, ON",
+    "league": "LCMHL"
+  },
+  {
+    "name": "Osgoode-Richmond Romans",
+    "location": "Osgoode, ON",
+    "league": "OBMHL"
+  },
+  {
+    "name": "Oshawa Generals",
+    "location": "Oshawa, ON",
+    "league": "LHL , OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Oshawa Lady Generals",
+    "location": "Oshawa, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Otonabee Wolves",
+    "location": "Keene, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Ottawa Centre",
+    "location": "Ottawa, ON",
+    "league": "BMHL"
+  },
+  {
+    "name": "Ottawa East Badgers",
+    "location": "Ottawa, ON",
+    "league": "BMHL"
+  },
+  {
+    "name": "Ottawa Ice",
+    "location": "Ottawa, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Ottawa Jr 67's",
+    "location": "Ottawa, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Ottawa Lady 67's",
+    "location": "Ottawa, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Ottawa Myers Automotive",
+    "location": "Ottawa, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Ottawa Senators",
+    "location": "Ottawa, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Ottawa Sting",
+    "location": "Ottawa, ON",
+    "league": "HEO , OBMHL"
+  },
+  {
+    "name": "Ottawa Valley Silver Seven",
+    "location": "Stittsville, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Ottawa Valley Thunder",
+    "location": "Pembroke, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Ottawa Valley Titans",
+    "location": "Stittsville, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Ottawa West Golden Knights",
+    "location": "Ottawa, ON",
+    "league": "OBMHL"
+  },
+  {
+    "name": "Owen Sound Ice Hawks",
+    "location": "Owen Sound, ON | Girls Only",
+    "league": "OWHL-S , WOAA"
+  },
+  {
+    "name": "Owen Sound Jr Attack",
+    "location": "Owen Sound, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Paris Wolfpack",
+    "location": "Paris, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Parry Sound Shamrocks",
+    "location": "Parry Sound, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Pelham Panthers",
+    "location": "Pelham, ON",
+    "league": "NDHL , OMHA"
+  },
+  {
+    "name": "Pembroke Kings",
+    "location": "Pembroke, ON",
+    "league": "UOVMHL"
+  },
+  {
+    "name": "Penetang Flames",
+    "location": "Penetanguishene, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Perth Wings",
+    "location": "Perth, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Perth-Lanark Wings",
+    "location": "Perth, ON",
+    "league": "LCMHL , OBMHL"
+  },
+  {
+    "name": "Petawawa Patriots",
+    "location": "Petawawa, ON",
+    "league": "UOVMHL"
+  },
+  {
+    "name": "Peterborough Ice Kats",
+    "location": "Peterborough, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Peterborough Jr Petes (AAA)",
+    "location": "Peterborough, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Peterborough Petes",
+    "location": "Peterborough, ON",
+    "league": "LHL , OMHA"
+  },
+  {
+    "name": "Petrolia Oilers",
+    "location": "Petrolia, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Plattsville Rage",
+    "location": "Plattsville, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Port Colborne Sailors",
+    "location": "Port Colborne, ON",
+    "league": "NDHL , OMHA"
+  },
+  {
+    "name": "Port Credit Storm",
+    "location": "Mississauga, ON",
+    "league": "MHL"
+  },
+  {
+    "name": "Port Dover Pirates",
+    "location": "Port Dover, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Port Stanley Jr Sailors",
+    "location": "Port Stanley, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Powassan Hawks",
+    "location": "Powassan, ON",
+    "league": "NDHL-N , NOHA"
+  },
+  {
+    "name": "Prince Edward County Kings",
+    "location": "Picton, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Quinte Red Devils",
+    "location": "Belleville, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Quinte West Golden Hawks",
+    "location": "Trenton, ON",
+    "league": "LHL , OMHA"
+  },
+  {
+    "name": "Red Lake Rockets",
+    "location": "Red Lake, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Red Rock Rangers",
+    "location": "Red Rock, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Renfrew Timberwolves",
+    "location": "Renfrew, ON",
+    "league": "OBMHL , UOVMHL"
+  },
+  {
+    "name": "Richmond Hill Jaguars",
+    "location": "Richmond Hill, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Richmond Royals",
+    "location": "Richmond, ON",
+    "league": "LCMHL"
+  },
+  {
+    "name": "Rideau St Lawrence Kings",
+    "location": "Brockville, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Riverside Rangers",
+    "location": "Windsor, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Russell Coyotes",
+    "location": "Russell, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Russell Warriors",
+    "location": "Russell, ON",
+    "league": "GHA , OBMHL"
+  },
+  {
+    "name": "Sarnia Jr Lady Sting",
+    "location": "Sarnia, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Sarnia Jr Sting",
+    "location": "Sarnia, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Sarnia-Lambton Jr Sting",
+    "location": "Sarnia, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Saugeen Maitland Lightning",
+    "location": "Goderich, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Saugeen Shores Storm",
+    "location": "Port Elgin, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Saugeen Valley Steelheads",
+    "location": "Durham, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Scarborough Ice Raiders",
+    "location": "Scarborough, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Scarborough Sharks",
+    "location": "Scarborough, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Scarborough Young Bruins",
+    "location": "Scarborough, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Schreiber Superior Stars",
+    "location": "Schreiber, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Schumacher",
+    "location": "Schumacher, ON",
+    "league": "NOHA"
+  },
+  {
+    "name": "Seaway Valley Rapids",
+    "location": "Cornwall, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Shallow Lake Lakers",
+    "location": "Shallow Lake, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Shelburne Wolves",
+    "location": "Shelburne, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Simcoe Warriors",
+    "location": "Simcoe, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Sioux Lookout Jr Bombers",
+    "location": "Sioux Lookout, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Six Nations Blackhawks",
+    "location": "Ohsweken, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Smiths Falls Bears",
+    "location": "Smiths Falls, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "Smiths Falls Cubs",
+    "location": "Smiths Falls, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Smooth Rock Falls Rockies",
+    "location": "Smooth Rock Falls, ON",
+    "league": "NEOHA , NOHA"
+  },
+  {
+    "name": "Soo",
+    "location": "Sault Ste Marie, ON",
+    "league": "SPWHL"
+  },
+  {
+    "name": "Soo Jr Greyhounds",
+    "location": "Sault Ste Marie, ON",
+    "league": "NIntHL , NOHA , NOHLAAA"
+  },
+  {
+    "name": "Soo Jr Greyhounds",
+    "location": "Sault Ste Marie, ON | Girls Only",
+    "league": "nan"
+  },
+  {
+    "name": "South Bruce Blades",
+    "location": "Mildmay, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "South Dundas Lions",
+    "location": "Morrisburg, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "South End Rangers",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "South Grenville Rangers",
+    "location": "Prescott, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "South Grey Spartans",
+    "location": "Flesherton, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "South Huron Sabres",
+    "location": "Exeter, ON",
+    "league": "OMHA , OWHL-S , SHL-CA"
+  },
+  {
+    "name": "South Kent Lightning",
+    "location": "Blenheim, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "South Muskoka Bears",
+    "location": "Bracebridge, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "South Oxford Storm",
+    "location": "Ingersoll, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "South Porcupine Jr Gold Kings",
+    "location": "Porcupine, ON",
+    "league": "NEOHA , NOHA"
+  },
+  {
+    "name": "South Simcoe Storm",
+    "location": "Bradford, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "South Stormont Selects",
+    "location": "Long Sault, ON",
+    "league": "UCMHL"
+  },
+  {
+    "name": "South West Admirals",
+    "location": "Blyth, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "SouthEnd Capitals",
+    "location": "Ottawa, ON",
+    "league": "BMHL"
+  },
+  {
+    "name": "Southeast Surge",
+    "location": "Listowel, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Southern Tier Admirals",
+    "location": "Welland, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Southpoint Capitals",
+    "location": "Leamington, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Southpoint Stars",
+    "location": "Leamington, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Southwest Bullets",
+    "location": "Glencoe, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "St Andrews College",
+    "location": "Aurora, ON",
+    "league": "PHC"
+  },
+  {
+    "name": "St Catharines Brock Jr Badgers",
+    "location": "St Catharines, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "St Catharines IceDogs",
+    "location": "St Catharines, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "St Catharines Jr Falcons",
+    "location": "St Catharines, ON",
+    "league": "NDHL , OMHA , TCMHL"
+  },
+  {
+    "name": "St George Generals",
+    "location": "St George, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "St Marys Rock",
+    "location": "St Marys, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "St Thomas Jr Stars",
+    "location": "St Thomas, ON",
+    "league": "MHAO , OMHA"
+  },
+  {
+    "name": "St Thomas Panthers",
+    "location": "St Thomas, ON | Girls Only",
+    "league": "OWHL-S , WOGHL"
+  },
+  {
+    "name": "Stirling Blues",
+    "location": "Stirling, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Stittsville Rams",
+    "location": "Stittsville, ON",
+    "league": "LCMHL , OBMHL"
+  },
+  {
+    "name": "Stittsville Rockets",
+    "location": "Stittsville, ON | Girls Only",
+    "league": "OWHL-E"
+  },
+  {
+    "name": "Stoney Creek Sabres",
+    "location": "Stoney Creek, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Stoney Creek Warriors",
+    "location": "Stoney Creek, ON",
+    "league": "OMHA , TCMHL"
+  },
+  {
+    "name": "Stouffville Clippers",
+    "location": "Stouffville, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Stratford Aces",
+    "location": "Stratford, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Stratford Warriors",
+    "location": "Stratford, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Strathroy Jr Rockets",
+    "location": "Strathroy, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Streetsville Derbys",
+    "location": "Streetsville, ON",
+    "league": "MHL"
+  },
+  {
+    "name": "Streetsville Tigers",
+    "location": "Streetsville, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Sturgeon Lake Thunder",
+    "location": "Fenelon Falls, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Sudbury Lady Wolves",
+    "location": "Sudbury, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Sudbury Wolves",
+    "location": "Sudbury, ON",
+    "league": "NDMHL , NOHA , NOHLAAA"
+  },
+  {
+    "name": "Sun County Panthers",
+    "location": "Essex, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "TNT Tornados",
+    "location": "New Tecumseth, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Talbot Trail Blazers",
+    "location": "Essex, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Tavistock Titans",
+    "location": "Tavistock, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Tecumseh Shoreline Eagles",
+    "location": "Tecumseh, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Ted Reeve Thunder",
+    "location": "Toronto, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Temagami",
+    "location": "Temagami, ON",
+    "league": "NDHL-N , NOHA"
+  },
+  {
+    "name": "Temiskaming Shores Puckhounds",
+    "location": "New Liskeard, ON",
+    "league": "NDHL-N , NEOHA , NOHA"
+  },
+  {
+    "name": "Terrace Bay Superior Stars",
+    "location": "Terrace Bay, ON",
+    "league": "HNO"
+  },
+  {
+    "name": "Thamesford Attack",
+    "location": "Thamesford, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Thorold Blackhawks",
+    "location": "Thorold, ON",
+    "league": "NDHL , OMHA"
+  },
+  {
+    "name": "Thunder Bay Beavers",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Thunder Bay Elks",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Thunder Bay Fury",
+    "location": "Thunder Bay, ON | Girls Only",
+    "league": "nan"
+  },
+  {
+    "name": "Thunder Bay Kings",
+    "location": "Thunder Bay, ON",
+    "league": "GNML , NOHLAAA"
+  },
+  {
+    "name": "Thunder Bay Queens",
+    "location": "Thunder Bay, ON | Girls Only",
+    "league": "nan"
+  },
+  {
+    "name": "Tillsonburg Tornadoes",
+    "location": "Tillsonburg, ON",
+    "league": "WOGHL"
+  },
+  {
+    "name": "Timmins Falcons",
+    "location": "Timmins, ON | Girls Only",
+    "league": "NEOHA"
+  },
+  {
+    "name": "Timmins North Stars",
+    "location": "Timmins, ON",
+    "league": "NDMHL , NEOHA , NOHA"
+  },
+  {
+    "name": "Toronto Aces",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Aeros",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Aeros",
+    "location": "Toronto, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Toronto Attack",
+    "location": "North York, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Avalanche",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Eagles",
+    "location": "York, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Jr Canadiens",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Leaside Wildcats",
+    "location": "Toronto, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Toronto Marlboros",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Nationals",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Red Wings",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Reps",
+    "location": "Mississauga, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Royals",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Shamrocks",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto TOP Titans",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Titans",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Toronto Wolverines",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Tri-Centre Jr Attack",
+    "location": "Owen Sound, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Tweed Hawks",
+    "location": "Tweed, ON",
+    "league": "EOMHL , OMHA"
+  },
+  {
+    "name": "Twin Centre Hericanes",
+    "location": "St Clements, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Twin Centre Stars",
+    "location": "St Clements, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Upper Canada Cyclones",
+    "location": "Cardinal, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Upper Maitland Mustangs",
+    "location": "Kurtzville, ON | Girls Only",
+    "league": "OWHL-S , WOAA"
+  },
+  {
+    "name": "Upper Ottawa Valley Aces",
+    "location": "Renfrew, ON",
+    "league": "HEO"
+  },
+  {
+    "name": "Upper York Admirals",
+    "location": "East Gwillimbury, ON",
+    "league": "OMHA , YSMHL"
+  },
+  {
+    "name": "Valley Storm",
+    "location": "Barry's Bay, ON",
+    "league": "UOVMHL"
+  },
+  {
+    "name": "Vaughan Flames",
+    "location": "Vaughan, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Vaughan JCC Warriors",
+    "location": "Vaughan, ON",
+    "league": "NYHL"
+  },
+  {
+    "name": "Vaughan Kings",
+    "location": "Vaughan, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Vaughan Panthers",
+    "location": "Vaughan, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Vaughan Rangers",
+    "location": "Vaughan, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Vermilion Bay Cougars",
+    "location": "Vermilion Bay, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Victoria Village Mustangs",
+    "location": "Toronto, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Volunteer Pool Bearcats",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Wainfleet Wild",
+    "location": "Wainfleet, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "Walkerton Capitals",
+    "location": "Walkerton, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Wallaceburg Lakers",
+    "location": "Wallaceburg, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "Warren Park Eagles",
+    "location": "Toronto, ON",
+    "league": "NYHL"
+  },
+  {
+    "name": "Wasaga Beach Stars",
+    "location": "Wasaga Beach, ON",
+    "league": "MOMHL , OMHA"
+  },
+  {
+    "name": "Waterford Wildcats",
+    "location": "Waterford, ON",
+    "league": "OMHA , SCMHL"
+  },
+  {
+    "name": "Waterloo Ravens",
+    "location": "Waterloo, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Waterloo Wolves",
+    "location": "Waterloo, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Wawa Travellers",
+    "location": "Wawa, ON",
+    "league": "NEOHA"
+  },
+  {
+    "name": "Welland Tigers",
+    "location": "Welland, ON",
+    "league": "NDHL , OMHA"
+  },
+  {
+    "name": "West Carleton Crusaders",
+    "location": "Carp, ON",
+    "league": "LCMHL , OBMHL"
+  },
+  {
+    "name": "West Coast Whitecaps",
+    "location": "Wingham, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "West End Bruins",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "West End Wolverines",
+    "location": "Ottawa, ON",
+    "league": "BMHL"
+  },
+  {
+    "name": "West Grey Warriors",
+    "location": "Durham, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "West Hill Golden Hawks",
+    "location": "Scarborough, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "West Lincoln Wrath",
+    "location": "Smithville, ON",
+    "league": "OMHA"
+  },
+  {
+    "name": "West London Hawks",
+    "location": "London, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "West Lorne Comets",
+    "location": "West Lorne, ON",
+    "league": "OMHA , SHL-CA"
+  },
+  {
+    "name": "West Mall Lightning",
+    "location": "Etobicoke, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "West Niagara Flying Aces",
+    "location": "Beamsville, ON",
+    "league": "TCMHL"
+  },
+  {
+    "name": "West Nipissing Sting",
+    "location": "Sturgeon Falls, ON",
+    "league": "NDHL-N , NOHA"
+  },
+  {
+    "name": "West Northumberland Wild",
+    "location": "Cobourg, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "West Oxford Inferno",
+    "location": "Thamesford, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "West Toronto Renegades",
+    "location": "Toronto, ON",
+    "league": "GTHL"
+  },
+  {
+    "name": "Westfort Maroons",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Westfort Rangers",
+    "location": "Thunder Bay, ON",
+    "league": "HNO , SNMHA , TBMHA"
+  },
+  {
+    "name": "Whitby Wildcats",
+    "location": "Whitby, ON",
+    "league": "LHL , OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Whitby Wolves",
+    "location": "Whitby, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Willowdale Hawks",
+    "location": "Toronto, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "Wilmot Wolverines",
+    "location": "Wilmot, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Windsor Jr Spitfires",
+    "location": "Windsor, ON",
+    "league": "nan"
+  },
+  {
+    "name": "Windsor Jr Spitfires AAA",
+    "location": "Windsor, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Windsor Wildcats",
+    "location": "Windsor, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Wingham Ironmen",
+    "location": "Wingham, ON",
+    "league": "OMHA , WOAA"
+  },
+  {
+    "name": "Woodstock Jr Navy Vets",
+    "location": "Woodstock, ON",
+    "league": "MHAO"
+  },
+  {
+    "name": "Woodstock Wildcats",
+    "location": "Woodstock, ON | Girls Only",
+    "league": "OWHL-S , WOGHL"
+  },
+  {
+    "name": "Woodville Hurricanes",
+    "location": "Woodville, ON",
+    "league": "OMHA , VDMHL"
+  },
+  {
+    "name": "Woolwich Wild",
+    "location": "Elmira, ON | Girls Only",
+    "league": "OWHL-S"
+  },
+  {
+    "name": "Woolwich Wildcats",
+    "location": "Elmira, ON",
+    "league": "OMHA , TCMHL"
+  },
+  {
+    "name": "York Mills Rangers",
+    "location": "Toronto, ON",
+    "league": "GTHL , NYHL"
+  },
+  {
+    "name": "York Simcoe Express",
+    "location": "Newmarket, ON",
+    "league": "OMHA , OMHA-AAA"
+  },
+  {
+    "name": "Zurich Thunder",
+    "location": "Zurich, ON",
+    "league": "OMHA , WOAA"
+  }
+]

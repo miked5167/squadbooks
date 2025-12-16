@@ -14,7 +14,7 @@ export default function NotFound() {
           <div>
             <h1 className="text-2xl font-bold text-navy mb-2">Budget Not Found</h1>
             <p className="text-navy/70 mb-4">
-              This budget link is invalid, has expired, or the budget hasn't been approved yet.
+              This budget link is invalid, has expired, or the budget hasn&apos;t been approved yet.
             </p>
             <p className="text-sm text-navy/60 mb-6">
               If you received this link from a coach, please contact them to verify the

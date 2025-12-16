@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { TransactionType, TransactionStatus, Prisma } from '@prisma/client'
+import type { TransactionType, TransactionStatus, Prisma } from '@prisma/client'
 import type { CreateTransactionInput, UpdateTransactionInput, TransactionFilter } from '@/lib/validations/transaction'
 import { logger } from '@/lib/logger'
 
@@ -275,6 +275,172 @@ export async function getTransactions(
       total,
       totalPages: Math.ceil(total / perPage),
     },
+  }
+}
+
+/**
+ * Get transactions with cursor-based pagination (optimized for list view)
+ * Returns only fields needed for the transaction list, with minimal relations
+ */
+export async function getTransactionsWithCursor(params: {
+  teamId: string
+  limit?: number
+  cursor?: { transactionDate: Date; id: string }
+  filters?: {
+    type?: TransactionType
+    categoryId?: string
+    status?: TransactionStatus
+    search?: string
+  }
+}) {
+  const { teamId, limit = 20, cursor, filters = {} } = params
+  const { type, categoryId, status, search } = filters
+
+  // Clamp limit to prevent abuse
+  const take = Math.min(limit, 50)
+
+  // Build where clause
+  const where: Prisma.TransactionWhereInput = {
+    teamId,
+    deletedAt: null,
+  }
+
+  // Add filters
+  if (type) where.type = type
+  if (status) where.status = status
+  if (categoryId) where.categoryId = categoryId
+
+  // Server-side search on vendor and description
+  if (search && search.trim()) {
+    where.OR = [
+      { vendor: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } },
+    ]
+  }
+
+  // Build cursor where clause separately to avoid OR conflicts
+  const whereWithCursor = { ...where }
+
+  // Add cursor condition for pagination
+  // Order is: transactionDate DESC, id DESC
+  // For cursor, we want items that come AFTER the cursor (older transactions)
+  if (cursor) {
+    // If we already have OR (from search), wrap everything in AND
+    if (whereWithCursor.OR) {
+      const searchOR = whereWithCursor.OR
+      delete whereWithCursor.OR
+      whereWithCursor.AND = [
+        { OR: searchOR },
+        {
+          OR: [
+            // Transaction date is older than cursor date
+            { transactionDate: { lt: cursor.transactionDate } },
+            // OR transaction date equals cursor date but ID is less than cursor ID
+            {
+              AND: [
+                { transactionDate: cursor.transactionDate },
+                { id: { lt: cursor.id } },
+              ],
+            },
+          ],
+        },
+      ]
+    } else {
+      // No search, just add cursor OR
+      whereWithCursor.OR = [
+        { transactionDate: { lt: cursor.transactionDate } },
+        {
+          AND: [
+            { transactionDate: cursor.transactionDate },
+            { id: { lt: cursor.id } },
+          ],
+        },
+      ]
+    }
+  }
+
+  // Get total count (without cursor, but with filters)
+  const totalCount = await prisma.transaction.count({ where })
+
+  // Fetch transactions with optimized select
+  const transactions = await prisma.transaction.findMany({
+    where: whereWithCursor,
+    orderBy: [
+      { transactionDate: 'desc' },
+      { id: 'desc' }, // Secondary sort for stable ordering
+    ],
+    take: take + 1, // Fetch one extra to check if there are more
+    select: {
+      id: true,
+      transactionDate: true,
+      amount: true,
+      vendor: true,
+      description: true,
+      status: true,
+      type: true,
+      receiptUrl: true,
+      envelopeId: true,
+      approvalReason: true,
+      // Minimal category data
+      category: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+        },
+      },
+      // Minimal creator data
+      creator: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      // Just count approvals, don't load full records
+      _count: {
+        select: {
+          approvals: true,
+        },
+      },
+    },
+  })
+
+  // Check if there are more results
+  const hasMore = transactions.length > take
+  const items = hasMore ? transactions.slice(0, take) : transactions
+
+  // Generate next cursor from last item
+  let nextCursor: string | null = null
+  if (hasMore && items.length > 0) {
+    const lastItem = items[items.length - 1]
+    // Encode cursor as base64 JSON
+    const cursorData = {
+      transactionDate: lastItem.transactionDate.toISOString(),
+      id: lastItem.id,
+    }
+    nextCursor = Buffer.from(JSON.stringify(cursorData)).toString('base64')
+  }
+
+  return {
+    items,
+    nextCursor,
+    totalCount,
+  }
+}
+
+/**
+ * Decode cursor from base64-encoded JSON
+ */
+export function decodeCursor(cursor: string): { transactionDate: Date; id: string } | null {
+  try {
+    const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString('utf-8'))
+    return {
+      transactionDate: new Date(decoded.transactionDate),
+      id: decoded.id,
+    }
+  } catch (error) {
+    logger.error('Failed to decode cursor', { error, cursor })
+    return null
   }
 }
 

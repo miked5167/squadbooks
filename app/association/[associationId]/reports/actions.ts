@@ -1,6 +1,7 @@
 'use server'
 
-import { PrismaClient, Decimal } from '@prisma/client'
+import type { Decimal } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 import { getAlertsData } from '../alerts/actions'
 
 const prisma = new PrismaClient()

@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dialog'
 import { Edit, Loader2, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { BudgetVersionWithAllocations } from '@/lib/types/budget-workflow'
+import type { BudgetVersionWithAllocations } from '@/lib/types/budget-workflow'
 
 interface ProposeUpdateButtonProps {
   budgetId: string
@@ -92,7 +92,7 @@ export function ProposeUpdateButton({ budgetId, currentVersion }: ProposeUpdateB
               What changed? <span className="text-red-500">*</span>
             </label>
             <p className="text-xs text-muted-foreground">
-              Summarize the changes you're proposing (1-2 sentences). This will be shown to parents.
+              Summarize the changes you&apos;re proposing (1-2 sentences). This will be shown to parents.
             </p>
             <Textarea
               id="changeSummary"

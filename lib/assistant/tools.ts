@@ -1,5 +1,6 @@
 // AI Assistant Tool Functions
-import { PrismaClient, TransactionType, TransactionStatus } from '@prisma/client'
+import type { TransactionType} from '@prisma/client';
+import { PrismaClient, TransactionStatus } from '@prisma/client'
 import type {
   AssistantContext,
   ToolResult,

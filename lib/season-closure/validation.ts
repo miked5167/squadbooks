@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { ValidationResult, ValidationIssue, PolicySnapshot } from './types';
+import type { ValidationResult, ValidationIssue, PolicySnapshot } from './types';
 import { MANDATORY_RECEIPT_THRESHOLD } from '@/lib/constants/validation';
 
 // Configuration constants

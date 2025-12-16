@@ -76,7 +76,7 @@ export function DemoRequestForm() {
         </div>
         <h3 className="text-2xl font-bold text-navy mb-2">Request Received!</h3>
         <p className="text-navy/70">
-          Thanks for your interest. We'll reach out soon to schedule your demo.
+          Thanks for your interest. We&apos;ll reach out soon to schedule your demo.
         </p>
       </div>
     )

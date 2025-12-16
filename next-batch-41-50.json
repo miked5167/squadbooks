@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Deep River Knights",
+    "location": "Deep River, ON",
+    "website": "https://dramha.com",
+    "staffPage": "https://dramha.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Delhi Norwich 59ers",
+    "location": "Delhi, ON",
+    "website": "https://delhinorwich59ers.ca",
+    "staffPage": "https://delhinorwich59ers.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "East Lambton Eagles",
+    "location": "Watford, ON",
+    "website": "https://eastlambtonminorhockey.ca",
+    "staffPage": "https://eastlambtonminorhockey.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "East Nipissing Vipers",
+    "location": "Astorville, ON",
+    "website": "https://govipersgo.com",
+    "staffPage": "https://govipersgo.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Elgin Middlesex Canucks",
+    "location": "Komoka, ON",
+    "website": "https://elgin-middlesexcanucks.ca",
+    "staffPage": "https://elgin-middlesexcanucks.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate AAA",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Elliot Lake",
+    "location": "Elliot Lake, ON",
+    "website": "https://elliotlakeminorhockey.ca",
+    "staffPage": "https://elliotlakeminorhockey.ca/Staff/1003/",
+    "notes": "CSV says Treasurer position vacant - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Central Perth Predators",
+    "location": "Monkton, ON",
+    "website": "https://centralperthminorhockey.ca",
+    "staffPage": "https://centralperthminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Central Ontario Wolves",
+    "location": "Lindsay, ON",
+    "website": "https://cowha.com",
+    "staffPage": "https://cowha.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate AAA",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Caledonia Thunder",
+    "location": "Caledonia, ON",
+    "website": "https://caledoniathunder.ca",
+    "staffPage": "https://caledoniathunder.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Caledon Hawks",
+    "location": "Caledon, ON",
+    "website": "https://caledonminorhockey.ca",
+    "staffPage": "https://caledonminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Playwright - validate",
+    "action": "VALIDATE"
+  }
+]

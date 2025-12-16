@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { UpdateTransactionSchema } from '@/lib/validations/transaction'
 import { getTransactionById, updateTransaction, deleteTransaction } from '@/lib/db/transactions'

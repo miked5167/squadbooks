@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { CreateTransactionSchema, TransactionFilterSchema } from '@/lib/validations/transaction'
-import { createTransaction, getTransactions } from '@/lib/db/transactions'
+import { createTransaction, getTransactions, getTransactionsWithCursor, decodeCursor } from '@/lib/db/transactions'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import { areTransactionsAllowed } from '@/lib/services/team-season-lifecycle'
@@ -10,7 +11,14 @@ import { createTeamSeasonWithSnapshot } from '@/lib/services/team-policy-snapsho
 
 /**
  * GET /api/transactions
- * Get list of transactions with filters
+ * Get list of transactions with cursor-based pagination and server-side filtering
+ * Query params:
+ * - cursor: base64-encoded cursor for pagination
+ * - limit: number of items (default 20, max 50)
+ * - type: INCOME or EXPENSE
+ * - status: DRAFT, PENDING, or APPROVED
+ * - categoryId: UUID of category
+ * - search: search term for vendor/description
  */
 export async function GET(request: NextRequest) {
   try {
@@ -30,25 +38,66 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Parse query parameters
-    const searchParams = request.nextUrl.searchParams
-    const filters = {
-      type: searchParams.get('type') || undefined,
-      status: searchParams.get('status') || undefined,
-      categoryId: searchParams.get('categoryId') || undefined,
-      startDate: searchParams.get('startDate') || undefined,
-      endDate: searchParams.get('endDate') || undefined,
-      page: parseInt(searchParams.get('page') || '1'),
-      perPage: parseInt(searchParams.get('perPage') || '50'),
-      sortBy: (searchParams.get('sortBy') || 'date') as 'date' | 'amount' | 'vendor',
-      sortOrder: (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc',
+    if (!user.teamId) {
+      return NextResponse.json({ error: 'User not assigned to a team' }, { status: 400 })
     }
 
-    // Validate filters
-    const validatedFilters = TransactionFilterSchema.parse(filters)
+    // Parse query parameters
+    const searchParams = request.nextUrl.searchParams
+    const cursorParam = searchParams.get('cursor')
+    const limitParam = searchParams.get('limit')
+    const typeParam = searchParams.get('type')
+    const statusParam = searchParams.get('status')
+    const categoryIdParam = searchParams.get('categoryId')
+    const searchParam = searchParams.get('search')
 
-    // Get transactions
-    const result = await getTransactions(user.teamId, validatedFilters)
+    // Decode cursor if provided
+    let cursor: { transactionDate: Date; id: string } | undefined
+    if (cursorParam) {
+      const decoded = decodeCursor(cursorParam)
+      if (!decoded) {
+        return NextResponse.json({ error: 'Invalid cursor' }, { status: 400 })
+      }
+      cursor = decoded
+    }
+
+    // Parse limit
+    const limit = limitParam ? parseInt(limitParam, 10) : 20
+    if (isNaN(limit) || limit < 1) {
+      return NextResponse.json({ error: 'Invalid limit' }, { status: 400 })
+    }
+
+    // Build filters
+    const filters: {
+      type?: 'INCOME' | 'EXPENSE'
+      status?: 'DRAFT' | 'PENDING' | 'APPROVED'
+      categoryId?: string
+      search?: string
+    } = {}
+
+    if (typeParam && (typeParam === 'INCOME' || typeParam === 'EXPENSE')) {
+      filters.type = typeParam
+    }
+
+    if (statusParam && ['DRAFT', 'PENDING', 'APPROVED'].includes(statusParam)) {
+      filters.status = statusParam as 'DRAFT' | 'PENDING' | 'APPROVED'
+    }
+
+    if (categoryIdParam) {
+      filters.categoryId = categoryIdParam
+    }
+
+    if (searchParam && searchParam.trim()) {
+      filters.search = searchParam.trim()
+    }
+
+    // Get transactions with cursor pagination
+    const result = await getTransactionsWithCursor({
+      teamId: user.teamId,
+      limit,
+      cursor,
+      filters,
+    })
 
     return NextResponse.json(result, { status: 200 })
   } catch (error) {

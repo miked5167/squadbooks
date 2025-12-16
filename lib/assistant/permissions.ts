@@ -1,5 +1,5 @@
 // Permission utilities for AI Assistant
-import { UserRole } from '@prisma/client'
+import type { UserRole } from '@prisma/client'
 import type { UserPermissions } from '@/lib/types/assistant'
 
 export function getUserPermissions(role: UserRole): UserPermissions {

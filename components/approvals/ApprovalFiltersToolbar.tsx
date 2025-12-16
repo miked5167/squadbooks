@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ApprovalFilters, RiskLevel } from '@/lib/types/approvals'
+import type { ApprovalFilters, RiskLevel } from '@/lib/types/approvals'
 
 interface ApprovalFiltersToolbarProps {
   filters: ApprovalFilters

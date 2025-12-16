@@ -6,7 +6,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
-import { TeamSeasonState } from '@prisma/client'
+import type { TeamSeasonState } from '@prisma/client'
 
 /**
  * Team season summary for association rollup

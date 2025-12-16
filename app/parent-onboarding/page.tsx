@@ -227,7 +227,7 @@ export default function ParentOnboardingPage() {
                 Your information has been securely saved and will be used for team management and emergency purposes only.
               </p>
               <p className="text-sm text-gray-600">
-                You'll receive communication from <strong>{validationData?.team.name}</strong> at the email address you provided.
+                You&apos;ll receive communication from <strong>{validationData?.team.name}</strong> at the email address you provided.
               </p>
             </div>
           </CardContent>

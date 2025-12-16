@@ -237,12 +237,12 @@ export function PublicBudgetView({ budget }: PublicBudgetViewProps) {
               )
             })}
 
-            {/* What's Included */}
+            {/* What&apos;s Included */}
             <Card className="bg-gradient-to-br from-navy/5 to-gold/5 border-navy/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-navy">
                   <Trophy className="w-5 h-5 text-gold" />
-                  What's Included
+                  What&apos;s Included
                 </CardTitle>
               </CardHeader>
               <CardContent>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
-import { PendingApproval, PendingApprovalWithRisk } from '../types/approvals'
+import type { PendingApproval, PendingApprovalWithRisk } from '../types/approvals'
 import { calculateRiskLevel } from '../utils/approval-risk'
 
 /**

@@ -1,6 +1,7 @@
 "use client"
 
-import { RuleType, ruleTypeMetadata } from "@/lib/validations/rule-schemas"
+import type { RuleType} from "@/lib/validations/rule-schemas";
+import { ruleTypeMetadata } from "@/lib/validations/rule-schemas"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {

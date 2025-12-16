@@ -47,7 +47,7 @@ export async function parseRosterExcel(file: File): Promise<ParsedRoster> {
     }
 
     // Find header row (should be first row, but let's be flexible)
-    let headerRowIndex = 0;
+    const headerRowIndex = 0;
     const headers = data[headerRowIndex];
 
     // Map column names to indices (case-insensitive)

@@ -1,0 +1,365 @@
+[
+  {
+    "index": 221,
+    "name": "Lakeshore Lightning",
+    "location": "Lakeshore, ON | Girls Only",
+    "president": {
+      "name": "Gord Lachine",
+      "email": "president@lakeshorelightning.com"
+    },
+    "vp": null,
+    "treasurer": {
+      "name": "Scott Dewar",
+      "email": "treasurer@lakeshorelightning.com"
+    },
+    "website": "https://lakeshorelightning.com",
+    "source": "https://lakeshorelightning.com/Contact"
+  },
+  {
+    "index": 222,
+    "name": "Lambeth Lancers",
+    "location": "Lambeth, ON",
+    "president": {
+      "name": "Jon Whitlock",
+      "email": "president@lambethminorhockey.com"
+    },
+    "vp": {
+      "name": "David Bruno",
+      "email": "vicepresident@lambethminorhockey.com"
+    },
+    "treasurer": {
+      "name": "Addy Coughlin",
+      "email": "treasurer@lambethminorhockey.com"
+    },
+    "website": "https://lambethminorhockey.com",
+    "source": "https://lambethminorhockey.com/Contact/1003/"
+  },
+  {
+    "index": 223,
+    "name": "Lambton Attack",
+    "location": "Petrolia, ON | Girls Only",
+    "president": {
+      "name": "Justin Free",
+      "email": "jjfree1717@gmail.com"
+    },
+    "vp": {
+      "name": "Thera Wagner",
+      "email": "laghavicepresident@gmail.com"
+    },
+    "treasurer": {
+      "name": "Marcy Freer",
+      "email": "laghatreasurer@gmail.com"
+    },
+    "website": "https://lambtonattack.com",
+    "source": "https://lambtonattack.com/Contact"
+  },
+  {
+    "index": 224,
+    "name": "Lambton Shores Predators",
+    "location": "Lambton Shores, ON",
+    "president": {
+      "name": "Heather George",
+      "email": "hetty17@hotmail.com"
+    },
+    "vp": {
+      "name": "Jeromy Bristowe",
+      "email": "protected"
+    },
+    "treasurer": {
+      "name": "Correna Jones",
+      "email": "protected"
+    },
+    "website": "https://lambtonshoresminorhockey.ca",
+    "source": "https://lambtonshoresminorhockey.ca/Contact",
+    "note": "VP and Treasurer emails are Cloudflare-protected"
+  },
+  {
+    "index": 225,
+    "name": "Langton Leafs",
+    "location": "Langton, ON",
+    "president": {
+      "name": "Janine Northey",
+      "email": "neener113@hotmail.com"
+    },
+    "vp": {
+      "name": "Jessica Brown",
+      "email": "letsplaylangton@gmail.com"
+    },
+    "treasurer": {
+      "name": "Marcel Vandendriessche",
+      "email": "vandendriesschemarcel@gmail.com"
+    },
+    "website": "https://langtonminorhockey.com",
+    "source": "https://langtonminorhockey.com/Contact"
+  },
+  {
+    "index": 226,
+    "name": "Leaside Flames",
+    "location": "Toronto, ON",
+    "president": {
+      "name": "Carlo A. Giuliani",
+      "email": "president@leasidehockey.com"
+    },
+    "vp": null,
+    "treasurer": {
+      "name": "Alex Goldsmith",
+      "email": "treasurer@leasidehockey.com"
+    },
+    "website": "https://leasidehockey.com",
+    "source": "https://leasidehockey.com/about/",
+    "note": "Multiple VPs for different programs, no single VP"
+  },
+  {
+    "index": 227,
+    "name": "Leeds Chargers",
+    "location": "Athens, ON",
+    "president": {
+      "name": "Mark Trachy",
+      "email": "contact form only"
+    },
+    "vp": {
+      "name": "Jason Peterson",
+      "email": "contact form only"
+    },
+    "treasurer": {
+      "name": "Ashleigh Trickey",
+      "email": "contact form only"
+    },
+    "website": "https://www.leedschargers.com",
+    "source": "https://www.leedschargers.com/executive/",
+    "note": "Uses contact forms instead of direct emails"
+  },
+  {
+    "index": 228,
+    "name": "Leitrim Hawks",
+    "location": "Leitrim, ON",
+    "president": {
+      "name": "Stacey Hall",
+      "email": "president@leitrimhockey.ca"
+    },
+    "vp": null,
+    "treasurer": null,
+    "website": "https://www.leitrimhockey.ca",
+    "source": "https://www.leitrimhockey.ca/welcome-to-2024-2025-board/",
+    "note": "VP of Finance and Treasurer positions vacant"
+  },
+  {
+    "index": 229,
+    "name": "Lincoln Blades",
+    "location": "Lincoln, ON",
+    "president": {
+      "name": "Steve Arsenault",
+      "email": "president@westniagaraminorhockey.ca"
+    },
+    "vp": {
+      "name": "Chris Unrau",
+      "email": "vpoperations@westniagaraminorhockey.ca"
+    },
+    "treasurer": {
+      "name": "Nick Stoehr",
+      "email": "vpfinance@westniagaraminorhockey.ca"
+    },
+    "website": "https://westniagaraminorhockey.ca",
+    "source": "https://westniagaraminorhockey.ca/Contact/1005/",
+    "note": "Part of West Niagara Minor Hockey Association"
+  },
+  {
+    "index": 230,
+    "name": "Lindsay Lynx",
+    "location": "Lindsay, ON | Girls Only",
+    "president": {
+      "name": "Julie Crowder",
+      "email": "lynxpresident@lgha.net"
+    },
+    "vp": {
+      "name": "Tanya Armstrong",
+      "email": "vicepresident@lgha.net"
+    },
+    "treasurer": {
+      "name": "Caley Ferguson",
+      "email": "treasurer@lgha.net"
+    },
+    "website": "https://lgha.net",
+    "source": "https://lgha.net"
+  },
+  {
+    "index": 231,
+    "name": "Lindsay Muskies",
+    "location": "Lindsay, ON",
+    "president": {
+      "name": "Casey Deschamps",
+      "email": "president@lindsayminorhockey.com"
+    },
+    "vp": {
+      "name": "Greg Walker",
+      "email": "vicepresident@lindsayminorhockey.com"
+    },
+    "treasurer": {
+      "name": "Jessica Dagg",
+      "email": "treasurer@lindsayminorhockey.com"
+    },
+    "website": "https://lindsayminorhockey.com",
+    "source": "https://lindsayminorhockey.com/Contact"
+  },
+  {
+    "index": 232,
+    "name": "Listowel Cyclones",
+    "location": "Listowel, ON",
+    "president": {
+      "name": "Sarah Metzger",
+      "email": "sarahmetzger1444@gmail.com"
+    },
+    "vp": {
+      "name": "Mallarie Elliott",
+      "email": "vp.listowelhockey@gmail.com"
+    },
+    "treasurer": {
+      "name": "Brendan Magee",
+      "email": "treasurerlistowelhockey@gmail.com"
+    },
+    "website": "https://listowelminorhockey.ca",
+    "source": "https://listowelminorhockey.ca/Contact"
+  },
+  {
+    "index": 233,
+    "name": "London Bandits",
+    "location": "London, ON",
+    "president": {
+      "name": "Shawn Reidy",
+      "email": "President@londonbanditshockey.com"
+    },
+    "vp": {
+      "name": "Shelby Paulding",
+      "email": "secretary@londonbanditshockey.com"
+    },
+    "treasurer": {
+      "name": "Michelle Drown",
+      "email": "Treasurer@londonbanditshockey.com"
+    },
+    "website": "https://londonbanditshockey.com",
+    "source": "https://londonbanditshockey.com/Contact/1005/",
+    "note": "Secretary listed as no single VP role"
+  },
+  {
+    "index": 234,
+    "name": "London Devilettes",
+    "location": "London, ON | Girls Only",
+    "president": {
+      "name": "Vacant",
+      "email": "president@londondevilettes.ca"
+    },
+    "vp": {
+      "name": "Chelsea Jongeneelen",
+      "email": "vicepresident@londondevilettes.ca"
+    },
+    "treasurer": {
+      "name": "Stephanie Fletcher",
+      "email": "treasurer@londondevilettes.ca"
+    },
+    "website": "https://londondevilettes.ca",
+    "source": "https://londondevilettes.ca/Contact",
+    "note": "President position vacant"
+  },
+  {
+    "index": 235,
+    "name": "London Jr Knights",
+    "location": "London, ON",
+    "president": {
+      "name": "Drew White",
+      "email": "president@londonjuniorknights.com"
+    },
+    "vp": {
+      "name": "Rick Ackert (VP Admin) / Kevin Gardner (VP Hockey Ops)",
+      "email": "vpadmin@londonjuniorknights.com"
+    },
+    "treasurer": {
+      "name": "Stephanie Mangialardi",
+      "email": "treasurer@londonjuniorknights.com"
+    },
+    "website": "https://londonjuniorknights.com",
+    "source": "https://londonjuniorknights.com/Contact",
+    "note": "Two VP positions: VP Administration and VP Hockey Operations"
+  },
+  {
+    "index": 236,
+    "name": "London Jr Mustangs",
+    "location": "London, ON",
+    "president": {
+      "name": "Sean Jefferies",
+      "email": "londonjuniormustangschair@glha.ca"
+    },
+    "vp": null,
+    "treasurer": {
+      "name": "Tina Barnes",
+      "email": "londonjuniormustangs@outlook.com"
+    },
+    "website": "https://londonjuniormustangs.ca",
+    "source": "https://londonjuniormustangs.ca/Staff/1003/",
+    "note": "Chairperson instead of President, no single VP role"
+  },
+  {
+    "index": 237,
+    "name": "Longlac Timberwolves",
+    "location": "Longlac, ON",
+    "president": {
+      "name": "Not available",
+      "email": "longlacminorhockey@gmail.com"
+    },
+    "vp": null,
+    "treasurer": null,
+    "website": "https://page.spordle.com/longlac-minor-hockey-association",
+    "source": "https://page.spordle.com/longlac-minor-hockey-association/contact",
+    "note": "Only general email found, no specific executive contacts"
+  },
+  {
+    "index": 238,
+    "name": "Loyalist Jets",
+    "location": "Amherstview, ON",
+    "president": null,
+    "vp": null,
+    "treasurer": {
+      "name": "Tim Byrd",
+      "email": "treasurer@ltmha.com"
+    },
+    "website": "https://ltmha.com",
+    "source": "https://ltmha.com/Contact",
+    "note": "Loyalist Township Minor Hockey - No President or VP listed"
+  },
+  {
+    "index": 239,
+    "name": "Lucan Irish",
+    "location": "Lucan, ON",
+    "president": {
+      "name": "Mark Millar",
+      "email": "president@lucanminorhockey.net"
+    },
+    "vp": {
+      "name": "Mindy Squire (1st VP) / Ashlynn Carr (2nd VP)",
+      "email": "1stvicepresident@lucanminorhockey.net"
+    },
+    "treasurer": {
+      "name": "Chuck Robertson",
+      "email": "treasurer@lucanminorhockey.net"
+    },
+    "website": "https://lucanminorhockey.net",
+    "source": "https://lucanminorhockey.net/Staff/1003/",
+    "note": "Two VP positions: 1st VP and 2nd VP"
+  },
+  {
+    "index": 240,
+    "name": "Manitoulin Panthers",
+    "location": "Little Current, ON",
+    "president": {
+      "name": "Scott Stephens",
+      "email": "scottstephens07@gmail.com"
+    },
+    "vp": null,
+    "treasurer": {
+      "name": "Marcie Hughson",
+      "email": "marciehughson@gmail.com"
+    },
+    "website": "https://manitoulinpanthers.com",
+    "source": "https://manitoulinpanthers.com/Contact",
+    "note": "Scott Stephens is VP/Acting President"
+  }
+]

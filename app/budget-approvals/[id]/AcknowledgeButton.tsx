@@ -60,17 +60,19 @@ export function AcknowledgeButton({ approvalId }: { approvalId: string }) {
           I Acknowledge Receipt of This Budget
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-white">
         <AlertDialogHeader>
-          <AlertDialogTitle>Acknowledge Budget?</AlertDialogTitle>
-          <AlertDialogDescription className="space-y-2">
-            <p>
-              By clicking "Acknowledge," you confirm that you have reviewed the budget information
-              provided above.
-            </p>
-            <p className="font-semibold text-orange-600">
-              Important: This action cannot be undone once completed.
-            </p>
+          <AlertDialogTitle className="text-navy text-xl">Acknowledge Budget?</AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <div className="space-y-3 text-base">
+              <p className="text-navy">
+                By clicking &ldquo;Acknowledge,&rdquo; you confirm that you have reviewed the budget information
+                provided above.
+              </p>
+              <p className="font-semibold text-orange-600 bg-orange-50 p-3 rounded-md border border-orange-200">
+                Important: This action cannot be undone once completed.
+              </p>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -81,7 +83,7 @@ export function AcknowledgeButton({ approvalId }: { approvalId: string }) {
               handleAcknowledge()
             }}
             disabled={loading}
-            className="bg-navy hover:bg-navy-medium"
+            className="bg-navy hover:bg-navy-medium text-white"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Acknowledge Budget

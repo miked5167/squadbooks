@@ -1,6 +1,6 @@
 "use client"
 
-import { RuleType, TeamType, AgeDivision, CompetitiveLevel } from "@/lib/validations/rule-schemas"
+import type { RuleType, TeamType, AgeDivision, CompetitiveLevel } from "@/lib/validations/rule-schemas"
 import { getCurrencySymbol } from "@/lib/utils/currency"
 import { DollarSign, Users, Gift, Scale, CheckCircle, List, Shield, Target } from "lucide-react"
 import { Badge } from "@/components/ui/badge"

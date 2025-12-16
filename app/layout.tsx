@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { WebVitals } from "@/components/web-vitals";
 // import { Assistant } from "@/components/assistant/Assistant";
 import "./globals.css";
 
@@ -35,6 +38,9 @@ export default function RootLayout({
         <body className={ibmPlexSans.className}>
           {children}
           <Toaster position="top-right" />
+          <Analytics />
+          <SpeedInsights />
+          <WebVitals />
           {/* <Assistant /> */}
         </body>
       </html>

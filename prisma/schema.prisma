@@ -41,6 +41,7 @@ model Association {
   rules            AssociationRule[] @relation("AssociationRules")
   preSeasonBudgets PreSeasonBudget[]
   reportSchedules  ReportSchedule[]
+  governanceRule   AssociationGovernanceRule?
 
   @@map("associations")
 }
@@ -409,6 +410,54 @@ model TeamComplianceStatus {
   @@index([status])
   @@index([complianceScore])
   @@map("team_compliance_status")
+}
+
+// ============================================
+// ASSOCIATION GOVERNANCE & BUDGET APPROVAL RULES
+// ============================================
+
+enum ParentAckMode {
+  COUNT // Lock when >= N families approve
+  PERCENT // Lock when >= X% of families approve
+}
+
+enum EligibleFamilyDefinition {
+  ACTIVE_ROSTER_ONLY // Only families with active players count as eligible
+  ACTIVE_ROSTER_AND_PAID // Future: families who paid registration
+  ALL_FAMILIES // Future: all families regardless of status
+}
+
+// Association-level governance rules for budget approval workflow
+model AssociationGovernanceRule {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId String   @unique @map("association_id") @db.Uuid
+
+  // Association budget approval requirement
+  requiresAssociationBudgetApproval Boolean @default(false) @map("requires_association_budget_approval")
+
+  // Parent acknowledgment threshold defaults (for all teams in this association)
+  parentAckMode            ParentAckMode @default(PERCENT) @map("parent_ack_mode")
+  parentAckCountThreshold  Int?          @map("parent_ack_count_threshold") // Required if mode = COUNT
+  parentAckPercentThreshold Int?         @map("parent_ack_percent_threshold") // Required if mode = PERCENT (store 80 not 0.8)
+
+  // Eligible family definition
+  eligibleFamilyDefinition EligibleFamilyDefinition @default(ACTIVE_ROSTER_ONLY) @map("eligible_family_definition")
+
+  // Team override settings (optional)
+  allowTeamOverrideThreshold Boolean @default(false) @map("allow_team_override_threshold")
+  overrideMinPercent         Int?    @map("override_min_percent") // Min allowed if team overrides (e.g., 50)
+  overrideMaxPercent         Int?    @map("override_max_percent") // Max allowed if team overrides (e.g., 100)
+  overrideMinCount           Int?    @map("override_min_count") // Min count allowed if team overrides
+  overrideMaxCount           Int?    @map("override_max_count") // Max count allowed if team overrides
+
+  // Metadata
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  association Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+
+  @@map("association_governance_rules")
 }
 
 // ============================================
@@ -1013,6 +1062,11 @@ model Transaction {
   @@index([plaidTransactionId])
   @@index([isImported])
   @@index([envelopeId])
+  // Composite indexes for cursor-based pagination with filters
+  @@index([teamId, deletedAt, transactionDate, id])
+  @@index([teamId, deletedAt, status, transactionDate, id])
+  @@index([teamId, deletedAt, type, transactionDate, id])
+  @@index([teamId, deletedAt, categoryId, transactionDate, id])
   @@map("transactions")
 }
 
@@ -1061,7 +1115,8 @@ model Approval {
 enum BudgetStatus {
   DRAFT // Treasurer is editing
   REVIEW // Submitted to coach for review
-  TEAM_APPROVED // Coach approved
+  ASSOCIATION_REVIEW // Awaiting association approval (optional workflow step)
+  TEAM_APPROVED // Coach approved (or association approved if required)
   PRESENTED // Presented to parents for acknowledgement
   APPROVED // Threshold met, ready to lock
   LOCKED // Final, immutable
@@ -1147,6 +1202,11 @@ model BudgetVersion {
   coachApprovedAt DateTime?
   coachApprovedBy String? // User ID of coach
   coachNotes      String?   @db.Text
+
+  // Association approval (optional - only used when association requires it)
+  associationApprovedAt DateTime?
+  associationApprovedBy String? // Association user ID (from AssociationUser)
+  associationNotes      String?   @db.Text
 
   // Relations
   budget      Budget                  @relation(fields: [budgetId], references: [id], onDelete: Cascade)

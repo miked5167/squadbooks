@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from 'react'
 import { BudgetApprovalCard } from './BudgetApprovalCard'
-import { BudgetApprovalFilters, FilterState } from './BudgetApprovalFilters'
+import type { FilterState } from './BudgetApprovalFilters';
+import { BudgetApprovalFilters } from './BudgetApprovalFilters'
 
 interface Acknowledgment {
   id: string

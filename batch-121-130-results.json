@@ -1,0 +1,131 @@
+[
+  {
+    "association": "Etobicoke Bulldogs",
+    "location": "Etobicoke, ON",
+    "website": "https://gtcapitals.com",
+    "success": true,
+    "url": "https://gtcapitals.com/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "EHL - PRESIDENT",
+      "name": "GEORGE STAVRO",
+      "email": "gstavro@bellnet.ca"
+    },
+    "vp": {
+      "role": "EHL - VICE PRESIDENT & GM",
+      "name": "TOM SANDRAS",
+      "email": "tsandras@rogers.com"
+    }
+  },
+  {
+    "association": "Etobicoke Dolphins",
+    "location": "Etobicoke, ON",
+    "website": "https://etobicokedolphins.ca",
+    "success": true,
+    "url": "https://etobicokedolphins.ca/Staff/1003/",
+    "totalContacts": 18,
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DEBBIE BLAND",
+      "email": "vp@etobicokedolphins.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARILYN RATH",
+      "email": "treasurer@etobicokedolphins.ca"
+    },
+    "president": {
+      "role": "PRESIDENT",
+      "name": "VIOLETA SCODELLER",
+      "email": "president@etobicokedolphins.ca"
+    }
+  },
+  {
+    "association": "Faustina Fury",
+    "location": "Etobicoke, ON",
+    "website": "https://www.faustinahockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Faustina Toros",
+    "location": "York, ON",
+    "website": "https://www.toroshockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Flamborough Falcons",
+    "location": "Flamborough, ON",
+    "website": "https://www.fgha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Flamborough Sabres",
+    "location": "Flamborough, ON",
+    "website": "https://flamboroughhockey.com",
+    "success": true,
+    "url": "https://flamboroughhockey.com/Staff/1003/",
+    "totalContacts": 30,
+    "president": {
+      "role": "PRESIDENT - FHA BOARD MEMBER",
+      "name": "ALEX NOTO",
+      "email": "president@flamboroughhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT - FHA BOARD MEMBER",
+      "name": "SHAWN ALBERT",
+      "email": "vicepresident@flamboroughhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER / ACCOUNTANT",
+      "name": "MATT MARTIN",
+      "email": "treasurer@flamboroughhockey.com"
+    }
+  },
+  {
+    "association": "Forest Hill Force",
+    "location": "Toronto, ON",
+    "website": "https://www.fhha.org",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Fort Frances Canadians",
+    "location": "Fort Frances, ON",
+    "website": "https://www.fortfranceshockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Fort Frances Leafs",
+    "location": "Fort Frances, ON",
+    "website": "http://ffgwha.msa4.rampinteractive.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Frontenac Flyers",
+    "location": "Frontenac, ON",
+    "website": "https://frontenachockey.ca",
+    "success": true,
+    "url": "https://frontenachockey.ca/Staff/1003/",
+    "totalContacts": 24,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARC MCINTOSH",
+      "email": "marcmcintosh12@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT / OMHA CONTACT",
+      "name": "JAMIE SEALE",
+      "email": "jayseale@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DEBBIE DONOVAN",
+      "email": "treasurer@frontenachockey.ca"
+    }
+  }
+]

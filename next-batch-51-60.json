@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Bradford Bulldogs",
+    "location": "Bradford, ON",
+    "website": "https://bradfordbulldogs.com",
+    "staffPage": "https://bradfordbulldogs.com/Staff/1003/",
+    "notes": "CSV has complete data - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Belmont Rangers",
+    "location": "Belmont, ON",
+    "website": "https://belmontminorhockey.ca",
+    "staffPage": "https://belmontminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Playwright - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Aurora Tigers",
+    "location": "Aurora, ON",
+    "website": "https://auroraminorhockey.com",
+    "staffPage": "https://auroraminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Arthur Vipers",
+    "location": "Arthur, ON",
+    "website": "https://arthurminorhockey.com",
+    "staffPage": "https://arthurminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Aylmer Flames",
+    "location": "Aylmer, ON",
+    "website": "https://aylmerflames.com",
+    "staffPage": "https://aylmerflames.com/Staff/1003/",
+    "notes": "CSV has complete data via Playwright - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Collingwood Jr Blues",
+    "location": "Collingwood, ON",
+    "website": "https://collingwoodhockey.com",
+    "staffPage": "https://collingwoodhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Playwright - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Brock Wild",
+    "location": "Brock, ON",
+    "website": "https://brockminorhockey.com",
+    "staffPage": "https://brockminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Brighton Bolts",
+    "location": "Brighton, ON",
+    "website": "https://brightonminorhockey.ca",
+    "staffPage": "https://brightonminorhockey.ca/Staff/1003/",
+    "notes": "CSV has co-treasurers via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Burford Coyotes",
+    "location": "Burford, ON",
+    "website": "https://burfordminorhockey.com",
+    "staffPage": "https://burfordminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Bruce Peninsula Predators",
+    "location": "Wiarton, ON",
+    "website": "https://northbrucehockey.com",
+    "staffPage": "https://northbrucehockey.com/Staff/1003/",
+    "notes": "CSV says no traditional Treasurer - validate",
+    "action": "VALIDATE"
+  }
+]

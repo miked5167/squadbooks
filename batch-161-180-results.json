@@ -1,0 +1,82 @@
+[
+  {
+    "association": "Brockville Jr Braves",
+    "location": "Brockville, ON",
+    "website": "https://brockvillejrbravesminorhockey.com",
+    "league": "UCMHL",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Burlington Barracudas",
+    "location": "Burlington, ON | Girls Only",
+    "website": "https://burlingtonbarracudasminorhockey.com",
+    "league": "OWHL-S",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Burlington Bulldogs",
+    "location": "Burlington, ON",
+    "website": "https://burlingtonbulldogsminorhockey.com",
+    "league": "MHAO",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Burlington Eagles",
+    "location": "Burlington, ON",
+    "website": "https://burlingtoneaglesminorhockey.com",
+    "league": "OMHA , OMHA-AAA , TCMHL",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Burlington Raiders",
+    "location": "Burlington, ON",
+    "website": "https://burlingtonraidersminorhockey.com",
+    "league": "MHAO",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "CIHA Voyageurs",
+    "location": "Rockland, ON",
+    "website": "https://cihavoyageursminorhockey.com",
+    "league": "CSSHL , HEO",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Caledon Coyotes",
+    "location": "Caledon, ON | Girls Only",
+    "website": "https://caledoncoyotesminorhockey.com",
+    "league": "OWHL-S",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Cambridge Roadrunners",
+    "location": "Cambridge, ON | Girls Only",
+    "website": "https://cambridgeroadrunnersminorhockey.com",
+    "league": "OWHL-S",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Carleton Place Cyclones",
+    "location": "Carleton Place, ON | Girls Only",
+    "website": "https://carletonplacecyclonesminorhockey.com",
+    "league": "OWHL-E",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Casselman-Embrun IceDogs",
+    "location": "Casselman, ON",
+    "website": "https://casselmanembrunicedogsminorhockey.com",
+    "league": "OBMHL",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  }
+]

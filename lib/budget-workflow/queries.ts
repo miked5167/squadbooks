@@ -5,7 +5,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
-import { BudgetWithVersion, BudgetVersionWithAllocations, BudgetAllocationDetail } from '@/lib/types/budget-workflow'
+import type { BudgetWithVersion, BudgetVersionWithAllocations, BudgetAllocationDetail } from '@/lib/types/budget-workflow'
 
 /**
  * Get budget with current and presented versions

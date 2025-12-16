@@ -1,0 +1,239 @@
+[
+  {
+    "association": "Ajax Pickering Raiders",
+    "location": "Ajax, ON",
+    "website": "https://ajaxpickeringminorhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Akwesasne Wolves",
+    "location": "Akwesasne, ON",
+    "website": "https://akwesasneminorhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Alexandria Glens",
+    "location": "Alexandria, ON",
+    "website": "https://alexandriaglens.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Almaguin Gazelles",
+    "location": "Sundridge, ON",
+    "website": "https://almaguingazelles.com",
+    "success": true,
+    "url": "https://almaguingazelles.com/Staff/1003/",
+    "totalContacts": 5,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DONALD LARSH",
+      "email": "president.gazelles@outlook.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DENISE LARSH",
+      "email": "treasurer.gazelles@outlook.com"
+    }
+  },
+  {
+    "association": "Ancaster Avalanche",
+    "location": "Ancaster, ON",
+    "website": "https://ancasteravalanche.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Avenue Road Ducks",
+    "location": "North York, ON",
+    "website": "https://avenueroadhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Ayr Rockets",
+    "location": "Ayr, ON",
+    "website": "https://ayrrockets.com",
+    "success": true,
+    "url": "https://ayrrockets.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "AMY HODGSON",
+      "email": "president@ayrrockets.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "REBECCA PERRIMAN",
+      "email": "vicepresident@ayrrockets.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ALISA BRUBACHER",
+      "email": "treasurer@ayrrockets.com"
+    }
+  },
+  {
+    "association": "Baltimore Ice Dogs",
+    "location": "Baltimore, ON",
+    "website": "https://baltimoreminorhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Barrie Colts AAA",
+    "location": "Barrie, ON",
+    "website": "https://barriecoltsaaa.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Barrie Sharks",
+    "location": "Barrie, ON",
+    "website": "https://barriesharks.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Beeton Stingers",
+    "location": "Beeton, ON",
+    "website": "https://beetonstingers.com",
+    "success": true,
+    "url": "https://beetonstingers.com/Staff/1003/",
+    "totalContacts": 9,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK SHAW",
+      "email": "president@beetonstingers.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANDREA WALLIS",
+      "email": "andrea.wallis@sympatico.ca"
+    }
+  },
+  {
+    "association": "Belleville Bearcats",
+    "location": "Belleville, ON",
+    "website": "https://bellevillebearcats.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Belmont Blazers",
+    "location": "Belmont, ON",
+    "website": "https://belmontminorhockey.ca",
+    "success": true,
+    "url": "https://belmontminorhockey.ca/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK LANDON",
+      "email": "meblandon@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MALLORY HESSELMANS",
+      "email": "malloryhesselmans@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ROB CARLISI",
+      "email": "robert_carlisi@hotmail.com"
+    }
+  },
+  {
+    "association": "BioSteel Sports Academy",
+    "location": "Windsor, ON",
+    "website": "https://biosteelsportsacademy.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Bluewater Hawks",
+    "location": "Strathroy, ON",
+    "website": "https://bluewaterhawks.com",
+    "success": true,
+    "url": "https://bluewaterhawks.com/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DARRELL GERRITS",
+      "email": "president@bluewaterhawks.com"
+    },
+    "treasurer": {
+      "role": "REGISTRAR/ TREASURER / OWHA REP",
+      "name": "JULIE PRYCE",
+      "email": "secretary@bluewaterhawks.com"
+    }
+  },
+  {
+    "association": "Brampton 45s",
+    "location": "Brampton, ON",
+    "website": "https://brampton45s.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Brampton Canadettes",
+    "location": "Brampton, ON",
+    "website": "https://bramptoncanadettes.com",
+    "success": true,
+    "url": "https://bramptoncanadettes.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TINA KELLOWAY",
+      "email": "president@bramptoncanadettes.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "STEWART MACKIE",
+      "email": "vice@bramptoncanadettes.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TIM MCGAUGH",
+      "email": "treasurer@bramptoncanadettes.com"
+    }
+  },
+  {
+    "association": "Brant Battalion",
+    "location": "Paris, ON",
+    "website": "https://parisminorhockey.com",
+    "success": true,
+    "url": "https://parisminorhockey.com/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ROB DELARONDE",
+      "email": "president@parisminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MATT LAMBERT",
+      "email": "vp@parisminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ALBERT AMOS",
+      "email": "treasurer@parisminorhockey.com"
+    }
+  },
+  {
+    "association": "Brantford Ice Cats",
+    "location": "Brantford, ON",
+    "website": "https://brantfordicecats.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Brockville Angels",
+    "location": "Brockville, ON",
+    "website": "https://brockvilleangels.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  }
+]

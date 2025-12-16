@@ -46,30 +46,48 @@ export default async function DashboardPage() {
   // Check if user is a parent
   const isParent = user.role === 'PARENT'
 
-  // Get comprehensive financial summary
-  const financialSummary = await getFinancialSummary(user.teamId)
-
-  // Fetch pending approvals count
-  const pendingApprovalsCount = await prisma.approval.count({
-    where: {
-      teamId: user.teamId,
-      status: 'PENDING',
-    },
-  })
-
-  // Fetch budget allocations with category info for budget performance
-  const budgetAllocations = await prisma.budgetAllocation.findMany({
-    where: {
-      teamId: user.teamId,
-      season: user.team?.season,
-    },
-    include: {
-      category: true,
-    },
-    orderBy: {
-      allocated: 'desc',
-    },
-  })
+  // Parallelize all database queries for better performance
+  const [
+    financialSummary,
+    pendingApprovalsCount,
+    budgetAllocations,
+    recentTransactions,
+    complianceResult,
+  ] = await Promise.all([
+    getFinancialSummary(user.teamId),
+    prisma.approval.count({
+      where: {
+        teamId: user.teamId,
+        status: 'PENDING',
+      },
+    }),
+    prisma.budgetAllocation.findMany({
+      where: {
+        teamId: user.teamId,
+        season: user.team?.season,
+      },
+      include: {
+        category: true,
+      },
+      orderBy: {
+        allocated: 'desc',
+      },
+    }),
+    prisma.transaction.findMany({
+      where: {
+        teamId: user.teamId,
+        deletedAt: null,
+      },
+      include: {
+        category: true,
+      },
+      orderBy: {
+        transactionDate: 'desc',
+      },
+      take: 10,
+    }),
+    getTeamCompliance(),
+  ])
 
   // Calculate spent per category
   const categorySpending = new Map<string, number>()
@@ -85,21 +103,6 @@ export default async function DashboardPage() {
     budget: Number(allocation.allocated),
   }))
 
-  // Fetch recent transactions (last 10)
-  const recentTransactions = await prisma.transaction.findMany({
-    where: {
-      teamId: user.teamId,
-      deletedAt: null,
-    },
-    include: {
-      category: true,
-    },
-    orderBy: {
-      transactionDate: 'desc',
-    },
-    take: 10,
-  })
-
   // Format transactions for preview table
   const formattedTransactions = recentTransactions.map((tx) => ({
     id: tx.id,
@@ -111,9 +114,6 @@ export default async function DashboardPage() {
     status: tx.status,
     receiptUrl: tx.receiptUrl,
   }))
-
-  // Get compliance data
-  const complianceResult = await getTeamCompliance()
   const complianceScore = complianceResult.score || 100
   const complianceStatus = complianceResult.status || 'COMPLIANT'
 

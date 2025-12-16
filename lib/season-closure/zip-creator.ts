@@ -1,5 +1,5 @@
 import AdmZip from 'adm-zip';
-import { SeasonPackage } from './types';
+import type { SeasonPackage } from './types';
 
 /**
  * Download a file from a URL and return as Buffer

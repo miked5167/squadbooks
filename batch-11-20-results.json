@@ -1,0 +1,226 @@
+[
+  {
+    "association": "Dorchester Dragons",
+    "location": "Dorchester, ON",
+    "website": "https://dorchesterdragons.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate with fresh extraction",
+    "success": true,
+    "url": "https://dorchesterdragons.ca/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "GARRETT HAMILTON",
+      "email": "presidentofdmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT -- HOCKEY OPERATIONS",
+      "name": "ALICIA DOW-MCDONALD",
+      "email": "vphockeyops@dorchesterdragons.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KAYLA BAILEY",
+      "email": "treasurerdmha@gmail.com"
+    }
+  },
+  {
+    "association": "Douro Dukes",
+    "location": "Douro, ON",
+    "website": "https://dourominorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://dourominorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LIAM RYAN",
+      "email": "liamsryan11@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER/TOURNAMENT CONVENER",
+      "name": "EMILY RYAN",
+      "email": "eryan@prhc.on.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "PATRICK O'GRADY",
+      "email": "patrickmogrady@hotmail.ca"
+    }
+  },
+  {
+    "association": "Drayton Defenders",
+    "location": "Drayton, ON",
+    "website": "https://draytonminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says no VP listed - try extraction",
+    "success": true,
+    "url": "https://draytonminorhockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BARB DRISCOLL",
+      "email": "president@draytonminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JENN ZETTLE",
+      "email": "draytonminorhockeytreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Dresden Jr Kings",
+    "location": "Dresden, ON",
+    "website": "https://dresdenminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://dresdenminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "IAN AVERY",
+      "email": "Ian.Avery@lkdsb.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JAMIE BEATTY",
+      "email": "jamiebeatty.djk@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARTY OSBORNE",
+      "email": "martyosborne18@hotmail.com"
+    }
+  },
+  {
+    "association": "Englehart Express",
+    "location": "Englehart, ON",
+    "website": "https://www.emhamx.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Ennismore Eagles",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoreeagles.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://ennismoreeagles.ca/Staff/1003/",
+    "totalContacts": 15,
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CRYSTAL WEISBERG",
+      "email": "eagles.vice@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MIKE MOHER",
+      "email": "eagles.treasurer1@gmail.com"
+    },
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PAULA JOORE",
+      "email": "eagles.pres1@gmail.com"
+    }
+  },
+  {
+    "association": "Essa Eagles",
+    "location": "Angus, ON",
+    "website": "https://essaminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://essaminorhockey.com/Staff/1003/",
+    "totalContacts": 33,
+    "president": {
+      "role": "PRESIDENT/ICE SCHEDULER",
+      "name": "TIFFANY HART",
+      "email": "president@essaminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/FUNDRAISING DIRECTOR",
+      "name": "KAYLA OTTEN",
+      "email": "vp@essaminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MACKENZIE JAMES",
+      "email": "treasurer@essaminorhockey.com"
+    }
+  },
+  {
+    "association": "Flamborough Sabres",
+    "location": "Flamborough, ON",
+    "website": "https://flamboroughhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://flamboroughhockey.com/Staff/1003/",
+    "totalContacts": 30,
+    "president": {
+      "role": "PRESIDENT - FHA BOARD MEMBER",
+      "name": "ALEX NOTO",
+      "email": "president@flamboroughhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT - FHA BOARD MEMBER",
+      "name": "SHAWN ALBERT",
+      "email": "vicepresident@flamboroughhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER / ACCOUNTANT",
+      "name": "MATT MARTIN",
+      "email": "treasurer@flamboroughhockey.com"
+    }
+  },
+  {
+    "association": "Frontenac Flyers",
+    "location": "Frontenac, ON",
+    "website": "https://frontenachockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has 2 VPs listed via Apify - validate",
+    "success": true,
+    "url": "https://frontenachockey.ca/Staff/1003/",
+    "totalContacts": 24,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARC MCINTOSH",
+      "email": "marcmcintosh12@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT / OMHA CONTACT",
+      "name": "JAMIE SEALE",
+      "email": "jayseale@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DEBBIE DONOVAN",
+      "email": "treasurer@frontenachockey.ca"
+    }
+  },
+  {
+    "association": "Gananoque Islanders",
+    "location": "Gananoque, ON",
+    "website": "https://ganminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://ganminorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHAD HAFFIE",
+      "email": "president@ganminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MICHELLE BROWN",
+      "email": "Treasurer@ganminorhockey.com"
+    }
+  }
+]

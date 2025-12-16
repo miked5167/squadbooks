@@ -2,7 +2,7 @@
 
 import { Menu } from 'lucide-react'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Logo } from '@/components/Logo'
 
 interface MobileHeaderProps {

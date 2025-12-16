@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Applewood Coyotes",
+    "location": "Mississauga, ON",
+    "website": "http://www.applewoodhockey.on.ca",
+    "staffPage": "http://www.applewoodhockey.on.ca/Staff/1003/",
+    "notes": "CSV has co-presidents via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Almonte Pakenham Thunder",
+    "location": "Almonte, ON",
+    "website": "https://apmha.org",
+    "staffPage": "https://apmha.org/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Cornwall Colts",
+    "location": "Cornwall, ON",
+    "website": "http://cornwallminorhockey.ca",
+    "staffPage": "http://cornwallminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify GOALLINE site - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Credit River Capitals",
+    "location": "Brampton, ON",
+    "website": "https://creditrivercapitals.ca",
+    "staffPage": "https://creditrivercapitals.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify AAA - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Durham Crusaders",
+    "location": "Oshawa, ON",
+    "website": "https://durhamcrusaders.ca",
+    "staffPage": "https://durhamcrusaders.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Eastern Ontario Cobras",
+    "location": "Casselman, ON",
+    "website": "https://easternontariocobras.com",
+    "staffPage": "https://easternontariocobras.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify TeamLinkt - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Elgin Thames 73s",
+    "location": "Aylmer, ON",
+    "website": "https://elginthamesminorhockey.ca",
+    "staffPage": "https://elginthamesminorhockey.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Ennismore Eagles Girls",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoregirlshockey.com",
+    "staffPage": "https://ennismoregirlshockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify OWHA - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Cambridge Hawks",
+    "location": "Cambridge, ON",
+    "website": "https://cambridgeminorhockey.com",
+    "staffPage": "https://cambridgeminorhockey.com/Staff/1003/",
+    "notes": "CSV has multiple VPs via Apify - validate Alliance",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Clarington Toros",
+    "location": "Bowmanville, ON",
+    "website": "https://claringtontoros.com",
+    "staffPage": "https://claringtontoros.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  }
+]

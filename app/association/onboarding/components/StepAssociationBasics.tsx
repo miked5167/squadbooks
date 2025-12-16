@@ -309,7 +309,7 @@ export function StepAssociationBasics({ onComplete, initialData }: StepAssociati
                 placeholder="https://example.com/logo.png"
               />
               <p className="text-xs text-navy/60 mt-1">
-                URL to your association's logo image
+                URL to your association&apos;s logo image
               </p>
             </div>
 

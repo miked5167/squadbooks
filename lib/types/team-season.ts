@@ -2,7 +2,7 @@
  * Team Season Lifecycle Types
  */
 
-import { TeamSeasonState, TeamSeasonAction } from '@prisma/client'
+import type { TeamSeasonState, TeamSeasonAction } from '@prisma/client'
 
 export type { TeamSeasonState, TeamSeasonAction }
 

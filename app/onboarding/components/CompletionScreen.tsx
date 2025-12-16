@@ -39,7 +39,7 @@ export function CompletionScreen({
         <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
           <CheckCircle2 className="h-12 w-12 text-green-600" />
         </div>
-        <h1 className="text-4xl font-bold mb-2">You're all set!</h1>
+        <h1 className="text-4xl font-bold mb-2">You&apos;re all set!</h1>
         <p className="text-lg text-muted-foreground">
           Your team is ready to start tracking finances
         </p>
@@ -81,7 +81,7 @@ export function CompletionScreen({
 
       {/* Next Steps */}
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Here's what to do next:</h2>
+        <h2 className="text-xl font-semibold mb-4">Here&apos;s what to do next:</h2>
         <div className="space-y-3">
           <NextStepCard
             title="Add your first expense"

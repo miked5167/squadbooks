@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { DollarSign, TrendingDown, Wallet, ActivitySquare, AlertTriangle, Loader2, Eye, Plus } from 'lucide-react'
+import { DollarSign, TrendingDown, Wallet, ActivitySquare, AlertTriangle, Loader2, Eye, Plus, AlertCircle, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
 import { BudgetAllocationChart } from '@/components/dashboard/BudgetAllocationChart'
 import { KpiCard } from '@/components/dashboard/KpiCard'
 import { FundingSourcesCard } from '@/components/budget/FundingSourcesCard'
 import { CategoryBreakdownTable } from '@/components/budget/CategoryBreakdownTable'
+import { BudgetApprovalStatus } from '@/components/budget/BudgetApprovalStatus'
 import type { BudgetHeadingGroup } from '@/lib/types/budget'
 
 interface BudgetData {
@@ -45,9 +47,28 @@ interface BudgetPageClientProps {
   isTreasurer: boolean
 }
 
+interface BudgetApproval {
+  id: string
+  description: string | null
+  approvalType: string
+  amount: number
+  acknowledgedCount: number
+  requiredCount: number
+  progressPercentage: number
+  expiresAt: string | null
+  pendingFamilies: string[]
+}
+
+interface PendingApprovalsData {
+  count: number
+  totalAmount: number
+  approvals: BudgetApproval[]
+}
+
 export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [pendingApprovals, setPendingApprovals] = useState<PendingApprovalsData | null>(null)
 
   // Financial summary state
   const [financialSummary, setFinancialSummary] = useState<{
@@ -91,9 +112,22 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
     }
   }
 
+  async function fetchPendingApprovals() {
+    try {
+      const res = await fetch('/api/budget-approvals/pending-count')
+      if (res.ok) {
+        const data = await res.json()
+        setPendingApprovals(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch pending approvals:', err)
+    }
+  }
+
   useEffect(() => {
     fetchBudget()
     fetchFinancialSummary()
+    fetchPendingApprovals()
   }, [])
 
   if (loading) {
@@ -203,6 +237,14 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
           </div>
         </div>
       </div>
+
+      {/* Budget Approval Status */}
+      {pendingApprovals && pendingApprovals.approvals && pendingApprovals.approvals.length > 0 && (
+        <BudgetApprovalStatus
+          approvals={pendingApprovals.approvals}
+          totalAmount={pendingApprovals.totalAmount}
+        />
+      )}
 
       {/* KPI Overview Strip */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

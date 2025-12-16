@@ -1,14 +1,23 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Trash2, Plus, Users, Download, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { ExcelUpload } from '@/components/ExcelUpload';
 import { downloadRosterTemplate } from '@/lib/excel/roster-template';
 import type { Family } from '@/lib/validations/family';
+
+// Dynamically import ExcelUpload to reduce initial bundle size
+const ExcelUpload = dynamic(
+  () => import('@/components/ExcelUpload').then((mod) => ({ default: mod.ExcelUpload })),
+  {
+    ssr: false,
+    loading: () => <div className="flex items-center justify-center p-8">Loading...</div>
+  }
+);
 
 interface StepRosterProps {
   teamId: string;
@@ -132,7 +141,7 @@ export function StepRoster({ teamId, onComplete, onBack, onSkip }: StepRosterPro
       secondaryEmail: f.secondaryEmail || '',
     }));
 
-    // Filter out the default empty family if it's still empty
+    // Filter out the default empty family if it&apos;s still empty
     const existingNonEmpty = families.filter(
       f => f.familyName.trim() || f.primaryEmail.trim()
     );
@@ -309,7 +318,7 @@ export function StepRoster({ teamId, onComplete, onBack, onSkip }: StepRosterPro
       </form>
 
       <p className="text-xs text-center text-muted-foreground mt-4">
-        We'll use these emails to notify families about payment statuses and team updates.
+        We&apos;ll use these emails to notify families about payment statuses and team updates.
       </p>
 
       {/* Excel Upload Modal */}

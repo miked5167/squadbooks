@@ -1,0 +1,196 @@
+[
+  {
+    "association": "Deep River Knights",
+    "location": "Deep River, ON",
+    "website": "https://dramha.com",
+    "success": true,
+    "url": "https://dramha.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "STEVE BIRD",
+      "email": "president@dramha.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/RISK AND SAFETY",
+      "name": "JAMIE CARR",
+      "email": "vicepresident@dramha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JAN SUNSTRUM",
+      "email": "deepriverknightstreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Delhi Norwich 59ers",
+    "location": "Delhi, ON",
+    "website": "https://delhinorwich59ers.ca",
+    "success": true,
+    "url": "https://delhinorwich59ers.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "RYAN DEVOS",
+      "email": "president@delhinorwich59ers.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MARISSA WILLS",
+      "email": "vp1@delhinorwich59ers.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JOE VANHAMME",
+      "email": "treasurer@delhinorwich59ers.ca"
+    }
+  },
+  {
+    "association": "East Lambton Eagles",
+    "location": "Watford, ON",
+    "website": "https://eastlambtonminorhockey.ca",
+    "success": true,
+    "url": "https://eastlambtonminorhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIM LEHRBASS",
+      "email": "President@eastlambtonminorhockey.ca"
+    },
+    "vp": {
+      "role": "OMHA/SHAMROCK REP, RESOLUTION COMMITTEE CHAIR, VICE PRESIDENT #1",
+      "name": "BRAD ROMBOUTS",
+      "email": "shamrockrep@eastlambtonminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER, ROO REVISION COMMITTEE",
+      "name": "JULIE HAYTER",
+      "email": "Treasurer@eastlambtonminorhockey.ca"
+    }
+  },
+  {
+    "association": "East Nipissing Vipers",
+    "location": "Astorville, ON",
+    "website": "https://govipersgo.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elgin Middlesex Canucks",
+    "location": "Komoka, ON",
+    "website": "https://elgin-middlesexcanucks.ca",
+    "success": true,
+    "url": "https://elgin-middlesexcanucks.ca/Staff/1003/",
+    "totalContacts": 12,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN LEE",
+      "email": "emccanuckspres@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARANDA KING",
+      "email": "emcanuckstreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Elliot Lake",
+    "location": "Elliot Lake, ON",
+    "website": "https://elliotlakeminorhockey.ca",
+    "success": true,
+    "url": "https://elliotlakeminorhockey.ca/Staff/1003/",
+    "totalContacts": 10,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LARA HUKEZALIE",
+      "email": "president@elliotlakeminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "VACANT VACANT",
+      "email": "treasurer@elliotlakeminorhockey.ca"
+    }
+  },
+  {
+    "association": "Central Perth Predators",
+    "location": "Monkton, ON",
+    "website": "https://centralperthminorhockey.ca",
+    "success": true,
+    "url": "https://centralperthminorhockey.ca/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JEFF ERWIN",
+      "email": "president@centralperthminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT",
+      "name": "CHRIS CAMERON",
+      "email": "Vicepresident@centralperthminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TROY HAMILTON",
+      "email": "treasurer@centralperthminorhockey.ca"
+    }
+  },
+  {
+    "association": "Central Ontario Wolves",
+    "location": "Lindsay, ON",
+    "website": "https://cowha.com",
+    "success": true,
+    "url": "https://cowha.com/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "NELSON PEREIRA",
+      "email": "president@cowha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TARYN ZYLSTRA",
+      "email": "treasurer@cowha.com"
+    }
+  },
+  {
+    "association": "Caledonia Thunder",
+    "location": "Caledonia, ON",
+    "website": "https://caledoniathunder.ca",
+    "success": true,
+    "url": "https://caledoniathunder.ca/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CDMHA EXECUTIVE",
+      "email": "president@caledoniathunder.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TRACIANN SHARP - EXECUTIVE",
+      "email": "vpll@caledoniathunder.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "BETTY CASPERSEN - EXECUTIVE",
+      "email": "treasurer@caledoniathunder.ca"
+    }
+  },
+  {
+    "association": "Caledon Hawks",
+    "location": "Caledon, ON",
+    "website": "https://caledonminorhockey.ca",
+    "success": true,
+    "url": "https://caledonminorhockey.ca/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ANTHONY COSTA",
+      "email": "president@caledonminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JASON NEWSOM",
+      "email": "treasurer@caledonminorhockey.ca"
+    }
+  }
+]

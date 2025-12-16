@@ -2,7 +2,7 @@
  * Utility functions for formatting team information
  */
 
-import { TeamType, AgeDivision, CompetitiveLevel } from '@prisma/client';
+import type { TeamType, AgeDivision, CompetitiveLevel } from '@prisma/client';
 
 /**
  * Format team level display string from structured fields

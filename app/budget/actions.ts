@@ -172,6 +172,26 @@ export async function createBudget(
       },
     })
 
+    // Get team's association and governance rules
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      include: { associationTeam: true },
+    })
+
+    const associationId = team?.associationTeam?.associationId
+
+    // Fetch parent threshold config from governance rules (or use defaults)
+    let thresholdMode: 'COUNT' | 'PERCENT' = 'PERCENT'
+    let thresholdValue: number = 80 // Default 80%
+    if (associationId) {
+      const { getParentThresholdConfig } = await import('@/lib/db/governance')
+      const thresholdConfig = await getParentThresholdConfig(associationId)
+      thresholdMode = thresholdConfig.mode
+      thresholdValue = thresholdConfig.mode === 'PERCENT'
+        ? (thresholdConfig.percentThreshold ?? 80)
+        : (thresholdConfig.countThreshold ?? Math.ceil(activeFamiliesCount * 0.8))
+    }
+
     // Create budget, version, and allocations in a transaction
     const budget = await prisma.$transaction(async (tx) => {
       // Create Budget
@@ -205,12 +225,13 @@ export async function createBudget(
         })),
       })
 
-      // Create ThresholdConfig (default: 80% of families)
+      // Create ThresholdConfig using governance rules (snapshotted)
       await tx.budgetThresholdConfig.create({
         data: {
           budgetId: newBudget.id,
-          mode: 'PERCENT',
-          percentThreshold: 80.0,
+          mode: thresholdMode,
+          percentThreshold: thresholdMode === 'PERCENT' ? thresholdValue : null,
+          countThreshold: thresholdMode === 'COUNT' ? thresholdValue : null,
           eligibleFamilyCount: activeFamiliesCount,
         },
       })
@@ -639,8 +660,28 @@ export async function approveBudget(input: CoachReviewInput): Promise<BudgetWork
       return { success: true }
     }
 
-    // Approve: REVIEW → TEAM_APPROVED
-    if (!canTransition(budget.status, BudgetStatus.TEAM_APPROVED)) {
+    // Determine next status based on association governance rules
+    const team = await prisma.team.findUnique({
+      where: { id: budget.teamId },
+      include: {
+        associationTeam: true,
+      },
+    })
+
+    const associationId = team?.associationTeam?.associationId
+
+    // Check if association approval is required
+    let nextStatus = BudgetStatus.TEAM_APPROVED
+    if (associationId) {
+      const { requiresAssociationApproval } = await import('@/lib/db/governance')
+      const needsAssociationApproval = await requiresAssociationApproval(associationId)
+      if (needsAssociationApproval) {
+        nextStatus = BudgetStatus.ASSOCIATION_REVIEW
+      }
+    }
+
+    // Approve: REVIEW → ASSOCIATION_REVIEW or TEAM_APPROVED
+    if (!canTransition(budget.status, nextStatus)) {
       return {
         success: false,
         error: {
@@ -661,16 +702,18 @@ export async function approveBudget(input: CoachReviewInput): Promise<BudgetWork
         },
       })
 
-      // Move to TEAM_APPROVED
+      // Move to next status (ASSOCIATION_REVIEW or TEAM_APPROVED)
       await tx.budget.update({
         where: { id: budget.id },
-        data: { status: BudgetStatus.TEAM_APPROVED },
+        data: { status: nextStatus },
       })
     })
 
     // LIFECYCLE INTEGRATION: Approve budget
     const teamSeason = await getOrCreateTeamSeason(budget.teamId, budget.season)
     if (teamSeason) {
+      // Only transition to TEAM_APPROVED state if no association review needed
+      const targetState = nextStatus === BudgetStatus.TEAM_APPROVED ? 'TEAM_APPROVED' : 'BUDGET_REVIEW'
       await transitionTeamSeason(
         teamSeason.id,
         'APPROVE_BUDGET',
@@ -679,6 +722,7 @@ export async function approveBudget(input: CoachReviewInput): Promise<BudgetWork
           budgetId: budget.id,
           versionNumber: input.versionNumber,
           coachNotes: input.notes,
+          requiresAssociationReview: nextStatus === BudgetStatus.ASSOCIATION_REVIEW,
         }
       )
     }
@@ -785,6 +829,81 @@ export async function presentToParents(input: PresentToParentsInput): Promise<Bu
           versionNumber: input.versionNumber,
         }
       )
+    }
+
+    // PARENT VOTING: Create budget approval request for parents
+    // Get all active parents for this team
+    const parents = await prisma.user.findMany({
+      where: {
+        teamId: budget.teamId,
+        role: 'PARENT',
+        isActive: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    })
+
+    if (parents.length > 0) {
+      // Get team name for emails
+      const team = await prisma.team.findUnique({
+        where: { id: budget.teamId },
+        select: { name: true },
+      })
+
+      // Create budget approval record
+      const budgetApproval = await prisma.budgetApproval.create({
+        data: {
+          teamId: budget.teamId,
+          season: budget.season,
+          budgetTotal: version.totalBudget,
+          approvalType: 'INITIAL',
+          description: `Budget for ${budget.season} season - Version ${input.versionNumber}`,
+          requiredCount: parents.length, // All parents must acknowledge
+          createdBy: user.id,
+          // Optional: Set deadline (e.g., 14 days from now)
+          // expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        },
+      })
+
+      // Create acknowledgment records for each parent
+      await prisma.acknowledgment.createMany({
+        data: parents.map((parent) => ({
+          budgetApprovalId: budgetApproval.id,
+          userId: parent.id,
+          familyName: parent.name || 'Parent',
+          email: parent.email,
+        })),
+      })
+
+      // Send email notifications to all parents
+      const { sendBudgetApprovalRequestEmail } = await import('@/lib/email')
+
+      const emailPromises = parents.map((parent) =>
+        sendBudgetApprovalRequestEmail({
+          parentName: parent.name || 'Parent',
+          parentEmail: parent.email,
+          teamName: team?.name || 'Your Team',
+          budgetTotal: Number(version.totalBudget),
+          approvalType: 'INITIAL',
+          description: `Budget for ${budget.season} season - Version ${input.versionNumber}`,
+          approvalId: budgetApproval.id,
+        })
+      )
+
+      // Send all emails in parallel, but don't fail the request if emails fail
+      try {
+        await Promise.allSettled(emailPromises)
+        console.log(`Budget approval emails sent to ${parents.length} parents`, {
+          budgetApprovalId: budgetApproval.id,
+          teamId: budget.teamId,
+        })
+      } catch (error) {
+        console.error('Failed to send budget approval emails', error)
+        // Continue - approval was created successfully even if emails failed
+      }
     }
 
     revalidatePath(`/budget/${input.budgetId}`)

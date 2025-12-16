@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Barrie Colts",
+    "location": "Barrie, ON",
+    "website": "https://barrieminorhockey.net",
+    "staffPage": "https://barrieminorhockey.net/Staff/1003/",
+    "notes": "CSV says 'Only President name found' - but we successfully extracted President and VP!",
+    "action": "UPDATE CSV with new data"
+  },
+  {
+    "name": "Almaguin Ice Devils",
+    "location": "Sundridge, ON",
+    "website": "https://almaguinminorhockey.com",
+    "staffPage": "https://almaguinminorhockey.com/Staff/1003/",
+    "notes": "CSV says 'Email found - needs decoding' - but we successfully extracted President and Treasurer!",
+    "action": "UPDATE CSV with new data"
+  },
+  {
+    "name": "Arnprior Packers",
+    "location": "Arnprior, ON",
+    "website": "https://arnpriorminorhockey.ca",
+    "staffPage": "https://arnpriorminorhockey.ca/Staff/1003/",
+    "notes": "CSV says 'Email found - needs decoding' - but we successfully extracted President, VP, and Treasurer!",
+    "action": "UPDATE CSV with new data"
+  },
+  {
+    "name": "Dubreuilville Bobcats",
+    "location": "Dubreuilville, ON",
+    "website": "https://gobobcatsgo.ca",
+    "staffPage": "https://gobobcatsgo.ca/Staff/1003/",
+    "notes": "CSV says general email only - try Staff page extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Atikokan Voyageurs",
+    "location": "Atikokan, ON",
+    "website": "https://www.atikokanhockey.ca",
+    "staffPage": "https://www.atikokanhockey.ca/Staff/1003/",
+    "notes": "CSV says 'Website found but contact details behind Facebook login' - try direct extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Espanola Eagles",
+    "location": "Espanola, ON",
+    "website": "http://espanolaminorhockey.com",
+    "staffPage": "http://espanolaminorhockey.com/Staff/1003/",
+    "notes": "CSV says 'Website inaccessible' - try again",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Elmvale Coyotes",
+    "location": "Elmvale, ON",
+    "website": "https://elmvaleminorhockey.ca",
+    "staffPage": "https://elmvaleminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data - validate with fresh extraction",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Erin Hillsburgh Devils",
+    "location": "Erin, ON",
+    "website": "https://ehmha.ca",
+    "staffPage": "https://ehmha.ca/Staff/1003/",
+    "notes": "CSV says 'Found referee contact only' - try Staff page",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Clearview Canucks",
+    "location": "Stayner, ON",
+    "website": "https://clearviewminorhockey.com",
+    "staffPage": "https://clearviewminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Coldwater Wildcats",
+    "location": "Coldwater, ON",
+    "website": "https://coldwaterwildcats.ca",
+    "staffPage": "https://coldwaterwildcats.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  }
+]

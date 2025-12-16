@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Dorchester Dragons",
+    "location": "Dorchester, ON",
+    "website": "https://dorchesterdragons.ca",
+    "staffPage": "https://dorchesterdragons.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate with fresh extraction",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Douro Dukes",
+    "location": "Douro, ON",
+    "website": "https://dourominorhockey.com",
+    "staffPage": "https://dourominorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Drayton Defenders",
+    "location": "Drayton, ON",
+    "website": "https://draytonminorhockey.com",
+    "staffPage": "https://draytonminorhockey.com/Staff/1003/",
+    "notes": "CSV says no VP listed - try extraction",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Dresden Jr Kings",
+    "location": "Dresden, ON",
+    "website": "https://dresdenminorhockey.com",
+    "staffPage": "https://dresdenminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Englehart Express",
+    "location": "Englehart, ON",
+    "website": "https://www.emhamx.com",
+    "staffPage": "https://www.emhamx.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Ennismore Eagles",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoreeagles.ca",
+    "staffPage": "https://ennismoreeagles.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Essa Eagles",
+    "location": "Angus, ON",
+    "website": "https://essaminorhockey.com",
+    "staffPage": "https://essaminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Flamborough Sabres",
+    "location": "Flamborough, ON",
+    "website": "https://flamboroughhockey.com",
+    "staffPage": "https://flamboroughhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Frontenac Flyers",
+    "location": "Frontenac, ON",
+    "website": "https://frontenachockey.ca",
+    "staffPage": "https://frontenachockey.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs listed via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Gananoque Islanders",
+    "location": "Gananoque, ON",
+    "website": "https://ganminorhockey.com",
+    "staffPage": "https://ganminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  }
+]

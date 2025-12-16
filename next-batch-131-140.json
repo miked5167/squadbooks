@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Gananoque Islanders",
+    "location": "Gananoque, ON",
+    "website": "https://ganminorhockey.com",
+    "staffPage": "https://ganminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Gananoque Royals",
+    "location": "Gananoque, ON",
+    "website": "https://ganroyals.ca",
+    "staffPage": "https://ganroyals.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OWHA girls site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "George Bell Titans",
+    "location": "Toronto, ON",
+    "website": "https://www.gbha.ca",
+    "staffPage": "https://www.gbha.ca/Staff/1003/",
+    "notes": "Role-based emails only, no individual exec emails - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Georgian Bay Islanders",
+    "location": "Midland, ON",
+    "website": "https://georgianbayminorhockey.ca",
+    "staffPage": "https://georgianbayminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Georgian Shores Lightning",
+    "location": "Meaford, ON",
+    "website": "https://georgianshoreshockey.ca",
+    "staffPage": "https://georgianshoreshockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Georgina Golden Hawks",
+    "location": "Keswick, ON",
+    "website": "https://georginagirlshockey.com",
+    "staffPage": "https://georginagirlshockey.com/Staff/1003/",
+    "notes": "CSV has 3 VPs via Apify - OWHA girls site",
+    "action": "VALIDATE"
+  }
+]

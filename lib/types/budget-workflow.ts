@@ -162,7 +162,8 @@ export interface BudgetWorkflowResult<T = void> {
 
 export const ALLOWED_TRANSITIONS: Record<BudgetStatus, BudgetStatus[]> = {
   [BudgetStatus.DRAFT]: [BudgetStatus.REVIEW],
-  [BudgetStatus.REVIEW]: [BudgetStatus.DRAFT, BudgetStatus.TEAM_APPROVED],
+  [BudgetStatus.REVIEW]: [BudgetStatus.DRAFT, BudgetStatus.ASSOCIATION_REVIEW, BudgetStatus.TEAM_APPROVED],
+  [BudgetStatus.ASSOCIATION_REVIEW]: [BudgetStatus.DRAFT, BudgetStatus.TEAM_APPROVED], // Association can approve or request changes
   [BudgetStatus.TEAM_APPROVED]: [BudgetStatus.PRESENTED, BudgetStatus.REVIEW],
   [BudgetStatus.PRESENTED]: [BudgetStatus.APPROVED, BudgetStatus.REVIEW], // Can go back to review if edits needed
   [BudgetStatus.APPROVED]: [BudgetStatus.LOCKED],
@@ -196,6 +197,12 @@ export function getBudgetStatusBadge(status: BudgetStatus): BudgetStatusBadge {
         label: 'In Review',
         variant: 'warning',
         description: 'Awaiting coach approval',
+      }
+    case BudgetStatus.ASSOCIATION_REVIEW:
+      return {
+        label: 'Association Review',
+        variant: 'warning',
+        description: 'Awaiting association approval',
       }
     case BudgetStatus.TEAM_APPROVED:
       return {

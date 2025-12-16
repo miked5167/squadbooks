@@ -4,7 +4,8 @@
  * Endpoints for managing a specific budget envelope
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { hasPermission } from "@/lib/auth/permissions";

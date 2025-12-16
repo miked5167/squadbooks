@@ -72,7 +72,7 @@ export function ParentDashboard({
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs text-sm">
-                    You're viewing financial data in read-only mode. Contact your team treasurer
+                    You&apos;re viewing financial data in read-only mode. Contact your team treasurer
                     to request changes.
                   </p>
                 </TooltipContent>
@@ -185,7 +185,7 @@ export function ParentDashboard({
           </p>
           <p className="text-sm text-blue-700">
             All financial information updates in real-time as your team treasurer approves
-            transactions. You're always viewing the latest data.
+            transactions. You&apos;re always viewing the latest data.
           </p>
         </div>
       </div>

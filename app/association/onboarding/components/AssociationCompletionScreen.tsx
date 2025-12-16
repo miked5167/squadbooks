@@ -63,7 +63,7 @@ export function AssociationCompletionScreen({
           <CheckCircle2 className="w-12 h-12 text-white" />
         </div>
         <h1 className="text-display-2 md:text-display-1 font-bold text-navy mb-3">
-          You're All Set!
+          You&apos;re All Set!
         </h1>
         <p className="text-lg text-navy/70 mb-2">
           Welcome to HuddleBooks, {adminName}
@@ -75,7 +75,7 @@ export function AssociationCompletionScreen({
 
       <Card className="mb-6">
         <CardContent className="p-6">
-          <h2 className="text-xl font-semibold text-navy mb-4">What's Next?</h2>
+          <h2 className="text-xl font-semibold text-navy mb-4">What&apos;s Next?</h2>
           <div className="space-y-4">
             {nextSteps.map((step, index) => {
               const Icon = step.icon;

@@ -1,0 +1,37 @@
+[
+  {
+    "association": "Ajax Pickering Raiders",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Ajax, ON",
+    "group": "OMHA Network"
+  },
+  {
+    "association": "Almaguin Ice Devils",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Sundridge, ON",
+    "group": "Cloudflare Encoded"
+  },
+  {
+    "association": "Arnprior Packers",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Arnprior, ON",
+    "group": "Cloudflare Encoded"
+  },
+  {
+    "association": "Colborne Fire Hawks",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Colborne, ON",
+    "group": "Playwright Retry"
+  },
+  {
+    "association": "Barrie Colts",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Barrie, ON",
+    "group": "Playwright Retry"
+  }
+]

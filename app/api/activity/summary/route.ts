@@ -4,7 +4,8 @@
  */
 
 import { auth } from '@/lib/auth/server-auth'
-import { NextRequest, NextResponse } from 'next/server'
+import type { NextRequest} from 'next/server';
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getActivitySummary } from '@/lib/activity/weekly-summary'
 import { detectPotentialIssues } from '@/lib/activity/potential-issues'

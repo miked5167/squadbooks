@@ -7,7 +7,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { BudgetStatus, ThresholdMode } from '@prisma/client'
-import { ApprovalProgress } from '@/lib/types/budget-workflow'
+import type { ApprovalProgress } from '@/lib/types/budget-workflow'
 
 /**
  * Check if budget approval threshold is met for the presented version
@@ -126,9 +126,6 @@ export async function getApprovalProgress(budgetId: string): Promise<ApprovalPro
     include: {
       thresholdConfig: true,
       versions: {
-        where: {
-          versionNumber: { not: null },
-        },
         include: {
           approvals: true,
         },

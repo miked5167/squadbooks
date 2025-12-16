@@ -1,0 +1,2378 @@
+[
+  {
+    "association": "Barrie Colts",
+    "location": "Barrie, ON",
+    "website": "https://barrieminorhockey.net",
+    "action": "UPDATE CSV with new data",
+    "originalNotes": "CSV says 'Only President name found' - but we successfully extracted President and VP!",
+    "success": true,
+    "url": "https://barrieminorhockey.net/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHRIS INGLIS",
+      "email": "president@barrieminorhockey.ca"
+    },
+    "vp": {
+      "role": "DIRECTOR OF INITIATION PROGRAMS (MYTE TO NOVICE)",
+      "name": "TBA TBA",
+      "email": "ip@barrieminorhockey.net"
+    }
+  },
+  {
+    "association": "Almaguin Ice Devils",
+    "location": "Sundridge, ON",
+    "website": "https://almaguinminorhockey.com",
+    "action": "UPDATE CSV with new data",
+    "originalNotes": "CSV says 'Email found - needs decoding' - but we successfully extracted President and Treasurer!",
+    "success": true,
+    "url": "https://almaguinminorhockey.com/Staff/1003/",
+    "totalContacts": 11,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "AARON HILL",
+      "email": "president1.amha@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JENNA WEBSTER",
+      "email": "almaguinicedevils@gmail.com"
+    }
+  },
+  {
+    "association": "Arnprior Packers",
+    "location": "Arnprior, ON",
+    "website": "https://arnpriorminorhockey.ca",
+    "action": "UPDATE CSV with new data",
+    "originalNotes": "CSV says 'Email found - needs decoding' - but we successfully extracted President, VP, and Treasurer!",
+    "success": true,
+    "url": "https://arnpriorminorhockey.ca/Staff/1003/",
+    "totalContacts": 29,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MATT AALBERS",
+      "email": "president@arnpriorminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TREVOR NICHOLAS",
+      "email": "vicepresident@arnpriorminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "BRETT SIMMONS",
+      "email": "treasurer@arnpriorminorhockey.ca"
+    }
+  },
+  {
+    "association": "Dubreuilville Bobcats",
+    "location": "Dubreuilville, ON",
+    "website": "https://gobobcatsgo.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says general email only - try Staff page extraction",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Atikokan Voyageurs",
+    "location": "Atikokan, ON",
+    "website": "https://www.atikokanhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says 'Website found but contact details behind Facebook login' - try direct extraction",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Espanola Eagles",
+    "location": "Espanola, ON",
+    "website": "http://espanolaminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says 'Website inaccessible' - try again",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elmvale Coyotes",
+    "location": "Elmvale, ON",
+    "website": "https://elmvaleminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data - validate with fresh extraction",
+    "success": true,
+    "url": "https://elmvaleminorhockey.ca/Staff/1003/",
+    "totalContacts": 26,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN SENEY",
+      "email": "president@elmvaleminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CARLEY PEARSON",
+      "email": "treasurer@elmvaleminorhockey.ca"
+    }
+  },
+  {
+    "association": "Erin Hillsburgh Devils",
+    "location": "Erin, ON",
+    "website": "https://ehmha.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says 'Found referee contact only' - try Staff page",
+    "success": true,
+    "url": "https://ehmha.ca/Staff/1003/",
+    "totalContacts": 18,
+    "president": {
+      "role": "PRESIDENT (EHMHA_PRESIDENT@EHMHA.CA)",
+      "name": "SID SPEAR",
+      "email": "ehmha_president@ehmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER (TREASURER@EHMHA.CA)",
+      "name": "JAMES TUGMAN",
+      "email": "treasurer@ehmha.ca"
+    }
+  },
+  {
+    "association": "Clearview Canucks",
+    "location": "Stayner, ON",
+    "website": "https://clearviewminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://clearviewminorhockey.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN PATTERSON",
+      "email": "clearviewmhpresident@outlook.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "HENRY BARTON",
+      "email": "henrybarton@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JANINA DOBBERKAU",
+      "email": "treasurerch@outlook.com"
+    }
+  },
+  {
+    "association": "Coldwater Wildcats",
+    "location": "Coldwater, ON",
+    "website": "https://coldwaterwildcats.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://coldwaterwildcats.ca/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KAREN AIGELDINGER",
+      "email": "karenaigeldinger@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "BRIAN ZULAK",
+      "email": "coldwatervp@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "LISA BONIFACE",
+      "email": "coldwatermha.treasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Dorchester Dragons",
+    "location": "Dorchester, ON",
+    "website": "https://dorchesterdragons.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate with fresh extraction",
+    "success": true,
+    "url": "https://dorchesterdragons.ca/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "GARRETT HAMILTON",
+      "email": "presidentofdmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT -- HOCKEY OPERATIONS",
+      "name": "ALICIA DOW-MCDONALD",
+      "email": "vphockeyops@dorchesterdragons.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KAYLA BAILEY",
+      "email": "treasurerdmha@gmail.com"
+    }
+  },
+  {
+    "association": "Douro Dukes",
+    "location": "Douro, ON",
+    "website": "https://dourominorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://dourominorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LIAM RYAN",
+      "email": "liamsryan11@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER/TOURNAMENT CONVENER",
+      "name": "EMILY RYAN",
+      "email": "eryan@prhc.on.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "PATRICK O'GRADY",
+      "email": "patrickmogrady@hotmail.ca"
+    }
+  },
+  {
+    "association": "Drayton Defenders",
+    "location": "Drayton, ON",
+    "website": "https://draytonminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says no VP listed - try extraction",
+    "success": true,
+    "url": "https://draytonminorhockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BARB DRISCOLL",
+      "email": "president@draytonminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JENN ZETTLE",
+      "email": "draytonminorhockeytreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Dresden Jr Kings",
+    "location": "Dresden, ON",
+    "website": "https://dresdenminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://dresdenminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "IAN AVERY",
+      "email": "Ian.Avery@lkdsb.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JAMIE BEATTY",
+      "email": "jamiebeatty.djk@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARTY OSBORNE",
+      "email": "martyosborne18@hotmail.com"
+    }
+  },
+  {
+    "association": "Englehart Express",
+    "location": "Englehart, ON",
+    "website": "https://www.emhamx.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Ennismore Eagles",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoreeagles.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://ennismoreeagles.ca/Staff/1003/",
+    "totalContacts": 15,
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CRYSTAL WEISBERG",
+      "email": "eagles.vice@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MIKE MOHER",
+      "email": "eagles.treasurer1@gmail.com"
+    },
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PAULA JOORE",
+      "email": "eagles.pres1@gmail.com"
+    }
+  },
+  {
+    "association": "Essa Eagles",
+    "location": "Angus, ON",
+    "website": "https://essaminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://essaminorhockey.com/Staff/1003/",
+    "totalContacts": 33,
+    "president": {
+      "role": "PRESIDENT/ICE SCHEDULER",
+      "name": "TIFFANY HART",
+      "email": "president@essaminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/FUNDRAISING DIRECTOR",
+      "name": "KAYLA OTTEN",
+      "email": "vp@essaminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MACKENZIE JAMES",
+      "email": "treasurer@essaminorhockey.com"
+    }
+  },
+  {
+    "association": "Flamborough Sabres",
+    "location": "Flamborough, ON",
+    "website": "https://flamboroughhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://flamboroughhockey.com/Staff/1003/",
+    "totalContacts": 30,
+    "president": {
+      "role": "PRESIDENT - FHA BOARD MEMBER",
+      "name": "ALEX NOTO",
+      "email": "president@flamboroughhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT - FHA BOARD MEMBER",
+      "name": "SHAWN ALBERT",
+      "email": "vicepresident@flamboroughhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER / ACCOUNTANT",
+      "name": "MATT MARTIN",
+      "email": "treasurer@flamboroughhockey.com"
+    }
+  },
+  {
+    "association": "Frontenac Flyers",
+    "location": "Frontenac, ON",
+    "website": "https://frontenachockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has 2 VPs listed via Apify - validate",
+    "success": true,
+    "url": "https://frontenachockey.ca/Staff/1003/",
+    "totalContacts": 24,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARC MCINTOSH",
+      "email": "marcmcintosh12@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT / OMHA CONTACT",
+      "name": "JAMIE SEALE",
+      "email": "jayseale@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DEBBIE DONOVAN",
+      "email": "treasurer@frontenachockey.ca"
+    }
+  },
+  {
+    "association": "Gananoque Islanders",
+    "location": "Gananoque, ON",
+    "website": "https://ganminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://ganminorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHAD HAFFIE",
+      "email": "president@ganminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MICHELLE BROWN",
+      "email": "Treasurer@ganminorhockey.com"
+    }
+  },
+  {
+    "association": "Georgian Bay Islanders",
+    "location": "Midland, ON",
+    "website": "https://georgianbayminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://georgianbayminorhockey.ca/Staff/1003/",
+    "totalContacts": 28,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DUANE HOMICK",
+      "email": "president@georgianbayminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DAVE CURRIE",
+      "email": "vicepresident@georgianbayminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DOUG BECKETT",
+      "email": "treasurer@georgianbayminorhockey.ca"
+    }
+  },
+  {
+    "association": "Georgian Shores Lightning",
+    "location": "Meaford, ON",
+    "website": "https://georgianshoreshockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://georgianshoreshockey.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK CRONIN",
+      "email": "president@gsmha.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JASON BOUWMAN",
+      "email": "vicepresident@gsmha.net"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "SARAH CLARKE",
+      "email": "treasurer@gsmha.net"
+    }
+  },
+  {
+    "association": "Gloucester Dragons",
+    "location": "Gloucester, ON",
+    "website": "https://gloucesterminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Goulbourn Stingers",
+    "location": "Stittsville, ON",
+    "website": "https://goulbournhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Grey Highlands Hawks",
+    "location": "Flesherton, ON",
+    "website": "https://greyhighlandsminorhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Grimsby Peach Kings",
+    "location": "Grimsby, ON",
+    "website": "https://grimsbyminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Guelph Gryphons",
+    "location": "Guelph, ON",
+    "website": "https://guelphminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": true,
+    "url": "https://guelphminorhockey.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JAMIE BAGGIO",
+      "email": "president@guelphminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT",
+      "name": "CHRIS STE. CROIX",
+      "email": "vicepresident@guelphminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ERIN APPLEBY",
+      "email": "treasurer@guelphminorhockey.com"
+    }
+  },
+  {
+    "association": "Haldimand County Huskies",
+    "location": "Haldimand County, ON",
+    "website": "https://haldimandminorhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Haliburton County Huskies",
+    "location": "Haliburton, ON",
+    "website": "https://haliburtonhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Hamilton Huskies",
+    "location": "Hamilton, ON",
+    "website": "https://hamiltonminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "Try extraction - OMHA network site",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Hanover Falcons",
+    "location": "Hanover, ON",
+    "website": "https://saugeenvalleyminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Playwright - validate",
+    "success": true,
+    "url": "https://saugeenvalleyminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JEREMY WHITE",
+      "email": "president@saugeenvalleyminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CRAIG CORRIVEAU",
+      "email": "vicepresident@saugeenvalleyminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CORNELIA VAN DEN HOEK",
+      "email": "treasurer@saugeenvalleyminorhockey.com"
+    }
+  },
+  {
+    "association": "East Gwillimbury Eagles",
+    "location": "Sharon, ON",
+    "website": "https://egmha.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says VP not listed - validate extraction",
+    "success": true,
+    "url": "https://egmha.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "RICK MCGLONE",
+      "email": "president@egmha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DAVE DIGIOVANNI",
+      "email": "treasurer@egmha.com"
+    }
+  },
+  {
+    "association": "Deseronto Bulldogs",
+    "location": "Deseronto, ON",
+    "website": "https://ddmha.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says President and Treasurer share email - validate",
+    "success": true,
+    "url": "https://ddmha.ca/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT & OMHA REP",
+      "name": "JULIE BARTOLO",
+      "email": "jnbartolo@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CHRISTINE DEWBERRY",
+      "email": "ddmhatreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Essex Ravens",
+    "location": "Essex, ON",
+    "website": "https://essex-southpoint.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV via Playwright - validate",
+    "success": true,
+    "url": "https://essex-southpoint.com/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JAMIE PAQUETTE",
+      "email": "paquer40@gmail.com"
+    }
+  },
+  {
+    "association": "Embro Edge",
+    "location": "Embro, ON",
+    "website": "https://embrohockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Playwright - validate",
+    "success": true,
+    "url": "https://embrohockey.com/Staff/1003/",
+    "totalContacts": 9,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "SONYA GREEN",
+      "email": "president@embrohockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/REFEREE IN CHIEF/TIMEKEEPER CONVENOR",
+      "name": "JOSH SMITH",
+      "email": "jsmith4778@hotmail.com"
+    }
+  },
+  {
+    "association": "Campbellford Colts",
+    "location": "Campbellford, ON",
+    "website": "https://campbellfordcolts.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says VP not listed - validate",
+    "success": true,
+    "url": "https://campbellfordcolts.com/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "WAYNE KERR",
+      "email": "wanker15@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JOANNA LINTON",
+      "email": "jopeth55@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KRISTY MCKEOWN",
+      "email": "coltstreasurer32@gmail.com"
+    }
+  },
+  {
+    "association": "Cayuga Stars",
+    "location": "Cayuga, ON",
+    "website": "https://cayugaminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://cayugaminorhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TREVOR METCALFE",
+      "email": "trevormetcalfe@cayugaminorhockey.ca"
+    },
+    "vp": {
+      "role": "1ST VICE PRESIDENT",
+      "name": "JEFF ALMAS",
+      "email": "jeffalmas@cayugaminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER - SPONSORSHIP COORDINATOR",
+      "name": "TRISH DAVIDSON",
+      "email": "trishdavidson@cayugaminorhockey.ca"
+    }
+  },
+  {
+    "association": "Centre Hastings Grizzlies",
+    "location": "Madoc, ON",
+    "website": "https://centrehastingsminorhockeyassociation.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://centrehastingsminorhockeyassociation.ca/Staff/1003/",
+    "totalContacts": 11,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CRYSTAL JULIA",
+      "email": "president@centrehastingsminorhockeyassociation.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/OMHA CONTACT",
+      "name": "JAMES MCCONNELL",
+      "email": "james.s.mcconnell@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KEVIN FORBES",
+      "email": "treasurer@centrehastingsminorhockeyassociation.ca"
+    }
+  },
+  {
+    "association": "Centre Wellington Fusion",
+    "location": "Fergus, ON",
+    "website": "https://cwminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://cwminorhockey.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PETER LIRUSSO",
+      "email": "president@cwmha.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "KIEL WEBB",
+      "email": "vp@cwmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "BETH MCCABE",
+      "email": "bethmccabe@wightman.ca"
+    }
+  },
+  {
+    "association": "Chatsworth Rebels",
+    "location": "Chatsworth, ON",
+    "website": "https://tcdmha.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate TCDMHA",
+    "success": true,
+    "url": "https://tcdmha.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DALE KUHL",
+      "email": "President@tcdmha.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "RANDY SACHS",
+      "email": "vicepresident@tcdmha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "AMANDA LANG",
+      "email": "Treasurer@tcdmha.com"
+    }
+  },
+  {
+    "association": "Deep River Knights",
+    "location": "Deep River, ON",
+    "website": "https://dramha.com",
+    "success": true,
+    "url": "https://dramha.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "STEVE BIRD",
+      "email": "president@dramha.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/RISK AND SAFETY",
+      "name": "JAMIE CARR",
+      "email": "vicepresident@dramha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JAN SUNSTRUM",
+      "email": "deepriverknightstreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Delhi Norwich 59ers",
+    "location": "Delhi, ON",
+    "website": "https://delhinorwich59ers.ca",
+    "success": true,
+    "url": "https://delhinorwich59ers.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "RYAN DEVOS",
+      "email": "president@delhinorwich59ers.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MARISSA WILLS",
+      "email": "vp1@delhinorwich59ers.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JOE VANHAMME",
+      "email": "treasurer@delhinorwich59ers.ca"
+    }
+  },
+  {
+    "association": "East Lambton Eagles",
+    "location": "Watford, ON",
+    "website": "https://eastlambtonminorhockey.ca",
+    "success": true,
+    "url": "https://eastlambtonminorhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIM LEHRBASS",
+      "email": "President@eastlambtonminorhockey.ca"
+    },
+    "vp": {
+      "role": "OMHA/SHAMROCK REP, RESOLUTION COMMITTEE CHAIR, VICE PRESIDENT #1",
+      "name": "BRAD ROMBOUTS",
+      "email": "shamrockrep@eastlambtonminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER, ROO REVISION COMMITTEE",
+      "name": "JULIE HAYTER",
+      "email": "Treasurer@eastlambtonminorhockey.ca"
+    }
+  },
+  {
+    "association": "East Nipissing Vipers",
+    "location": "Astorville, ON",
+    "website": "https://govipersgo.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elgin Middlesex Canucks",
+    "location": "Komoka, ON",
+    "website": "https://elgin-middlesexcanucks.ca",
+    "success": true,
+    "url": "https://elgin-middlesexcanucks.ca/Staff/1003/",
+    "totalContacts": 12,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN LEE",
+      "email": "emccanuckspres@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARANDA KING",
+      "email": "emcanuckstreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Elliot Lake",
+    "location": "Elliot Lake, ON",
+    "website": "https://elliotlakeminorhockey.ca",
+    "success": true,
+    "url": "https://elliotlakeminorhockey.ca/Staff/1003/",
+    "totalContacts": 10,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LARA HUKEZALIE",
+      "email": "president@elliotlakeminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "VACANT VACANT",
+      "email": "treasurer@elliotlakeminorhockey.ca"
+    }
+  },
+  {
+    "association": "Central Perth Predators",
+    "location": "Monkton, ON",
+    "website": "https://centralperthminorhockey.ca",
+    "success": true,
+    "url": "https://centralperthminorhockey.ca/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JEFF ERWIN",
+      "email": "president@centralperthminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT",
+      "name": "CHRIS CAMERON",
+      "email": "Vicepresident@centralperthminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TROY HAMILTON",
+      "email": "treasurer@centralperthminorhockey.ca"
+    }
+  },
+  {
+    "association": "Central Ontario Wolves",
+    "location": "Lindsay, ON",
+    "website": "https://cowha.com",
+    "success": true,
+    "url": "https://cowha.com/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "NELSON PEREIRA",
+      "email": "president@cowha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TARYN ZYLSTRA",
+      "email": "treasurer@cowha.com"
+    }
+  },
+  {
+    "association": "Caledonia Thunder",
+    "location": "Caledonia, ON",
+    "website": "https://caledoniathunder.ca",
+    "success": true,
+    "url": "https://caledoniathunder.ca/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CDMHA EXECUTIVE",
+      "email": "president@caledoniathunder.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TRACIANN SHARP - EXECUTIVE",
+      "email": "vpll@caledoniathunder.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "BETTY CASPERSEN - EXECUTIVE",
+      "email": "treasurer@caledoniathunder.ca"
+    }
+  },
+  {
+    "association": "Caledon Hawks",
+    "location": "Caledon, ON",
+    "website": "https://caledonminorhockey.ca",
+    "success": true,
+    "url": "https://caledonminorhockey.ca/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ANTHONY COSTA",
+      "email": "president@caledonminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JASON NEWSOM",
+      "email": "treasurer@caledonminorhockey.ca"
+    }
+  },
+  {
+    "association": "Bradford Bulldogs",
+    "location": "Bradford, ON",
+    "website": "https://bradfordbulldogs.com",
+    "success": true,
+    "url": "https://bradfordbulldogs.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN REILLY",
+      "email": "president@bradfordbulldogs.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CINDY STYLES",
+      "email": "treasurercindy@bradfordbulldogs.com"
+    }
+  },
+  {
+    "association": "Belmont Rangers",
+    "location": "Belmont, ON",
+    "website": "https://belmontminorhockey.ca",
+    "success": true,
+    "url": "https://belmontminorhockey.ca/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK LANDON",
+      "email": "meblandon@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MALLORY HESSELMANS",
+      "email": "malloryhesselmans@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ROB CARLISI",
+      "email": "robert_carlisi@hotmail.com"
+    }
+  },
+  {
+    "association": "Aurora Tigers",
+    "location": "Aurora, ON",
+    "website": "https://auroraminorhockey.com",
+    "success": true,
+    "url": "https://auroraminorhockey.com/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CORBY SALTZMAN",
+      "email": "corby.saltzman@gmail.com"
+    },
+    "vp": {
+      "role": "1ST VICE PRESIDENT AA/A/BB/B",
+      "name": "HOLLY WINDLE",
+      "email": "amha3vp@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ALAN PECK",
+      "email": "Cybrral@gmail.com"
+    }
+  },
+  {
+    "association": "Arthur Vipers",
+    "location": "Arthur, ON",
+    "website": "https://arthurminorhockey.com",
+    "success": true,
+    "url": "https://arthurminorhockey.com/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARGARET RIBEY",
+      "email": "presidentarthurminorhockey@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "ANN WARNAAR",
+      "email": "annwarnaar@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JULIE O'DONNELL",
+      "email": "julieodonnell8@gmail.com"
+    }
+  },
+  {
+    "association": "Aylmer Flames",
+    "location": "Aylmer, ON",
+    "website": "https://aylmerflames.com",
+    "success": true,
+    "url": "https://aylmerflames.com/Staff/1003/",
+    "totalContacts": 24,
+    "president": {
+      "role": "PRESIDENT AND ICE CONVENOR",
+      "name": "SHAWN PEDE",
+      "email": "shawn_pede@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT & REGISTRAR",
+      "name": "LEON THOONEN",
+      "email": "playamha@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER, NOMINATIONS AND FUNDRAISING COMMITTEES",
+      "name": "MISSY WALCARIUS",
+      "email": "mwalcarius@underhillsfarmsupply.ca"
+    }
+  },
+  {
+    "association": "Collingwood Jr Blues",
+    "location": "Collingwood, ON",
+    "website": "https://collingwoodhockey.com",
+    "success": true,
+    "url": "https://collingwoodhockey.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT, CLINICS, DISCIPLINE, COMMUNICATIONS",
+      "name": "DAVE EPP",
+      "email": "president@collingwoodhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JOHN ELMES",
+      "email": "Johnelmes@collingwoodhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DWAYNE DRAPER",
+      "email": "treasurer@collingwoodhockey.com"
+    }
+  },
+  {
+    "association": "Brock Wild",
+    "location": "Brock, ON",
+    "website": "https://brockminorhockey.com",
+    "success": true,
+    "url": "https://brockminorhockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MATT GROSS",
+      "email": "president@brockminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DAVE PARRY",
+      "email": "treasurerbmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT, OMHA REPRESENTATIVE AND B/LL PROGRAMS (U11 AND OLDER)",
+      "name": "BRANDEN STEVENS",
+      "email": "omharep@brockminorhockey.com"
+    }
+  },
+  {
+    "association": "Brighton Bolts",
+    "location": "Brighton, ON",
+    "website": "https://brightonminorhockey.ca",
+    "success": true,
+    "url": "https://brightonminorhockey.ca/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BYRON MCBRIDE",
+      "email": "byron_mcbride@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "STEVE HOUGH",
+      "email": "hough.can@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER / REGISTRAR",
+      "name": "ASHLEY HUTCHINSON",
+      "email": "bdmharegistrar@gmail.com"
+    }
+  },
+  {
+    "association": "Burford Coyotes",
+    "location": "Burford, ON",
+    "website": "https://burfordminorhockey.com",
+    "success": true,
+    "url": "https://burfordminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CURTIS INBERG",
+      "email": "president.burfordminorhockey@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JESSE KLOEPFER",
+      "email": "vp.burfordminorhockey@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARK LANGE",
+      "email": "Treasurer.burfordminorhockey@gmail.com"
+    }
+  },
+  {
+    "association": "Bruce Peninsula Predators",
+    "location": "Wiarton, ON",
+    "website": "https://northbrucehockey.com",
+    "success": true,
+    "url": "https://northbrucehockey.com/Staff/1003/",
+    "totalContacts": 9,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIFFANY ROBBINS",
+      "email": "s.bpmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TOM CUNNINGHAM",
+      "email": "cunninghamcanes@gmail.com"
+    }
+  },
+  {
+    "association": "Bracebridge",
+    "location": "Bracebridge, ON",
+    "website": "https://southmuskokaminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Brant County",
+    "location": "Brant County, ON",
+    "website": "https://brantcountyminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Brantford 99ers",
+    "location": "Brantford, ON",
+    "website": "https://brantfordminorhockey.com",
+    "success": true,
+    "url": "https://brantfordminorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "COREY WARING",
+      "email": "president@brantfordminorhockey.com"
+    },
+    "vp": {
+      "role": "1ST VICE-PRESIDENT",
+      "name": "MIKE PIERCE",
+      "email": "firstvp@brantfordminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DAVE HERRIOT",
+      "email": "treasurer@brantfordminorhockey.com"
+    }
+  },
+  {
+    "association": "Blind River Thunder",
+    "location": "Blind River, ON",
+    "website": "https://blindriverminorhockey.ca",
+    "success": true,
+    "url": "https://blindriverminorhockey.ca/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ALISON FAUTEUX",
+      "email": "president@blindriverminorhockey.ca"
+    },
+    "vp": {
+      "role": "2ND VICE-PRESIDENT",
+      "name": "ERIC LAFERRIERE",
+      "email": "2ndvice@blindriverminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "SARRA MEADOWS",
+      "email": "sarrameadows.brmha@gmail.com"
+    }
+  },
+  {
+    "association": "Blyth-Brussels Crusaders",
+    "location": "Blyth-Brussels, ON",
+    "website": "https://blythbrusselsminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Bancroft Jets",
+    "location": "Bancroft, ON",
+    "website": "https://bancroftjets.com",
+    "success": true,
+    "url": "https://bancroftjets.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARC GIBSON",
+      "email": "bancroftminorhockey@gmail.com"
+    },
+    "vp": {
+      "role": "1ST VICE PRESIDENT - COACHING CO-ORDINATOR",
+      "name": "TRAVIS KAUFFELDT",
+      "email": "bancroftminorhockey@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MEREDITH CARD",
+      "email": "bancroftminorhockey@gmail.com"
+    }
+  },
+  {
+    "association": "Belleville Jr Bulls",
+    "location": "Belleville, ON",
+    "website": "https://bellevilleminorhockey.ca",
+    "success": true,
+    "url": "https://bellevilleminorhockey.ca/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JILL BAIN",
+      "email": "president@bellevilleminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "RYAN LAPALM",
+      "email": "rlapalm@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "RYAN GRIFFIN",
+      "email": "ryan@qhsi.ca"
+    }
+  },
+  {
+    "association": "Ayr Flames",
+    "location": "Ayr, ON",
+    "website": "https://ayrminorhockey.com",
+    "success": true,
+    "url": "https://ayrminorhockey.com/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KEVIN MILLER",
+      "email": "president@ayrminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT (ADMIN)",
+      "name": "SHIRLEY CRONKITE",
+      "email": "vpadmin@ayrminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MELISSA EDGAR",
+      "email": "treasurer@ayrminorhockey.com"
+    }
+  },
+  {
+    "association": "Ausable Valley Coyotes",
+    "location": "Parkhill, ON",
+    "website": "https://ausablevalleyhockey.ca",
+    "success": true,
+    "url": "https://ausablevalleyhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "GLENN SILVER",
+      "email": "president@ausablevalleyhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT – NORTH MIDDLESEX",
+      "name": "KEVIN THOMPSON",
+      "email": "VPNorthMiddlesex@ausablevalleyhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MANDY WALKER",
+      "email": "Treasurer@ausablevalleyhockey.ca"
+    }
+  },
+  {
+    "association": "Arran-Elderslie Ice Dogs",
+    "location": "Paisley, ON",
+    "website": "https://aemha.ca",
+    "success": true,
+    "url": "https://aemha.ca/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "NICOLE VACHAL",
+      "email": "aemhaicedogs@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT",
+      "name": "DUSTIN STARK",
+      "email": "starkd1887@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DANIELLE DEBOER",
+      "email": "aemhaicedogs@hotmail.com"
+    }
+  },
+  {
+    "association": "Applewood Coyotes",
+    "location": "Mississauga, ON",
+    "website": "http://www.applewoodhockey.on.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Almonte Pakenham Thunder",
+    "location": "Almonte, ON",
+    "website": "https://apmha.org",
+    "success": true,
+    "url": "https://apmha.org/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "SCOTT ROBILLARD",
+      "email": "president@apmha.org"
+    }
+  },
+  {
+    "association": "Cornwall Colts",
+    "location": "Cornwall, ON",
+    "website": "http://cornwallminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Credit River Capitals",
+    "location": "Brampton, ON",
+    "website": "https://creditrivercapitals.ca",
+    "success": true,
+    "url": "https://creditrivercapitals.ca/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHRIS FIORE",
+      "email": "chris.fiore@creditrivercapitals.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "PATTI SAKITKOVSKI",
+      "email": "VP@creditrivercapitals.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JOHN SACCO",
+      "email": "treasurer@creditrivercapitals.ca"
+    }
+  },
+  {
+    "association": "Durham Crusaders",
+    "location": "Oshawa, ON",
+    "website": "https://durhamcrusaders.ca",
+    "success": true,
+    "url": "https://durhamcrusaders.ca/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PRES;DENT PRES;DENT",
+      "email": "durhamcrusaderspresident@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT - LOCAL LEAGUE/ REP.",
+      "name": "VP VP",
+      "email": "rjford@furlongford.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TREASURER TREASURER",
+      "email": "crusadertreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Eastern Ontario Cobras",
+    "location": "Casselman, ON",
+    "website": "https://easternontariocobras.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elgin Thames 73s",
+    "location": "Aylmer, ON",
+    "website": "https://elginthamesminorhockey.ca",
+    "success": true,
+    "url": "https://elginthamesminorhockey.ca/Staff/1003/",
+    "totalContacts": 12,
+    "president": {
+      "role": "PRESIDENT ETMH (AMHA)",
+      "name": "SHAWN PEDE",
+      "email": "president@elginthamesminorhockey.ca"
+    },
+    "vp": {
+      "role": "1ST VP ETMH (BMHA)",
+      "name": "MARK LANDON",
+      "email": "meblandon@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER/SECRETARY",
+      "name": "SANDRA LAKE",
+      "email": "etmhtreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Ennismore Eagles Girls",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoregirlshockey.com",
+    "success": true,
+    "url": "https://ennismoregirlshockey.com/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JASEN MACDONALD",
+      "email": "eghapresident@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CASEY KIDD",
+      "email": "eghavice@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARC ROCHON",
+      "email": "eghatreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Cambridge Hawks",
+    "location": "Cambridge, ON",
+    "website": "https://cambridgeminorhockey.com",
+    "success": true,
+    "url": "https://cambridgeminorhockey.com/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JASON PEMBLETON",
+      "email": "president@cambridgeminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT, HOUSE LEAGUE",
+      "name": "JOHN MORTON",
+      "email": "vphouseleague@cambridgeminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TED JEFFERIES (INTERIM)",
+      "email": "treasurer@cambridgeminorhockey.com"
+    }
+  },
+  {
+    "association": "Clarington Toros",
+    "location": "Bowmanville, ON",
+    "website": "https://claringtontoros.com",
+    "success": true,
+    "url": "https://claringtontoros.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DAWN MATHERS",
+      "email": "president@claringtontoros.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DWAYNE MCGLYNN",
+      "email": "vp@claringtontoros.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "RICH SUCHAN",
+      "email": "rsuchan06@gmail.com"
+    }
+  },
+  {
+    "association": "Brampton Hockey Inc",
+    "location": "Brampton, ON",
+    "website": "https://bramptonhockey.com",
+    "success": true,
+    "url": "https://bramptonhockey.com/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ANDREW MONAHAN",
+      "email": "president@bramptonhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "PARVEZ CHOWDHURY",
+      "email": "finance@bramptonhockey.com"
+    }
+  },
+  {
+    "association": "Fort Erie International Falcons",
+    "location": "Fort Erie, ON",
+    "website": "https://forteriehockey.com",
+    "success": true,
+    "url": "https://forteriehockey.com/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KEN HOAGE",
+      "email": "president@forteriehockey.com"
+    },
+    "vp": {
+      "role": "SENIOR VICE PRESIDENT",
+      "name": "SEAN MCCOOEY",
+      "email": "seniorvp@forteriehockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "GREG VAMPLEW",
+      "email": "fehockeytreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Blackburn Stingers",
+    "location": "Blackburn Hamlet, ON",
+    "website": "https://blackburnstingers.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Belle River Jr Canadiens",
+    "location": "Belle River, ON",
+    "website": "https://brdmha.com",
+    "success": true,
+    "url": "https://brdmha.com/Staff/1003/",
+    "totalContacts": 28,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PAUL GRAY",
+      "email": "president@brdmha.com"
+    }
+  },
+  {
+    "association": "Brant Battalion Paris",
+    "location": "Paris, ON",
+    "website": "https://parisminorhockey.com",
+    "success": true,
+    "url": "https://parisminorhockey.com/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ROB DELARONDE",
+      "email": "president@parisminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MATT LAMBERT",
+      "email": "vp@parisminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ALBERT AMOS",
+      "email": "treasurer@parisminorhockey.com"
+    }
+  },
+  {
+    "association": "Bruce Grey Bulls",
+    "location": "Port Elgin, ON",
+    "website": "https://brucegreybulls.ca",
+    "success": true,
+    "url": "https://brucegreybulls.ca/Staff/1003/",
+    "totalContacts": 8,
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DANIELLE DE BOER",
+      "email": "treasurer@brucegreybulls.ca"
+    }
+  },
+  {
+    "association": "Canterbury Knights",
+    "location": "Ottawa, ON",
+    "website": "https://www.crknights.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Carleton Place Kings",
+    "location": "Carleton Place, ON",
+    "website": "https://cpmha.ca",
+    "success": true,
+    "url": "https://cpmha.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "STUART ROBINSON",
+      "email": "president@cpmha.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT HOCKEY",
+      "name": "STEVE VALARDO",
+      "email": "vphockey@cpmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANGELA ROY",
+      "email": "treasurer@cpmha.ca"
+    }
+  },
+  {
+    "association": "Castor River Canucks",
+    "location": "Metcalfe, ON",
+    "website": "https://metcalfejets.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Current River Comets",
+    "location": "Thunder Bay, ON",
+    "website": "https://pamha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Clarence-Rockland Lightning",
+    "location": "Rockland, ON",
+    "website": "https://crgha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Clarington Flames",
+    "location": "Bowmanville, ON",
+    "website": "https://claringtonflames.ca",
+    "success": true,
+    "url": "https://claringtonflames.ca/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BRENT STRAND",
+      "email": "president@claringtonflames.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MELISSA WILSON",
+      "email": "vicepresident@claringtonflames.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JESSICA JAMES",
+      "email": "treasurer@claringtonflames.ca"
+    }
+  },
+  {
+    "association": "Clearview Canucks",
+    "location": "Stayner, ON",
+    "website": "https://clearviewminorhockey.com",
+    "success": true,
+    "url": "https://clearviewminorhockey.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN PATTERSON",
+      "email": "clearviewmhpresident@outlook.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "HENRY BARTON",
+      "email": "henrybarton@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JANINA DOBBERKAU",
+      "email": "treasurerch@outlook.com"
+    }
+  },
+  {
+    "association": "Cold Creek Comets",
+    "location": "Trenton, ON",
+    "website": "https://coldcreekcomets.com",
+    "success": true,
+    "url": "https://coldcreekcomets.com/Staff/1003/",
+    "totalContacts": 12,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "THOMAS MACLEAN",
+      "email": "President@ColdCreekComets.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "RONDA HOUGH",
+      "email": "VicePres@ColdCreekComets.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANDREA DUNKLEY",
+      "email": "Treasurer@ColdCreekComets.com"
+    }
+  },
+  {
+    "association": "Coldwater Wildcats",
+    "location": "Coldwater, ON",
+    "website": "https://coldwaterwildcats.ca",
+    "success": true,
+    "url": "https://coldwaterwildcats.ca/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KAREN AIGELDINGER",
+      "email": "karenaigeldinger@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "BRIAN ZULAK",
+      "email": "coldwatervp@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "LISA BONIFACE",
+      "email": "coldwatermha.treasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Collingwood Lightning",
+    "location": "Collingwood, ON",
+    "website": "https://collingwoodgirlshockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Copper Cliff Reds",
+    "location": "Copper Cliff, ON",
+    "website": "http://coppercliffminorhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Deep River Knights",
+    "location": "Deep River, ON",
+    "website": "https://dramha.com",
+    "success": true,
+    "url": "https://dramha.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "STEVE BIRD",
+      "email": "president@dramha.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/RISK AND SAFETY",
+      "name": "JAMIE CARR",
+      "email": "vicepresident@dramha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JAN SUNSTRUM",
+      "email": "deepriverknightstreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Delhi Norwich 59ers",
+    "location": "Delhi, ON",
+    "website": "https://delhinorwich59ers.ca",
+    "success": true,
+    "url": "https://delhinorwich59ers.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "RYAN DEVOS",
+      "email": "president@delhinorwich59ers.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MARISSA WILLS",
+      "email": "vp1@delhinorwich59ers.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JOE VANHAMME",
+      "email": "treasurer@delhinorwich59ers.ca"
+    }
+  },
+  {
+    "association": "Dorchester Dragons",
+    "location": "Dorchester, ON",
+    "website": "https://dorchesterdragons.ca",
+    "success": true,
+    "url": "https://dorchesterdragons.ca/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "GARRETT HAMILTON",
+      "email": "presidentofdmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT -- HOCKEY OPERATIONS",
+      "name": "ALICIA DOW-MCDONALD",
+      "email": "vphockeyops@dorchesterdragons.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KAYLA BAILEY",
+      "email": "treasurerdmha@gmail.com"
+    }
+  },
+  {
+    "association": "Douro Dukes",
+    "location": "Douro, ON",
+    "website": "https://dourominorhockey.com",
+    "success": true,
+    "url": "https://dourominorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LIAM RYAN",
+      "email": "liamsryan11@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER/TOURNAMENT CONVENER",
+      "name": "EMILY RYAN",
+      "email": "eryan@prhc.on.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "PATRICK O'GRADY",
+      "email": "patrickmogrady@hotmail.ca"
+    }
+  },
+  {
+    "association": "Drayton Defenders",
+    "location": "Drayton, ON",
+    "website": "https://draytonminorhockey.com",
+    "success": true,
+    "url": "https://draytonminorhockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BARB DRISCOLL",
+      "email": "president@draytonminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JENN ZETTLE",
+      "email": "draytonminorhockeytreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Dresden Jr Kings",
+    "location": "Dresden, ON",
+    "website": "https://dresdenminorhockey.com",
+    "success": true,
+    "url": "https://dresdenminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "IAN AVERY",
+      "email": "Ian.Avery@lkdsb.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JAMIE BEATTY",
+      "email": "jamiebeatty.djk@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARTY OSBORNE",
+      "email": "martyosborne18@hotmail.com"
+    }
+  },
+  {
+    "association": "Dubreuilville Bobcats",
+    "location": "Dubreuilville, ON",
+    "website": "https://gobobcatsgo.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Duffield Devils",
+    "location": "North York, ON",
+    "website": "https://duffieldhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Dundas Blues",
+    "location": "Dundas, ON",
+    "website": "https://dundasblues.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Dunnville Mudcats",
+    "location": "Dunnville, ON",
+    "website": "https://dunnvillemudcats.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Durham West Lightning",
+    "location": "Pickering, ON",
+    "website": "https://dwgha.com",
+    "success": true,
+    "url": "https://dwgha.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT & OWHA COMMUNICATIONS OFFICER",
+      "name": "EVAN JONES",
+      "email": "president@dwgha.com"
+    },
+    "treasurer": {
+      "role": "SECRETARY/TREASURER",
+      "name": "VACANT POSITION",
+      "email": "secretary@dwgha.com"
+    }
+  },
+  {
+    "association": "East Enders Ticats",
+    "location": "Toronto, ON",
+    "website": "https://torontoeastenders.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "East Lambton Eagles",
+    "location": "Watford, ON",
+    "website": "https://eastlambtonminorhockey.ca",
+    "success": true,
+    "url": "https://eastlambtonminorhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIM LEHRBASS",
+      "email": "President@eastlambtonminorhockey.ca"
+    },
+    "vp": {
+      "role": "OMHA/SHAMROCK REP, RESOLUTION COMMITTEE CHAIR, VICE PRESIDENT #1",
+      "name": "BRAD ROMBOUTS",
+      "email": "shamrockrep@eastlambtonminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER, ROO REVISION COMMITTEE",
+      "name": "JULIE HAYTER",
+      "email": "Treasurer@eastlambtonminorhockey.ca"
+    }
+  },
+  {
+    "association": "East Nipissing Vipers",
+    "location": "Astorville, ON",
+    "website": "https://govipersgo.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "East Ottawa Stars",
+    "location": "Orleans, ON",
+    "website": "https://eogh.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elliot Lake",
+    "location": "Elliot Lake, ON",
+    "website": "https://elliotlakeminorhockey.ca",
+    "success": true,
+    "url": "https://elliotlakeminorhockey.ca/Staff/1003/",
+    "totalContacts": 10,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LARA HUKEZALIE",
+      "email": "president@elliotlakeminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "VACANT VACANT",
+      "email": "treasurer@elliotlakeminorhockey.ca"
+    }
+  },
+  {
+    "association": "Elmvale Coyotes",
+    "location": "Elmvale, ON",
+    "website": "https://elmvaleminorhockey.ca",
+    "success": true,
+    "url": "https://elmvaleminorhockey.ca/Staff/1003/",
+    "totalContacts": 26,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN SENEY",
+      "email": "president@elmvaleminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CARLEY PEARSON",
+      "email": "treasurer@elmvaleminorhockey.ca"
+    }
+  },
+  {
+    "association": "Emo Express",
+    "location": "Emo, ON",
+    "website": "https://emohockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Englehart Express",
+    "location": "Englehart, ON",
+    "website": "https://www.emhamx.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Ennismore Eagles",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoreeagles.ca",
+    "success": true,
+    "url": "https://ennismoreeagles.ca/Staff/1003/",
+    "totalContacts": 15,
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CRYSTAL WEISBERG",
+      "email": "eagles.vice@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MIKE MOHER",
+      "email": "eagles.treasurer1@gmail.com"
+    },
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PAULA JOORE",
+      "email": "eagles.pres1@gmail.com"
+    }
+  },
+  {
+    "association": "Erin Hillsburgh Devils",
+    "location": "Erin, ON",
+    "website": "https://ehmha.ca",
+    "success": true,
+    "url": "https://ehmha.ca/Staff/1003/",
+    "totalContacts": 18,
+    "president": {
+      "role": "PRESIDENT (EHMHA_PRESIDENT@EHMHA.CA)",
+      "name": "SID SPEAR",
+      "email": "ehmha_president@ehmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER (TREASURER@EHMHA.CA)",
+      "name": "JAMES TUGMAN",
+      "email": "treasurer@ehmha.ca"
+    }
+  },
+  {
+    "association": "Erindale Spitfires",
+    "location": "Mississauga, ON",
+    "website": "https://www.erindalehockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Essa Eagles",
+    "location": "Angus, ON",
+    "website": "https://essaminorhockey.com",
+    "success": true,
+    "url": "https://essaminorhockey.com/Staff/1003/",
+    "totalContacts": 33,
+    "president": {
+      "role": "PRESIDENT/ICE SCHEDULER",
+      "name": "TIFFANY HART",
+      "email": "president@essaminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/FUNDRAISING DIRECTOR",
+      "name": "KAYLA OTTEN",
+      "email": "vp@essaminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MACKENZIE JAMES",
+      "email": "treasurer@essaminorhockey.com"
+    }
+  },
+  {
+    "association": "Etobicoke Bulldogs",
+    "location": "Etobicoke, ON",
+    "website": "https://gtcapitals.com",
+    "success": true,
+    "url": "https://gtcapitals.com/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "EHL - PRESIDENT",
+      "name": "GEORGE STAVRO",
+      "email": "gstavro@bellnet.ca"
+    },
+    "vp": {
+      "role": "EHL - VICE PRESIDENT & GM",
+      "name": "TOM SANDRAS",
+      "email": "tsandras@rogers.com"
+    }
+  },
+  {
+    "association": "Etobicoke Dolphins",
+    "location": "Etobicoke, ON",
+    "website": "https://etobicokedolphins.ca",
+    "success": true,
+    "url": "https://etobicokedolphins.ca/Staff/1003/",
+    "totalContacts": 18,
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DEBBIE BLAND",
+      "email": "vp@etobicokedolphins.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARILYN RATH",
+      "email": "treasurer@etobicokedolphins.ca"
+    },
+    "president": {
+      "role": "PRESIDENT",
+      "name": "VIOLETA SCODELLER",
+      "email": "president@etobicokedolphins.ca"
+    }
+  },
+  {
+    "association": "Faustina Fury",
+    "location": "Etobicoke, ON",
+    "website": "https://www.faustinahockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Faustina Toros",
+    "location": "York, ON",
+    "website": "https://www.toroshockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Flamborough Falcons",
+    "location": "Flamborough, ON",
+    "website": "https://www.fgha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Flamborough Sabres",
+    "location": "Flamborough, ON",
+    "website": "https://flamboroughhockey.com",
+    "success": true,
+    "url": "https://flamboroughhockey.com/Staff/1003/",
+    "totalContacts": 30,
+    "president": {
+      "role": "PRESIDENT - FHA BOARD MEMBER",
+      "name": "ALEX NOTO",
+      "email": "president@flamboroughhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT - FHA BOARD MEMBER",
+      "name": "SHAWN ALBERT",
+      "email": "vicepresident@flamboroughhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER / ACCOUNTANT",
+      "name": "MATT MARTIN",
+      "email": "treasurer@flamboroughhockey.com"
+    }
+  },
+  {
+    "association": "Forest Hill Force",
+    "location": "Toronto, ON",
+    "website": "https://www.fhha.org",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Fort Frances Canadians",
+    "location": "Fort Frances, ON",
+    "website": "https://www.fortfranceshockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Fort Frances Leafs",
+    "location": "Fort Frances, ON",
+    "website": "http://ffgwha.msa4.rampinteractive.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Frontenac Flyers",
+    "location": "Frontenac, ON",
+    "website": "https://frontenachockey.ca",
+    "success": true,
+    "url": "https://frontenachockey.ca/Staff/1003/",
+    "totalContacts": 24,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARC MCINTOSH",
+      "email": "marcmcintosh12@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT / OMHA CONTACT",
+      "name": "JAMIE SEALE",
+      "email": "jayseale@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DEBBIE DONOVAN",
+      "email": "treasurer@frontenachockey.ca"
+    }
+  },
+  {
+    "association": "Gananoque Islanders",
+    "location": "Gananoque, ON",
+    "website": "https://ganminorhockey.com",
+    "success": true,
+    "url": "https://ganminorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHAD HAFFIE",
+      "email": "president@ganminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MICHELLE BROWN",
+      "email": "Treasurer@ganminorhockey.com"
+    }
+  },
+  {
+    "association": "Gananoque Royals",
+    "location": "Gananoque, ON",
+    "website": "https://ganroyals.ca",
+    "success": true,
+    "url": "https://ganroyals.ca/Staff/1003/",
+    "totalContacts": 10,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "SAMANTHA KELLY",
+      "email": "president@ganroyals.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TOM LINDSAY",
+      "email": "vicepresident@ganroyals.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "LINN SIGUR",
+      "email": "treasurer@ganroyals.ca"
+    }
+  },
+  {
+    "association": "George Bell Titans",
+    "location": "Toronto, ON",
+    "website": "https://www.gbha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Georgian Bay Islanders",
+    "location": "Midland, ON",
+    "website": "https://georgianbayminorhockey.ca",
+    "success": true,
+    "url": "https://georgianbayminorhockey.ca/Staff/1003/",
+    "totalContacts": 28,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DUANE HOMICK",
+      "email": "president@georgianbayminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DAVE CURRIE",
+      "email": "vicepresident@georgianbayminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DOUG BECKETT",
+      "email": "treasurer@georgianbayminorhockey.ca"
+    }
+  },
+  {
+    "association": "Georgian Shores Lightning",
+    "location": "Meaford, ON",
+    "website": "https://georgianshoreshockey.ca",
+    "success": true,
+    "url": "https://georgianshoreshockey.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK CRONIN",
+      "email": "president@gsmha.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JASON BOUWMAN",
+      "email": "vicepresident@gsmha.net"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "SARAH CLARKE",
+      "email": "treasurer@gsmha.net"
+    }
+  },
+  {
+    "association": "Georgina Golden Hawks",
+    "location": "Keswick, ON",
+    "website": "https://georginagirlshockey.com",
+    "success": true,
+    "url": "https://georginagirlshockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ANDREA FILBY",
+      "email": "afilby@rogers.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MICHELLE MOFFATT",
+      "email": "georginahawkstreasurer@gmail.com"
+    }
+  }
+]

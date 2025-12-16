@@ -1,0 +1,82 @@
+[
+  {
+    "name": "East Nipissing Vipers",
+    "location": "Astorville, ON",
+    "website": "https://govipersgo.com",
+    "staffPage": "https://govipersgo.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "East Ottawa Stars",
+    "location": "Orleans, ON",
+    "website": "https://eogh.ca",
+    "staffPage": "https://eogh.ca/Staff/1003/",
+    "notes": "CSV has President and Treasurer, VP vacant - girls only - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Elliot Lake",
+    "location": "Elliot Lake, ON",
+    "website": "https://elliotlakeminorhockey.ca",
+    "staffPage": "https://elliotlakeminorhockey.ca/Staff/1003/",
+    "notes": "CSV has President and Treasurer, VP vacant - Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Elmvale Coyotes",
+    "location": "Elmvale, ON",
+    "website": "https://elmvaleminorhockey.ca",
+    "staffPage": "https://elmvaleminorhockey.ca/Staff/1003/",
+    "notes": "CSV has President and Treasurer, no traditional VP - OMHA site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Emo Express",
+    "location": "Emo, ON",
+    "website": "https://emohockey.ca",
+    "staffPage": "https://emohockey.ca/Staff/1003/",
+    "notes": "Found general registrar email only - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Englehart Express",
+    "location": "Englehart, ON",
+    "website": "https://www.emhamx.com",
+    "staffPage": "https://www.emhamx.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Ennismore Eagles",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoreeagles.ca",
+    "staffPage": "https://ennismoreeagles.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA co-ed site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Erin Hillsburgh Devils",
+    "location": "Erin, ON",
+    "website": "https://ehmha.ca",
+    "staffPage": "https://ehmha.ca/Staff/1003/",
+    "notes": "Found referee contact only, Treasurer vacant - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Erindale Spitfires",
+    "location": "Mississauga, ON",
+    "website": "https://www.erindalehockey.com",
+    "staffPage": "https://www.erindalehockey.com/Staff/1003/",
+    "notes": "CSV has President and VP, no traditional Treasurer - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Essa Eagles",
+    "location": "Angus, ON",
+    "website": "https://essaminorhockey.com",
+    "staffPage": "https://essaminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA site",
+    "action": "VALIDATE"
+  }
+]

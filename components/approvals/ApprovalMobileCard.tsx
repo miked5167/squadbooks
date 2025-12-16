@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { PendingApprovalWithRisk } from '@/lib/types/approvals'
+import type { PendingApprovalWithRisk } from '@/lib/types/approvals'
 import { getRiskBadgeClass } from '@/lib/utils/approval-risk'
 import { cn } from '@/lib/utils'
 

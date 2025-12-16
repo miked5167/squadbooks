@@ -1,0 +1,222 @@
+[
+  {
+    "association": "Bradford Bulldogs",
+    "location": "Bradford, ON",
+    "website": "https://bradfordbulldogs.com",
+    "success": true,
+    "url": "https://bradfordbulldogs.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN REILLY",
+      "email": "president@bradfordbulldogs.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CINDY STYLES",
+      "email": "treasurercindy@bradfordbulldogs.com"
+    }
+  },
+  {
+    "association": "Belmont Rangers",
+    "location": "Belmont, ON",
+    "website": "https://belmontminorhockey.ca",
+    "success": true,
+    "url": "https://belmontminorhockey.ca/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK LANDON",
+      "email": "meblandon@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MALLORY HESSELMANS",
+      "email": "malloryhesselmans@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ROB CARLISI",
+      "email": "robert_carlisi@hotmail.com"
+    }
+  },
+  {
+    "association": "Aurora Tigers",
+    "location": "Aurora, ON",
+    "website": "https://auroraminorhockey.com",
+    "success": true,
+    "url": "https://auroraminorhockey.com/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CORBY SALTZMAN",
+      "email": "corby.saltzman@gmail.com"
+    },
+    "vp": {
+      "role": "1ST VICE PRESIDENT AA/A/BB/B",
+      "name": "HOLLY WINDLE",
+      "email": "amha3vp@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ALAN PECK",
+      "email": "Cybrral@gmail.com"
+    }
+  },
+  {
+    "association": "Arthur Vipers",
+    "location": "Arthur, ON",
+    "website": "https://arthurminorhockey.com",
+    "success": true,
+    "url": "https://arthurminorhockey.com/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARGARET RIBEY",
+      "email": "presidentarthurminorhockey@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "ANN WARNAAR",
+      "email": "annwarnaar@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JULIE O'DONNELL",
+      "email": "julieodonnell8@gmail.com"
+    }
+  },
+  {
+    "association": "Aylmer Flames",
+    "location": "Aylmer, ON",
+    "website": "https://aylmerflames.com",
+    "success": true,
+    "url": "https://aylmerflames.com/Staff/1003/",
+    "totalContacts": 24,
+    "president": {
+      "role": "PRESIDENT AND ICE CONVENOR",
+      "name": "SHAWN PEDE",
+      "email": "shawn_pede@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT & REGISTRAR",
+      "name": "LEON THOONEN",
+      "email": "playamha@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER, NOMINATIONS AND FUNDRAISING COMMITTEES",
+      "name": "MISSY WALCARIUS",
+      "email": "mwalcarius@underhillsfarmsupply.ca"
+    }
+  },
+  {
+    "association": "Collingwood Jr Blues",
+    "location": "Collingwood, ON",
+    "website": "https://collingwoodhockey.com",
+    "success": true,
+    "url": "https://collingwoodhockey.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT, CLINICS, DISCIPLINE, COMMUNICATIONS",
+      "name": "DAVE EPP",
+      "email": "president@collingwoodhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JOHN ELMES",
+      "email": "Johnelmes@collingwoodhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DWAYNE DRAPER",
+      "email": "treasurer@collingwoodhockey.com"
+    }
+  },
+  {
+    "association": "Brock Wild",
+    "location": "Brock, ON",
+    "website": "https://brockminorhockey.com",
+    "success": true,
+    "url": "https://brockminorhockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MATT GROSS",
+      "email": "president@brockminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DAVE PARRY",
+      "email": "treasurerbmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT, OMHA REPRESENTATIVE AND B/LL PROGRAMS (U11 AND OLDER)",
+      "name": "BRANDEN STEVENS",
+      "email": "omharep@brockminorhockey.com"
+    }
+  },
+  {
+    "association": "Brighton Bolts",
+    "location": "Brighton, ON",
+    "website": "https://brightonminorhockey.ca",
+    "success": true,
+    "url": "https://brightonminorhockey.ca/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BYRON MCBRIDE",
+      "email": "byron_mcbride@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "STEVE HOUGH",
+      "email": "hough.can@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER / REGISTRAR",
+      "name": "ASHLEY HUTCHINSON",
+      "email": "bdmharegistrar@gmail.com"
+    }
+  },
+  {
+    "association": "Burford Coyotes",
+    "location": "Burford, ON",
+    "website": "https://burfordminorhockey.com",
+    "success": true,
+    "url": "https://burfordminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CURTIS INBERG",
+      "email": "president.burfordminorhockey@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JESSE KLOEPFER",
+      "email": "vp.burfordminorhockey@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARK LANGE",
+      "email": "Treasurer.burfordminorhockey@gmail.com"
+    }
+  },
+  {
+    "association": "Bruce Peninsula Predators",
+    "location": "Wiarton, ON",
+    "website": "https://northbrucehockey.com",
+    "success": true,
+    "url": "https://northbrucehockey.com/Staff/1003/",
+    "totalContacts": 9,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIFFANY ROBBINS",
+      "email": "s.bpmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TOM CUNNINGHAM",
+      "email": "cunninghamcanes@gmail.com"
+    }
+  }
+]

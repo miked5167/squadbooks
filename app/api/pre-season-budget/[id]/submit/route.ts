@@ -1,5 +1,6 @@
 import { auth } from '@/lib/auth/server-auth'
-import { NextResponse, NextRequest } from 'next/server'
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { submitForApproval } from '@/lib/db/pre-season-budget'
 

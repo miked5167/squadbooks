@@ -13,7 +13,7 @@ import {
   TableRow,
   TableFooter,
 } from '@/components/ui/table'
-import { BudgetAllocationDetail } from '@/lib/types/budget-workflow'
+import type { BudgetAllocationDetail } from '@/lib/types/budget-workflow'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface BudgetAllocationsTableProps {

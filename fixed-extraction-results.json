@@ -1,0 +1,141 @@
+[
+  {
+    "association": "Ingersoll Express",
+    "url": "https://ingersollminorhockey.ca/Staff/1003/",
+    "success": true,
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JASON GRAHAM",
+      "email": "jasongraham68@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/ OMHA REP",
+      "name": "CHRIS PARE",
+      "email": "dieguy81@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANGELA NEDDO",
+      "email": "a_vyse@hotmail.com"
+    },
+    "location": "Ingersoll, ON",
+    "group": "Test - Previously Successful"
+  },
+  {
+    "association": "Beeton Stingers",
+    "url": "https://beetonstingers.com/Staff/1003/",
+    "success": true,
+    "totalContacts": 9,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK SHAW",
+      "email": "president@beetonstingers.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANDREA WALLIS",
+      "email": "andrea.wallis@sympatico.ca"
+    },
+    "location": "Beeton, ON",
+    "group": "Test - Previously Successful"
+  },
+  {
+    "association": "Georgina Blaze",
+    "url": "https://georginahockey.com/Staff/1003/",
+    "success": true,
+    "totalContacts": 12,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIM MARSHALL",
+      "email": "president@georginahockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TRACEY BOLIN",
+      "email": "traceyleebolin@gmail.com"
+    },
+    "location": "Keswick, ON",
+    "group": "Test - Previously Successful"
+  },
+  {
+    "association": "Ajax Pickering Raiders",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Ajax, ON",
+    "group": "OMHA Network"
+  },
+  {
+    "association": "Almaguin Ice Devils",
+    "url": "https://almaguinminorhockey.com/Staff/1003/",
+    "success": true,
+    "totalContacts": 11,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "AARON HILL",
+      "email": "president1.amha@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JENNA WEBSTER",
+      "email": "almaguinicedevils@gmail.com"
+    },
+    "location": "Sundridge, ON",
+    "group": "Cloudflare Encoded"
+  },
+  {
+    "association": "Arnprior Packers",
+    "url": "https://arnpriorminorhockey.ca/Staff/1003/",
+    "success": true,
+    "totalContacts": 29,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MATT AALBERS",
+      "email": "president@arnpriorminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TREVOR NICHOLAS",
+      "email": "vicepresident@arnpriorminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "BRETT SIMMONS",
+      "email": "treasurer@arnpriorminorhockey.ca"
+    },
+    "location": "Arnprior, ON",
+    "group": "Cloudflare Encoded"
+  },
+  {
+    "association": "Colborne Fire Hawks",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Colborne, ON",
+    "group": "Playwright Retry"
+  },
+  {
+    "association": "Barrie Colts",
+    "url": "https://barrieminorhockey.net/Staff/1003/",
+    "success": true,
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHRIS INGLIS",
+      "email": "president@barrieminorhockey.ca"
+    },
+    "vp": {
+      "role": "DIRECTOR OF INITIATION PROGRAMS (MYTE TO NOVICE)",
+      "name": "TBA TBA",
+      "email": "ip@barrieminorhockey.net"
+    },
+    "location": "Barrie, ON",
+    "group": "Playwright Retry"
+  },
+  {
+    "association": "Copper Cliff Reds",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Copper Cliff, ON",
+    "group": "Playwright Retry"
+  }
+]

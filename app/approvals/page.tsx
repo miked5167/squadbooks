@@ -19,13 +19,13 @@ import {
   useBulkApprove,
   useBulkReject,
 } from '@/lib/hooks/use-approvals'
-import {
+import type {
   ApprovalFilters,
   ApprovalSort,
   PendingApprovalWithRisk,
 } from '@/lib/types/approvals'
 import { sortByRiskLevel } from '@/lib/utils/approval-risk'
-import { UserRole } from '@prisma/client'
+import type { UserRole } from '@prisma/client'
 
 export default function ApprovalsPage() {
   const searchParams = useSearchParams()

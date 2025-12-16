@@ -7,7 +7,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
-import { TeamSeasonState, TeamSeasonAction } from '@prisma/client'
+import type { TeamSeasonState, TeamSeasonAction } from '@prisma/client'
 import type {
   TransitionResult,
   ActorType,
@@ -15,6 +15,21 @@ import type {
   GuardResult,
   TeamSeasonWithRelations,
 } from '@/lib/types/team-season'
+
+// ============================================
+// TYPE DEFINITIONS
+// ============================================
+
+interface TeamSeasonUpdates {
+  state: TeamSeasonState
+  stateUpdatedAt: Date
+  lastActivityAt: Date
+  activeAt?: Date
+  closedAt?: Date
+  archivedAt?: Date
+  lockedVersionId?: string
+  presentedVersionId?: string
+}
 
 // ============================================
 // ALLOWED TRANSITIONS MAP
@@ -137,7 +152,6 @@ async function validateTransitionData(
       team: {
         include: {
           budgets: {
-            where: { season: { equals: prisma.raw('team_season.season_label') } },
             include: {
               versions: {
                 include: {
@@ -155,10 +169,15 @@ async function validateTransitionData(
     return { allowed: false, reason: 'Team season not found' }
   }
 
+  // Find budget matching this team season's season label
+  const budget = teamSeason.team?.budgets.find(
+    b => b.season === teamSeason.seasonLabel
+  )
+
   // Validate action-specific requirements
   switch (action) {
     case 'PRESENT_BUDGET':
-      if (!teamSeason.team?.budgets[0]?.presentedVersionNumber) {
+      if (!budget?.presentedVersionNumber) {
         return {
           allowed: false,
           reason: 'No budget version has been marked for presentation',
@@ -234,9 +253,9 @@ export async function transitionTeamSeason(
       }
     }
 
-    // 3. Check permissions (skip for system actions)
-    if (actorUserId && action !== 'LOCK_BUDGET') {
-      // Get user's role
+    // 3. Check permissions
+    if (actorUserId) {
+      // User-initiated action - check permissions
       const user = await prisma.user.findUnique({
         where: { id: actorUserId },
         select: { role: true, teamId: true },
@@ -264,6 +283,16 @@ export async function transitionTeamSeason(
           error: permissionCheck.reason,
         }
       }
+    } else {
+      // System-initiated action - validate it's a legitimate system action
+      const systemActions: TeamSeasonAction[] = ['LOCK_BUDGET', 'START_SEASON']
+      if (!systemActions.includes(action)) {
+        return {
+          success: false,
+          newState: currentState,
+          error: `Action ${action} requires a user actor`,
+        }
+      }
     }
 
     // 4. Validate transition-specific data
@@ -279,7 +308,7 @@ export async function transitionTeamSeason(
     // 5. Perform the transition in a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Update timestamps based on action
-      const updates: any = {
+      const updates: TeamSeasonUpdates = {
         state: nextState,
         stateUpdatedAt: new Date(),
         lastActivityAt: new Date(),
@@ -292,9 +321,9 @@ export async function transitionTeamSeason(
       } else if (action === 'FINALIZE_ARCHIVE') {
         updates.archivedAt = new Date()
       } else if (action === 'LOCK_BUDGET' && metadata?.lockedVersionId) {
-        updates.lockedVersionId = metadata.lockedVersionId
+        updates.lockedVersionId = metadata.lockedVersionId as string
       } else if (action === 'PRESENT_BUDGET' && metadata?.presentedVersionId) {
-        updates.presentedVersionId = metadata.presentedVersionId
+        updates.presentedVersionId = metadata.presentedVersionId as string
       }
 
       // Update team season

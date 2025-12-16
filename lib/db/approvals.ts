@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { ApprovalStatus } from '@prisma/client'
+import type { ApprovalStatus } from '@prisma/client'
 import { sendApprovalStatusEmail } from '@/lib/email'
 
 /**

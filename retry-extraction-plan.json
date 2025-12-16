@@ -1,0 +1,254 @@
+{
+  "priorityGroups": {
+    "group1_omha_network_encoded": {
+      "description": "OMHA network sites with encoded emails - HIGHEST SUCCESS PROBABILITY",
+      "method": "Direct Playwright with 2-second Cloudflare wait",
+      "expectedSuccess": "90-100%",
+      "associations": [
+        {
+          "name": "Ajax Pickering Raiders",
+          "location": "Ajax, ON",
+          "website": "https://ajaxpickeringminorhockey.com",
+          "staffPage": "https://ajaxpickeringminorhockey.com/Staff/1003/",
+          "note": "OMHA network site - board names visible but contact emails are encoded"
+        }
+      ]
+    },
+    "group2_cloudflare_encoded": {
+      "description": "Sites with Cloudflare-encoded emails",
+      "method": "Direct Playwright with 2-second Cloudflare wait",
+      "expectedSuccess": "70-90%",
+      "associations": [
+        {
+          "name": "Almaguin Ice Devils",
+          "location": "Sundridge, ON",
+          "website": "https://almaguinminorhockey.com",
+          "note": "Email found - needs decoding"
+        },
+        {
+          "name": "Arnprior Packers",
+          "location": "Arnprior, ON",
+          "website": "https://arnpriorminorhockey.ca",
+          "note": "Email found - needs decoding"
+        }
+      ]
+    },
+    "group3_playwright_retry": {
+      "description": "Sites where Playwright extraction failed or found no emails",
+      "method": "Direct Playwright with multiple URL patterns",
+      "expectedSuccess": "50-70%",
+      "associations": [
+        {
+          "name": "Colborne Fire Hawks",
+          "location": "Colborne, ON",
+          "website": "https://ccmhafirehawks.com",
+          "staffPage": "https://ccmhafirehawks.com/Staff/1003/",
+          "note": "Playwright extraction found no emails - but was in successful batch!"
+        },
+        {
+          "name": "Barrie Colts",
+          "location": "Barrie, ON",
+          "website": "https://barrieminorhockey.net",
+          "note": "Only President name found - no contact emails listed"
+        },
+        {
+          "name": "Copper Cliff Reds",
+          "location": "Copper Cliff, ON",
+          "website": "http://coppercliffminorhockey.com",
+          "note": "TeamPages site found but no contact emails listed"
+        }
+      ]
+    },
+    "group4_names_only": {
+      "description": "Sites where names were found but emails weren't extracted",
+      "method": "Direct Playwright with enhanced email searching",
+      "expectedSuccess": "40-60%",
+      "associations": [
+        {
+          "name": "Brockville Angels",
+          "location": "Brockville, ON",
+          "website": "http://brockvilleangels.ca",
+          "note": "President and VP names found but no email addresses listed"
+        },
+        {
+          "name": "Erin Hillsburgh Devils",
+          "location": "Erin, ON",
+          "website": "https://ehmha.ca",
+          "note": "President Sid Spear and VP Shannon Fawns listed but no exec emails"
+        },
+        {
+          "name": "Faustina Fury",
+          "location": "Etobicoke, ON",
+          "website": "https://www.faustinahockey.com",
+          "note": "President Barry Carolan and Treasurer Brian Shangrow listed but no individual exec emails"
+        },
+        {
+          "name": "Fort Frances Canadians",
+          "location": "Fort Frances, ON",
+          "website": "https://www.fortfranceshockey.com",
+          "note": "President position VACANT, VP John Gibson listed but no email"
+        }
+      ]
+    },
+    "group5_teamlinkt_sites": {
+      "description": "TeamLinkt sites with no emails - may need different extraction strategy",
+      "method": "Playwright with TeamLinkt-specific selectors",
+      "expectedSuccess": "20-40%",
+      "associations": [
+        {
+          "name": "Brockville Jr Braves",
+          "location": "Brockville, ON",
+          "website": "https://www.gobmha.com/brockvilleminorhockeyassociation",
+          "note": "TeamLinkt site with no email addresses listed"
+        },
+        {
+          "name": "CIHA Voyageurs",
+          "location": "Rockland, ON",
+          "website": "https://rockland-nats.ca/rocklandminorhockeyassociation",
+          "note": "TeamLinkt site with no emails listed"
+        },
+        {
+          "name": "Char-Lan Rebels",
+          "location": "Williamstown, ON",
+          "website": "https://leagues.teamlinkt.com/clmha",
+          "note": "TeamLinkt site with no email addresses listed"
+        },
+        {
+          "name": "Clarence Rockland Crush",
+          "location": "Clarence-Rockland, ON",
+          "website": "https://www.crushhockey.ca",
+          "note": "TeamLinkt site with no email addresses listed"
+        },
+        {
+          "name": "Casselman-Embrun IceDogs",
+          "location": "Casselman, ON",
+          "website": "https://icedogshockey.ca/casselmanembrunicedogs",
+          "note": "TeamLinkt site"
+        }
+      ]
+    },
+    "group6_role_based_only": {
+      "description": "Sites with only role-based emails, no individual contacts",
+      "method": "Manual review may be needed - role emails might be acceptable",
+      "expectedSuccess": "N/A - may already be complete",
+      "associations": [
+        {
+          "name": "Forest Hill Force",
+          "location": "Toronto, ON",
+          "website": "https://www.fhha.org",
+          "note": "Role-based emails only - no individual exec names on contact page"
+        },
+        {
+          "name": "George Bell Titans",
+          "location": "Toronto, ON",
+          "website": "https://www.gbha.ca",
+          "note": "Role-based emails only - lists John Bell as President/GM but no individual emails"
+        }
+      ]
+    },
+    "group7_not_found": {
+      "description": "Websites not found - need Google search first",
+      "method": "Google search + Playwright extraction",
+      "expectedSuccess": "10-30%",
+      "associations": [
+        {
+          "name": "Borden",
+          "location": "Borden, ON",
+          "note": "Search returned general OMHA/OHF info - specific Borden association website not located"
+        },
+        {
+          "name": "Chapleau Huskies",
+          "location": "Chapleau, ON",
+          "note": "Search returned Township of Chapleau government contacts"
+        },
+        {
+          "name": "Cochrane",
+          "location": "Cochrane, ON",
+          "note": "Search returned Cochrane Alberta (CAHL)"
+        },
+        {
+          "name": "Dryden Paperkings",
+          "location": "Dryden, ON",
+          "note": "Search returned OMHA general contact page"
+        },
+        {
+          "name": "Dundalk Storm",
+          "location": "Dundalk, ON",
+          "note": "Search returned Prairie Storm Minor Hockey (Saskatchewan)"
+        },
+        {
+          "name": "East York Bulldogs",
+          "location": "Toronto, ON",
+          "note": "Search returned East York Baseball Association instead of hockey"
+        },
+        {
+          "name": "Espanola Eagles",
+          "location": "Espanola, ON",
+          "website": "http://espanolaminorhockey.com",
+          "note": "Website inaccessible"
+        }
+      ]
+    },
+    "group8_special_cases": {
+      "description": "Special cases requiring manual intervention",
+      "method": "Manual review",
+      "expectedSuccess": "N/A",
+      "associations": [
+        {
+          "name": "Atikokan Voyageurs",
+          "location": "Atikokan, ON",
+          "website": "https://www.atikokanhockey.ca",
+          "note": "Website found but contact details behind Facebook login"
+        },
+        {
+          "name": "Cumberland Jr Grads",
+          "location": "Cumberland, ON",
+          "website": "https://cumberlandminorhockey.ca",
+          "note": "Jr. Grads are competitive teams within CMHA - no executive contact info"
+        },
+        {
+          "name": "Dubreuilville Bobcats",
+          "location": "Dubreuilville, ON",
+          "website": "https://gobobcatsgo.ca",
+          "note": "Found general email (dmha.bobcats@yahoo.com) but no specific executive emails"
+        },
+        {
+          "name": "Emo Express",
+          "location": "Emo, ON",
+          "website": "https://emohockey.ca",
+          "note": "Found general registrar email only"
+        },
+        {
+          "name": "Fort William Canadiens",
+          "location": "Thunder Bay, ON",
+          "website": "https://www.tbmha.com",
+          "note": "Member club of TBMHA - only compose email form available"
+        },
+        {
+          "name": "Fort William Hurricanes",
+          "location": "Thunder Bay, ON",
+          "website": "https://www.tbmha.com",
+          "note": "Member club of TBMHA - only compose email form available"
+        }
+      ]
+    }
+  },
+  "testBatch": [
+    "Ajax Pickering Raiders",
+    "Almaguin Ice Devils",
+    "Arnprior Packers",
+    "Colborne Fire Hawks",
+    "Barrie Colts"
+  ],
+  "statistics": {
+    "totalFailedAssociations": 47,
+    "omhaSites": 1,
+    "cloudflareEncoded": 2,
+    "playwrightRetry": 3,
+    "namesOnly": 4,
+    "teamLinktSites": 5,
+    "roleBasedOnly": 2,
+    "notFound": 7,
+    "specialCases": 6
+  }
+}
