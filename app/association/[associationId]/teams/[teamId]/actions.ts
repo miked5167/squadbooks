@@ -14,6 +14,22 @@ export interface NormalizedAlert {
   link: string
 }
 
+// Normalize database severity values to AlertSeverity type
+function normalizeSeverity(severity: string): AlertSeverity {
+  const severityMap: Record<string, AlertSeverity> = {
+    critical: 'HIGH',
+    warning: 'MEDIUM',
+    info: 'LOW',
+    high: 'HIGH',
+    medium: 'MEDIUM',
+    low: 'LOW',
+    HIGH: 'HIGH',
+    MEDIUM: 'MEDIUM',
+    LOW: 'LOW',
+  }
+  return severityMap[severity] || 'MEDIUM'
+}
+
 export interface SnapshotHistory {
   id: string
   snapshotAt: Date
@@ -421,7 +437,7 @@ export async function getTeamDetailData(
         teamName: associationTeam.teamName,
         type: alert.alertType,
         message: alert.title,
-        severity: alert.severity as AlertSeverity,
+        severity: normalizeSeverity(alert.severity),
         createdAt: alert.createdAt,
         link: `/association/${associationId}/teams/${teamId}`,
       })

@@ -31,9 +31,28 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
   const isIncome = transaction.type === 'INCOME'
   const statusColors = {
     VALIDATED: 'bg-green-100 text-green-800',
+    APPROVED: 'bg-green-100 text-green-800',
     PENDING: 'bg-yellow-100 text-yellow-800',
     REJECTED: 'bg-red-100 text-red-800',
+    DRAFT: 'bg-gray-100 text-gray-800',
+    IMPORTED: 'bg-blue-100 text-blue-800',
+    EXCEPTION: 'bg-orange-100 text-orange-800',
+    RESOLVED: 'bg-green-100 text-green-800',
   }
+
+  const statusLabels: Record<string, string> = {
+    APPROVED: 'Validated',
+    VALIDATED: 'Validated',
+    PENDING: 'Pending',
+    REJECTED: 'Rejected',
+    DRAFT: 'Draft',
+    IMPORTED: 'Imported',
+    EXCEPTION: 'Exception',
+    RESOLVED: 'Resolved',
+    LOCKED: 'Locked',
+  }
+
+  const displayStatus = statusLabels[transaction.status] || transaction.status
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50">
@@ -77,7 +96,7 @@ function TransactionRow({ transaction }: { transaction: Transaction }) {
         <span
           className={`inline-block rounded px-2 py-1 text-xs font-medium ${statusColors[transaction.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}
         >
-          {transaction.status}
+          {displayStatus}
         </span>
       </td>
       <td
