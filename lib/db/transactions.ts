@@ -1,8 +1,12 @@
 import { prisma } from '@/lib/prisma'
 import type { TransactionType, TransactionStatus, Prisma } from '@prisma/client'
-import type { CreateTransactionInput, UpdateTransactionInput, TransactionFilter } from '@/lib/validations/transaction'
+import type {
+  CreateTransactionInput,
+  UpdateTransactionInput,
+  TransactionFilter,
+} from '@/lib/validations/transaction'
 import { logger } from '@/lib/logger'
-import { computeValidation, deriveStatusFromValidation } from '@/lib/services/transaction-validator'
+import { computeValidation } from '@/lib/services/transaction-validator'
 import type { ValidationContext } from '@/lib/types/validation'
 
 /**
@@ -43,12 +47,34 @@ async function buildValidationContext(
   },
   teamId: string
 ): Promise<ValidationContext> {
-  // Get team settings
+  // Get team settings with receipt override
   const teamSettings = await prisma.teamSettings.findUnique({
     where: { teamId },
     select: {
-      receiptRequiredThreshold: true,
+      receiptGlobalThresholdOverrideCents: true,
       dualApprovalThreshold: true,
+    },
+  })
+
+  // Get association receipt policy
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    select: {
+      associationTeam: {
+        select: {
+          association: {
+            select: {
+              id: true,
+              receiptsEnabled: true,
+              receiptGlobalThresholdCents: true,
+              receiptGracePeriodDays: true,
+              receiptCategoryThresholdsEnabled: true,
+              receiptCategoryOverrides: true,
+              allowedTeamThresholdOverride: true,
+            },
+          },
+        },
+      },
     },
   })
 
@@ -105,6 +131,24 @@ async function buildValidationContext(
     },
   })
 
+  // Build receipt policy object if association exists
+  const association = team?.associationTeam?.association
+  const receiptPolicy = association
+    ? {
+        receiptsEnabled: association.receiptsEnabled,
+        receiptGlobalThresholdCents: association.receiptGlobalThresholdCents,
+        receiptGracePeriodDays: association.receiptGracePeriodDays,
+        receiptCategoryThresholdsEnabled: association.receiptCategoryThresholdsEnabled,
+        receiptCategoryOverrides:
+          (association.receiptCategoryOverrides as Record<
+            string,
+            { thresholdCents?: number; exempt?: boolean }
+          >) || {},
+        allowedTeamThresholdOverride: association.allowedTeamThresholdOverride,
+        teamReceiptGlobalThresholdOverrideCents: teamSettings?.receiptGlobalThresholdOverrideCents,
+      }
+    : undefined
+
   return {
     transaction: {
       amount: Number(data.amount),
@@ -120,30 +164,26 @@ async function buildValidationContext(
       ? {
           id: budget.id,
           status: budget.status,
-          allocations: (budget.currentVersion?.allocations || []).map((a) => ({
+          allocations: (budget.currentVersion?.allocations || []).map(a => ({
             categoryId: a.categoryId,
             allocated: Number(a.allocated),
             spent: Number(a.spent),
           })),
         }
       : undefined,
-    envelopes: envelopes.map((e) => ({
+    envelopes: envelopes.map(e => ({
       id: e.id,
       categoryId: e.categoryId,
       vendorMatch: e.vendorMatch,
       vendorMatchType: e.vendorMatchType,
       capAmount: Number(e.capAmount),
       spent: Number(e.spent),
-      maxSingleTransaction: e.maxSingleTransaction
-        ? Number(e.maxSingleTransaction)
-        : null,
+      maxSingleTransaction: e.maxSingleTransaction ? Number(e.maxSingleTransaction) : null,
     })),
     teamSettings: {
-      receiptThreshold: Number(teamSettings?.receiptRequiredThreshold || 100),
-      largeTransactionThreshold: Number(
-        teamSettings?.dualApprovalThreshold || 200
-      ),
+      largeTransactionThreshold: Number(teamSettings?.dualApprovalThreshold || 200),
     },
+    receiptPolicy,
     season: teamSeason
       ? {
           startDate: teamSeason.season.startDate,
@@ -179,7 +219,7 @@ export async function createTransaction(
       vendor,
       transactionDate: new Date(transactionDate),
       teamId,
-      type: type as "INCOME" | "EXPENSE",
+      type: type as 'INCOME' | 'EXPENSE',
     },
     approvalThreshold
   )
@@ -227,10 +267,8 @@ export async function createTransaction(
       // NEW: Store exception reason if not compliant
       exceptionReason: !validationResult.compliant
         ? validationResult.violations
-            .filter(
-              (v) => v.severity === 'ERROR' || v.severity === 'CRITICAL'
-            )
-            .map((v) => v.message)
+            .filter(v => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+            .map(v => v.message)
             .join('; ')
         : null,
     },
@@ -266,7 +304,9 @@ export async function createTransaction(
     if (approver) {
       // Additional safety check: ensure approver is not the creator
       if (approver.id === userId) {
-        throw new Error('Cannot assign approval to transaction creator. Team needs both a treasurer and assistant treasurer.')
+        throw new Error(
+          'Cannot assign approval to transaction creator. Team needs both a treasurer and assistant treasurer.'
+        )
       }
 
       const approval = await prisma.approval.create({
@@ -343,21 +383,8 @@ export async function createTransaction(
 /**
  * Get transactions with filters, pagination, and sorting
  */
-export async function getTransactions(
-  teamId: string,
-  filters: TransactionFilter
-) {
-  const {
-    type,
-    status,
-    categoryId,
-    startDate,
-    endDate,
-    page,
-    perPage,
-    sortBy,
-    sortOrder,
-  } = filters
+export async function getTransactions(teamId: string, filters: TransactionFilter) {
+  const { type, status, categoryId, startDate, endDate, page, perPage, sortBy, sortOrder } = filters
 
   // Build where clause
   const where: Prisma.TransactionWhereInput = {
@@ -501,10 +528,7 @@ export async function getTransactionsWithCursor(params: {
             { transactionDate: { lt: cursor.transactionDate } },
             // OR transaction date equals cursor date but ID is less than cursor ID
             {
-              AND: [
-                { transactionDate: cursor.transactionDate },
-                { id: { lt: cursor.id } },
-              ],
+              AND: [{ transactionDate: cursor.transactionDate }, { id: { lt: cursor.id } }],
             },
           ],
         },
@@ -514,10 +538,7 @@ export async function getTransactionsWithCursor(params: {
       whereWithCursor.OR = [
         { transactionDate: { lt: cursor.transactionDate } },
         {
-          AND: [
-            { transactionDate: cursor.transactionDate },
-            { id: { lt: cursor.id } },
-          ],
+          AND: [{ transactionDate: cursor.transactionDate }, { id: { lt: cursor.id } }],
         },
       ]
     }
@@ -770,7 +791,8 @@ export async function updateTransaction(
   // Run validation asynchronously to avoid blocking the response
   Promise.resolve().then(async () => {
     try {
-      const { validateSingleTransaction } = await import('@/lib/services/validate-imported-transactions')
+      const { validateSingleTransaction } =
+        await import('@/lib/services/validate-imported-transactions')
       await validateSingleTransaction(id, teamId)
       logger.info(`Re-validated transaction ${id} after update`)
     } catch (error) {

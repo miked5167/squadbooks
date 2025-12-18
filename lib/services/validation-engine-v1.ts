@@ -9,18 +9,14 @@
  * 5. Cash-like types -> exception (severity medium unless over limit)
  */
 
-import {
-  ValidationResult,
-  ValidationContext,
-  Violation,
-  ViolationCode,
-  ViolationSeverity,
-} from '@/lib/types/validation'
+import type { ValidationResult, ValidationContext, Violation } from '@/lib/types/validation'
+import { ViolationCode, ViolationSeverity } from '@/lib/types/validation'
 import {
   isCashLikeTransaction,
   calculateOverrunPercentage,
   DEFAULT_ASSOCIATION_RULES,
 } from '@/lib/types/association-rules'
+import { calculateReceiptRequirement, isWithinGracePeriod } from './receipt-policy'
 
 /**
  * Rule 1: Check if transaction category is in approved budget
@@ -35,9 +31,7 @@ export function validateApprovedCategory(context: ValidationContext): Violation 
   if (!transaction.categoryId) return null
 
   // Check if category exists in budget allocations
-  const categoryAllocation = budget.allocations.find(
-    (a) => a.categoryId === transaction.categoryId
-  )
+  const categoryAllocation = budget.allocations.find(a => a.categoryId === transaction.categoryId)
 
   if (!categoryAllocation) {
     return {
@@ -68,9 +62,7 @@ export function validateCategoryOverrun(context: ValidationContext): Violation |
   if (!budget || !transaction.categoryId) return null
 
   // Find category allocation
-  const allocation = budget.allocations.find(
-    (a) => a.categoryId === transaction.categoryId
-  )
+  const allocation = budget.allocations.find(a => a.categoryId === transaction.categoryId)
 
   if (!allocation) return null // Caught by Rule 1
 
@@ -112,36 +104,93 @@ export function validateCategoryOverrun(context: ValidationContext): Violation |
 
 /**
  * Rule 3: Check if receipt is required but missing
+ *
+ * Uses association-level receipt policy with optional team override and category thresholds.
+ * Implements grace period - violations only occur AFTER grace period elapsed.
  */
 export function validateRequiredReceipt(context: ValidationContext): Violation | null {
-  const { transaction, associationRules } = context
+  const { transaction, receiptPolicy } = context
 
   // Only check expenses
   if (transaction.type !== 'EXPENSE') return null
 
-  // Get receipt threshold from association rules
-  const rules = associationRules || DEFAULT_ASSOCIATION_RULES
-  const threshold = rules.receiptRequiredOverAmount
+  // If no receipt policy provided, use legacy threshold from association rules
+  if (!receiptPolicy) {
+    const rules = context.associationRules || DEFAULT_ASSOCIATION_RULES
+    const threshold = rules.receiptRequiredOverAmount
+    const requiresReceipt = transaction.amount >= threshold
 
-  // Check if receipt is required
-  const requiresReceipt = transaction.amount >= threshold
+    if (requiresReceipt && !transaction.receiptUrl) {
+      return {
+        code: ViolationCode.MISSING_RECEIPT,
+        severity: ViolationSeverity.ERROR,
+        message: `Receipt required for expenses $${threshold} or more`,
+        ruleId: 'RULE_3_MISSING_RECEIPT',
+        metadata: {
+          amount: transaction.amount,
+          threshold,
+          hasReceipt: false,
+        },
+      }
+    }
 
-  // If receipt required but missing, flag violation
-  if (requiresReceipt && !transaction.receiptUrl) {
+    return null
+  }
+
+  // Calculate receipt requirement using new policy system
+  const requirement = calculateReceiptRequirement(
+    transaction.amount * 100, // Convert to cents
+    transaction.categoryId,
+    receiptPolicy
+  )
+
+  // If receipt not required, no violation
+  if (!requirement.required) return null
+
+  // If receipt is present, no violation
+  if (transaction.receiptUrl) return null
+
+  // Receipt is required but missing - check grace period
+  const withinGracePeriod = isWithinGracePeriod(
+    transaction.transactionDate,
+    requirement.gracePeriodDays
+  )
+
+  // IMPORTANT: Grace period behavior
+  // - Within grace period: Return INFO violation (won't block VALIDATED status)
+  // - After grace period: Return ERROR violation (will cause EXCEPTION status)
+  if (withinGracePeriod) {
     return {
       code: ViolationCode.MISSING_RECEIPT,
-      severity: ViolationSeverity.ERROR,
-      message: `Receipt required for expenses $${threshold} or more`,
-      ruleId: 'RULE_3_MISSING_RECEIPT',
+      severity: ViolationSeverity.INFO,
+      message: `Receipt required (grace period ends ${requirement.gracePeriodDays} days after transaction date)`,
+      ruleId: 'RULE_3_MISSING_RECEIPT_GRACE_PERIOD',
       metadata: {
         amount: transaction.amount,
-        threshold,
+        threshold: requirement.thresholdCents / 100,
         hasReceipt: false,
+        gracePeriodDays: requirement.gracePeriodDays,
+        withinGracePeriod: true,
+        policySource: requirement.source,
       },
     }
   }
 
-  return null
+  // After grace period - ERROR violation
+  return {
+    code: ViolationCode.MISSING_RECEIPT,
+    severity: ViolationSeverity.ERROR,
+    message: `Receipt required for expenses $${(requirement.thresholdCents / 100).toFixed(2)} or more (grace period expired)`,
+    ruleId: 'RULE_3_MISSING_RECEIPT',
+    metadata: {
+      amount: transaction.amount,
+      threshold: requirement.thresholdCents / 100,
+      hasReceipt: false,
+      gracePeriodDays: requirement.gracePeriodDays,
+      withinGracePeriod: false,
+      policySource: requirement.source,
+    },
+  }
 }
 
 /**
@@ -185,10 +234,7 @@ export function validateCashLike(context: ValidationContext): Violation | null {
   if (!rules.cashLikeRequiresReview) return null
 
   // Check if transaction is cash-like
-  const isCashLike = isCashLikeTransaction(
-    transaction.vendor,
-    transaction.description || undefined
-  )
+  const isCashLike = isCashLikeTransaction(transaction.vendor, transaction.description || undefined)
 
   if (isCashLike) {
     // Determine severity: CRITICAL if over limit, MEDIUM otherwise
@@ -285,7 +331,7 @@ export function validateTransaction(context: ValidationContext): ValidationResul
 
   // Determine compliance (no ERROR or CRITICAL violations)
   const compliant = !violations.some(
-    (v) => v.severity === ViolationSeverity.ERROR || v.severity === ViolationSeverity.CRITICAL
+    v => v.severity === ViolationSeverity.ERROR || v.severity === ViolationSeverity.CRITICAL
   )
 
   // Calculate score
@@ -313,8 +359,6 @@ export function validateTransaction(context: ValidationContext): ValidationResul
 /**
  * Derive transaction status from validation result
  */
-export function deriveStatus(
-  validation: ValidationResult
-): 'VALIDATED' | 'EXCEPTION' {
+export function deriveStatus(validation: ValidationResult): 'VALIDATED' | 'EXCEPTION' {
   return validation.compliant ? 'VALIDATED' : 'EXCEPTION'
 }

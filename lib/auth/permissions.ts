@@ -85,6 +85,45 @@ export async function requireAuditor() {
 }
 
 /**
+ * Requires user to be an Association Admin
+ * For association-level settings and policy management
+ * @param associationId - The association ID to check admin access for
+ * @throws {Error} if user is not an admin for the specified association
+ */
+export async function requireAssociationAdmin(associationId: string) {
+  const { userId: clerkId } = await auth()
+
+  if (!clerkId) {
+    throw new Error('Unauthorized: No user session found')
+  }
+
+  const associationUser = await prisma.associationUser.findFirst({
+    where: {
+      associationId,
+      clerkUserId: clerkId,
+    },
+    select: {
+      id: true,
+      associationId: true,
+      clerkUserId: true,
+      email: true,
+      name: true,
+      role: true,
+    },
+  })
+
+  if (!associationUser) {
+    throw new Error('Forbidden: You are not a member of this association')
+  }
+
+  if (associationUser.role !== 'association_admin') {
+    throw new Error('Forbidden: This action requires association admin privileges')
+  }
+
+  return associationUser
+}
+
+/**
  * Checks if user has permission to manage other users
  * @param targetUserId - The user being managed
  * @param currentUser - The current user (optional, will fetch if not provided)
@@ -93,7 +132,7 @@ export async function canManageUser(
   targetUserId: string,
   currentUser?: Awaited<ReturnType<typeof getCurrentUser>>
 ) {
-  const user = currentUser || await getCurrentUser()
+  const user = currentUser || (await getCurrentUser())
 
   // Only treasurers can manage users
   if (user.role !== UserRole.TREASURER) {

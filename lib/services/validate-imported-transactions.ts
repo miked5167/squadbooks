@@ -6,7 +6,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { validateTransaction, deriveStatus } from './validation-engine-v1'
-import { ValidationContext } from '@/lib/types/validation'
+import type { ValidationContext } from '@/lib/types/validation'
 import { DEFAULT_ASSOCIATION_RULES } from '@/lib/types/association-rules'
 import { logger } from '@/lib/logger'
 import { sendExceptionNotificationEmail } from '@/lib/email'
@@ -26,11 +26,11 @@ async function buildValidationContext(
   teamId: string
 ): Promise<ValidationContext | null> {
   try {
-    // Get team settings
+    // Get team settings with receipt override
     const teamSettings = await prisma.teamSettings.findUnique({
       where: { teamId },
       select: {
-        receiptRequiredThreshold: true,
+        receiptGlobalThresholdOverrideCents: true,
         dualApprovalThreshold: true,
       },
     })
@@ -57,15 +57,50 @@ async function buildValidationContext(
       },
     })
 
-    // Get association (if exists)
+    // Get association receipt policy
     const team = await prisma.team.findUnique({
       where: { id: teamId },
-      select: { associationId: true },
+      select: {
+        associationTeam: {
+          select: {
+            association: {
+              select: {
+                id: true,
+                receiptsEnabled: true,
+                receiptGlobalThresholdCents: true,
+                receiptGracePeriodDays: true,
+                receiptCategoryThresholdsEnabled: true,
+                receiptCategoryOverrides: true,
+                allowedTeamThresholdOverride: true,
+              },
+            },
+          },
+        },
+      },
     })
 
     // For V1, use default association rules
     // TODO: Load from association settings when implemented
     const associationRules = DEFAULT_ASSOCIATION_RULES
+
+    // Build receipt policy object if association exists
+    const association = team?.associationTeam?.association
+    const receiptPolicy = association
+      ? {
+          receiptsEnabled: association.receiptsEnabled,
+          receiptGlobalThresholdCents: association.receiptGlobalThresholdCents,
+          receiptGracePeriodDays: association.receiptGracePeriodDays,
+          receiptCategoryThresholdsEnabled: association.receiptCategoryThresholdsEnabled,
+          receiptCategoryOverrides:
+            (association.receiptCategoryOverrides as Record<
+              string,
+              { thresholdCents?: number; exempt?: boolean }
+            >) || {},
+          allowedTeamThresholdOverride: association.allowedTeamThresholdOverride,
+          teamReceiptGlobalThresholdOverrideCents:
+            teamSettings?.receiptGlobalThresholdOverrideCents,
+        }
+      : undefined
 
     return {
       transaction: {
@@ -82,7 +117,7 @@ async function buildValidationContext(
         ? {
             id: budget.id,
             status: budget.status,
-            allocations: (budget.currentVersion?.allocations || []).map((a) => ({
+            allocations: (budget.currentVersion?.allocations || []).map(a => ({
               categoryId: a.categoryId,
               allocated: Number(a.allocated),
               spent: Number(a.spent),
@@ -90,11 +125,9 @@ async function buildValidationContext(
           }
         : undefined,
       teamSettings: {
-        receiptThreshold: Number(teamSettings?.receiptRequiredThreshold || 100),
-        largeTransactionThreshold: Number(
-          teamSettings?.dualApprovalThreshold || 200
-        ),
+        largeTransactionThreshold: Number(teamSettings?.dualApprovalThreshold || 200),
       },
+      receiptPolicy,
       associationRules,
     }
   } catch (error) {
@@ -107,12 +140,8 @@ async function buildValidationContext(
  * Determine exception severity from validation result
  */
 function calculateExceptionSeverity(validation: any, amount: number) {
-  const criticalViolations = validation.violations.filter(
-    (v: any) => v.severity === 'CRITICAL'
-  )
-  const errorViolations = validation.violations.filter(
-    (v: any) => v.severity === 'ERROR'
-  )
+  const criticalViolations = validation.violations.filter((v: any) => v.severity === 'CRITICAL')
+  const errorViolations = validation.violations.filter((v: any) => v.severity === 'ERROR')
 
   if (criticalViolations.length > 0) return 'CRITICAL'
   if (errorViolations.length > 2) return 'HIGH'
@@ -160,8 +189,8 @@ export async function validateSingleTransaction(
     txn.receiptUrl !== null
       ? 'ATTACHED'
       : txn.type === 'EXPENSE' && Number(txn.amount) >= 100
-      ? 'REQUIRED_MISSING'
-      : 'NONE'
+        ? 'REQUIRED_MISSING'
+        : 'NONE'
 
   // Prepare validation data
   const validationJson = {
@@ -172,12 +201,13 @@ export async function validateSingleTransaction(
     checksRun: validation.checksRun,
   }
 
-  const exceptionReason = validation.violations.length > 0
-    ? validation.violations
-        .filter((v) => v.severity === 'ERROR' || v.severity === 'CRITICAL')
-        .map((v) => v.message)
-        .join('; ')
-    : null
+  const exceptionReason =
+    validation.violations.length > 0
+      ? validation.violations
+          .filter(v => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+          .map(v => v.message)
+          .join('; ')
+      : null
 
   // Update transaction
   await prisma.transaction.update({
@@ -228,9 +258,7 @@ export async function validateImportedTransactions(
       return stats
     }
 
-    logger.info(
-      `Validating ${transactions.length} imported transactions for team ${teamId}`
-    )
+    logger.info(`Validating ${transactions.length} imported transactions for team ${teamId}`)
 
     // Process each transaction
     for (const txn of transactions) {
@@ -257,8 +285,8 @@ export async function validateImportedTransactions(
           txn.receiptUrl !== null
             ? 'ATTACHED'
             : txn.type === 'EXPENSE' && Number(txn.amount) >= 100
-            ? 'REQUIRED_MISSING'
-            : 'NONE'
+              ? 'REQUIRED_MISSING'
+              : 'NONE'
 
         // Prepare update data
         const updateData = {
@@ -275,8 +303,8 @@ export async function validateImportedTransactions(
           ...(validation.violations.length > 0
             ? {
                 exceptionReason: validation.violations
-                  .filter((v) => v.severity === 'ERROR' || v.severity === 'CRITICAL')
-                  .map((v) => v.message)
+                  .filter(v => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+                  .map(v => v.message)
                   .join('; '),
               }
             : {}),
@@ -313,15 +341,15 @@ export async function validateImportedTransactions(
                   },
                 },
               })
-              .then((team) => {
+              .then(team => {
                 if (!team) return
 
                 // Send email to each treasurer
                 const violationSummary = validation.violations
-                  .filter((v) => v.severity === 'ERROR' || v.severity === 'CRITICAL')
-                  .map((v) => v.message)
+                  .filter(v => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+                  .map(v => v.message)
 
-                team.members.forEach((treasurer) => {
+                team.members.forEach(treasurer => {
                   sendExceptionNotificationEmail({
                     treasurerName: treasurer.name || 'Treasurer',
                     treasurerEmail: treasurer.email,
@@ -333,19 +361,13 @@ export async function validateImportedTransactions(
                     severity: exceptionSeverity as 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW',
                     violationCount: violationSummary.length,
                     violationSummary,
-                  }).catch((err) => {
-                    logger.error(
-                      `Failed to send exception email for transaction ${txn.id}:`,
-                      err
-                    )
+                  }).catch(err => {
+                    logger.error(`Failed to send exception email for transaction ${txn.id}:`, err)
                   })
                 })
               })
-              .catch((err) => {
-                logger.error(
-                  `Failed to fetch team info for exception email (txn ${txn.id}):`,
-                  err
-                )
+              .catch(err => {
+                logger.error(`Failed to fetch team info for exception email (txn ${txn.id}):`, err)
               })
           }
         }
