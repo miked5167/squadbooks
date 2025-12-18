@@ -18,8 +18,15 @@ model Association {
   season                     String?                    @db.VarChar(32)
   createdAt                  DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                  DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
-  currency                   String                     @default("CAD") @db.VarChar(3)
-  preSeasonBudgetAutoApprove Boolean                    @default(false) @map("pre_season_budget_auto_approve")
+  currency                          String  @default("CAD") @db.VarChar(3)
+  // Receipt Policy Fields
+  receiptsEnabled                   Boolean @default(true) @map("receipts_enabled")
+  receiptGlobalThresholdCents       Int     @default(10000) @map("receipt_global_threshold_cents")
+  receiptGracePeriodDays            Int     @default(7) @map("receipt_grace_period_days")
+  receiptCategoryThresholdsEnabled  Boolean @default(false) @map("receipt_category_thresholds_enabled")
+  receiptCategoryOverrides          Json    @default("{}") @map("receipt_category_overrides") @db.JsonB
+  allowedTeamThresholdOverride      Boolean @default(false) @map("allowed_team_threshold_override")
+  preSeasonBudgetAutoApprove        Boolean @default(false) @map("pre_season_budget_auto_approve")
   preSeasonBudgetDeadline    DateTime?                  @map("pre_season_budget_deadline") @db.Timestamptz(6)
   preSeasonBudgetsRequired   Int?                       @map("pre_season_budgets_required")
   alerts                     Alert[]
@@ -967,8 +974,9 @@ model TeamSettings {
   teamId                    String   @unique
   dualApprovalEnabled       Boolean  @default(true)
   dualApprovalThreshold     Decimal  @default(200.00) @db.Decimal(10, 2)
-  receiptRequired           Boolean  @default(true)
-  allowSelfReimbursement    Boolean  @default(false)
+  receiptRequired                      Boolean @default(true)
+  receiptGlobalThresholdOverrideCents  Int?    @map("receipt_global_threshold_override_cents")
+  allowSelfReimbursement               Boolean @default(false)
   duplicateDetectionEnabled Boolean  @default(true)
   allowedPaymentMethods     String[] @default(["CASH", "CHEQUE", "E_TRANSFER"])
   duplicateDetectionWindow  Int      @default(7)
