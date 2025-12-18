@@ -134,7 +134,7 @@ interface TeamConfig {
   budgetTotal: number; // in dollars
   percentSpent: number; // 0.75 = 75%
   bankReconciliationDaysAgo: number;
-  pendingApprovalsCount: number;
+  pendingReviewsCount: number;
   playersCount: number;
   healthStatus: 'healthy' | 'needs_attention' | 'at_risk';
 }
@@ -148,7 +148,7 @@ const TEAM_CONFIGS: TeamConfig[] = [
     budgetTotal: 45000,
     percentSpent: 0.75,
     bankReconciliationDaysAgo: 5,
-    pendingApprovalsCount: 2,
+    pendingReviewsCount: 2,
     playersCount: 18,
     healthStatus: 'healthy',
   },
@@ -160,7 +160,7 @@ const TEAM_CONFIGS: TeamConfig[] = [
     budgetTotal: 38000,
     percentSpent: 0.88,
     bankReconciliationDaysAgo: 35,
-    pendingApprovalsCount: 6,
+    pendingReviewsCount: 6,
     playersCount: 16,
     healthStatus: 'needs_attention',
   },
@@ -172,7 +172,7 @@ const TEAM_CONFIGS: TeamConfig[] = [
     budgetTotal: 52000,
     percentSpent: 0.97,
     bankReconciliationDaysAgo: 65,
-    pendingApprovalsCount: 12,
+    pendingReviewsCount: 12,
     playersCount: 17,
     healthStatus: 'at_risk',
   },
@@ -184,7 +184,7 @@ const TEAM_CONFIGS: TeamConfig[] = [
     budgetTotal: 48000,
     percentSpent: 0.68,
     bankReconciliationDaysAgo: 10,
-    pendingApprovalsCount: 1,
+    pendingReviewsCount: 1,
     playersCount: 18,
     healthStatus: 'healthy',
   },
@@ -196,7 +196,7 @@ const TEAM_CONFIGS: TeamConfig[] = [
     budgetTotal: 28000,
     percentSpent: 0.82,
     bankReconciliationDaysAgo: 15,
-    pendingApprovalsCount: 7,
+    pendingReviewsCount: 7,
     playersCount: 16,
     healthStatus: 'needs_attention',
   },
@@ -489,7 +489,15 @@ async function wipeDemoData() {
     const delTransactions = await prisma.transaction.deleteMany({
       where: { teamId: { in: demoTeamIds } },
     });
-    if (delTransactions.count > 0) console.log(`   ✓ Deleted ${delTransactions.count} transactions`);
+    if (delTransactions.count > 0) console.log(`   ✓ Deleted ${delTransactions.count} transactions by teamId`);
+  }
+
+  // Also delete transactions created by demo users (in case they created transactions for non-demo teams)
+  if (demoUserIds.length > 0) {
+    const delTransactionsByUser = await prisma.transaction.deleteMany({
+      where: { createdBy: { in: demoUserIds } },
+    });
+    if (delTransactionsByUser.count > 0) console.log(`   ✓ Deleted ${delTransactionsByUser.count} transactions by createdBy`);
   }
 
   // 6. BankTransactions (references BankAccount)
@@ -518,6 +526,18 @@ async function wipeDemoData() {
       where: { teamId: { in: demoTeamIds } },
     });
     if (delBudgetAlloc.count > 0) console.log(`   ✓ Deleted ${delBudgetAlloc.count} budget allocations`);
+  }
+
+  // 8.5. PreSeasonAllocations (references Category) - Must delete before Categories
+  if (demoTeamIds.length > 0) {
+    const delPreSeasonAlloc = await prisma.preSeasonAllocation.deleteMany({
+      where: {
+        category: {
+          teamId: { in: demoTeamIds },
+        },
+      },
+    });
+    if (delPreSeasonAlloc.count > 0) console.log(`   ✓ Deleted ${delPreSeasonAlloc.count} pre-season allocations`);
   }
 
   // 9. Categories (references Team)
@@ -1353,7 +1373,7 @@ async function linkTeamToAssociation(
       associationId,
       teamId,
       teamName: cfg.name,
-      division: `${cfg.ageDivision} ${cfg.competitiveLevel}`,
+      division: cfg.ageDivision,
       season: DEMO_SEASON,
       isActive: true,
       treasurerName: treasurer.name,
@@ -1427,8 +1447,8 @@ async function createFinancialSnapshot(
   if (cfg.bankReconciliationDaysAgo >= 60) healthScore -= 25;
   else if (cfg.bankReconciliationDaysAgo >= 30) healthScore -= 10;
 
-  if (cfg.pendingApprovalsCount >= 10) healthScore -= 20;
-  else if (cfg.pendingApprovalsCount >= 5) healthScore -= 10;
+  if (cfg.pendingReviewsCount >= 10) healthScore -= 20;
+  else if (cfg.pendingReviewsCount >= 5) healthScore -= 10;
 
   return await prisma.teamFinancialSnapshot.create({
     data: {
@@ -1440,7 +1460,7 @@ async function createFinancialSnapshot(
       spent,
       remaining,
       percentUsed: cfg.percentSpent * 100,
-      pendingApprovals: cfg.pendingApprovalsCount,
+      pendingReviews: cfg.pendingReviewsCount,
       missingReceipts: randomInt(0, 3),
       bankReconciledThrough,
       bankConnected: true,
@@ -1816,7 +1836,7 @@ async function createTransactions(
   }
 
   // 8. Pending transactions
-  for (let i = 0; i < cfg.pendingApprovalsCount; i++) {
+  for (let i = 0; i < cfg.pendingReviewsCount; i++) {
     const anyCat = randomChoice(categories.filter((c) => c.type === CategoryType.EXPENSE));
     const amount = randomInt(150, 800);
     const txDate = randomDateBetween(addDays(NOW, -21), NOW);
@@ -1829,7 +1849,7 @@ async function createTransactions(
         amount,
         categoryId: anyCat.id,
         vendor: randomChoice([...VENDORS.retail, ...VENDORS.gas]),
-        description: 'Pending expense awaiting approval',
+        description: 'Expense requiring validation',
         transactionDate: txDate,
         receiptUrl: amount >= MANDATORY_RECEIPT_THRESHOLD ? receiptUrl(cfg.code, txDate) : undefined,
         createdBy: treasurerId,
@@ -2025,31 +2045,31 @@ async function createAlerts(
     alerts.push(alert);
   }
 
-  // Pending approvals alerts
-  if (cfg.pendingApprovalsCount >= 10) {
+  // Pending reviews alerts
+  if (cfg.pendingReviewsCount >= 10) {
     const alert = await prisma.alert.create({
       data: {
         associationId,
         associationTeamId,
-        alertType: 'PENDING_APPROVALS',
+        alertType: 'PENDING_REVIEW',
         severity: 'critical',
-        title: 'Many Pending Approvals',
-        description: `${cfg.pendingApprovalsCount} pending approvals require attention`,
+        title: 'Many Pending Reviews',
+        description: `${cfg.pendingReviewsCount} pending reviews require attention`,
         status: 'active',
         createdAt: daysAgo(NOW, randomInt(3, 15)),
         lastTriggeredAt: daysAgo(NOW, randomInt(0, 2)),
       },
     });
     alerts.push(alert);
-  } else if (cfg.pendingApprovalsCount >= 5) {
+  } else if (cfg.pendingReviewsCount >= 5) {
     const alert = await prisma.alert.create({
       data: {
         associationId,
         associationTeamId,
-        alertType: 'PENDING_APPROVALS',
+        alertType: 'PENDING_REVIEW',
         severity: 'warning',
-        title: 'Pending Approvals',
-        description: `${cfg.pendingApprovalsCount} pending approvals require attention`,
+        title: 'Pending Reviews',
+        description: `${cfg.pendingReviewsCount} pending reviews require attention`,
         status: 'active',
         createdAt: daysAgo(NOW, randomInt(3, 10)),
         lastTriggeredAt: daysAgo(NOW, randomInt(0, 2)),

@@ -21,7 +21,7 @@ export type SeasonFinancialRow = {
   budgetUsedPercent: number
   healthScore: number | null
   healthStatus: string | null
-  pendingApprovals: number
+  pendingReviews: number
   missingReceipts: number
 }
 
@@ -164,7 +164,7 @@ export async function getReportsData(
       const snapshot = snapshotMap.get(at.id)
       const healthScore = snapshot?.healthScore || null
       const healthStatus = snapshot?.healthStatus || null
-      const pendingApprovals = snapshot?.pendingApprovals || 0
+      const pendingReviews = snapshot?.pendingReviews || 0
       const missingReceipts = snapshot?.missingReceipts || 0
 
       return {
@@ -177,7 +177,7 @@ export async function getReportsData(
         budgetUsedPercent,
         healthScore,
         healthStatus,
-        pendingApprovals,
+        pendingReviews,
         missingReceipts,
       }
     })
@@ -251,7 +251,7 @@ export async function getSeasonFinancialCsv(
     'Budget Used %',
     'Health Score',
     'Health Status',
-    'Pending Approvals',
+    'Pending Reviews',
     'Missing Receipts',
   ]
 
@@ -267,7 +267,7 @@ export async function getSeasonFinancialCsv(
       escapeCsvField(row.budgetUsedPercent.toFixed(2)),
       escapeCsvField(row.healthScore?.toFixed(2) || ''),
       escapeCsvField(row.healthStatus || ''),
-      escapeCsvField(row.pendingApprovals),
+      escapeCsvField(row.pendingReviews),
       escapeCsvField(row.missingReceipts),
     ].join(',')
     csvLines.push(line)

@@ -18,7 +18,6 @@ interface StepPreSeasonConfigProps {
 interface PreSeasonConfigData {
   usePreSeasonBudgets: boolean;
   preSeasonBudgetDeadline?: string;
-  preSeasonBudgetsRequired?: number;
   preSeasonBudgetAutoApprove: boolean;
 }
 
@@ -31,7 +30,6 @@ export function StepPreSeasonConfig({
   const [formData, setFormData] = useState<PreSeasonConfigData>({
     usePreSeasonBudgets: initialData?.usePreSeasonBudgets ?? false,
     preSeasonBudgetDeadline: initialData?.preSeasonBudgetDeadline || getDefaultDeadline(),
-    preSeasonBudgetsRequired: initialData?.preSeasonBudgetsRequired ?? 3,
     preSeasonBudgetAutoApprove: initialData?.preSeasonBudgetAutoApprove ?? false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -113,29 +111,6 @@ export function StepPreSeasonConfig({
                     />
                     <p className="text-xs text-navy/60 mt-1">
                       Teams must submit their budgets by this date
-                    </p>
-                  </div>
-
-                  {/* Number of Budgets Required */}
-                  <div className="mb-4">
-                    <Label htmlFor="budgetsRequired">
-                      Number of Budget Versions Required
-                    </Label>
-                    <Input
-                      id="budgetsRequired"
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={formData.preSeasonBudgetsRequired}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          preSeasonBudgetsRequired: parseInt(e.target.value) || 1,
-                        })
-                      }
-                    />
-                    <p className="text-xs text-navy/60 mt-1">
-                      Typical: 3 budgets (Low/Medium/High scenarios)
                     </p>
                   </div>
 

@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
       season: '2025-2026',
       generatedAt: new Date().toISOString(),
       summary: {
-        pendingApprovals: pendingTransactions.length,
+        pendingReviews: pendingTransactions.length,
         pendingAmount,
         missingReceipts: missingReceipts.length,
         missingReceiptAmount: missingReceipts.reduce(
@@ -214,7 +214,7 @@ export async function POST(request: NextRequest) {
         net: netBalance,
       },
       outstandingItems: {
-        pendingApprovals: pendingTransactions.length,
+        pendingReviews: pendingTransactions.length,
         missingReceipts: missingReceipts.length,
       },
       nextSeasonPreparation: {

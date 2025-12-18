@@ -80,7 +80,6 @@ const RECOMMENDED_DEFAULTS: DashboardConfigData = {
     requireBudgetVsActual: true,
     requireBudgetChanges: false,
     requireCategoryBreakdown: true,
-    requireNarrative: false,
   },
   associationReportSchedule: {
     recipient: 'ASSOCIATION',
@@ -90,7 +89,6 @@ const RECOMMENDED_DEFAULTS: DashboardConfigData = {
     requireBudgetVsActual: true,
     requireBudgetChanges: true,
     requireCategoryBreakdown: true,
-    requireNarrative: false,
   },
 };
 
@@ -144,8 +142,7 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
         formData.parentReapprovalTotalBudgetChangeAmount !== null ||
         formData.parentReapprovalTotalBudgetChangePercent !== null ||
         formData.parentReapprovalCategoryChangeAmount !== null ||
-        formData.parentReapprovalCategoryChangePercent !== null ||
-        formData.parentReapprovalAlwaysIceFacilities;
+        formData.parentReapprovalCategoryChangePercent !== null;
 
       if (!hasTrigger) {
         newErrors.push('At least one parent reapproval trigger must be set when requiring parent reapproval');
@@ -250,7 +247,10 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
             </div>
 
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-navy mb-4">Bank Reconciliation Alerts</h3>
+              <h3 className="text-lg font-semibold text-navy mb-4">Transaction Review Alerts</h3>
+              <p className="text-sm text-navy/70 mb-4">
+                Alert when teams have imported transactions that haven't been reviewed or validated within the specified timeframe
+              </p>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -265,7 +265,7 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                       value={formData.bankWarningDays}
                       onChange={(e) => handleFieldChange('bankWarningDays', parseInt(e.target.value) || 0)}
                     />
-                    <p className="text-xs text-navy/60 mt-1">Alert if not reconciled</p>
+                    <p className="text-xs text-navy/60 mt-1">Alert if unreviewed for this many days</p>
                   </div>
                   <div>
                     <Label htmlFor="bankCritical">
@@ -279,14 +279,17 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                       value={formData.bankCriticalDays}
                       onChange={(e) => handleFieldChange('bankCriticalDays', parseInt(e.target.value) || 0)}
                     />
-                    <p className="text-xs text-navy/60 mt-1">Urgent alert</p>
+                    <p className="text-xs text-navy/60 mt-1">Urgent alert threshold</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-navy mb-4">Pending Approvals Alerts</h3>
+              <h3 className="text-lg font-semibold text-navy mb-4">Pending Reviews Alerts</h3>
+              <p className="text-sm text-navy/70 mb-4">
+                Alert when teams have unreviewed transactions, missing receipts, or outstanding validations requiring attention
+              </p>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -301,7 +304,7 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                       value={formData.approvalsWarningCount}
                       onChange={(e) => handleFieldChange('approvalsWarningCount', parseInt(e.target.value) || 0)}
                     />
-                    <p className="text-xs text-navy/60 mt-1">Alert at this many pending</p>
+                    <p className="text-xs text-navy/60 mt-1">Alert at this many unreviewed items</p>
                   </div>
                   <div>
                     <Label htmlFor="approvalsCritical">
@@ -315,7 +318,7 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                       value={formData.approvalsCriticalCount}
                       onChange={(e) => handleFieldChange('approvalsCriticalCount', parseInt(e.target.value) || 0)}
                     />
-                    <p className="text-xs text-navy/60 mt-1">Urgent alert</p>
+                    <p className="text-xs text-navy/60 mt-1">Urgent alert threshold</p>
                   </div>
                 </div>
               </div>
@@ -437,17 +440,6 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                         <p className="text-xs text-navy/60 mt-1">Per-category percentage</p>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id="alwaysIceFacilities"
-                        checked={formData.parentReapprovalAlwaysIceFacilities}
-                        onCheckedChange={(checked) => handleFieldChange('parentReapprovalAlwaysIceFacilities', checked)}
-                      />
-                      <Label htmlFor="alwaysIceFacilities" className="text-sm cursor-pointer">
-                        Always require re-approval for ice/facilities changes
-                      </Label>
-                    </div>
                   </div>
                 )}
               </div>
@@ -549,6 +541,7 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                     label="Parent Report Schedule"
                     schedule={formData.parentReportSchedule}
                     onChange={(schedule) => setFormData({ ...formData, parentReportSchedule: schedule })}
+                    scheduleType="PARENT"
                   />
                 )}
               </div>
@@ -576,6 +569,7 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                     label="Association Report Schedule"
                     schedule={formData.associationReportSchedule}
                     onChange={(schedule) => setFormData({ ...formData, associationReportSchedule: schedule })}
+                    scheduleType="ASSOCIATION"
                   />
                 )}
               </div>

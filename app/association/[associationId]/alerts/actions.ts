@@ -66,7 +66,7 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
             healthStatus: true,
             healthScore: true,
             percentUsed: true,
-            pendingApprovals: true,
+            pendingReviews: true,
             missingReceipts: true,
             budgetTotal: true,
             spent: true,
@@ -138,8 +138,8 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
           id: `pending-${txn.id}`,
           teamId: assocTeam.id,
           teamName: assocTeam.teamName,
-          type: 'PENDING_APPROVAL',
-          message: `Pending approval for ${txn.vendor} - $${Number(txn.amount).toLocaleString()}`,
+          type: 'PENDING_REVIEW',
+          message: `Pending review for ${txn.vendor} - $${Number(txn.amount).toLocaleString()}`,
           severity: 'MEDIUM',
           createdAt: txn.createdAt,
           link: `/association/${associationId}/teams/${assocTeam.id}`,
@@ -150,7 +150,9 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
       const missingReceiptTxns = await prisma.transaction.findMany({
         where: {
           teamId: teamInternalId,
-          status: 'APPROVED',
+          status: {
+            in: ['PENDING', 'VALIDATED']
+          },
           receiptUrl: null,
         },
         select: {
@@ -196,7 +198,7 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
         }
 
         // Warning health status
-        if (latestSnapshot.healthStatus === 'warning') {
+        if (latestSnapshot.healthStatus === 'needs_attention') {
           allAlerts.push({
             id: `health-warning-${assocTeam.id}`,
             teamId: assocTeam.id,
@@ -243,13 +245,13 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
         }
 
         // Multiple pending approvals alert
-        if (latestSnapshot.pendingApprovals !== null && latestSnapshot.pendingApprovals >= 3) {
+        if (latestSnapshot.pendingReviews !== null && latestSnapshot.pendingReviews >= 3) {
           allAlerts.push({
             id: `pending-count-${assocTeam.id}`,
             teamId: assocTeam.id,
             teamName: assocTeam.teamName,
             type: 'MULTIPLE_PENDING',
-            message: `${latestSnapshot.pendingApprovals} transactions awaiting approval`,
+            message: `${latestSnapshot.pendingReviews} transactions awaiting review`,
             severity: 'MEDIUM',
             createdAt: latestSnapshot.snapshotAt,
             link: `/association/${associationId}/teams/${assocTeam.id}`,

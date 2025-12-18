@@ -16,7 +16,7 @@ import { createTeamSeasonWithSnapshot } from '@/lib/services/team-policy-snapsho
  * - cursor: base64-encoded cursor for pagination
  * - limit: number of items (default 20, max 50)
  * - type: INCOME or EXPENSE
- * - status: DRAFT, PENDING, or APPROVED
+ * - status: IMPORTED, VALIDATED, EXCEPTION, RESOLVED, LOCKED, DRAFT, PENDING, APPROVED, or REJECTED
  * - categoryId: UUID of category
  * - search: search term for vendor/description
  */
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
     // Build filters
     const filters: {
       type?: 'INCOME' | 'EXPENSE'
-      status?: 'DRAFT' | 'PENDING' | 'APPROVED'
+      status?: 'IMPORTED' | 'VALIDATED' | 'EXCEPTION' | 'RESOLVED' | 'LOCKED' | 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
       categoryId?: string
       search?: string
     } = {}
@@ -79,8 +79,9 @@ export async function GET(request: NextRequest) {
       filters.type = typeParam
     }
 
-    if (statusParam && ['DRAFT', 'PENDING', 'APPROVED'].includes(statusParam)) {
-      filters.status = statusParam as 'DRAFT' | 'PENDING' | 'APPROVED'
+    const validStatuses = ['IMPORTED', 'VALIDATED', 'EXCEPTION', 'RESOLVED', 'LOCKED', 'DRAFT', 'PENDING', 'APPROVED', 'REJECTED']
+    if (statusParam && validStatuses.includes(statusParam)) {
+      filters.status = statusParam as typeof filters.status
     }
 
     if (categoryIdParam) {

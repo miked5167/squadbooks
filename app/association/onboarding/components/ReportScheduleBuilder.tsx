@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,24 +23,38 @@ export interface ReportSchedule {
   requireBudgetVsActual: boolean;
   requireBudgetChanges: boolean;
   requireCategoryBreakdown: boolean;
-  requireNarrative: boolean;
-  narrativeMinLength?: number;
-  narrativePrompts?: string[];
 }
 
 interface ReportScheduleBuilderProps {
   schedule: ReportSchedule;
   onChange: (schedule: ReportSchedule) => void;
   label: string;
+  scheduleType: 'PARENT' | 'ASSOCIATION';
 }
 
-export function ReportScheduleBuilder({ schedule, onChange, label }: ReportScheduleBuilderProps) {
+export function ReportScheduleBuilder({ schedule, onChange, label, scheduleType }: ReportScheduleBuilderProps) {
   const [newDate, setNewDate] = useState('');
-  const [newPrompt, setNewPrompt] = useState('');
+
+  // Determine valid recipient options based on schedule type
+  const validRecipients = scheduleType === 'PARENT'
+    ? ['PARENTS', 'BOTH'] as const
+    : ['ASSOCIATION', 'BOTH'] as const;
+
+  // Validate and auto-correct invalid recipient selection
+  const currentRecipient = validRecipients.includes(schedule.recipient as any)
+    ? schedule.recipient
+    : (scheduleType === 'PARENT' ? 'PARENTS' : 'ASSOCIATION');
 
   const updateSchedule = (updates: Partial<ReportSchedule>) => {
     onChange({ ...schedule, ...updates });
   };
+
+  // Auto-correct invalid recipient selection on mount or when schedule changes
+  useEffect(() => {
+    if (currentRecipient !== schedule.recipient) {
+      updateSchedule({ recipient: currentRecipient });
+    }
+  }, [scheduleType]); // Only run when scheduleType changes
 
   const addSpecificDate = () => {
     if (newDate) {
@@ -55,19 +69,6 @@ export function ReportScheduleBuilder({ schedule, onChange, label }: ReportSched
     updateSchedule({ specificDates: dates.filter((_, i) => i !== index) });
   };
 
-  const addNarrativePrompt = () => {
-    if (newPrompt) {
-      const prompts = schedule.narrativePrompts || [];
-      updateSchedule({ narrativePrompts: [...prompts, newPrompt] });
-      setNewPrompt('');
-    }
-  };
-
-  const removeNarrativePrompt = (index: number) => {
-    const prompts = schedule.narrativePrompts || [];
-    updateSchedule({ narrativePrompts: prompts.filter((_, i) => i !== index) });
-  };
-
   const showRecurringFields = schedule.scheduleType === 'RECURRING' || schedule.scheduleType === 'HYBRID';
   const showSpecificDatesFields = schedule.scheduleType === 'SPECIFIC_DATES' || schedule.scheduleType === 'HYBRID';
 
@@ -79,7 +80,7 @@ export function ReportScheduleBuilder({ schedule, onChange, label }: ReportSched
       <div className="space-y-2">
         <Label>Report Recipient</Label>
         <Select
-          value={schedule.recipient}
+          value={currentRecipient}
           onValueChange={(value: 'PARENTS' | 'ASSOCIATION' | 'BOTH') =>
             updateSchedule({ recipient: value })
           }
@@ -88,11 +89,24 @@ export function ReportScheduleBuilder({ schedule, onChange, label }: ReportSched
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="PARENTS">Parents Only</SelectItem>
-            <SelectItem value="ASSOCIATION">Association Only</SelectItem>
-            <SelectItem value="BOTH">Both Parents and Association</SelectItem>
+            {scheduleType === 'PARENT' ? (
+              <>
+                <SelectItem value="PARENTS">Parents Only</SelectItem>
+                <SelectItem value="BOTH">Both Parents and Association</SelectItem>
+              </>
+            ) : (
+              <>
+                <SelectItem value="ASSOCIATION">Association Only</SelectItem>
+                <SelectItem value="BOTH">Both Parents and Association</SelectItem>
+              </>
+            )}
           </SelectContent>
         </Select>
+        <p className="text-xs text-navy/60 mt-1">
+          {scheduleType === 'PARENT'
+            ? 'Parent reports are designed for families, with optional association visibility.'
+            : 'Association reports are designed for oversight, with optional parent transparency.'}
+        </p>
       </div>
 
       {/* Schedule Type Selection */}
@@ -230,74 +244,8 @@ export function ReportScheduleBuilder({ schedule, onChange, label }: ReportSched
               onCheckedChange={(checked) => updateSchedule({ requireCategoryBreakdown: checked })}
             />
           </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor={`${label}-narrative`}>Require Written Narrative</Label>
-            <Switch
-              id={`${label}-narrative`}
-              checked={schedule.requireNarrative}
-              onCheckedChange={(checked) => updateSchedule({ requireNarrative: checked })}
-            />
-          </div>
         </div>
       </div>
-
-      {/* Narrative Configuration */}
-      {schedule.requireNarrative && (
-        <div className="space-y-4 pl-4 border-l-2 border-purple-200">
-          <h5 className="text-sm font-medium text-gray-700">Narrative Requirements</h5>
-
-          <div className="space-y-2">
-            <Label>Minimum Length (characters)</Label>
-            <Input
-              type="number"
-              min="0"
-              value={schedule.narrativeMinLength || ''}
-              onChange={(e) => updateSchedule({ narrativeMinLength: parseInt(e.target.value) || undefined })}
-              placeholder="e.g., 200"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Narrative Prompts</Label>
-            <p className="text-xs text-gray-500">
-              Add prompts or questions to guide the narrative writing
-            </p>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                value={newPrompt}
-                onChange={(e) => setNewPrompt(e.target.value)}
-                placeholder="e.g., What were the biggest challenges this period?"
-              />
-              <Button type="button" onClick={addNarrativePrompt} size="sm">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {schedule.narrativePrompts && schedule.narrativePrompts.length > 0 && (
-            <div className="space-y-2">
-              <Label>Configured Prompts</Label>
-              <ul className="space-y-1">
-                {schedule.narrativePrompts.map((prompt, index) => (
-                  <li key={index} className="flex items-center justify-between bg-white p-2 rounded border">
-                    <span className="text-sm">{prompt}</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeNarrativePrompt(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

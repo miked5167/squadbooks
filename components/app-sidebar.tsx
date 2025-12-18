@@ -26,8 +26,8 @@ const navigation = [
   { name: 'Budget', href: '/budget', icon: PiggyBank },
   { name: 'Transactions', href: '/transactions', icon: Receipt },
   {
-    name: 'Approvals',
-    href: '/approvals',
+    name: 'Exceptions',
+    href: '/exceptions',
     icon: CheckCircle,
     requiresRole: ['TREASURER', 'ASSISTANT_TREASURER'] // Only show to treasurers
   },

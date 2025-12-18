@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma'
 import type { TransactionType, TransactionStatus, Prisma } from '@prisma/client'
 import type { CreateTransactionInput, UpdateTransactionInput, TransactionFilter } from '@/lib/validations/transaction'
 import { logger } from '@/lib/logger'
+import { computeValidation, deriveStatusFromValidation } from '@/lib/services/transaction-validator'
+import type { ValidationContext } from '@/lib/types/validation'
 
 /**
  * Business Logic: Determine if a transaction requires approval
@@ -22,6 +24,133 @@ export async function requiresApproval(
 
   // Amount is in cents, requiresDualApproval expects cents
   return await requiresDualApproval(amount, teamId)
+}
+
+/**
+ * Build validation context for a transaction
+ * Helper function to gather all necessary data for validation
+ */
+async function buildValidationContext(
+  data: {
+    amount: number
+    type: TransactionType
+    categoryId: string
+    systemCategoryId?: string | null
+    vendor: string
+    transactionDate: Date
+    receiptUrl?: string | null
+    description?: string | null
+  },
+  teamId: string
+): Promise<ValidationContext> {
+  // Get team settings
+  const teamSettings = await prisma.teamSettings.findUnique({
+    where: { teamId },
+    select: {
+      receiptRequiredThreshold: true,
+      dualApprovalThreshold: true,
+    },
+  })
+
+  // Get active budget with allocations
+  const budget = await prisma.budget.findFirst({
+    where: {
+      teamId,
+      status: 'LOCKED',
+    },
+    include: {
+      currentVersion: {
+        include: {
+          allocations: {
+            select: {
+              categoryId: true,
+              allocated: true,
+              spent: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  // Get active envelopes
+  const envelopes = await prisma.budgetEnvelope.findMany({
+    where: {
+      budgetId: budget?.id,
+      isActive: true,
+    },
+    select: {
+      id: true,
+      categoryId: true,
+      vendorMatch: true,
+      vendorMatchType: true,
+      capAmount: true,
+      spent: true,
+      maxSingleTransaction: true,
+    },
+  })
+
+  // Get season dates if available
+  const teamSeason = await prisma.teamSeason.findFirst({
+    where: {
+      teamId,
+    },
+    select: {
+      season: {
+        select: {
+          startDate: true,
+          endDate: true,
+        },
+      },
+    },
+  })
+
+  return {
+    transaction: {
+      amount: Number(data.amount),
+      type: data.type as 'INCOME' | 'EXPENSE',
+      categoryId: data.categoryId,
+      systemCategoryId: data.systemCategoryId ?? null,
+      vendor: data.vendor,
+      transactionDate: data.transactionDate,
+      receiptUrl: data.receiptUrl ?? null,
+      description: data.description ?? null,
+    },
+    budget: budget
+      ? {
+          id: budget.id,
+          status: budget.status,
+          allocations: (budget.currentVersion?.allocations || []).map((a) => ({
+            categoryId: a.categoryId,
+            allocated: Number(a.allocated),
+            spent: Number(a.spent),
+          })),
+        }
+      : undefined,
+    envelopes: envelopes.map((e) => ({
+      id: e.id,
+      categoryId: e.categoryId,
+      vendorMatch: e.vendorMatch,
+      vendorMatchType: e.vendorMatchType,
+      capAmount: Number(e.capAmount),
+      spent: Number(e.spent),
+      maxSingleTransaction: e.maxSingleTransaction
+        ? Number(e.maxSingleTransaction)
+        : null,
+    })),
+    teamSettings: {
+      receiptThreshold: Number(teamSettings?.receiptRequiredThreshold || 100),
+      largeTransactionThreshold: Number(
+        teamSettings?.dualApprovalThreshold || 200
+      ),
+    },
+    season: teamSeason
+      ? {
+          startDate: teamSeason.season.startDate,
+          endDate: teamSeason.season.endDate,
+        }
+      : undefined,
+  }
 }
 
 /**
@@ -55,12 +184,28 @@ export async function createTransaction(
     approvalThreshold
   )
 
-  // Create transaction with routing decision
+  // NEW: Run validation (parallel to routing decision)
+  const validationContext = await buildValidationContext(
+    {
+      amount,
+      type: type as TransactionType,
+      categoryId,
+      systemCategoryId: data.systemCategoryId,
+      vendor,
+      transactionDate: new Date(transactionDate),
+      receiptUrl,
+      description,
+    },
+    teamId
+  )
+  const validationResult = await computeValidation(validationContext)
+
+  // Create transaction with routing decision AND validation result
   const transaction = await prisma.transaction.create({
     data: {
       teamId,
       type: type as TransactionType,
-      status: routingDecision.status,
+      status: routingDecision.status, // Keep existing routing for now
       amount,
       categoryId,
       vendor,
@@ -70,9 +215,28 @@ export async function createTransaction(
       createdBy: userId,
       envelopeId: routingDecision.envelopeId,
       approvalReason: routingDecision.approvalReason,
+      // NEW: Store validation result
+      validation: {
+        create: {
+          compliant: validationResult.compliant,
+          score: validationResult.score,
+          violations: validationResult.violations as any, // JSON field
+          checksRun: validationResult.checksRun as any, // JSON field
+        },
+      },
+      // NEW: Store exception reason if not compliant
+      exceptionReason: !validationResult.compliant
+        ? validationResult.violations
+            .filter(
+              (v) => v.severity === 'ERROR' || v.severity === 'CRITICAL'
+            )
+            .map((v) => v.message)
+            .join('; ')
+        : null,
     },
     include: {
       category: true,
+      validation: true,
       creator: {
         select: {
           id: true,
@@ -601,6 +765,19 @@ export async function updateTransaction(
     })
     // Don't fail transaction update if audit logging fails
   }
+
+  // NEW: Re-run validation after update (especially important for category changes)
+  // Run validation asynchronously to avoid blocking the response
+  Promise.resolve().then(async () => {
+    try {
+      const { validateSingleTransaction } = await import('@/lib/services/validate-imported-transactions')
+      await validateSingleTransaction(id, teamId)
+      logger.info(`Re-validated transaction ${id} after update`)
+    } catch (error) {
+      logger.error('Failed to re-validate transaction after update:', error)
+      // Don't fail the update if validation fails
+    }
+  })
 
   // Revalidate budget cache to reflect updated transaction
   const { revalidateBudgetCache } = await import('@/lib/db/budget')

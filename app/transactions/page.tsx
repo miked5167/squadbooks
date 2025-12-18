@@ -30,11 +30,18 @@ import { toast } from 'sonner'
 import { ReceiptViewer } from '@/components/ReceiptViewer'
 import { TransactionDetailsDrawer } from '@/components/transactions/transaction-details-drawer'
 import { Skeleton } from '@/components/ui/skeleton'
+import { usePermissions } from '@/lib/hooks/use-permissions'
+import { Permission } from '@/lib/permissions/permissions'
+import {
+  mapTransactionToUIState,
+  mapUIFilterToBackendStatus,
+  type TransactionStatus,
+} from '@/lib/utils/transaction-ui-mapping'
 
 interface Transaction {
   id: string
   type: 'INCOME' | 'EXPENSE'
-  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
+  status: TransactionStatus
   amount: string
   vendor: string
   description: string | null
@@ -42,11 +49,19 @@ interface Transaction {
   receiptUrl: string | null
   envelopeId: string | null
   approvalReason: string | null
+  exceptionReason?: string | null
+  resolvedAt?: string | null
+  overrideJustification?: string | null
+  resolutionNotes?: string | null
   category: {
     id: string
     name: string
     color?: string
   }
+  validation?: {
+    compliant: boolean
+    violations?: any[]
+  } | null
   creator: {
     id: string
     name: string
@@ -58,6 +73,7 @@ interface Transaction {
 
 export default function TransactionsPage() {
   const searchParams = useSearchParams()
+  const { hasPermission, isTreasurer } = usePermissions()
 
   // Data state
   const [items, setItems] = useState<Transaction[]>([])
@@ -77,7 +93,6 @@ export default function TransactionsPage() {
 
   // UI state
   const [mounted, setMounted] = useState(false)
-  const [userRole, setUserRole] = useState<string | null>(null)
 
   // Receipt viewer state
   const [selectedReceipt, setSelectedReceipt] = useState<{
@@ -90,19 +105,11 @@ export default function TransactionsPage() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [detailsDrawerOpen, setDetailsDrawerOpen] = useState(false)
 
+  // Check permissions
+  const canCreateTransaction = hasPermission(Permission.CREATE_TRANSACTION)
+
   useEffect(() => {
     setMounted(true)
-    // Fetch user role
-    fetch('/api/user/me')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.role) {
-          setUserRole(data.role)
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to fetch user role:', err)
-      })
   }, [])
 
   // Read categoryId from URL on mount
@@ -140,8 +147,9 @@ export default function TransactionsPage() {
       const params = new URLSearchParams()
       params.append('limit', '20')
 
-      if (statusFilter !== 'all') {
-        params.append('status', statusFilter.toUpperCase())
+      const backendStatus = mapUIFilterToBackendStatus(statusFilter)
+      if (backendStatus) {
+        params.append('status', backendStatus)
       }
 
       if (typeFilter !== 'all') {
@@ -189,8 +197,9 @@ export default function TransactionsPage() {
       params.append('limit', '20')
       params.append('cursor', nextCursor)
 
-      if (statusFilter !== 'all') {
-        params.append('status', statusFilter.toUpperCase())
+      const backendStatus = mapUIFilterToBackendStatus(statusFilter)
+      if (backendStatus) {
+        params.append('status', backendStatus)
       }
 
       if (typeFilter !== 'all') {
@@ -248,24 +257,54 @@ export default function TransactionsPage() {
     return transaction?.category.name || null
   }, [categoryFilter, items])
 
-  function getStatusBadge(status: string) {
-    const variants: Record<
-      string,
-      { color: string; label: string }
-    > = {
-      DRAFT: { color: 'bg-gray-100 text-gray-700 border-gray-300', label: 'Draft' },
-      PENDING: { color: 'bg-yellow-100 text-yellow-700 border-yellow-300', label: 'Pending' },
-      APPROVED: { color: 'bg-meadow/10 text-meadow border-meadow/30', label: 'Approved' },
-      REJECTED: { color: 'bg-red-100 text-red-700 border-red-300', label: 'Rejected' },
+  function getTransactionUIState(transaction: Transaction) {
+    return mapTransactionToUIState(
+      {
+        status: transaction.status,
+        validation: transaction.validation,
+        exceptionReason: transaction.exceptionReason,
+        resolvedAt: transaction.resolvedAt,
+        categoryId: transaction.category?.id,
+        receiptUrl: transaction.receiptUrl,
+        amount: transaction.amount,
+        type: transaction.type,
+      },
+      {
+        receiptRequiredOver: 100, // Configure receipt requirement threshold
+      }
+    )
+  }
+
+  /**
+   * Sanitize transaction description by removing approval-first language
+   * This handles legacy data that may contain old semantics
+   */
+  function sanitizeDescription(description: string | null | undefined): string | null {
+    if (!description) return null
+
+    // Remove approval-first language patterns
+    const approvalPatterns = [
+      /\s*-?\s*pending\s+expense\s+awaiting\s+approval\s*/gi,
+      /\s*-?\s*awaiting\s+approval\s*/gi,
+      /\s*-?\s*pending\s+approval\s*/gi,
+      /\s*-?\s*needs\s+approval\s*/gi,
+      /\s*-?\s*requires\s+approval\s*/gi,
+    ]
+
+    let sanitized = description
+    approvalPatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '')
+    })
+
+    // Clean up any double spaces or leading/trailing spaces
+    sanitized = sanitized.replace(/\s+/g, ' ').trim()
+
+    // If the description is now empty or just punctuation, return null
+    if (!sanitized || /^[\s\-,.:;]+$/.test(sanitized)) {
+      return null
     }
 
-    const badge = variants[status] || variants['DRAFT']
-
-    return (
-      <Badge variant="outline" className={badge.color}>
-        {badge.label}
-      </Badge>
-    )
+    return sanitized
   }
 
   function openReceiptViewer(transaction: Transaction) {
@@ -281,7 +320,7 @@ export default function TransactionsPage() {
   async function openTransactionDetails(transaction: Transaction) {
     setDetailsDrawerOpen(true)
 
-    // Fetch full transaction details with approvals
+    // Fetch full transaction details with review history
     try {
       const res = await fetch(`/api/transactions/${transaction.id}`)
       if (!res.ok) {
@@ -343,7 +382,7 @@ export default function TransactionsPage() {
                 <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
-              {userRole === 'TREASURER' || userRole === 'ASSISTANT_TREASURER' ? (
+              {canCreateTransaction && (
                 <>
                   <Button asChild size="sm" className="bg-navy-light hover:bg-navy-lighter">
                     <Link href="/expenses/new">
@@ -358,7 +397,7 @@ export default function TransactionsPage() {
                     </Link>
                   </Button>
                 </>
-              ) : null}
+              )}
             </div>
           </div>
         </div>
@@ -372,11 +411,12 @@ export default function TransactionsPage() {
                 {/* Status Filter Tabs */}
                 <div className="md:col-span-3">
                   <Tabs value={statusFilter} onValueChange={setStatusFilter}>
-                    <TabsList className="grid grid-cols-4 w-full max-w-md">
+                    <TabsList className="grid grid-cols-5 w-full max-w-2xl">
                       <TabsTrigger value="all">All</TabsTrigger>
-                      <TabsTrigger value="approved">Approved</TabsTrigger>
-                      <TabsTrigger value="pending">Pending</TabsTrigger>
-                      <TabsTrigger value="draft">Draft</TabsTrigger>
+                      <TabsTrigger value="imported">Imported</TabsTrigger>
+                      <TabsTrigger value="validated">Validated</TabsTrigger>
+                      <TabsTrigger value="exceptions">Exceptions</TabsTrigger>
+                      <TabsTrigger value="resolved">Resolved</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
@@ -453,7 +493,7 @@ export default function TransactionsPage() {
                     ? 'Try adjusting your filters or search query'
                     : 'Get started by creating your first transaction'}
                 </p>
-                {userRole === 'TREASURER' || userRole === 'ASSISTANT_TREASURER' ? (
+                {canCreateTransaction && (
                   <div className="flex gap-2">
                     <Button asChild className="bg-navy hover:bg-navy-dark">
                       <Link href="/expenses/new">
@@ -468,7 +508,7 @@ export default function TransactionsPage() {
                       </Link>
                     </Button>
                   </div>
-                ) : null}
+                )}
               </CardContent>
             </Card>
           )}
@@ -494,13 +534,13 @@ export default function TransactionsPage() {
                         <TableHead className="font-semibold text-navy">Category</TableHead>
                         <TableHead className="font-semibold text-navy text-right">Amount</TableHead>
                         <TableHead className="font-semibold text-navy">Status</TableHead>
-                        <TableHead className="font-semibold text-navy">Approvals</TableHead>
+                        <TableHead className="font-semibold text-navy">Validation</TableHead>
                         <TableHead className="font-semibold text-navy text-center">Receipt</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {items.map((transaction) => {
-                        const statusBadge = getStatusBadge(transaction.status)
+                        const uiState = getTransactionUIState(transaction)
                         return (
                           <TableRow key={transaction.id} className="hover:bg-navy/5">
                             <TableCell className="font-medium text-navy/80">
@@ -525,9 +565,9 @@ export default function TransactionsPage() {
                             <TableCell>
                               <div>
                                 <div className="font-medium text-navy">{transaction.vendor}</div>
-                                {transaction.description && (
+                                {sanitizeDescription(transaction.description) && (
                                   <div className="text-sm text-navy/60 mt-0.5">
-                                    {transaction.description}
+                                    {sanitizeDescription(transaction.description)}
                                   </div>
                                 )}
                               </div>
@@ -543,20 +583,31 @@ export default function TransactionsPage() {
                                 {parseFloat(transaction.amount).toFixed(2)}
                               </span>
                             </TableCell>
-                            <TableCell>{statusBadge}</TableCell>
                             <TableCell>
-                              {transaction._count.approvals > 0 ? (
+                              <Badge variant="outline" className={uiState.statusColor}>
+                                {uiState.statusLabel}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {uiState.validationState === 'exception' ? (
                                 <Button
                                   variant="link"
                                   size="sm"
                                   onClick={() => openTransactionDetails(transaction)}
-                                  className="text-navy hover:text-navy-dark p-0 h-auto"
+                                  className="text-navy hover:text-navy-dark p-0 h-auto flex items-center gap-1"
                                 >
-                                  {transaction._count.approvals}{' '}
-                                  {transaction._count.approvals === 1 ? 'approval' : 'approvals'}
+                                  <span>{uiState.validationIcon}</span>
+                                  <Badge variant="outline" className={uiState.validationColor}>
+                                    {uiState.validationLabel}
+                                  </Badge>
                                 </Button>
                               ) : (
-                                <span className="text-sm text-navy/50">None</span>
+                                <div className="flex items-center gap-1">
+                                  <span>{uiState.validationIcon}</span>
+                                  <Badge variant="outline" className={uiState.validationColor}>
+                                    {uiState.validationLabel}
+                                  </Badge>
+                                </div>
                               )}
                             </TableCell>
                             <TableCell className="text-center">

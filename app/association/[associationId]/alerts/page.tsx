@@ -22,7 +22,7 @@ interface PageProps {
   }>
 }
 
-type FilterType = 'ALL' | 'PENDING_APPROVAL' | 'MISSING_RECEIPT' | 'OVERSPEND' | 'FLAGS'
+type FilterType = 'ALL' | 'PENDING_REVIEW' | 'MISSING_RECEIPT' | 'OVERSPEND' | 'FLAGS'
 
 function getSeverityStyles(severity: AlertSeverity) {
   const styles = {
@@ -44,7 +44,7 @@ function getSeverityBadge(severity: AlertSeverity) {
 
 function getAlertTypeLabel(type: string) {
   const labels: Record<string, string> = {
-    PENDING_APPROVAL: 'Pending Approval',
+    PENDING_REVIEW: 'Pending Review',
     MISSING_RECEIPT: 'Missing Receipt',
     OVERSPEND: 'Budget Overspend',
     HIGH_BUDGET_USAGE: 'High Budget Usage',
@@ -170,6 +170,11 @@ export default function AlertsPage({ params }: PageProps) {
     loadData()
   }, [associationId])
 
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeFilter])
+
   // Function to reload alerts data
   const reloadAlerts = async () => {
     if (!associationId) return
@@ -236,8 +241,8 @@ export default function AlertsPage({ params }: PageProps) {
   // Filter alerts based on active filter
   const filteredAlerts = alerts.filter((alert) => {
     if (activeFilter === 'ALL') return true
-    if (activeFilter === 'PENDING_APPROVAL') {
-      return alert.type === 'PENDING_APPROVAL' || alert.type === 'MULTIPLE_PENDING'
+    if (activeFilter === 'PENDING_REVIEW') {
+      return alert.type === 'PENDING_REVIEW' || alert.type === 'MULTIPLE_PENDING'
     }
     if (activeFilter === 'MISSING_RECEIPT') {
       return alert.type === 'MISSING_RECEIPT' || alert.type === 'MULTIPLE_RECEIPTS'
@@ -253,7 +258,7 @@ export default function AlertsPage({ params }: PageProps) {
 
   // Count alerts by type for filter badges
   const pendingCount = alerts.filter(
-    (a) => a.type === 'PENDING_APPROVAL' || a.type === 'MULTIPLE_PENDING'
+    (a) => a.type === 'PENDING_REVIEW' || a.type === 'MULTIPLE_PENDING'
   ).length
   const receiptCount = alerts.filter(
     (a) => a.type === 'MISSING_RECEIPT' || a.type === 'MULTIPLE_RECEIPTS'
@@ -270,11 +275,6 @@ export default function AlertsPage({ params }: PageProps) {
   const startIndex = (currentPage - 1) * itemsPerPage
   const endIndex = startIndex + itemsPerPage
   const paginatedAlerts = filteredAlerts.slice(startIndex, endIndex)
-
-  // Reset to page 1 when filter changes
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [activeFilter])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -317,11 +317,11 @@ export default function AlertsPage({ params }: PageProps) {
               All Alerts
             </FilterButton>
             <FilterButton
-              active={activeFilter === 'PENDING_APPROVAL'}
-              onClick={() => setActiveFilter('PENDING_APPROVAL')}
+              active={activeFilter === 'PENDING_REVIEW'}
+              onClick={() => setActiveFilter('PENDING_REVIEW')}
               count={pendingCount}
             >
-              Pending Approvals
+              Pending Reviews
             </FilterButton>
             <FilterButton
               active={activeFilter === 'MISSING_RECEIPT'}

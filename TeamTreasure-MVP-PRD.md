@@ -10,13 +10,13 @@
 ## Executive Summary
 
 ### MVP Mission
-Prove that dual approval + transparent budget tracking prevents fraud better than Excel spreadsheets for volunteer-run hockey teams.
+Prove that automated validation rules + transparent budget tracking prevents fraud better than Excel spreadsheets for volunteer-run hockey teams.
 
 ### Core Value Proposition
 TeamTreasure replaces Excel with professional financial management that:
-1. **Prevents fraud** through dual approval workflow
-2. **Saves time** by automating reports and calculations
-3. **Builds trust** through parent transparency
+1. **Prevents fraud** through automated validation and exception tracking
+2. **Saves time** by automating compliance checks, reports, and calculations
+3. **Builds trust** through parent transparency and clear audit trails
 
 ### What We're NOT Building (Yet)
 - ❌ Bank integration (Plaid)
@@ -40,9 +40,9 @@ These are Phase 2 features. MVP focuses on manual transaction entry with automat
 - **Success Metric:** <10 minutes per week after setup
 
 ### Secondary: Team President
-- Needs to approve large expenses
+- Needs visibility into exceptions and compliance
 - Wants confidence fraud is prevented
-- **Success Metric:** Approve expense in <30 seconds from phone
+- **Success Metric:** Review exceptions dashboard in <2 minutes
 
 ### Tertiary: Parent
 - Paid $800-$2,500 for season
@@ -74,7 +74,7 @@ Treasurer can manually enter income and expenses, link to budget categories, and
   - Description: Text (optional, max 500 chars)
   - Transaction Date: Date (default: today, cannot be future)
   - Receipt: File upload (optional for <$100, required for >$100)
-  - Status: Auto-set to PENDING if >$200, else APPROVED
+  - Status: Auto-set by validation engine (VALIDATED or EXCEPTION)
 
 #### Transaction Listing
 - **GET** `/api/transactions` - List transactions with filters
@@ -93,8 +93,9 @@ Treasurer can manually enter income and expenses, link to budget categories, and
 
 #### Transaction Update
 - **PUT** `/api/transactions/:id` - Update transaction
-  - Can only update if status = DRAFT or PENDING
-  - Cannot update if status = APPROVED or REJECTED
+  - Can only update if status != LOCKED
+  - Cannot update if season is closed
+  - Automatically re-validates after update
   - Log all changes in audit trail
 
 #### Transaction Delete

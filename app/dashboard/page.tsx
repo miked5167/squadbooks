@@ -21,6 +21,7 @@ import { QuickActionsCard } from '@/components/dashboard/QuickActionsCard'
 import { BudgetCategoryList } from '@/components/dashboard/BudgetCategoryList'
 import { TransactionsPreviewTable } from '@/components/dashboard/TransactionsPreviewTable'
 import { ParentDashboard } from '@/components/dashboard/ParentDashboard'
+import { ValidationComplianceCard } from '@/components/dashboard/ValidationComplianceCard'
 import { getTeamCompliance } from '@/app/transactions/actions'
 
 export default async function DashboardPage() {
@@ -49,16 +50,17 @@ export default async function DashboardPage() {
   // Parallelize all database queries for better performance
   const [
     financialSummary,
-    pendingApprovalsCount,
+    exceptionsCount,
     budgetAllocations,
     recentTransactions,
     complianceResult,
   ] = await Promise.all([
     getFinancialSummary(user.teamId),
-    prisma.approval.count({
+    prisma.transaction.count({
       where: {
         teamId: user.teamId,
-        status: 'PENDING',
+        status: 'EXCEPTION',
+        deletedAt: null,
       },
     }),
     prisma.budgetAllocation.findMany({
@@ -252,19 +254,19 @@ export default async function DashboardPage() {
           />
 
           <KpiCard
-            title="Pending Approvals"
-            value={pendingApprovalsCount}
-            subtitle={pendingApprovalsCount === 1 ? 'transaction' : 'transactions'}
+            title="Exceptions"
+            value={exceptionsCount}
+            subtitle={exceptionsCount === 1 ? 'transaction' : 'transactions'}
             icon={Clock}
             trend={
-              pendingApprovalsCount > 0
+              exceptionsCount > 0
                 ? {
-                    value: 'Requires review',
+                    value: 'Review required',
                   }
                 : undefined
             }
             badge={
-              pendingApprovalsCount > 0
+              exceptionsCount > 0
                 ? {
                     label: 'Action Needed',
                     variant: 'warning',
@@ -299,7 +301,7 @@ export default async function DashboardPage() {
           />
         </div>
 
-        {/* Middle Grid - Budget Performance + Quick Actions/Approvals */}
+        {/* Middle Grid - Budget Performance + Quick Actions/Exceptions */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
           {/* Budget Performance - 8 cols on desktop */}
           <div className="lg:col-span-8">
@@ -311,29 +313,31 @@ export default async function DashboardPage() {
             {/* Quick Actions */}
             <QuickActionsCard isTreasurer={isTreasurer} />
 
-            {/* Pending Approvals Card (if any) */}
-            {pendingApprovalsCount > 0 && (
+            {/* Validation Compliance Analytics */}
+            <ValidationComplianceCard />
+
+            {/* Exceptions Card (if any) */}
+            {exceptionsCount > 0 && (
               <Card className="border-0 shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    Approvals Needed
+                    Exceptions Need Review
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <p className="text-2xl font-bold text-golden">{pendingApprovalsCount}</p>
+                    <p className="text-2xl font-bold text-golden">{exceptionsCount}</p>
                     <p className="text-sm text-navy/60">
-                      {pendingApprovalsCount === 1 ? 'transaction' : 'transactions'} awaiting
-                      review
+                      {exceptionsCount === 1 ? 'transaction' : 'transactions'} flagged by validation rules
                     </p>
                   </div>
                   <Button
                     asChild
                     className="w-full bg-golden hover:bg-golden/90 text-navy font-semibold"
                   >
-                    <Link href="/approvals">
-                      Review Approvals
+                    <Link href="/exceptions">
+                      Review Exceptions
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Link>
                   </Button>

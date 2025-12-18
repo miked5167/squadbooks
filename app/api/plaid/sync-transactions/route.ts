@@ -4,6 +4,7 @@ import { auth } from '@/lib/auth/server-auth';
 import { prisma } from '@/lib/prisma';
 import { plaidClient } from '@/lib/plaid/client';
 import { categorizeTransactions } from '@/lib/services/transaction-categorizer';
+import { validateImportedTransactions } from '@/lib/services/validate-imported-transactions';
 
 /**
  * Sync Transactions API - Fetch new transactions from connected Plaid account
@@ -191,7 +192,7 @@ export async function POST(request: Request) {
       return {
         teamId,
         type: isIncome ? 'INCOME' : 'EXPENSE',
-        status: 'DRAFT', // Synced transactions start as DRAFT for review
+        status: 'IMPORTED', // NEW: Imported transactions start as IMPORTED for validation
         amount: Math.abs(plaidTx.amount),
         categoryId,
         vendor: plaidTx.merchantName || plaidTx.name,
@@ -242,6 +243,11 @@ export async function POST(request: Request) {
 
     logger.info(`Synced ${result.count} new transactions for team ${teamId}`);
 
+    // Run validation on imported transactions (async, don't block response)
+    validateImportedTransactions(teamId).catch((error) => {
+      logger.error('Failed to validate imported transactions:', error);
+    });
+
     return NextResponse.json({
       success: true,
       imported: result.count,
@@ -249,7 +255,7 @@ export async function POST(request: Request) {
       total: transactionsWithCategories.length,
       message: `Successfully synced ${result.count} new transaction(s)${
         existingPlaidIds.size > 0 ? `, skipped ${existingPlaidIds.size} existing` : ''
-      }`,
+      }. Validation running in background.`,
     });
   } catch (error) {
     logger.error('Sync transactions error', error as Error);

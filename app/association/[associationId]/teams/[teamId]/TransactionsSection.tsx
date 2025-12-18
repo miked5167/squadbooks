@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 type TransactionType = 'all' | 'EXPENSE' | 'INCOME'
-type TransactionStatus = 'all' | 'PENDING' | 'APPROVED' | 'REJECTED'
+type TransactionStatus = 'all' | 'PENDING' | 'VALIDATED' | 'REJECTED'
 
 interface Transaction {
   id: string
@@ -30,7 +30,7 @@ interface TransactionsSectionProps {
 function TransactionRow({ transaction }: { transaction: Transaction }) {
   const isIncome = transaction.type === 'INCOME'
   const statusColors = {
-    APPROVED: 'bg-green-100 text-green-800',
+    VALIDATED: 'bg-green-100 text-green-800',
     PENDING: 'bg-yellow-100 text-yellow-800',
     REJECTED: 'bg-red-100 text-red-800',
   }
@@ -138,9 +138,9 @@ export function TransactionsSection({ transactions }: TransactionsSectionProps) 
           >
             <TabsList>
               <TabsTrigger value="all">All Status</TabsTrigger>
-              <TabsTrigger value="PENDING">Pending</TabsTrigger>
-              <TabsTrigger value="APPROVED">Approved</TabsTrigger>
-              <TabsTrigger value="REJECTED">Rejected</TabsTrigger>
+              <TabsTrigger value="PENDING">PENDING</TabsTrigger>
+              <TabsTrigger value="VALIDATED">VALIDATED</TabsTrigger>
+              <TabsTrigger value="REJECTED">REJECTED</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>

@@ -119,14 +119,28 @@ function TeamFinancialRow({
   const percentUsed = team.budgetUsedPercent
 
   let percentColor = 'text-green-600'
-  let statusBadgeColor = 'bg-green-100 text-green-800'
+
+  // Map health status to badge colors
+  const healthStatusColors: Record<string, string> = {
+    healthy: 'bg-green-100 text-green-800',
+    needs_attention: 'bg-yellow-100 text-yellow-800',
+    at_risk: 'bg-red-100 text-red-800',
+  }
+
+  // Map health status to labels
+  const healthStatusLabels: Record<string, string> = {
+    healthy: 'Healthy',
+    needs_attention: 'Needs Attention',
+    at_risk: 'At Risk',
+  }
+
+  const statusBadgeColor = healthStatusColors[team.healthStatus] || 'bg-gray-100 text-gray-800'
+  const statusLabel = healthStatusLabels[team.healthStatus] || team.healthStatus
 
   if (percentUsed >= 90) {
     percentColor = 'text-red-600'
-    statusBadgeColor = 'bg-red-100 text-red-800'
   } else if (percentUsed >= 70) {
     percentColor = 'text-yellow-600'
-    statusBadgeColor = 'bg-yellow-100 text-yellow-800'
   }
 
   const remaining = team.budget - team.spent
@@ -140,8 +154,8 @@ function TeamFinancialRow({
           <div className="flex flex-col">
             <span className="font-semibold text-gray-900">{team.name}</span>
             <div className="flex gap-2 mt-1">
-              {team.level && (
-                <span className="text-xs text-gray-500">{team.level}</span>
+              {team.competitiveLevel && (
+                <span className="text-xs text-gray-500">Level: {team.competitiveLevel}</span>
               )}
               {team.division && (
                 <span className="text-xs text-gray-500">Division: {team.division}</span>
@@ -175,7 +189,7 @@ function TeamFinancialRow({
               <span className="text-sm font-semibold text-gray-900">{team.healthScore}/100</span>
               {team.healthStatus && (
                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium mt-1 ${statusBadgeColor}`}>
-                  {team.healthStatus.toUpperCase()}
+                  {statusLabel}
                 </span>
               )}
             </div>
@@ -184,9 +198,9 @@ function TeamFinancialRow({
           )}
         </td>
         <td className="px-4 py-4 text-center">
-          {team.pendingApprovals > 0 ? (
+          {team.pendingReviews > 0 ? (
             <span className="inline-flex items-center justify-center w-7 h-7 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold">
-              {team.pendingApprovals}
+              {team.pendingReviews}
             </span>
           ) : (
             <span className="text-gray-400">-</span>
@@ -321,7 +335,7 @@ export default function AssociationFinancialsPage({ params }: PageProps) {
           <SummaryCard
             label="Pending Amount"
             amount={summary.pendingAmount}
-            subtext={summary.pendingAmount > 0 ? 'Awaiting approval' : 'No pending items'}
+            subtext={summary.pendingAmount > 0 ? 'Awaiting review' : 'No pending items'}
             colorClass="text-yellow-600"
           />
         </div>
@@ -389,7 +403,7 @@ export default function AssociationFinancialsPage({ params }: PageProps) {
                         Health
                       </th>
                       <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Pending
+                        Pending Reviews
                       </th>
                       <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Receipts

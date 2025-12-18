@@ -35,7 +35,7 @@ export interface OverviewData {
       spent: number | null
       remaining: number | null
       percentUsed: number | null
-      pendingApprovals: number | null
+      pendingReviews: number | null
       missingReceipts: number | null
       snapshotAt: Date
     } | null
@@ -92,7 +92,7 @@ export async function getOverviewData(associationId: string): Promise<OverviewDa
           select: {
             id: true,
             name: true,
-            level: true,
+            competitiveLevel: true,
             budgetTotal: true,
           },
         },
@@ -109,7 +109,7 @@ export async function getOverviewData(associationId: string): Promise<OverviewDa
             spent: true,
             remaining: true,
             percentUsed: true,
-            pendingApprovals: true,
+            pendingReviews: true,
             missingReceipts: true,
             snapshotAt: true,
           },
@@ -121,18 +121,39 @@ export async function getOverviewData(associationId: string): Promise<OverviewDa
     })
 
     // Transform the data to include the latest snapshot
-    const teams = associationTeams.map(at => ({
-      id: at.id,
-      teamName: at.teamName,
-      division: at.division,
-      isActive: at.isActive,
-      treasurerName: at.treasurerName,
-      treasurerEmail: at.treasurerEmail,
-      connectedAt: at.connectedAt,
-      lastSyncedAt: at.lastSyncedAt,
-      team: at.team,
-      latestSnapshot: at.snapshots[0] || null,
-    }))
+    // Convert Decimal values to numbers for client components (required by Next.js)
+    const teams = associationTeams.map(at => {
+      const snapshot = at.snapshots[0] || null
+
+      return {
+        id: at.id,
+        teamName: at.teamName,
+        division: at.division,
+        isActive: at.isActive,
+        treasurerName: at.treasurerName,
+        treasurerEmail: at.treasurerEmail,
+        connectedAt: at.connectedAt,
+        lastSyncedAt: at.lastSyncedAt,
+        team: at.team ? {
+          id: at.team.id,
+          name: at.team.name,
+          competitiveLevel: at.team.competitiveLevel,
+          budgetTotal: Number(at.team.budgetTotal),
+        } : null,
+        latestSnapshot: snapshot ? {
+          id: snapshot.id,
+          healthStatus: snapshot.healthStatus,
+          healthScore: snapshot.healthScore,
+          budgetTotal: snapshot.budgetTotal !== null ? Number(snapshot.budgetTotal) : null,
+          spent: snapshot.spent !== null ? Number(snapshot.spent) : null,
+          remaining: snapshot.remaining !== null ? Number(snapshot.remaining) : null,
+          percentUsed: snapshot.percentUsed !== null ? Number(snapshot.percentUsed) : null,
+          pendingReviews: snapshot.pendingReviews,
+          missingReceipts: snapshot.missingReceipts,
+          snapshotAt: snapshot.snapshotAt,
+        } : null,
+      }
+    })
 
     // Fetch recent alerts (last 7 days, up to 10 alerts)
     const sevenDaysAgo = new Date()

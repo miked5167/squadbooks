@@ -20,8 +20,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { toast } from 'sonner'
 import { CheckCircle, Loader2, AlertCircle } from 'lucide-react'
+import { usePermissions } from '@/lib/hooks/use-permissions'
+import { Permission } from '@/lib/permissions/permissions'
 
 interface Transaction {
   id: string
@@ -62,12 +65,16 @@ export function TransactionReviewModal({
   onOpenChange,
   onComplete,
 }: TransactionReviewModalProps) {
+  const { hasPermission } = usePermissions()
   const [vendor, setVendor] = useState('')
   const [description, setDescription] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingCategories, setLoadingCategories] = useState(false)
+
+  // Check permissions
+  const canEditTransaction = hasPermission(Permission.EDIT_TRANSACTION)
 
   // Load categories on mount
   useEffect(() => {
@@ -280,6 +287,15 @@ export function TransactionReviewModal({
           </div>
         </div>
 
+        {!canEditTransaction && (
+          <Alert className="mt-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              You do not have permission to approve transactions. Contact your treasurer for assistance.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <DialogFooter>
           <Button
             variant="outline"
@@ -290,7 +306,7 @@ export function TransactionReviewModal({
           </Button>
           <Button
             onClick={handleApprove}
-            disabled={loading || !vendor.trim() || !categoryId}
+            disabled={loading || !vendor.trim() || !categoryId || !canEditTransaction}
             className="bg-meadow hover:bg-meadow/90 text-white"
           >
             {loading ? (

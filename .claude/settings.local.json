@@ -283,7 +283,11 @@
       "Bash(node:*)",
       "Bash(tee:*)",
       "Bash(npm run build:*)",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(supabase --version:*)",
+      "Bash(if exist .env copy .env .env.backup.temp)",
+      "Bash(npx vitest:*)",
+      "Bash(npx cross-env FORCE_RESEED=true npm run seed:demo:*)"
     ],
     "deny": [],
     "ask": []

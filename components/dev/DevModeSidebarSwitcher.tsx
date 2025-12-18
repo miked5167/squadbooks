@@ -11,6 +11,7 @@ import {
   FileText,
   Sparkles,
   Loader2,
+  CheckCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -288,26 +289,131 @@ export function DevModeSidebarSwitcher() {
   }
 
   const resetTeamOnboarding = async () => {
+    console.log('═══════════════════════════════════════════════════')
+    console.log('[CLIENT-TRACE-001] Reset Team Onboarding button clicked')
+    console.log('═══════════════════════════════════════════════════')
+
     // Don't allow resetting if viewing as association admin
+    console.log('[CLIENT-TRACE-002] Checking if user is association admin...')
+    console.log('[CLIENT-TRACE-003] currentUser.isAssociation:', currentUser.isAssociation)
     if (currentUser.isAssociation) {
+      console.log('[CLIENT-TRACE-004] User is association admin - REJECTED')
       toast.error('Please switch to a team user first')
       return
     }
-    if (!confirm('This will delete the team and all its data. You can then go through team onboarding again. Continue?')) return
+
+    console.log('[CLIENT-TRACE-005] User is not association admin - proceeding')
+    console.log('[CLIENT-TRACE-006] Showing confirmation dialog...')
+
+    if (!confirm('This will delete the team and all its data. You can then go through team onboarding again. Continue?')) {
+      console.log('[CLIENT-TRACE-007] User cancelled confirmation dialog')
+      return
+    }
+
+    console.log('[CLIENT-TRACE-008] User confirmed - proceeding')
     setLoading('reset-team-onboarding')
+
     try {
+      // Extract teamId from user ID (format: {teamId}-{role})
+      console.log('[CLIENT-TRACE-009] Extracting teamId from currentUser.id:', currentUser.id)
       const teamId = currentUser.id.split('-')[0]
-      const response = await fetch(`/api/dev/reset-team-onboarding?teamId=${teamId}`, {
+
+      console.log('[CLIENT-TRACE-010] Extracted teamId:', teamId)
+      console.log('[CLIENT-TRACE-011] TeamId length:', teamId?.length)
+      console.log('[CLIENT-TRACE-012] Full current user object:', JSON.stringify(currentUser, null, 2))
+
+      // Validate teamId exists and has reasonable length
+      if (!teamId || teamId.length < 10) {
+        console.error('[CLIENT-TRACE-013] Invalid teamId - REJECTED')
+        console.error('[CLIENT-TRACE-014] teamId value:', teamId)
+        console.error('[CLIENT-TRACE-015] teamId length:', teamId?.length)
+        toast.error('Invalid team ID. Please select a different team user.')
+        setLoading(null)
+        return
+      }
+
+      console.log('[CLIENT-TRACE-016] TeamId validation passed')
+      const url = `/api/dev/reset-team-onboarding?teamId=${teamId}`
+      console.log('[CLIENT-TRACE-017] Calling DELETE:', url)
+
+      console.log('[CLIENT-TRACE-018] About to call fetch...')
+
+      const response = await fetch(url, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
+
+      console.log('[CLIENT-TRACE-019] Fetch completed')
+      console.log('[CLIENT-TRACE-020] Response received')
+      console.log('[CLIENT-TRACE-021] Response status:', response.status)
+      console.log('[CLIENT-TRACE-022] Response ok:', response.ok)
+      console.log('[CLIENT-TRACE-023] Response status text:', response.statusText)
+      console.log('[CLIENT-TRACE-024] Response headers:', Object.fromEntries(response.headers.entries()))
+
+      console.log('[CLIENT-TRACE-025] Parsing response JSON...')
       const data = await response.json()
+      console.log('[CLIENT-TRACE-026] Response data parsed')
+      console.log('[CLIENT-TRACE-027] Response data:', JSON.stringify(data, null, 2))
+
       if (response.ok) {
-        toast.success(data.message || 'Team reset successfully')
+        console.log('[CLIENT-TRACE-028] Response is OK - SUCCESS')
+        toast.success(data.message || 'Team reset successfully. Redirecting to onboarding...')
+        console.log('[CLIENT-TRACE-029] Success toast shown')
+        console.log('[CLIENT-TRACE-030] Redirecting to /onboarding in 1 second...')
         setTimeout(() => {
+          console.log('[CLIENT-TRACE-031] Executing redirect now')
           window.location.href = '/onboarding'
         }, 1000)
       } else {
-        toast.error(data.error || 'Failed to reset team')
+        console.error('═══════════════════════════════════════════════════')
+        console.error('[CLIENT-ERROR] Reset failed')
+        console.error('[CLIENT-ERROR] Status:', response.status)
+        console.error('[CLIENT-ERROR] Error:', data.error)
+        console.error('[CLIENT-ERROR] Details:', data.details)
+        console.error('[CLIENT-ERROR] Error type:', data.errorType)
+        console.error('[CLIENT-ERROR] Full response data:', JSON.stringify(data, null, 2))
+        console.error('═══════════════════════════════════════════════════')
+        toast.error(data.error || 'Failed to reset team', {
+          description: data.details || 'Check the console for more details',
+          duration: 5000,
+        })
+      }
+    } catch (error) {
+      console.error('═══════════════════════════════════════════════════')
+      console.error('[CLIENT-EXCEPTION] Reset Team Onboarding - Exception caught')
+      console.error('[CLIENT-EXCEPTION] Error:', error)
+      console.error('[CLIENT-EXCEPTION] Error type:', error instanceof Error ? 'Error instance' : typeof error)
+      console.error('[CLIENT-EXCEPTION] Error name:', error instanceof Error ? error.name : 'N/A')
+      console.error('[CLIENT-EXCEPTION] Error message:', error instanceof Error ? error.message : String(error))
+      console.error('[CLIENT-EXCEPTION] Error stack:', error instanceof Error ? error.stack : 'N/A')
+      console.error('═══════════════════════════════════════════════════')
+      toast.error('An error occurred while resetting the team', {
+        description: error instanceof Error ? error.message : 'Unknown error',
+        duration: 5000,
+      })
+    } finally {
+      console.log('[CLIENT-TRACE-099] Finally block - cleaning up')
+      setLoading(null)
+    }
+  }
+
+  const setupBudgetWorkflow = async () => {
+    setLoading('budget-workflow')
+    try {
+      const response = await fetch('/api/dev/setup-budget-workflow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      const data = await response.json()
+      if (response.ok) {
+        toast.success(data.message || 'Budget workflow setup complete', {
+          description: data.description || 'Teams ready for demo',
+          duration: 5000,
+        })
+      } else {
+        toast.error(data.error || 'Failed to setup workflow')
       }
     } catch (error) {
       toast.error('An error occurred')
@@ -483,6 +589,21 @@ export function DevModeSidebarSwitcher() {
                     <FileText className="h-3 w-3 text-blue-400" />
                   )}
                   <span className="text-xs text-slate-200">Gen Reports</span>
+                </div>
+              </button>
+
+              <button
+                onClick={setupBudgetWorkflow}
+                disabled={loading === 'budget-workflow'}
+                className="w-full px-2 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 disabled:opacity-50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  {loading === 'budget-workflow' ? (
+                    <Loader2 className="h-3 w-3 animate-spin text-cyan-400" />
+                  ) : (
+                    <CheckCircle className="h-3 w-3 text-cyan-400" />
+                  )}
+                  <span className="text-xs text-slate-200">Budget Approval Flow</span>
                 </div>
               </button>
             </div>

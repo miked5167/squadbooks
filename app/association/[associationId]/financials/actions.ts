@@ -28,13 +28,13 @@ export type AssociationFinancialsResponse = {
     id: string
     name: string
     division: string | null
-    level: string | null
+    competitiveLevel: string | null
     budget: number
     spent: number
     budgetUsedPercent: number
     healthScore: number | null
     healthStatus: string | null
-    pendingApprovals: number
+    pendingReviews: number
     missingReceipts: number
   }>
 }
@@ -87,7 +87,7 @@ export async function getAssociationFinancials(
         team: {
           select: {
             id: true,
-            level: true,
+            competitiveLevel: true,
             budgetTotal: true,
           },
         },
@@ -102,7 +102,7 @@ export async function getAssociationFinancials(
             budgetTotal: true,
             spent: true,
             percentUsed: true,
-            pendingApprovals: true,
+            pendingReviews: true,
             missingReceipts: true,
           },
         },
@@ -119,11 +119,11 @@ export async function getAssociationFinancials(
       .map(at => at.team?.id)
       .filter(Boolean) as string[]
 
-    // Get all APPROVED transactions for spent calculation
+    // Get all VALIDATED transactions for spent calculation
     const approvedTransactions = await prisma.transaction.findMany({
       where: {
         teamId: { in: teamInternalIds },
-        status: 'APPROVED',
+        status: 'VALIDATED',
         type: 'EXPENSE',
       },
       select: {
@@ -225,13 +225,13 @@ export async function getAssociationFinancials(
           id: at.id,
           name: at.teamName,
           division: at.division,
-          level: at.team?.level || null,
+          competitiveLevel: at.team?.competitiveLevel || null,
           budget,
           spent: teamSpent,
           budgetUsedPercent,
           healthScore: snapshot?.healthScore || null,
           healthStatus: snapshot?.healthStatus || null,
-          pendingApprovals: snapshot?.pendingApprovals || 0,
+          pendingReviews: snapshot?.pendingReviews || 0,
           missingReceipts: snapshot?.missingReceipts || 0,
         }
       })

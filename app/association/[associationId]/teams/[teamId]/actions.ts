@@ -20,7 +20,7 @@ export interface SnapshotHistory {
   healthStatus: string
   healthScore: number | null
   percentUsed: number | null
-  pendingApprovals: number | null
+  pendingReviews: number | null
   missingReceipts: number | null
 }
 
@@ -57,7 +57,7 @@ export interface TeamDetailData {
     spent: number | null
     remaining: number | null
     percentUsed: number | null
-    pendingApprovals: number | null
+    pendingReviews: number | null
     missingReceipts: number | null
     redFlags: any | null
     snapshotAt: Date
@@ -187,7 +187,7 @@ export async function getTeamDetailData(
             spent: true,
             remaining: true,
             percentUsed: true,
-            pendingApprovals: true,
+            pendingReviews: true,
             missingReceipts: true,
             redFlags: true,
             snapshotAt: true,
@@ -390,7 +390,7 @@ export async function getTeamDetailData(
         healthStatus: true,
         healthScore: true,
         percentUsed: true,
-        pendingApprovals: true,
+        pendingReviews: true,
         missingReceipts: true,
       },
     })
@@ -433,8 +433,8 @@ export async function getTeamDetailData(
         id: `pending-${txn.id}`,
         teamId: associationTeam.id,
         teamName: associationTeam.teamName,
-        type: 'PENDING_APPROVAL',
-        message: `Pending approval for ${txn.vendor} - $${Number(txn.amount).toLocaleString()}`,
+        type: 'PENDING_REVIEW',
+        message: `Pending review for ${txn.vendor} - $${Number(txn.amount).toLocaleString()}`,
         severity: 'MEDIUM',
         createdAt: txn.transactionDate,
         link: `/association/${associationId}/teams/${teamId}`,
@@ -443,7 +443,7 @@ export async function getTeamDetailData(
 
     // 3. Missing receipts
     const missingReceiptTxns = allTransactions
-      .filter(t => t.missingReceipt && t.status === 'APPROVED')
+      .filter(t => t.missingReceipt && (t.status === 'PENDING' || t.status === 'VALIDATED'))
       .slice(0, 5)
     for (const txn of missingReceiptTxns) {
       alerts.push({
@@ -460,7 +460,7 @@ export async function getTeamDetailData(
 
     // 4. Snapshot-based alerts
     if (latestSnapshot) {
-      if (latestSnapshot.healthStatus === 'critical') {
+      if (latestSnapshot.healthStatus === 'at_risk') {
         alerts.push({
           id: `health-critical-${associationTeam.id}`,
           teamId: associationTeam.id,

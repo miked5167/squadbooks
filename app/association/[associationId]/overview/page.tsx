@@ -13,15 +13,22 @@ interface PageProps {
 function HealthBadge({ status, score }: { status: string; score: number | null }) {
   const statusColors = {
     healthy: 'bg-green-100 text-green-800 border-green-200',
-    warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    critical: 'bg-red-100 text-red-800 border-red-200',
+    needs_attention: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    at_risk: 'bg-red-100 text-red-800 border-red-200',
+  }
+
+  const statusLabels = {
+    healthy: 'Healthy',
+    needs_attention: 'Needs Attention',
+    at_risk: 'At Risk',
   }
 
   const color = statusColors[status as keyof typeof statusColors] || statusColors.healthy
+  const label = statusLabels[status as keyof typeof statusLabels] || status
 
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border ${color}`}>
-      <span className="font-semibold uppercase text-xs">{status}</span>
+      <span className="font-semibold uppercase text-xs">{label}</span>
       {score !== null && (
         <span className="text-sm font-medium">{score}/100</span>
       )}
@@ -67,11 +74,11 @@ function TeamCard({ team, associationId }: { team: any; associationId: string })
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-xl font-bold text-gray-900">{team.teamName}</h3>
+            {team.team?.competitiveLevel && (
+              <p className="text-sm text-gray-500">Level: {team.team.competitiveLevel}</p>
+            )}
             {team.division && (
               <p className="text-sm text-gray-600">Division: {team.division}</p>
-            )}
-            {team.team && (
-              <p className="text-sm text-gray-500">Level: {team.team.level}</p>
             )}
           </div>
           {snapshot && (
@@ -121,12 +128,12 @@ function TeamCard({ team, associationId }: { team: any; associationId: string })
 
             {/* Alerts */}
             <div className="flex gap-4 pt-3 border-t border-gray-100">
-              {snapshot.pendingApprovals !== null && snapshot.pendingApprovals > 0 && (
+              {snapshot.pendingReviews !== null && snapshot.pendingReviews > 0 && (
                 <div className="flex items-center gap-2 text-sm">
                   <span className="inline-flex items-center justify-center w-6 h-6 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold">
-                    {snapshot.pendingApprovals}
+                    {snapshot.pendingReviews}
                   </span>
-                  <span className="text-gray-600">Pending Approval{snapshot.pendingApprovals !== 1 ? 's' : ''}</span>
+                  <span className="text-gray-600">Pending Review{snapshot.pendingReviews !== 1 ? 's' : ''}</span>
                 </div>
               )}
               {snapshot.missingReceipts !== null && snapshot.missingReceipts > 0 && (
@@ -238,15 +245,15 @@ export default async function AssociationOverviewPage({ params }: PageProps) {
             </p>
           </div>
           <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">Warning</p>
+            <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">Needs Attention</p>
             <p className="text-3xl font-bold text-yellow-600">
-              {teams.filter(t => t.latestSnapshot?.healthStatus === 'warning').length}
+              {teams.filter(t => t.latestSnapshot?.healthStatus === 'needs_attention').length}
             </p>
           </div>
           <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">Critical</p>
+            <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">At Risk</p>
             <p className="text-3xl font-bold text-red-600">
-              {teams.filter(t => t.latestSnapshot?.healthStatus === 'critical').length}
+              {teams.filter(t => t.latestSnapshot?.healthStatus === 'at_risk').length}
             </p>
           </div>
         </div>

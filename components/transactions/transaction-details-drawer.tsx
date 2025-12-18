@@ -2,7 +2,7 @@
 
 /**
  * Transaction Details Drawer Component
- * Shows detailed information about a specific transaction including approval history
+ * Shows detailed information about a specific transaction including review history
  */
 
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -27,7 +27,7 @@ interface Approval {
 interface Transaction {
   id: string
   type: 'INCOME' | 'EXPENSE'
-  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
+  status: 'IMPORTED' | 'VALIDATED' | 'EXCEPTION' | 'RESOLVED' | 'LOCKED' | 'DRAFT' | 'PENDING' | 'APPROVED' | 'APPROVED_AUTOMATIC' | 'REJECTED'
   amount: string | number
   vendor: string
   description: string | null
@@ -60,6 +60,38 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
     ? new Date(transaction.transactionDate)
     : transaction.transactionDate
 
+  /**
+   * Sanitize transaction description by removing approval-first language
+   * This handles legacy data that may contain old semantics
+   */
+  function sanitizeDescription(description: string | null | undefined): string | null {
+    if (!description) return null
+
+    // Remove approval-first language patterns
+    const approvalPatterns = [
+      /\s*-?\s*pending\s+expense\s+awaiting\s+approval\s*/gi,
+      /\s*-?\s*awaiting\s+approval\s*/gi,
+      /\s*-?\s*pending\s+approval\s*/gi,
+      /\s*-?\s*needs\s+approval\s*/gi,
+      /\s*-?\s*requires\s+approval\s*/gi,
+    ]
+
+    let sanitized = description
+    approvalPatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '')
+    })
+
+    // Clean up any double spaces or leading/trailing spaces
+    sanitized = sanitized.replace(/\s+/g, ' ').trim()
+
+    // If the description is now empty or just punctuation, return null
+    if (!sanitized || /^[\s\-,.:;]+$/.test(sanitized)) {
+      return null
+    }
+
+    return sanitized
+  }
+
   // Filter and sort approvals
   const approvedApprovals = (transaction.approvals || [])
     .filter(a => a.status === 'APPROVED')
@@ -76,9 +108,17 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
 
   function getStatusBadge(status: string) {
     const variants = {
+      // New validation-first statuses
+      IMPORTED: { variant: 'secondary' as const, className: 'bg-gray-100 text-gray-700', label: 'Imported' },
+      VALIDATED: { variant: 'outline' as const, className: 'bg-meadow/10 text-meadow border-meadow/30', label: 'Validated' },
+      EXCEPTION: { variant: 'outline' as const, className: 'bg-golden/10 text-golden border-golden/30', label: 'Exception' },
+      RESOLVED: { variant: 'outline' as const, className: 'bg-blue-100 text-blue-700 border-blue-300', label: 'Resolved' },
+      LOCKED: { variant: 'outline' as const, className: 'bg-purple-100 text-purple-700 border-purple-300', label: 'Locked' },
+      // Legacy statuses (backward compatibility)
       DRAFT: { variant: 'secondary' as const, className: 'bg-gray-100 text-gray-700', label: 'Draft' },
-      PENDING: { variant: 'outline' as const, className: 'bg-golden/10 text-golden border-golden/30', label: 'Pending Approval' },
-      APPROVED: { variant: 'outline' as const, className: 'bg-meadow/10 text-meadow border-meadow/30', label: 'Approved' },
+      PENDING: { variant: 'outline' as const, className: 'bg-golden/10 text-golden border-golden/30', label: 'Pending Review' },
+      APPROVED: { variant: 'outline' as const, className: 'bg-meadow/10 text-meadow border-meadow/30', label: 'Validated' },
+      APPROVED_AUTOMATIC: { variant: 'outline' as const, className: 'bg-meadow/10 text-meadow border-meadow/30', label: 'Auto-Validated' },
       REJECTED: { variant: 'outline' as const, className: 'bg-red-100 text-red-700 border-red-300', label: 'Rejected' },
     }
     return variants[status as keyof typeof variants] || variants.DRAFT
@@ -150,10 +190,10 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                   })}
                 </span>
               </div>
-              {transaction.description && (
+              {sanitizeDescription(transaction.description) && (
                 <div className="pt-2 border-t">
                   <span className="text-sm text-navy/60 block mb-1">Description</span>
-                  <p className="text-sm text-navy">{transaction.description}</p>
+                  <p className="text-sm text-navy">{sanitizeDescription(transaction.description)}</p>
                 </div>
               )}
             </div>
@@ -179,21 +219,21 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
             </div>
           </div>
 
-          {/* Approvals Section */}
+          {/* Review History Section */}
           {hasApprovals && (
             <div>
               <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <CheckCircle className="w-4 h-4" />
-                Approvals
+                Review History
                 {approvedApprovals.length > 0 && (
                   <Badge variant="outline" className="bg-meadow/10 text-meadow border-meadow/30 ml-auto">
-                    {approvedApprovals.length} Approved
+                    {approvedApprovals.length} Validated
                   </Badge>
                 )}
               </h3>
 
               <div className="space-y-3">
-                {/* Approved Approvals */}
+                {/* Validated Reviews */}
                 {approvedApprovals.map((approval, index) => (
                   <div key={approval.id} className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <div className="flex items-start gap-3">
@@ -206,10 +246,10 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                             <p className="font-semibold text-navy">
                               {approval.approver.name}
                               {index === 0 && approvedApprovals.length > 1 && (
-                                <span className="ml-2 text-xs text-green-600 font-normal">(1st Approval)</span>
+                                <span className="ml-2 text-xs text-green-600 font-normal">(1st Review)</span>
                               )}
                               {index === 1 && approvedApprovals.length > 1 && (
-                                <span className="ml-2 text-xs text-green-600 font-normal">(2nd Approval)</span>
+                                <span className="ml-2 text-xs text-green-600 font-normal">(2nd Review)</span>
                               )}
                             </p>
                             <p className="text-xs text-navy/60 capitalize">
@@ -217,7 +257,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                             </p>
                           </div>
                           <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300 flex-shrink-0">
-                            APPROVED
+                            VALIDATED
                           </Badge>
                         </div>
                         {approval.approvedAt && (
@@ -245,7 +285,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                   </div>
                 ))}
 
-                {/* Pending Approvals */}
+                {/* Pending Reviews */}
                 {pendingApprovals.map((approval) => (
                   <div key={approval.id} className="bg-golden/5 border border-golden/30 rounded-lg p-4">
                     <div className="flex items-start gap-3">
@@ -264,13 +304,13 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                             PENDING
                           </Badge>
                         </div>
-                        <p className="text-xs text-navy/60">Awaiting approval...</p>
+                        <p className="text-xs text-navy/60">Awaiting review...</p>
                       </div>
                     </div>
                   </div>
                 ))}
 
-                {/* Rejected Approvals */}
+                {/* Rejected Reviews */}
                 {rejectedApprovals.map((approval) => (
                   <div key={approval.id} className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-start gap-3">

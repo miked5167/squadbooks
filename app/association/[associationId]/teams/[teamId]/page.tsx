@@ -14,15 +14,22 @@ interface PageProps {
 function HealthBadge({ status, score }: { status: string; score: number | null }) {
   const statusColors = {
     healthy: 'bg-green-100 text-green-800 border-green-200',
-    warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    critical: 'bg-red-100 text-red-800 border-red-200',
+    needs_attention: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    at_risk: 'bg-red-100 text-red-800 border-red-200',
+  }
+
+  const statusLabels = {
+    healthy: 'Healthy',
+    needs_attention: 'Needs Attention',
+    at_risk: 'At Risk',
   }
 
   const color = statusColors[status as keyof typeof statusColors] || statusColors.healthy
+  const label = statusLabels[status as keyof typeof statusLabels] || status
 
   return (
     <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border ${color}`}>
-      <span className="font-semibold uppercase text-sm">{status}</span>
+      <span className="font-semibold text-sm">{label}</span>
       {score !== null && (
         <span className="text-lg font-bold">{score}/100</span>
       )}
@@ -105,7 +112,7 @@ function PendingTransactionCard({ transaction }: { transaction: any }) {
             ${Number(transaction.amount).toLocaleString()}
           </p>
           <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium mt-1">
-            Pending
+            PENDING
           </span>
         </div>
       </div>
@@ -149,9 +156,17 @@ function AlertCard({ alert, associationId }: { alert: NormalizedAlert; associati
 function SnapshotHistoryRow({ snapshot }: { snapshot: SnapshotHistory }) {
   const healthColors = {
     healthy: 'text-green-600',
-    warning: 'text-yellow-600',
-    critical: 'text-red-600',
+    needs_attention: 'text-yellow-600',
+    at_risk: 'text-red-600',
   }
+
+  const statusLabels = {
+    healthy: 'Healthy',
+    needs_attention: 'Needs Attention',
+    at_risk: 'At Risk',
+  }
+
+  const label = statusLabels[snapshot.healthStatus as keyof typeof statusLabels] || snapshot.healthStatus
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50">
@@ -160,7 +175,7 @@ function SnapshotHistoryRow({ snapshot }: { snapshot: SnapshotHistory }) {
       </td>
       <td className="px-4 py-3">
         <span className={`text-sm font-medium ${healthColors[snapshot.healthStatus as keyof typeof healthColors] || 'text-gray-600'}`}>
-          {snapshot.healthStatus.toUpperCase()}
+          {label}
         </span>
       </td>
       <td className="px-4 py-3 text-sm text-gray-900">
@@ -171,16 +186,13 @@ function SnapshotHistoryRow({ snapshot }: { snapshot: SnapshotHistory }) {
       </td>
       <td className="px-4 py-3 text-sm text-gray-600">
         <div className="flex flex-col gap-1">
-          {snapshot.pendingApprovals !== null && snapshot.pendingApprovals > 0 && (
-            <span>{snapshot.pendingApprovals} pending</span>
+          {snapshot.pendingReviews !== null && snapshot.pendingReviews > 0 && (
+            <span>{snapshot.pendingReviews} pending</span>
           )}
           {snapshot.missingReceipts !== null && snapshot.missingReceipts > 0 && (
             <span>{snapshot.missingReceipts} receipts</span>
           )}
-          {snapshot.overspendAmount !== null && snapshot.overspendAmount > 0 && (
-            <span className="text-red-600">Overspend: ${Number(snapshot.overspendAmount).toLocaleString()}</span>
-          )}
-          {(!snapshot.pendingApprovals && !snapshot.missingReceipts && !snapshot.overspendAmount) && '-'}
+          {(!snapshot.pendingReviews && !snapshot.missingReceipts) && '-'}
         </div>
       </td>
     </tr>
@@ -227,7 +239,9 @@ export default async function TeamDetailPage({ params }: PageProps) {
               <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                 {associationTeam.team && (
                   <>
-                    <span className="font-medium">{associationTeam.team.level}</span>
+                    {associationTeam.team.competitiveLevel && (
+                      <span className="font-medium">Level: {associationTeam.team.competitiveLevel}</span>
+                    )}
                     {associationTeam.division && <span>Division: {associationTeam.division}</span>}
                     <span>{associationTeam.team.season}</span>
                   </>
@@ -336,11 +350,11 @@ export default async function TeamDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Pending Approvals */}
+        {/* Pending Reviews */}
         {pendingTransactions.length > 0 && (
           <div className="mb-8">
             <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              Pending Approvals
+              Pending Reviews
               <span className="inline-flex items-center justify-center w-7 h-7 bg-yellow-100 text-yellow-800 rounded-full text-sm font-bold">
                 {pendingTransactions.length}
               </span>

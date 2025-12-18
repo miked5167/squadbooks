@@ -14,19 +14,24 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-br from-navy via-navy-medium to-navy">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 relative">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 lg:pt-32 pb-32 lg:pb-40 relative">
           <div className="max-w-5xl mx-auto text-center">
             {/* Logo */}
-            <div className="mb-8 flex justify-center animate-slide-up-fade">
+            <div className="mb-4 flex justify-center animate-slide-up-fade">
               <Image
                 src="/huddlebooks-logo.png"
                 alt="HuddleBooks"
                 width={300}
                 height={300}
                 priority
-                className="w-48 md:w-64 h-auto"
+                className="w-48 md:w-64 h-auto mix-blend-lighten"
               />
             </div>
+
+            {/* Tagline */}
+            <p className="text-white/70 text-sm md:text-base italic mb-8 animate-slide-up-fade">
+              Where every dollar is validated — not just approved.
+            </p>
 
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-meadow/20 backdrop-blur-sm px-5 py-2.5 rounded-full text-meadow border border-meadow/30 text-sm font-medium mb-8 animate-slide-up-fade">
@@ -45,7 +50,7 @@ export default function Home() {
 
             {/* Subheadline */}
             <p className="text-lg md:text-xl lg:text-2xl text-white/80 mb-10 max-w-3xl mx-auto leading-relaxed">
-              HuddleBooks brings professional-grade financial controls and transparency to volunteer-run hockey — budgets, receipts, approvals, and reporting in one simple system.
+              HuddleBooks validates every transaction against a parent-approved budget, giving teams, parents, and associations clear visibility into how money is actually spent — all season long.
             </p>
 
             {/* CTAs */}
@@ -109,9 +114,9 @@ export default function Home() {
                 <div className="w-16 h-16 bg-golden/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-golden">
                   <span className="text-2xl font-bold text-golden">1</span>
                 </div>
-                <h3 className="text-xl font-bold text-navy mb-3">Track Every Dollar</h3>
+                <h3 className="text-xl font-bold text-navy mb-3">Approve the Budget Up Front</h3>
                 <p className="text-navy/70">
-                  Log expenses and income with receipt uploads. Every transaction is documented and categorized.
+                  Parents review and approve the season budget before spending begins. Everyone knows the plan — ice time, tournaments, equipment, and more.
                 </p>
               </div>
 
@@ -120,9 +125,9 @@ export default function Home() {
                 <div className="w-16 h-16 bg-golden/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-golden">
                   <span className="text-2xl font-bold text-golden">2</span>
                 </div>
-                <h3 className="text-xl font-bold text-navy mb-3">Dual Approval Controls</h3>
+                <h3 className="text-xl font-bold text-navy mb-3">Validate Spending Against the Budget</h3>
                 <p className="text-navy/70">
-                  Built-in approval workflows ensure multiple eyes on every expense. Prevent fraud and errors.
+                  As transactions occur, receipts and spending are logged and automatically validated against your approved budget. Catch issues early, not at season-end.
                 </p>
               </div>
 
@@ -131,9 +136,9 @@ export default function Home() {
                 <div className="w-16 h-16 bg-golden/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-golden">
                   <span className="text-2xl font-bold text-golden">3</span>
                 </div>
-                <h3 className="text-xl font-bold text-navy mb-3">Share With Parents</h3>
+                <h3 className="text-xl font-bold text-navy mb-3">Maintain Transparency All Season</h3>
                 <p className="text-navy/70">
-                  Generate reports instantly. Build trust through complete transparency with all families.
+                  Parents, treasurers, and associations see exactly how money is spent — all season long. No surprises, no guesswork, just trust.
                 </p>
               </div>
             </div>

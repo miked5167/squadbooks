@@ -365,7 +365,7 @@ export async function POST(request: NextRequest) {
           amount,
           categoryId: anyCat.id,
           vendor: randomChoice([...VENDORS.retail, ...VENDORS.gas]),
-          description: 'Pending expense awaiting approval',
+          description: 'Expense requiring validation',
           transactionDate: txDate,
           receiptUrl:
             amount >= MANDATORY_RECEIPT_THRESHOLD

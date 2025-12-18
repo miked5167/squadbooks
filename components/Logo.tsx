@@ -49,9 +49,15 @@ export function Logo({ variant = 'icon', className, iconClassName }: LogoProps) 
   }
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      <Logo variant="icon" iconClassName={iconClassName} />
-      <span className="text-xl font-bold text-white">HuddleBooks</span>
+    <div className={cn('relative', className)}>
+      <Image
+        src="/huddlebooks-logo.png"
+        alt="HuddleBooks"
+        width={200}
+        height={60}
+        className="w-auto h-10"
+        priority
+      />
     </div>
   )
 }

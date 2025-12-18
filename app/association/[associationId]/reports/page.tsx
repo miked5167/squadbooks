@@ -567,9 +567,9 @@ function SeasonFinancialCard({
                       </td>
                       <td className="px-4 py-3 text-center text-sm text-gray-900">
                         <div className="flex flex-col gap-1 items-center">
-                          {row.pendingApprovals > 0 && (
+                          {row.pendingReviews > 0 && (
                             <span className="text-xs text-yellow-600">
-                              {row.pendingApprovals} pending
+                              {row.pendingReviews} pending
                             </span>
                           )}
                           {row.missingReceipts > 0 && (
@@ -577,7 +577,7 @@ function SeasonFinancialCard({
                               {row.missingReceipts} no receipt
                             </span>
                           )}
-                          {row.pendingApprovals === 0 &&
+                          {row.pendingReviews === 0 &&
                             row.missingReceipts === 0 && (
                               <span className="text-xs text-gray-400">-</span>
                             )}

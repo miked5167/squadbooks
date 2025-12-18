@@ -57,7 +57,6 @@ interface WizardData {
   // Step 5: Pre-Season Configuration
   usePreSeasonBudgets: boolean;
   preSeasonBudgetDeadline?: string;
-  preSeasonBudgetsRequired?: number;
   preSeasonBudgetAutoApprove: boolean;
 
   // Result
@@ -104,7 +103,6 @@ export default function AssociationOnboardingPage() {
       requireBudgetVsActual: true,
       requireBudgetChanges: false,
       requireCategoryBreakdown: true,
-      requireNarrative: false,
     },
     associationReportSchedule: {
       recipient: 'ASSOCIATION',
@@ -114,7 +112,6 @@ export default function AssociationOnboardingPage() {
       requireBudgetVsActual: true,
       requireBudgetChanges: true,
       requireCategoryBreakdown: true,
-      requireNarrative: false,
     },
 
     usePreSeasonBudgets: false,
@@ -262,7 +259,6 @@ export default function AssociationOnboardingPage() {
           initialData={{
             usePreSeasonBudgets: wizardData.usePreSeasonBudgets,
             preSeasonBudgetDeadline: wizardData.preSeasonBudgetDeadline,
-            preSeasonBudgetsRequired: wizardData.preSeasonBudgetsRequired,
             preSeasonBudgetAutoApprove: wizardData.preSeasonBudgetAutoApprove,
           }}
           onComplete={async (data) => {

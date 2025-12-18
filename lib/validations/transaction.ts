@@ -2,7 +2,20 @@ import { z } from 'zod'
 
 // Enums matching Prisma schema
 export const TransactionTypeEnum = z.enum(['INCOME', 'EXPENSE'])
-export const TransactionStatusEnum = z.enum(['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'])
+export const TransactionStatusEnum = z.enum([
+  // New validation-first statuses
+  'IMPORTED',
+  'VALIDATED',
+  'EXCEPTION',
+  'RESOLVED',
+  'LOCKED',
+  // Legacy statuses (backward compatibility)
+  'DRAFT',
+  'PENDING',
+  'APPROVED',
+  'APPROVED_AUTOMATIC',
+  'REJECTED',
+])
 
 // Create Transaction Schema
 export const CreateTransactionSchema = z.object({
@@ -63,7 +76,26 @@ export const TransactionFilterSchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 })
 
+// Exception Resolution Schema
+export const ResolutionActionEnum = z.enum(['REVALIDATE', 'OVERRIDE', 'CORRECT'])
+
+export const ResolveExceptionSchema = z.object({
+  action: ResolutionActionEnum,
+  notes: z.string().min(10, { message: 'Resolution notes must be at least 10 characters' }),
+  overrideJustification: z.string().optional(),
+  correctedData: z.object({
+    categoryId: z.string().optional(),
+    systemCategoryId: z.string().optional(),
+    vendor: z.string().optional(),
+    amount: z.number().positive().optional(),
+    receiptUrl: z.string().url().optional(),
+    description: z.string().optional(),
+  }).optional(),
+})
+
 // Type exports
 export type CreateTransactionInput = z.infer<typeof CreateTransactionSchema>
 export type UpdateTransactionInput = z.infer<typeof UpdateTransactionSchema>
 export type TransactionFilter = z.infer<typeof TransactionFilterSchema>
+export type ResolutionAction = z.infer<typeof ResolutionActionEnum>
+export type ResolveExceptionInput = z.infer<typeof ResolveExceptionSchema>

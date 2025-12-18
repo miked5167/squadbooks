@@ -1469,6 +1469,373 @@ This is an automated notification from Squadbooks
 }
 
 // ========================
+// Exception Notification Emails
+// ========================
+
+export interface ExceptionNotificationEmailData {
+  treasurerName: string
+  treasurerEmail: string
+  teamName: string
+  transactionVendor: string
+  transactionAmount: number
+  transactionDate: string
+  transactionId: string
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
+  violationCount: number
+  violationSummary: string[]
+}
+
+/**
+ * Send exception notification email to treasurers
+ */
+export async function sendExceptionNotificationEmail(data: ExceptionNotificationEmailData) {
+  const {
+    treasurerName,
+    treasurerEmail,
+    teamName,
+    transactionVendor,
+    transactionAmount,
+    transactionDate,
+    transactionId,
+    severity,
+    violationCount,
+    violationSummary,
+  } = data
+
+  const exceptionsUrl = `${APP_URL}/exceptions?highlight=${transactionId}`
+  const transactionUrl = `${APP_URL}/transactions/${transactionId}`
+
+  const severityConfig = {
+    CRITICAL: { label: 'Critical', color: '#dc2626', bgColor: '#fee2e2' },
+    HIGH: { label: 'High', color: '#ea580c', bgColor: '#ffedd5' },
+    MEDIUM: { label: 'Medium', color: '#f59e0b', bgColor: '#fef3c7' },
+    LOW: { label: 'Low', color: '#3b82f6', bgColor: '#dbeafe' },
+  }
+
+  const { label: severityLabel, color: severityColor, bgColor: severityBgColor } = severityConfig[severity]
+
+  const subject = `[${severityLabel} Priority] Transaction Exception: $${transactionAmount.toLocaleString()} - ${transactionVendor}`
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction Exception</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, ${severityColor} 0%, ${severityColor}dd 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">⚠️ Transaction Exception</h1>
+    <p style="margin: 10px 0 0; opacity: 0.9; font-size: 14px;">${teamName}</p>
+  </div>
+
+  <!-- Content -->
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+
+    <p style="margin: 0 0 20px; font-size: 16px;">Hi ${treasurerName},</p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      A transaction has been flagged by validation rules and requires your review.
+    </p>
+
+    <!-- Severity Badge -->
+    <div style="background: ${severityBgColor}; border: 2px solid ${severityColor}; border-radius: 8px; padding: 12px 16px; margin: 20px 0; text-align: center;">
+      <span style="font-size: 14px; font-weight: 700; color: ${severityColor}; text-transform: uppercase; letter-spacing: 0.5px;">
+        ${severityLabel} Priority
+      </span>
+    </div>
+
+    <!-- Transaction Details Card -->
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px solid #e5e7eb;">
+        <span style="font-size: 14px; color: #6b7280; font-weight: 500;">AMOUNT</span>
+        <span style="font-size: 24px; font-weight: 700; color: #dc2626;">
+          $${transactionAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </span>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 35%;">Vendor:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${transactionVendor}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Date:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 500;">${new Date(transactionDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Issues Found:</td>
+          <td style="padding: 8px 0; color: ${severityColor}; font-size: 14px; font-weight: 700;">${violationCount} ${violationCount === 1 ? 'violation' : 'violations'}</td>
+        </tr>
+      </table>
+
+    </div>
+
+    <!-- Violations List -->
+    <div style="background: #fef9f3; border-left: 4px solid ${severityColor}; padding: 16px 20px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0 0 10px; font-size: 14px; color: #92400e; font-weight: 500;">
+        <strong>Compliance Issues:</strong>
+      </p>
+      <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #92400e;">
+        ${violationSummary.map(v => `<li style="margin: 5px 0;">${v}</li>`).join('')}
+      </ul>
+    </div>
+
+    <!-- Info Card -->
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px; color: #1e40af; font-weight: 500;">
+        <strong>What to do:</strong>
+      </p>
+      <p style="margin: 8px 0 0; font-size: 14px; color: #1e40af;">
+        Review the transaction details, fix any issues if possible, or provide a justification to resolve the exception manually.
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="text-align: center; margin: 30px 0 20px;">
+      <a href="${exceptionsUrl}" style="display: inline-block; background: ${severityColor}; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; margin: 0 5px;">
+        Review Exception
+      </a>
+      <a href="${transactionUrl}" style="display: inline-block; background: #6b7280; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; margin: 0 5px;">
+        View Transaction
+      </a>
+    </div>
+
+    <p style="margin: 20px 0 0; font-size: 14px; color: #6b7280; text-align: center;">
+      Please review this exception at your earliest convenience.
+    </p>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+    <p style="margin: 0 0 5px;">This is an automated notification from Squadbooks</p>
+    <p style="margin: 0;">© ${new Date().getFullYear()} Squadbooks. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
+`
+
+  const textContent = `
+Transaction Exception - ${teamName}
+
+Hi ${treasurerName},
+
+A transaction has been flagged by validation rules and requires your review.
+
+Priority: ${severityLabel}
+
+Transaction Details:
+-------------------
+Amount: $${transactionAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+Vendor: ${transactionVendor}
+Date: ${new Date(transactionDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+Issues Found: ${violationCount} ${violationCount === 1 ? 'violation' : 'violations'}
+
+Compliance Issues:
+${violationSummary.map(v => `• ${v}`).join('\n')}
+
+What to do:
+Review the transaction details, fix any issues if possible, or provide a justification to resolve the exception manually.
+
+Review exception: ${exceptionsUrl}
+View transaction: ${transactionUrl}
+
+Please review this exception at your earliest convenience.
+
+---
+This is an automated notification from Squadbooks
+© ${new Date().getFullYear()} Squadbooks. All rights reserved.
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: treasurerEmail,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Exception notification email sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send exception notification email:', error)
+    // Don't throw - we don't want to fail validation just because email failed
+    return { success: false, error }
+  }
+}
+
+/**
+ * Send daily digest of exceptions to treasurers
+ */
+export async function sendExceptionDigestEmail(
+  treasurerName: string,
+  treasurerEmail: string,
+  teamName: string,
+  exceptionsSummary: {
+    critical: number
+    high: number
+    medium: number
+    low: number
+    total: number
+  }
+) {
+  const exceptionsUrl = `${APP_URL}/exceptions`
+
+  const subject = `Daily Exception Digest: ${exceptionsSummary.total} transactions need review - ${teamName}`
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Exception Digest</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600;">Daily Exception Digest</h1>
+    <p style="margin: 10px 0 0; opacity: 0.9; font-size: 14px;">${teamName}</p>
+  </div>
+
+  <!-- Content -->
+  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+
+    <p style="margin: 0 0 20px; font-size: 16px;">Hi ${treasurerName},</p>
+
+    <p style="margin: 0 0 20px; font-size: 16px;">
+      You have <strong>${exceptionsSummary.total} ${exceptionsSummary.total === 1 ? 'transaction' : 'transactions'}</strong> flagged by validation rules that need your review.
+    </p>
+
+    <!-- Exception Count Card -->
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 20px 0;">
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 48px; font-weight: 700; color: #f59e0b;">
+          ${exceptionsSummary.total}
+        </div>
+        <div style="font-size: 14px; color: #6b7280; font-weight: 500; margin-top: 5px;">
+          Total Exceptions
+        </div>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; border-top: 2px solid #e5e7eb; padding-top: 15px;">
+        ${exceptionsSummary.critical > 0 ? `
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
+            <span style="display: inline-block; width: 12px; height: 12px; background: #dc2626; border-radius: 50%; margin-right: 8px;"></span>
+            Critical:
+          </td>
+          <td style="padding: 8px 0; color: #dc2626; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.critical}</td>
+        </tr>
+        ` : ''}
+        ${exceptionsSummary.high > 0 ? `
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
+            <span style="display: inline-block; width: 12px; height: 12px; background: #ea580c; border-radius: 50%; margin-right: 8px;"></span>
+            High:
+          </td>
+          <td style="padding: 8px 0; color: #ea580c; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.high}</td>
+        </tr>
+        ` : ''}
+        ${exceptionsSummary.medium > 0 ? `
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
+            <span style="display: inline-block; width: 12px; height: 12px; background: #f59e0b; border-radius: 50%; margin-right: 8px;"></span>
+            Medium:
+          </td>
+          <td style="padding: 8px 0; color: #f59e0b; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.medium}</td>
+        </tr>
+        ` : ''}
+        ${exceptionsSummary.low > 0 ? `
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
+            <span style="display: inline-block; width: 12px; height: 12px; background: #3b82f6; border-radius: 50%; margin-right: 8px;"></span>
+            Low:
+          </td>
+          <td style="padding: 8px 0; color: #3b82f6; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.low}</td>
+        </tr>
+        ` : ''}
+      </table>
+
+    </div>
+
+    <!-- Info Card -->
+    <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; font-size: 14px; color: #1e40af;">
+        Review these exceptions to ensure compliance with association rules. You can fix issues or provide justification to resolve them.
+      </p>
+    </div>
+
+    <!-- Action Button -->
+    <div style="text-align: center; margin: 30px 0 20px;">
+      <a href="${exceptionsUrl}" style="display: inline-block; background: #f59e0b; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);">
+        Review All Exceptions
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 20px; padding: 20px; color: #9ca3af; font-size: 12px;">
+    <p style="margin: 0 0 5px;">This is a daily digest from Squadbooks</p>
+    <p style="margin: 0;">© ${new Date().getFullYear()} Squadbooks. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
+`
+
+  const textContent = `
+Daily Exception Digest - ${teamName}
+
+Hi ${treasurerName},
+
+You have ${exceptionsSummary.total} ${exceptionsSummary.total === 1 ? 'transaction' : 'transactions'} flagged by validation rules that need your review.
+
+Exception Summary:
+-----------------
+Total: ${exceptionsSummary.total}
+${exceptionsSummary.critical > 0 ? `• Critical: ${exceptionsSummary.critical}` : ''}
+${exceptionsSummary.high > 0 ? `• High: ${exceptionsSummary.high}` : ''}
+${exceptionsSummary.medium > 0 ? `• Medium: ${exceptionsSummary.medium}` : ''}
+${exceptionsSummary.low > 0 ? `• Low: ${exceptionsSummary.low}` : ''}
+
+Review these exceptions to ensure compliance with association rules. You can fix issues or provide justification to resolve them.
+
+Review all exceptions: ${exceptionsUrl}
+
+---
+This is a daily digest from Squadbooks
+© ${new Date().getFullYear()} Squadbooks. All rights reserved.
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: treasurerEmail,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Exception digest email sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send exception digest email:', error)
+    return { success: false, error }
+  }
+}
+
+// ========================
 // Waitlist Emails
 // ========================
 
@@ -1530,7 +1897,7 @@ export async function sendWaitlistWelcomeEmail(email: string) {
         <div style="display: inline-block; width: 24px; height: 24px; background: #10b981; border-radius: 50%; text-align: center; vertical-align: middle; margin-right: 10px;">
           <span style="color: white; font-weight: bold; line-height: 24px; font-size: 14px;">✓</span>
         </div>
-        <span style="font-size: 15px; color: #111827; vertical-align: middle;"><strong>Approve transactions</strong> with dual approval workflow</span>
+        <span style="font-size: 15px; color: #111827; vertical-align: middle;"><strong>Validate transactions</strong> with automated compliance checks</span>
       </div>
 
       <div>
