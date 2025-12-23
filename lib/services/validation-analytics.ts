@@ -31,16 +31,16 @@ export async function getExceptionCountsBySeverity(params: {
   }
 
   const exceptions = await prisma.transaction.groupBy({
-    by: ['exceptionSeverity'],
+    by: ['exception_severity'],
     where,
     _count: true,
   })
 
   return {
-    critical: exceptions.find((e) => e.exceptionSeverity === 'CRITICAL')?._count || 0,
-    high: exceptions.find((e) => e.exceptionSeverity === 'HIGH')?._count || 0,
-    medium: exceptions.find((e) => e.exceptionSeverity === 'MEDIUM')?._count || 0,
-    low: exceptions.find((e) => e.exceptionSeverity === 'LOW')?._count || 0,
+    critical: exceptions.find((e) => e.exception_severity === 'CRITICAL')?._count || 0,
+    high: exceptions.find((e) => e.exception_severity === 'HIGH')?._count || 0,
+    medium: exceptions.find((e) => e.exception_severity === 'MEDIUM')?._count || 0,
+    low: exceptions.find((e) => e.exception_severity === 'LOW')?._count || 0,
     total:
       exceptions.reduce((sum, e) => sum + e._count, 0) ||
       (await prisma.transaction.count({ where })),
@@ -201,7 +201,7 @@ export async function getTopViolationTypes(params: {
   const transactions = await prisma.transaction.findMany({
     where,
     select: {
-      validationJson: true,
+      validation_json: true,
     },
   })
 
@@ -209,7 +209,7 @@ export async function getTopViolationTypes(params: {
   const violationCounts: Record<string, { count: number; severity: string; message: string }> = {}
 
   transactions.forEach((txn) => {
-    const validation = txn.validationJson as any
+    const validation = txn.validation_json as any
     if (validation?.violations) {
       validation.violations.forEach((violation: any) => {
         const code = violation.code || 'UNKNOWN'
@@ -287,7 +287,7 @@ export async function getExceptionTrend(params: {
     select: {
       createdAt: true,
       status: true,
-      exceptionSeverity: true,
+      exception_severity: true,
     },
   })
 

@@ -2,10 +2,13 @@
  * Alert Resolution API Route
  *
  * POST /api/associations/[associationId]/alerts/[alertId]/resolve
- * Resolves an active alert
+ * Resolves an active alert - TEAM USERS ONLY (Treasurer/Assistant Treasurer)
  *
  * Body:
  * - notes: string (optional) - Resolution notes
+ *
+ * IMPORTANT: Association users CANNOT resolve alerts. They can only acknowledge them.
+ * Alert resolution is a team-level action restricted to treasurers and assistant treasurers.
  */
 
 import type { NextRequest} from 'next/server';
@@ -86,10 +89,17 @@ export async function POST(
 
     const { notes } = bodyParams.data
 
-    // Fetch alert
+    // Fetch alert with team information
     const alert = await prisma.alert.findUnique({
       where: {
         id: alertId,
+      },
+      include: {
+        team: {
+          include: {
+            team: true,
+          },
+        },
       },
     })
 
@@ -120,7 +130,7 @@ export async function POST(
       )
     }
 
-    // Check user authorization
+    // Check if user is an association user (NOT allowed to resolve)
     const associationUser = await prisma.associationUser.findFirst({
       where: {
         clerkUserId: userId,
@@ -128,13 +138,51 @@ export async function POST(
       },
     })
 
-    if (!associationUser) {
+    if (associationUser) {
       return NextResponse.json(
         {
           data: null,
           error: {
             code: 'FORBIDDEN',
-            message: 'You do not have access to this alert',
+            message: 'Association users cannot resolve alerts. Alert resolution is a team-level action restricted to treasurers and assistant treasurers. Use the acknowledge feature instead.',
+          },
+        },
+        { status: 403 }
+      )
+    }
+
+    // Check if user is a team user with proper role (TREASURER or ASSISTANT_TREASURER)
+    if (!alert.team.team) {
+      return NextResponse.json(
+        {
+          data: null,
+          error: {
+            code: 'TEAM_NOT_FOUND',
+            message: 'Team not found for this alert',
+          },
+        },
+        { status: 404 }
+      )
+    }
+
+    const teamUser = await prisma.user.findFirst({
+      where: {
+        clerkId: userId,
+        teamId: alert.team.team.id,
+        isActive: true,
+        role: {
+          in: ['TREASURER', 'ASSISTANT_TREASURER'],
+        },
+      },
+    })
+
+    if (!teamUser) {
+      return NextResponse.json(
+        {
+          data: null,
+          error: {
+            code: 'FORBIDDEN',
+            message: 'Only treasurers and assistant treasurers can resolve alerts',
           },
         },
         { status: 403 }
@@ -155,7 +203,7 @@ export async function POST(
       )
     }
 
-    // Resolve alert
+    // Resolve alert with team user ID
     await prisma.alert.update({
       where: {
         id: alertId,
@@ -163,9 +211,16 @@ export async function POST(
       data: {
         status: 'resolved',
         resolvedAt: new Date(),
-        resolvedBy: associationUser.id,
+        resolvedByTeamUserId: teamUser.id,
         notes: notes || alert.notes,
       },
+    })
+
+    logger.info('Alert resolved by team user', {
+      alertId,
+      teamUserId: teamUser.id,
+      teamUserRole: teamUser.role,
+      teamId: alert.team.team.id,
     })
 
     return NextResponse.json({

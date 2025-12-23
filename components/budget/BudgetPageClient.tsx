@@ -65,10 +65,21 @@ interface PendingApprovalsData {
   approvals: BudgetApproval[]
 }
 
+interface CompletedBudgetApproval {
+  id: string
+  approvalType: string
+  budgetTotal: number
+  acknowledgedCount: number
+  requiredCount: number
+  completedAt: string
+  description: string | null
+}
+
 export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
   const [budgetData, setBudgetData] = useState<BudgetData | null>(null)
   const [loading, setLoading] = useState(true)
   const [pendingApprovals, setPendingApprovals] = useState<PendingApprovalsData | null>(null)
+  const [completedApproval, setCompletedApproval] = useState<CompletedBudgetApproval | null>(null)
 
   // Financial summary state
   const [financialSummary, setFinancialSummary] = useState<{
@@ -124,10 +135,23 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
     }
   }
 
+  async function fetchCompletedApproval() {
+    try {
+      const res = await fetch('/api/budget-approvals/completed-initial')
+      if (res.ok) {
+        const data = await res.json()
+        setCompletedApproval(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch completed approval:', err)
+    }
+  }
+
   useEffect(() => {
     fetchBudget()
     fetchFinancialSummary()
     fetchPendingApprovals()
+    fetchCompletedApproval()
   }, [])
 
   if (loading) {
@@ -238,7 +262,68 @@ export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
         </div>
       </div>
 
-      {/* Budget Approval Status */}
+      {/* Completed Budget Approval Status */}
+      {completedApproval && (
+        <Card className="border-0 shadow-card mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-l-green-500">
+          <CardContent className="py-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-lg font-semibold text-green-900">
+                    Budget Approved by Parent Group
+                  </h3>
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                    Completed
+                  </Badge>
+                </div>
+                <p className="text-sm text-green-700 mb-2">
+                  {completedApproval.description || 'Initial Season Budget'}
+                </p>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-green-800">
+                  <div className="flex items-center gap-1">
+                    <DollarSign className="w-4 h-4" />
+                    <span className="font-medium">
+                      ${Number(completedApproval.budgetTotal).toLocaleString('en-US', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>
+                      {completedApproval.acknowledgedCount}/{completedApproval.requiredCount} families approved
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>
+                      Approved {new Date(completedApproval.completedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Pending Budget Approval Status */}
       {pendingApprovals && pendingApprovals.approvals && pendingApprovals.approvals.length > 0 && (
         <BudgetApprovalStatus
           approvals={pendingApprovals.approvals}

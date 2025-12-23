@@ -11,6 +11,7 @@ import { hasPermission, Permission, PermissionErrors, canResolveException } from
 
 /**
  * Get current user with role and team info
+ * Updated to fetch associationId through associationUser relation
  */
 export async function getCurrentUser() {
   const { userId } = await auth()
@@ -26,13 +27,26 @@ export async function getCurrentUser() {
       clerkId: true,
       role: true,
       teamId: true,
-      associationId: true,
+      associationUserId: true,
       name: true,
       email: true,
+      associationUser: {
+        select: {
+          associationId: true,
+        },
+      },
     },
   })
 
-  return user
+  if (!user) {
+    return null
+  }
+
+  // Return user with associationId at top level for easier access
+  return {
+    ...user,
+    associationId: user.associationUser?.associationId || null,
+  }
 }
 
 /**
@@ -107,10 +121,16 @@ export async function requireTeamAccess(teamId: string) {
   if (user.role === 'ASSOCIATION_ADMIN') {
     const team = await prisma.team.findUnique({
       where: { id: teamId },
-      select: { associationId: true },
+      select: {
+        associationTeam: {
+          select: {
+            associationId: true,
+          },
+        },
+      },
     })
 
-    if (team?.associationId !== user.associationId) {
+    if (team?.associationTeam?.associationId !== user.associationId) {
       throw new PermissionError('You do not have access to this team', 403)
     }
 
@@ -165,10 +185,17 @@ export async function requireBudgetApprovalPermission(teamId: string) {
   const team = await prisma.team.findUnique({
     where: { id: teamId },
     select: {
-      associationId: true,
-      association: {
+      associationTeam: {
         select: {
-          settings: true, // Assuming association has settings for coach approval
+          associationId: true,
+          association: {
+            select: {
+              // Assuming association has settings for coach approval
+              // Note: Association model doesn't have a settings field in the schema
+              // This may need to be updated based on actual schema
+              id: true,
+            },
+          },
         },
       },
     },
@@ -180,7 +207,7 @@ export async function requireBudgetApprovalPermission(teamId: string) {
 
   // Association admin can always approve
   if (user.role === 'ASSOCIATION_ADMIN') {
-    if (team.associationId !== user.associationId) {
+    if (team.associationTeam?.associationId !== user.associationId) {
       throw new PermissionError('You do not have access to this team', 403)
     }
     return user
@@ -192,8 +219,10 @@ export async function requireBudgetApprovalPermission(teamId: string) {
   }
 
   // Coach can approve if association allows it
+  // Note: Association model doesn't have a settings field in current schema
+  // This will always be false for now - may need to add this setting to DashboardConfig
   const associationAllowsCoachApproval =
-    (team.association?.settings as any)?.allowCoachBudgetApproval || false
+    (team.associationTeam?.association as any)?.settings?.allowCoachBudgetApproval || false
 
   if (user.role === 'COACH' && user.teamId === teamId && associationAllowsCoachApproval) {
     return user

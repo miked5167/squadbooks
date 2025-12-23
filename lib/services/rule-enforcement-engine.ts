@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import type { AssociationRule, RuleViolation } from '@prisma/client'
+import * as coachComp from './coach-compensation'
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -48,8 +49,11 @@ export type BudgetValidationResult = {
  * Transaction validation input
  */
 export type TransactionInput = {
+  id?: string
   amount: number
   type: 'INCOME' | 'EXPENSE'
+  systemCategoryId?: string | null
+  teamId?: string
 }
 
 /**
@@ -58,6 +62,7 @@ export type TransactionInput = {
 export type TransactionValidationResult = {
   requiredApprovals: number
   tier: { min: number; max: number; approvals: number } | null
+  coachCompValidation?: coachComp.ValidationResult
 }
 
 /**
@@ -261,6 +266,14 @@ export class RuleEnforcementEngine {
             break
           }
 
+          case 'COACH_COMPENSATION_LIMIT': {
+            // Note: Budget validation for coach compensation happens via
+            // a separate call to coachComp.validateBudget() in the budget
+            // submission flow since we need the full budgetId
+            console.log(`[RuleEngine] Coach compensation validation handled separately for budgets`)
+            break
+          }
+
           default:
             console.warn(`[RuleEngine] Unknown rule type: ${rule.ruleType}`)
         }
@@ -303,46 +316,87 @@ export class RuleEnforcementEngine {
     transaction: TransactionInput
   ): Promise<TransactionValidationResult> {
     try {
-      // Only validate expenses
-      if (transaction.type !== 'EXPENSE') {
-        console.log(`[RuleEngine] Skipping approval validation for ${transaction.type} transaction`)
-        return { requiredApprovals: 0, tier: null }
-      }
+      let requiredApprovals = 0
+      let tier: { min: number; max: number; approvals: number } | null = null
+      let coachCompValidation: coachComp.ValidationResult | undefined
 
-      const rules = await this.getActiveRules(teamId)
-      const approvalRule = rules.find(r => r.ruleType === 'APPROVAL_TIERS')
+      // Only validate expenses for approval tiers
+      if (transaction.type === 'EXPENSE') {
+        const rules = await this.getActiveRules(teamId)
+        const approvalRule = rules.find(r => r.ruleType === 'APPROVAL_TIERS')
 
-      if (!approvalRule) {
-        console.log(`[RuleEngine] No APPROVAL_TIERS rule found for team ${teamId}`)
-        return { requiredApprovals: 0, tier: null }
-      }
+        if (approvalRule) {
+          const tiers = approvalRule.approvalTiers as Array<{
+            min: number
+            max: number
+            approvals: number
+          }>
 
-      const tiers = approvalRule.approvalTiers as Array<{
-        min: number
-        max: number
-        approvals: number
-      }>
+          if (tiers && Array.isArray(tiers)) {
+            // Find matching tier
+            tier = tiers.find(t =>
+              transaction.amount >= t.min &&
+              transaction.amount < t.max
+            ) || null
 
-      if (!tiers || !Array.isArray(tiers)) {
-        console.warn(`[RuleEngine] Invalid approvalTiers format for rule ${approvalRule.id}`)
-        return { requiredApprovals: 0, tier: null }
-      }
+            requiredApprovals = tier?.approvals || 0
 
-      // Find matching tier
-      const tier = tiers.find(t =>
-        transaction.amount >= t.min &&
-        transaction.amount < t.max
-      )
+            if (tier) {
+              console.log(`[RuleEngine] Transaction $${transaction.amount} requires ${tier.approvals} approvals (tier: $${tier.min}-$${tier.max})`)
+            } else {
+              console.log(`[RuleEngine] No matching tier found for transaction amount $${transaction.amount}`)
+            }
+          }
+        }
 
-      if (tier) {
-        console.log(`[RuleEngine] Transaction $${transaction.amount} requires ${tier.approvals} approvals (tier: $${tier.min}-$${tier.max})`)
-      } else {
-        console.log(`[RuleEngine] No matching tier found for transaction amount $${transaction.amount}`)
+        // Validate coach compensation limits if transaction has necessary data
+        if (transaction.teamId && transaction.systemCategoryId !== undefined) {
+          try {
+            // Get team's association and season
+            const team = await prisma.team.findUnique({
+              where: { id: transaction.teamId },
+              select: {
+                associationTeam: {
+                  select: {
+                    associationId: true,
+                    association: {
+                      select: {
+                        season: true,
+                      },
+                    },
+                  },
+                },
+              },
+            })
+
+            if (team?.associationTeam?.[0]) {
+              const associationId = team.associationTeam[0].associationId
+              const season = team.associationTeam[0].association.season
+
+              coachCompValidation = await coachComp.validateTransaction({
+                transaction: {
+                  id: transaction.id,
+                  teamId: transaction.teamId,
+                  systemCategoryId: transaction.systemCategoryId,
+                  amount: transaction.amount,
+                },
+                season,
+                associationId,
+              })
+
+              console.log(`[RuleEngine] Coach comp validation: ${coachCompValidation.allowed ? 'ALLOWED' : 'BLOCKED'} (${coachCompValidation.severity})`)
+            }
+          } catch (error) {
+            console.error(`[RuleEngine] Error validating coach compensation:`, error)
+            // Don't block on validation errors
+          }
+        }
       }
 
       return {
-        requiredApprovals: tier?.approvals || 0,
-        tier: tier || null
+        requiredApprovals,
+        tier,
+        coachCompValidation,
       }
     } catch (error) {
       console.error(`[RuleEngine] Error validating transaction for team ${teamId}:`, error)

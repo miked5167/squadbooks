@@ -58,6 +58,7 @@ export function calculateBudgetHealth(percentage: number): BudgetHealth {
 
 /**
  * Calculate spending for a specific category
+ * Includes APPROVED, VALIDATED, and RESOLVED transactions
  */
 export async function calculateCategorySpending(
   teamId: string,
@@ -67,9 +68,9 @@ export async function calculateCategorySpending(
   const result = await prisma.transaction.aggregate({
     where: {
       teamId,
-      systemCategoryId: categoryId,
+      categoryId: categoryId,
       type: 'EXPENSE',
-      status: 'APPROVED',
+      status: { in: ['APPROVED', 'VALIDATED', 'RESOLVED'] },
       deletedAt: null,
     },
     _sum: {
@@ -82,6 +83,7 @@ export async function calculateCategorySpending(
 
 /**
  * Calculate pending spending for a specific category
+ * Includes PENDING and EXCEPTION transactions
  */
 export async function calculateCategoryPending(
   teamId: string,
@@ -91,9 +93,9 @@ export async function calculateCategoryPending(
   const result = await prisma.transaction.aggregate({
     where: {
       teamId,
-      systemCategoryId: categoryId,
+      categoryId: categoryId,
       type: 'EXPENSE',
-      status: 'PENDING',
+      status: { in: ['PENDING', 'EXCEPTION'] },
       deletedAt: null,
     },
     _sum: {
@@ -133,57 +135,51 @@ export async function getBudgetOverview(
       season: currentSeason,
     },
     include: {
-      systemCategory: {
+      category: {
         select: {
           id: true,
           name: true,
-          displayCategory: {
-            select: {
-              name: true,
-              color: true,
-              sortOrder: true,
-            },
-          },
+          heading: true,
+          color: true,
+          sortOrder: true,
         },
       },
     },
     orderBy: {
-      systemCategory: {
-        displayCategory: {
-          sortOrder: 'asc',
-        },
+      category: {
+        sortOrder: 'asc',
       },
     },
   })
 
   // Batch fetch all spending and pending amounts in 2 queries
   const categoryIds = budgetAllocations
-    .map((a) => a.systemCategoryId)
+    .map((a) => a.categoryId)
     .filter((id): id is string => id !== null)
 
   const [spentByCategory, pendingByCategory] = await Promise.all([
-    // Get all APPROVED spending grouped by category
+    // Get all APPROVED, VALIDATED, and RESOLVED spending grouped by category
     prisma.transaction.groupBy({
-      by: ['systemCategoryId'],
+      by: ['categoryId'],
       where: {
         teamId,
-        systemCategoryId: { in: categoryIds },
+        categoryId: { in: categoryIds },
         type: 'EXPENSE',
-        status: 'APPROVED',
+        status: { in: ['APPROVED', 'VALIDATED', 'RESOLVED'] },
         deletedAt: null,
       },
       _sum: {
         amount: true,
       },
     }),
-    // Get all PENDING spending grouped by category
+    // Get all PENDING and EXCEPTION spending grouped by category
     prisma.transaction.groupBy({
-      by: ['systemCategoryId'],
+      by: ['categoryId'],
       where: {
         teamId,
-        systemCategoryId: { in: categoryIds },
+        categoryId: { in: categoryIds },
         type: 'EXPENSE',
-        status: 'PENDING',
+        status: { in: ['PENDING', 'EXCEPTION'] },
         deletedAt: null,
       },
       _sum: {
@@ -194,18 +190,18 @@ export async function getBudgetOverview(
 
   // Create lookup maps for fast access
   const spentMap = new Map(
-    spentByCategory.map((item) => [item.systemCategoryId!, Number(item._sum.amount || 0)])
+    spentByCategory.map((item) => [item.categoryId!, Number(item._sum.amount || 0)])
   )
   const pendingMap = new Map(
-    pendingByCategory.map((item) => [item.systemCategoryId!, Number(item._sum.amount || 0)])
+    pendingByCategory.map((item) => [item.categoryId!, Number(item._sum.amount || 0)])
   )
 
   // Calculate spending for each category
   const categoryBudgets: CategoryBudget[] = budgetAllocations
-    .filter((allocation) => allocation.systemCategory && allocation.systemCategoryId)
+    .filter((allocation) => allocation.category && allocation.categoryId)
     .map((allocation) => {
-      const spent = spentMap.get(allocation.systemCategoryId!) || 0
-      const pending = pendingMap.get(allocation.systemCategoryId!) || 0
+      const spent = spentMap.get(allocation.categoryId!) || 0
+      const pending = pendingMap.get(allocation.categoryId!) || 0
 
       const allocated = Number(allocation.allocated)
       const remaining = allocated - spent
@@ -216,10 +212,10 @@ export async function getBudgetOverview(
       const projectedHealth = calculateBudgetHealth(projectedPercentage)
 
       return {
-        categoryId: allocation.systemCategory!.id,
-        categoryName: allocation.systemCategory!.name,
-        categoryHeading: allocation.systemCategory!.displayCategory?.name || 'Uncategorized',
-        categoryColor: allocation.systemCategory!.displayCategory?.color || '#6B7280',
+        categoryId: allocation.category!.id,
+        categoryName: allocation.category!.name,
+        categoryHeading: allocation.category!.heading || 'Uncategorized',
+        categoryColor: allocation.category!.color || '#6B7280',
         allocated,
         spent,
         pending,

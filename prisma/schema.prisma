@@ -43,18 +43,18 @@ model Association {
 }
 
 model AssociationUser {
-  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationId  String      @map("association_id") @db.Uuid
-  clerkUserId    String      @map("clerk_user_id") @db.VarChar(255)
-  email          String      @db.VarChar(255)
-  name           String?     @db.VarChar(255)
-  role           String      @db.VarChar(32)
-  lastLoginAt    DateTime?   @map("last_login_at") @db.Timestamptz(6)
-  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  alertsResolved Alert[]     @relation("AlertResolvedBy")
-  association    Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
-  reports        Report[]
-  teamUsers      User[]
+  id                    String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId         String      @map("association_id") @db.Uuid
+  clerkUserId           String      @map("clerk_user_id") @db.VarChar(255)
+  email                 String      @db.VarChar(255)
+  name                  String?     @db.VarChar(255)
+  role                  String      @db.VarChar(32)
+  lastLoginAt           DateTime?   @map("last_login_at") @db.Timestamptz(6)
+  createdAt             DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  alertsAcknowledged    Alert[]     @relation("AlertAcknowledgedBy")
+  association           Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  reports               Report[]
+  teamUsers             User[]
 
   @@unique([clerkUserId, associationId], name: "unique_user_per_association")
   @@map("association_users")
@@ -110,22 +110,26 @@ model TeamFinancialSnapshot {
 }
 
 model Alert {
-  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationId     String           @map("association_id") @db.Uuid
-  associationTeamId String           @map("association_team_id") @db.Uuid
-  alertType         String           @map("alert_type") @db.VarChar(64)
-  severity          String           @db.VarChar(16)
-  title             String           @db.VarChar(255)
-  description       String?
-  status            String           @default("active") @db.VarChar(16)
-  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  resolvedAt        DateTime?        @map("resolved_at") @db.Timestamptz(6)
-  resolvedBy        String?          @map("resolved_by") @db.Uuid
-  lastTriggeredAt   DateTime         @default(now()) @map("last_triggered_at") @db.Timestamptz(6)
-  notes             String?
-  association       Association      @relation(fields: [associationId], references: [id], onDelete: Cascade)
-  team              AssociationTeam  @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
-  resolver          AssociationUser? @relation("AlertResolvedBy", fields: [resolvedBy], references: [id])
+  id                        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId             String           @map("association_id") @db.Uuid
+  associationTeamId         String           @map("association_team_id") @db.Uuid
+  alertType                 String           @map("alert_type") @db.VarChar(64)
+  severity                  String           @db.VarChar(16)
+  title                     String           @db.VarChar(255)
+  description               String?
+  status                    String           @default("active") @db.VarChar(16)
+  createdAt                 DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  resolvedAt                DateTime?        @map("resolved_at") @db.Timestamptz(6)
+  resolvedByTeamUserId      String?          @map("resolved_by_team_user_id")
+  lastTriggeredAt           DateTime         @default(now()) @map("last_triggered_at") @db.Timestamptz(6)
+  notes                     String?
+  // Association acknowledgment (non-mutating observation)
+  associationAcknowledgedAt DateTime?        @map("association_acknowledged_at") @db.Timestamptz(6)
+  associationAcknowledgedBy String?          @map("association_acknowledged_by") @db.Uuid
+  association               Association      @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  team                      AssociationTeam  @relation(fields: [associationTeamId], references: [id], onDelete: Cascade)
+  teamUserResolver          User?            @relation("AlertResolvedByTeamUser", fields: [resolvedByTeamUserId], references: [id])
+  associationAcknowledger   AssociationUser? @relation("AlertAcknowledgedBy", fields: [associationAcknowledgedBy], references: [id])
 
   @@unique([associationTeamId, alertType, status], name: "uq_active_alert")
   @@index([associationId, status, severity, createdAt(sort: Desc)], map: "idx_alerts_active")
@@ -217,9 +221,10 @@ model AssociationRule {
   ageDivisionFilter           Json?              @map("age_division_filter")
   competitiveLevelFilter      Json?              @map("competitive_level_filter")
   teamTypeFilter              Json?              @map("team_type_filter")
-  association                 Association        @relation("AssociationRules", fields: [associationId], references: [id], onDelete: Cascade)
+  association                 Association              @relation("AssociationRules", fields: [associationId], references: [id], onDelete: Cascade)
   violations                  RuleViolation[]
   overrides                   TeamRuleOverride[]
+  coachCompensationLimits     CoachCompensationLimit[]
 
   @@unique([associationId, name], name: "unique_association_rule_name")
   @@index([associationId])
@@ -292,6 +297,23 @@ model TeamComplianceStatus {
   @@index([status])
   @@index([complianceScore])
   @@map("team_compliance_status")
+}
+
+model CoachCompensationLimit {
+  id             String          @id @default(cuid())
+  ruleId         String          @map("rule_id")
+  season         String?         @db.VarChar(32)
+  ageGroup       String          @map("age_group") @db.VarChar(10)
+  skillLevel     String          @map("skill_level") @db.VarChar(10)
+  capAmountCents Int             @map("cap_amount_cents")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  rule           AssociationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@unique([ruleId, season, ageGroup, skillLevel], name: "unique_cap_limit")
+  @@index([ruleId])
+  @@index([season])
+  @@map("coach_compensation_limits")
 }
 
 model AssociationGovernanceRule {
@@ -521,6 +543,7 @@ model User {
   isSigningAuthority      Boolean                 @default(false) @map("is_signing_authority")
   userType                String?                 @map("user_type")
   acknowledgments         Acknowledgment[]        @relation("ParentAcknowledgments")
+  alertsResolved          Alert[]                 @relation("AlertResolvedByTeamUser")
   approvalsApproved       Approval[]              @relation("Approver")
   approvalsAssigned       Approval[]              @relation("ApprovalAssignee")
   approvalsCreated        Approval[]              @relation("ApprovalCreator")
@@ -632,7 +655,7 @@ model Transaction {
   type                   TransactionType
   status                 TransactionStatus      @default(DRAFT)
   amount                 Decimal                @db.Decimal(10, 2)
-  categoryId             String
+  categoryId             String?
   vendor                 String
   description            String?
   transactionDate        DateTime
@@ -666,7 +689,7 @@ model Transaction {
   override_justification String?
   approvals              Approval[]
   validation             TransactionValidation?
-  category               Category               @relation(fields: [categoryId], references: [id])
+  category               Category?              @relation(fields: [categoryId], references: [id])
   creator                User                   @relation("TransactionCreator", fields: [createdBy], references: [id])
   envelope               BudgetEnvelope?        @relation(fields: [envelopeId], references: [id])
   resolver               User?                  @relation("TransactionResolver", fields: [resolvedBy], references: [id])

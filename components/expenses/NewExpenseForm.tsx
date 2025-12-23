@@ -171,12 +171,55 @@ export function NewExpenseForm() {
         toast.dismiss()
       }
 
-      toast.success('Expense created successfully!')
+      // Check for validation errors and handle accordingly
+      if (transactionData.hasValidationErrors && transactionData.violations) {
+        // Find receipt-related violations
+        const receiptViolations = transactionData.violations.filter((v: any) =>
+          v.code === 'MISSING_RECEIPT' || v.message.toLowerCase().includes('receipt')
+        )
 
-      // Redirect after a short delay
-      setTimeout(() => {
-        router.push('/transactions')
-      }, 1000)
+        if (receiptViolations.length > 0) {
+          const violation = receiptViolations[0]
+          toast.error(
+            <div className="space-y-3">
+              <p className="font-semibold text-base">Cannot create expense without receipt</p>
+              <p className="text-sm">{violation.message}</p>
+              <p className="text-xs text-muted-foreground">
+                Please attach a receipt and try again, or upload one from the transactions page.
+              </p>
+            </div>,
+            { duration: Infinity }
+          )
+        } else {
+          // Show generic validation error
+          const errorMessage = transactionData.violations
+            .filter((v: any) => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+            .map((v: any) => v.message)
+            .join('\n')
+
+          toast.error(
+            <div className="space-y-3">
+              <p className="font-semibold text-base">Expense has validation issues:</p>
+              <p className="whitespace-pre-line text-sm">{errorMessage}</p>
+              <p className="text-xs text-muted-foreground">
+                Please correct these issues from the transactions page.
+              </p>
+            </div>,
+            { duration: Infinity }
+          )
+        }
+
+        // Redirect to the created transaction after 3 seconds so user can fix it
+        setTimeout(() => {
+          router.push(`/transactions?highlight=${transactionId}`)
+        }, 3000)
+      } else {
+        // Only show success and redirect if no validation errors
+        toast.success('Expense created successfully!')
+        setTimeout(() => {
+          router.push('/transactions')
+        }, 1000)
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to create expense')
     } finally {

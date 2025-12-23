@@ -76,8 +76,8 @@ export async function getExceptionMetrics(
         select: {
           id: true,
           status: true,
-          exceptionSeverity: true,
-          validationJson: true,
+          exception_severity: true,
+          validation_json: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -113,7 +113,7 @@ export async function getExceptionMetrics(
     }
 
     exceptions.forEach((e) => {
-      const severity = (e.exceptionSeverity || 'LOW') as keyof typeof bySeverity
+      const severity = (e.exception_severity || 'LOW') as keyof typeof bySeverity
       if (severity in bySeverity) {
         bySeverity[severity]++
       }
@@ -156,7 +156,7 @@ export async function getExceptionMetrics(
     const violationCounts = new Map<string, { count: number; message: string }>()
 
     exceptions.forEach((e) => {
-      const validation = e.validationJson as any
+      const validation = e.validation_json as any
       if (validation?.violations) {
         validation.violations.forEach((v: any) => {
           const existing = violationCounts.get(v.code) || { count: 0, message: v.message }
@@ -335,7 +335,7 @@ export async function getExceptionDigestSummary(teamId: string): Promise<{
         deletedAt: null,
       },
       select: {
-        exceptionSeverity: true,
+        exception_severity: true,
       },
     })
 
@@ -348,7 +348,7 @@ export async function getExceptionDigestSummary(teamId: string): Promise<{
     }
 
     exceptions.forEach((e) => {
-      const severity = (e.exceptionSeverity || 'LOW').toLowerCase()
+      const severity = (e.exception_severity || 'LOW').toLowerCase()
       if (severity in summary) {
         summary[severity as keyof typeof summary]++
       }

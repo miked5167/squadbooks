@@ -40,7 +40,7 @@ export function WeeklySummaryCard({ summary, isLoading }: WeeklySummaryCardProps
       bgColor: 'bg-blue-50',
     },
     {
-      label: 'Approved',
+      label: 'Validated',
       value: summary.transactionsApproved,
       icon: CheckCircle,
       color: 'text-meadow',

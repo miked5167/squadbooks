@@ -59,6 +59,12 @@ interface WizardData {
   preSeasonBudgetDeadline?: string;
   preSeasonBudgetAutoApprove: boolean;
 
+  // Receipt Policy
+  receiptsEnabled: boolean;
+  receiptGlobalThresholdCents: number;
+  receiptGracePeriodDays: number;
+  allowedTeamThresholdOverride: boolean;
+
   // Result
   associationId?: string;
 }
@@ -116,6 +122,12 @@ export default function AssociationOnboardingPage() {
 
     usePreSeasonBudgets: false,
     preSeasonBudgetAutoApprove: false,
+
+    // Receipt Policy
+    receiptsEnabled: true,
+    receiptGlobalThresholdCents: 10000, // $100.00
+    receiptGracePeriodDays: 7,
+    allowedTeamThresholdOverride: false,
   });
 
   const totalSteps = 5;
@@ -244,6 +256,12 @@ export default function AssociationOnboardingPage() {
             enableAssociationReports: wizardData.enableAssociationReports,
             parentReportSchedule: wizardData.parentReportSchedule,
             associationReportSchedule: wizardData.associationReportSchedule,
+
+            // Receipt Policy
+            receiptsEnabled: wizardData.receiptsEnabled,
+            receiptGlobalThresholdCents: wizardData.receiptGlobalThresholdCents,
+            receiptGracePeriodDays: wizardData.receiptGracePeriodDays,
+            allowedTeamThresholdOverride: wizardData.allowedTeamThresholdOverride,
           }}
           onComplete={(data) => {
             setWizardData({ ...wizardData, ...data });

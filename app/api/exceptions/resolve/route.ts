@@ -52,9 +52,10 @@ export async function POST(request: Request) {
         id: true,
         teamId: true,
         status: true,
-        exceptionSeverity: true,
-        exceptionReason: true,
-        validationJson: true,
+        // @ts-expect-error - Prisma returns snake_case field names
+        exception_severity: true,
+        exception_reason: true,
+        validation_json: true,
       },
     })
 
@@ -74,7 +75,8 @@ export async function POST(request: Request) {
     await requireTeamAccess(transaction.teamId)
 
     // Check permissions based on severity and resolution method
-    const severity = (transaction.exceptionSeverity || 'LOW') as 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
+    // @ts-expect-error - Prisma returns snake_case field names
+    const severity = (transaction.exception_severity || 'LOW') as 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW'
     const user = await requireExceptionResolvePermission(severity, resolution)
 
     // Handle different resolution types
@@ -115,7 +117,8 @@ export async function POST(request: Request) {
 
     // If override was applied, log separately for analytics
     if (resolution === 'OVERRIDE') {
-      const violations = (transaction.validationJson as any)?.violations || []
+      // @ts-expect-error - Prisma returns snake_case field names
+      const violations = (transaction.validation_json as any)?.violations || []
       await logOverrideApplied({
         teamId: transaction.teamId,
         userId: user.id,

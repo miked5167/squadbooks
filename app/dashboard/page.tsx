@@ -221,7 +221,7 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
           <KpiCard
             title="Cash Position"
-            value={`${isNetPositive ? '+' : ''}$${Math.abs(financialSummary.netPosition).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            value={`${isNetPositive ? '+' : '-'}$${Math.abs(financialSummary.netPosition).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             subtitle="Income minus expenses"
             icon={DollarSign}
             trend={{
@@ -314,7 +314,7 @@ export default async function DashboardPage() {
             <QuickActionsCard isTreasurer={isTreasurer} />
 
             {/* Validation Compliance Analytics */}
-            <ValidationComplianceCard />
+            <ValidationComplianceCard teamId={user.teamId} />
 
             {/* Exceptions Card (if any) */}
             {exceptionsCount > 0 && (

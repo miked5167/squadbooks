@@ -22,7 +22,7 @@ interface PageProps {
   }>
 }
 
-type FilterType = 'ALL' | 'PENDING_REVIEW' | 'MISSING_RECEIPT' | 'OVERSPEND' | 'FLAGS'
+type FilterType = 'ALL' | 'PENDING_REVIEW' | 'MISSING_RECEIPT' | 'OVERSPEND' | 'FLAGS' | 'COACH_COMP'
 
 function getSeverityStyles(severity: AlertSeverity) {
   const styles = {
@@ -52,11 +52,27 @@ function getAlertTypeLabel(type: string) {
     WARNING_HEALTH: 'Warning Health',
     MULTIPLE_PENDING: 'Multiple Pending',
     MULTIPLE_RECEIPTS: 'Multiple Receipts',
+    COACH_COMP_APPROACHING: 'Coach Comp Cap Approaching',
+    COACH_COMP_EXCEEDED: 'Coach Comp Cap Exceeded',
   }
   return labels[type] || type.replace(/_/g, ' ')
 }
 
-function AlertCard({ alert, onResolve }: { alert: NormalizedAlert; onResolve: (alert: NormalizedAlert) => void }) {
+function AlertCard({
+  alert,
+  onResolve,
+  onAcknowledge,
+  isAssociationUser
+}: {
+  alert: NormalizedAlert;
+  onResolve: (alert: NormalizedAlert) => void;
+  onAcknowledge: (alert: NormalizedAlert) => void;
+  isAssociationUser: boolean;
+}) {
+  // Only database alerts (with 'alert-' prefix) can be acknowledged
+  // Dynamic alerts (pending-, receipt-, health-*, etc.) don't exist in the database
+  const canBeAcknowledged = alert.id.startsWith('alert-')
+
   return (
     <div className={`border-2 rounded-lg p-5 ${getSeverityStyles(alert.severity)}`}>
       <div className="flex items-start justify-between mb-3">
@@ -77,18 +93,35 @@ function AlertCard({ alert, onResolve }: { alert: NormalizedAlert; onResolve: (a
           {new Date(alert.createdAt).toLocaleDateString()} at {new Date(alert.createdAt).toLocaleTimeString()}
         </p>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onResolve(alert)
-            }}
-            className="text-sm"
-          >
-            Resolve
-          </Button>
+          {isAssociationUser && canBeAcknowledged ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onAcknowledge(alert)
+              }}
+              className="text-sm"
+            >
+              Acknowledge
+            </Button>
+          ) : !isAssociationUser ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onResolve(alert)
+              }}
+              className="text-sm"
+              disabled
+              title="Only team treasurers can resolve alerts"
+            >
+              Resolve (Team Only)
+            </Button>
+          ) : null}
           <Link
             href={alert.link}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -139,11 +172,17 @@ export default function AlertsPage({ params }: PageProps) {
   const [alerts, setAlerts] = useState<NormalizedAlert[]>([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState<FilterType>('ALL')
+  const [isAssociationUser, setIsAssociationUser] = useState(false)
 
   // Resolution dialog state
   const [resolveDialogOpen, setResolveDialogOpen] = useState(false)
   const [resolvingAlert, setResolvingAlert] = useState<NormalizedAlert | null>(null)
   const [resolving, setResolving] = useState(false)
+
+  // Acknowledgment dialog state
+  const [acknowledgeDialogOpen, setAcknowledgeDialogOpen] = useState(false)
+  const [acknowledgingAlert, setAcknowledgingAlert] = useState<NormalizedAlert | null>(null)
+  const [acknowledging, setAcknowledging] = useState(false)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1)
@@ -165,6 +204,12 @@ export default function AlertsPage({ params }: PageProps) {
       const data = await getAlertsData(associationId)
       setAssociation(data.association)
       setAlerts(data.alerts)
+
+      // Check if current user is an association user (viewing alerts from association level)
+      // If viewing from /association/[id]/alerts, they are an association user
+      // This is a simple heuristic - in production you'd check the user's role from the session
+      setIsAssociationUser(true)
+
       setLoading(false)
     }
     loadData()
@@ -223,6 +268,57 @@ export default function AlertsPage({ params }: PageProps) {
     setResolveDialogOpen(true)
   }
 
+  // Handle acknowledge alert
+  const handleAcknowledge = async () => {
+    if (!acknowledgingAlert || !associationId) return
+
+    // Extract the database alert ID by removing the 'alert-' prefix
+    // Only database alerts (with 'alert-' prefix) can be acknowledged
+    if (!acknowledgingAlert.id.startsWith('alert-')) {
+      alert('Only database alerts can be acknowledged.')
+      return
+    }
+
+    const alertId = acknowledgingAlert.id.replace('alert-', '')
+
+    setAcknowledging(true)
+    try {
+      const response = await fetch(
+        `/api/associations/${associationId}/alerts/${alertId}/acknowledge`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error?.message || 'Failed to acknowledge alert')
+      }
+
+      // Refresh alerts list
+      await reloadAlerts()
+
+      // Close dialog
+      setAcknowledgeDialogOpen(false)
+      setAcknowledgingAlert(null)
+    } catch (err) {
+      console.error('Error acknowledging alert:', err)
+      alert(err instanceof Error ? err.message : 'Failed to acknowledge alert. Please try again.')
+    } finally {
+      setAcknowledging(false)
+    }
+  }
+
+  // Handle opening acknowledge dialog
+  const handleOpenAcknowledgeDialog = (alert: NormalizedAlert) => {
+    setAcknowledgingAlert(alert)
+    setAcknowledgeDialogOpen(true)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -253,6 +349,9 @@ export default function AlertsPage({ params }: PageProps) {
     if (activeFilter === 'FLAGS') {
       return alert.type === 'CRITICAL_HEALTH' || alert.type === 'WARNING_HEALTH'
     }
+    if (activeFilter === 'COACH_COMP') {
+      return alert.type === 'COACH_COMP_APPROACHING' || alert.type === 'COACH_COMP_EXCEEDED'
+    }
     return true
   })
 
@@ -268,6 +367,9 @@ export default function AlertsPage({ params }: PageProps) {
   ).length
   const flagsCount = alerts.filter(
     (a) => a.type === 'CRITICAL_HEALTH' || a.type === 'WARNING_HEALTH'
+  ).length
+  const coachCompCount = alerts.filter(
+    (a) => a.type === 'COACH_COMP_APPROACHING' || a.type === 'COACH_COMP_EXCEEDED'
   ).length
 
   // Pagination calculations
@@ -344,6 +446,13 @@ export default function AlertsPage({ params }: PageProps) {
             >
               Health Flags
             </FilterButton>
+            <FilterButton
+              active={activeFilter === 'COACH_COMP'}
+              onClick={() => setActiveFilter('COACH_COMP')}
+              count={coachCompCount}
+            >
+              Coach Compensation
+            </FilterButton>
           </div>
         </div>
 
@@ -359,7 +468,13 @@ export default function AlertsPage({ params }: PageProps) {
           <>
             <div className="grid grid-cols-1 gap-4">
               {paginatedAlerts.map((alert) => (
-                <AlertCard key={alert.id} alert={alert} onResolve={handleOpenResolveDialog} />
+                <AlertCard
+                  key={alert.id}
+                  alert={alert}
+                  onResolve={handleOpenResolveDialog}
+                  onAcknowledge={handleOpenAcknowledgeDialog}
+                  isAssociationUser={isAssociationUser}
+                />
               ))}
             </div>
 
@@ -461,6 +576,62 @@ export default function AlertsPage({ params }: PageProps) {
             </Button>
             <Button onClick={handleResolve} disabled={resolving}>
               {resolving ? 'Resolving...' : 'Resolve Alert'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Acknowledge Alert Dialog */}
+      <Dialog open={acknowledgeDialogOpen} onOpenChange={setAcknowledgeDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Acknowledge Alert</DialogTitle>
+            <DialogDescription>
+              Acknowledging this alert creates an audit trail of your oversight as an association user.
+              This is a non-mutating observation - only team treasurers can resolve alerts.
+            </DialogDescription>
+          </DialogHeader>
+
+          {acknowledgingAlert && (
+            <div className="py-4">
+              <div className="space-y-2">
+                <div>
+                  <span className="text-sm font-medium">Team:</span>{' '}
+                  <span className="text-sm">{acknowledgingAlert.teamName}</span>
+                </div>
+                <div>
+                  <span className="text-sm font-medium">Alert:</span>{' '}
+                  <span className="text-sm">{acknowledgingAlert.message}</span>
+                </div>
+                <div>
+                  <span className="text-sm font-medium">Severity:</span>{' '}
+                  <SeverityBadge severity={acknowledgingAlert.severity} />
+                </div>
+                <div>
+                  <span className="text-sm font-medium">Type:</span>{' '}
+                  <span className="text-sm">{getAlertTypeLabel(acknowledgingAlert.type)}</span>
+                </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-xs text-blue-800">
+                  <strong>Note:</strong> This acknowledgment is for association oversight purposes.
+                  The alert will remain active until resolved by the team's treasurer.
+                </p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setAcknowledgeDialogOpen(false)}
+              disabled={acknowledging}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleAcknowledge} disabled={acknowledging}>
+              {acknowledging ? 'Acknowledging...' : 'Acknowledge'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -287,7 +287,12 @@
       "Bash(supabase --version:*)",
       "Bash(if exist .env copy .env .env.backup.temp)",
       "Bash(npx vitest:*)",
-      "Bash(npx cross-env FORCE_RESEED=true npm run seed:demo:*)"
+      "Bash(npx cross-env FORCE_RESEED=true npm run seed:demo:*)",
+      "Bash(npx supabase:*)",
+      "Bash(C:UsersmikedSquadbookslibpermissionsserver-permissions.ts)",
+      "Bash(\"app/api/associations/[associationId]/alerts/[alertId]/acknowledge/route.ts\")",
+      "Bash(if exist \"lib\\services\\validation-analytics.ts\" echo \"File exists\")",
+      "Bash(Write-Host 'Killed all Node processes'\" & timeout /t 5 >nul\")"
     ],
     "deny": [],
     "ask": []

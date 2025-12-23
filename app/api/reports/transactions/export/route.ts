@@ -66,12 +66,12 @@ export async function GET(req: NextRequest) {
         txn.transactionDate.toISOString().split('T')[0], // Date (YYYY-MM-DD)
         txn.type,
         escapeCsvValue(txn.vendor),
-        escapeCsvValue(txn.category.name),
+        escapeCsvValue(txn.category?.name || 'Uncategorized'),
         txn.amount.toString(),
         txn.status,
         escapeCsvValue(txn.description || ''),
         escapeCsvValue(approvedBy || '-'),
-        escapeCsvValue(txn.creator.name),
+        escapeCsvValue(txn.creator?.name || 'Unknown'),
         txn.receiptUrl ? 'Yes' : 'No',
       ]
     })

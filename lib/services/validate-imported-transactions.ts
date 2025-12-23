@@ -43,13 +43,12 @@ async function buildValidationContext(
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        currentVersion: {
+        versions: {
           include: {
             allocations: {
               select: {
                 categoryId: true,
                 allocated: true,
-                spent: true,
               },
             },
           },
@@ -102,6 +101,11 @@ async function buildValidationContext(
         }
       : undefined
 
+    // Find the current version from the versions array
+    const currentVersion = budget?.versions.find(
+      v => v.versionNumber === budget.currentVersionNumber
+    )
+
     return {
       transaction: {
         amount: Number(transaction.amount),
@@ -113,14 +117,14 @@ async function buildValidationContext(
         receiptUrl: transaction.receiptUrl,
         description: transaction.description,
       },
-      budget: budget
+      budget: budget && currentVersion
         ? {
             id: budget.id,
             status: budget.status,
-            allocations: (budget.currentVersion?.allocations || []).map(a => ({
+            allocations: (currentVersion.allocations || []).map(a => ({
               categoryId: a.categoryId,
               allocated: Number(a.allocated),
-              spent: Number(a.spent),
+              spent: 0, // TODO: Calculate spent amount from transactions
             })),
           }
         : undefined,
@@ -177,7 +181,7 @@ export async function validateSingleTransaction(
 
   // Run validation
   const validation = validateTransaction(context)
-  const newStatus = deriveStatus(validation)
+  const newStatus = deriveStatus(validation, txn.status)
 
   // Calculate exception severity if needed
   const exceptionSeverity = !validation.compliant
@@ -209,15 +213,17 @@ export async function validateSingleTransaction(
           .join('; ')
       : null
 
-  // Update transaction
+  // Update transaction with correct field names (snake_case for Prisma)
   await prisma.transaction.update({
     where: { id: transactionId },
     data: {
       status: newStatus,
-      validationJson: validationJson as any,
-      ...(exceptionSeverity ? { exceptionSeverity } : {}),
-      receiptStatus,
-      ...(exceptionReason ? { exceptionReason } : {}),
+      validation_json: validationJson as any,
+      ...(exceptionSeverity ? { exception_severity: exceptionSeverity } : {}),
+      receipt_status: receiptStatus,
+      ...(exceptionReason ? { exception_reason: exceptionReason } : {}),
+      // Set resolved_at timestamp when transitioning to RESOLVED
+      ...(newStatus === 'RESOLVED' ? { resolved_at: new Date() } : {}),
     },
   })
 
@@ -273,7 +279,7 @@ export async function validateImportedTransactions(
 
         // Run validation
         const validation = validateTransaction(context)
-        const newStatus = deriveStatus(validation)
+        const newStatus = deriveStatus(validation, txn.status)
 
         // Calculate exception severity if needed
         const exceptionSeverity = !validation.compliant

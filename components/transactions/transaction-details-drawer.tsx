@@ -5,12 +5,14 @@
  * Shows detailed information about a specific transaction including review history
  */
 
+import { useState } from 'react'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
-import { ExternalLink, User as UserIcon, CheckCircle, XCircle, Clock, FileText, Receipt } from 'lucide-react'
+import { ExternalLink, User as UserIcon, CheckCircle, XCircle, Clock, FileText, Receipt, Edit, AlertCircle, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
+import { ReceiptViewer } from '@/components/ReceiptViewer'
 
 interface Approval {
   id: string
@@ -37,13 +39,23 @@ interface Transaction {
     id: string
     name: string
     heading: string
-  }
+  } | null
   creator: {
     id: string
     name: string
     role: string
   }
   approvals?: Approval[]
+  validation_json?: {
+    compliant: boolean
+    violations: Array<{
+      code: string
+      message: string
+      severity: 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL'
+      category?: string
+    }>
+    score: number
+  } | null
 }
 
 interface TransactionDetailsDrawerProps {
@@ -53,12 +65,33 @@ interface TransactionDetailsDrawerProps {
 }
 
 export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: TransactionDetailsDrawerProps) {
+  const [showReceiptViewer, setShowReceiptViewer] = useState(false)
+
   if (!transaction) return null
 
-  const amount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount
-  const transactionDate = typeof transaction.transactionDate === 'string'
-    ? new Date(transaction.transactionDate)
-    : transaction.transactionDate
+  const parsedAmount = typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount
+  const amount = isNaN(parsedAmount) || parsedAmount === null || parsedAmount === undefined ? 0 : parsedAmount
+
+  // Extract date in UTC to avoid timezone shifts
+  const getUTCDateString = (dateInput: string | Date) => {
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      return null
+    }
+    const year = date.getUTCFullYear()
+    const month = date.getUTCMonth() // 0-11
+    const day = date.getUTCDate()
+    return { year, month, day }
+  }
+
+  const dateInfo = getUTCDateString(transaction.transactionDate)
+
+  // Format UTC date without timezone conversion
+  const formatUTCDate = (info: { year: number; month: number; day: number } | null): string => {
+    if (!info) return 'Invalid date'
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    return `${monthNames[info.month]} ${info.day}, ${info.year}`
+  }
 
   /**
    * Sanitize transaction description by removing approval-first language
@@ -127,6 +160,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
   const statusBadge = getStatusBadge(transaction.status)
 
   return (
+    <>
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-lg overflow-y-auto bg-white">
         <SheetHeader>
@@ -137,7 +171,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
             <div className="flex-1">
               <SheetTitle>{transaction.vendor}</SheetTitle>
               <SheetDescription>
-                {transaction.type === 'INCOME' ? '+' : '-'}${amount.toFixed(2)} • {transactionDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                {transaction.type === 'INCOME' ? '+' : '-'}${amount.toFixed(2)} • {formatUTCDate(dateInfo)}
               </SheetDescription>
             </div>
           </div>
@@ -152,7 +186,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
             </h3>
             <div className="space-y-2 bg-gray-50 rounded-lg p-4">
               <div className="flex justify-between text-sm">
-                <span className="text-navy/60">Type</span>
+                <span style={{color: '#4B5563'}}>Type</span>
                 <Badge
                   variant="outline"
                   className={
@@ -165,59 +199,107 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                 </Badge>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-navy/60">Status</span>
+                <span style={{color: '#4B5563'}}>Status</span>
                 <Badge variant={statusBadge.variant} className={statusBadge.className}>
                   {statusBadge.label}
                 </Badge>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-navy/60">Amount</span>
+                <span style={{color: '#4B5563'}}>Amount</span>
                 <span className={`font-semibold ${transaction.type === 'INCOME' ? 'text-meadow' : 'text-red-600'}`}>
                   {transaction.type === 'INCOME' ? '+' : '-'}${amount.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-navy/60">Category</span>
-                <span className="text-navy">{transaction.category.heading} → {transaction.category.name}</span>
+                <span style={{color: '#4B5563'}}>Category</span>
+                {transaction.category ? (
+                  <span style={{color: '#111827'}}>{transaction.category.heading} → {transaction.category.name}</span>
+                ) : (
+                  <span className="text-amber-600 italic">Not categorized</span>
+                )}
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-navy/60">Date</span>
-                <span className="text-navy">
-                  {transactionDate.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
+                <span style={{color: '#4B5563'}}>Date</span>
+                <span style={{color: '#111827'}}>
+                  {formatUTCDate(dateInfo)}
                 </span>
               </div>
               {sanitizeDescription(transaction.description) && (
                 <div className="pt-2 border-t">
-                  <span className="text-sm text-navy/60 block mb-1">Description</span>
-                  <p className="text-sm text-navy">{sanitizeDescription(transaction.description)}</p>
+                  <span className="text-sm block mb-1" style={{color: '#4B5563'}}>Description</span>
+                  <p className="text-sm" style={{color: '#111827'}}>{sanitizeDescription(transaction.description)}</p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Created By */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <UserIcon className="w-4 h-4" />
-              Created By
-            </h3>
-            <div className="space-y-2 bg-gray-50 rounded-lg p-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-navy/60">Name</span>
-                <span className="font-medium text-navy">{transaction.creator.name}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-navy/60">Role</span>
-                <Badge variant="outline" className="capitalize">
-                  {transaction.creator.role.replace(/_/g, ' ').toLowerCase()}
+          {/* Violations/Exceptions Section */}
+          {transaction.validation_json && !transaction.validation_json.compliant && transaction.validation_json.violations.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                Policy Violations
+                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300 ml-auto">
+                  {transaction.validation_json.violations.length} {transaction.validation_json.violations.length === 1 ? 'Issue' : 'Issues'}
                 </Badge>
+              </h3>
+              <div className="space-y-2">
+                {transaction.validation_json.violations.map((violation, index) => {
+                  const severityConfig = {
+                    CRITICAL: { icon: AlertCircle, bgColor: 'bg-red-50', borderColor: 'border-red-300', textColor: 'text-red-700', iconColor: 'text-red-600', badgeBg: 'bg-red-100' },
+                    ERROR: { icon: AlertCircle, bgColor: 'bg-red-50', borderColor: 'border-red-300', textColor: 'text-red-700', iconColor: 'text-red-600', badgeBg: 'bg-red-100' },
+                    WARNING: { icon: AlertTriangle, bgColor: 'bg-amber-50', borderColor: 'border-amber-300', textColor: 'text-amber-700', iconColor: 'text-amber-600', badgeBg: 'bg-amber-100' },
+                    INFO: { icon: AlertCircle, bgColor: 'bg-blue-50', borderColor: 'border-blue-300', textColor: 'text-blue-700', iconColor: 'text-blue-600', badgeBg: 'bg-blue-100' },
+                  }
+                  const config = severityConfig[violation.severity] || severityConfig.INFO
+                  const Icon = config.icon
+
+                  return (
+                    <div key={index} className={`${config.bgColor} border ${config.borderColor} rounded-lg p-3`}>
+                      <div className="flex items-start gap-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${config.badgeBg}`}>
+                          <Icon className={`w-3.5 h-3.5 ${config.iconColor}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <p className={`text-sm font-medium ${config.textColor}`}>{violation.message}</p>
+                            <Badge variant="outline" className={`${config.badgeBg} ${config.textColor} ${config.borderColor} flex-shrink-0 text-xs`}>
+                              {violation.severity}
+                            </Badge>
+                          </div>
+                          {violation.code && (
+                            <p className="text-xs text-gray-600 font-mono">{violation.code}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Created By */}
+          {transaction.creator && (
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <UserIcon className="w-4 h-4" />
+                Created By
+              </h3>
+              <div className="space-y-2 bg-gray-50 rounded-lg p-4">
+                <div className="flex justify-between text-sm">
+                  <span style={{color: '#4B5563'}}>Name</span>
+                  <span className="font-medium" style={{color: '#111827'}}>{transaction.creator.name}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span style={{color: '#4B5563'}}>Role</span>
+                  <Badge variant="outline" className="capitalize">
+                    {transaction.creator.role.replace(/_/g, ' ').toLowerCase()}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Review History Section */}
           {hasApprovals && (
@@ -243,7 +325,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <div>
-                            <p className="font-semibold text-navy">
+                            <p className="font-semibold" style={{color: '#111827'}}>
                               {approval.approver.name}
                               {index === 0 && approvedApprovals.length > 1 && (
                                 <span className="ml-2 text-xs text-green-600 font-normal">(1st Review)</span>
@@ -252,7 +334,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                                 <span className="ml-2 text-xs text-green-600 font-normal">(2nd Review)</span>
                               )}
                             </p>
-                            <p className="text-xs text-navy/60 capitalize">
+                            <p className="text-xs capitalize" style={{color: '#4B5563'}}>
                               {approval.approver.role.replace(/_/g, ' ').toLowerCase()}
                             </p>
                           </div>
@@ -261,7 +343,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                           </Badge>
                         </div>
                         {approval.approvedAt && (
-                          <p className="text-xs text-navy/60 mb-2">
+                          <p className="text-xs mb-2" style={{color: '#4B5563'}}>
                             {new Date(approval.approvedAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -277,7 +359,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                         )}
                         {approval.comment && (
                           <div className="bg-white rounded border border-green-200 p-2 mt-2">
-                            <p className="text-xs text-navy/80 italic">"{approval.comment}"</p>
+                            <p className="text-xs italic" style={{color: '#374151'}}>"{approval.comment}"</p>
                           </div>
                         )}
                       </div>
@@ -295,8 +377,8 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <div>
-                            <p className="font-semibold text-navy">{approval.approver.name}</p>
-                            <p className="text-xs text-navy/60 capitalize">
+                            <p className="font-semibold" style={{color: '#111827'}}>{approval.approver.name}</p>
+                            <p className="text-xs capitalize" style={{color: '#4B5563'}}>
                               {approval.approver.role.replace(/_/g, ' ').toLowerCase()}
                             </p>
                           </div>
@@ -304,7 +386,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                             PENDING
                           </Badge>
                         </div>
-                        <p className="text-xs text-navy/60">Awaiting review...</p>
+                        <p className="text-xs" style={{color: '#4B5563'}}>Awaiting review...</p>
                       </div>
                     </div>
                   </div>
@@ -320,8 +402,8 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <div>
-                            <p className="font-semibold text-navy">{approval.approver.name}</p>
-                            <p className="text-xs text-navy/60 capitalize">
+                            <p className="font-semibold" style={{color: '#111827'}}>{approval.approver.name}</p>
+                            <p className="text-xs capitalize" style={{color: '#4B5563'}}>
                               {approval.approver.role.replace(/_/g, ' ').toLowerCase()}
                             </p>
                           </div>
@@ -330,7 +412,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                           </Badge>
                         </div>
                         {approval.approvedAt && (
-                          <p className="text-xs text-navy/60 mb-2">
+                          <p className="text-xs mb-2" style={{color: '#4B5563'}}>
                             {new Date(approval.approvedAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -346,7 +428,7 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                         )}
                         {approval.comment && (
                           <div className="bg-white rounded border border-red-200 p-2 mt-2">
-                            <p className="text-xs text-navy/80 italic">"{approval.comment}"</p>
+                            <p className="text-xs italic" style={{color: '#374151'}}>"{approval.comment}"</p>
                           </div>
                         )}
                       </div>
@@ -365,17 +447,39 @@ export function TransactionDetailsDrawer({ transaction, open, onOpenChange }: Tr
                 Receipt
               </h3>
               <div className="bg-gray-50 rounded-lg p-4">
-                <Button asChild variant="outline" className="w-full">
-                  <a href={transaction.receiptUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    View Receipt
-                  </a>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setShowReceiptViewer(true)}
+                >
+                  <Receipt className="w-4 h-4 mr-2" />
+                  View Receipt
                 </Button>
               </div>
             </div>
           )}
+
+          {/* Edit Button */}
+          <div className="pt-4 border-t">
+            <Button asChild variant="default" className="w-full bg-navy hover:bg-navy-dark text-white">
+              <Link href={`/${transaction.type === 'EXPENSE' ? 'expenses' : 'income'}/${transaction.id}/edit`}>
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Transaction
+              </Link>
+            </Button>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
+
+    {/* Receipt Viewer */}
+    {transaction.receiptUrl && (
+      <ReceiptViewer
+        receiptUrl={transaction.receiptUrl}
+        isOpen={showReceiptViewer}
+        onClose={() => setShowReceiptViewer(false)}
+      />
+    )}
+  </>
   )
 }

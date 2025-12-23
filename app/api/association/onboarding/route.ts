@@ -62,6 +62,12 @@ export async function POST(request: Request) {
       enableAssociationReports,
       parentReportSchedule,
       associationReportSchedule,
+
+      // Receipt Policy
+      receiptsEnabled,
+      receiptGlobalThresholdCents,
+      receiptGracePeriodDays,
+      allowedTeamThresholdOverride,
     } = body;
 
     // Validate required fields
@@ -106,6 +112,11 @@ export async function POST(request: Request) {
           preSeasonBudgetAutoApprove: usePreSeasonBudgets
             ? preSeasonBudgetAutoApprove
             : false,
+          // Receipt Policy
+          receiptsEnabled: receiptsEnabled ?? true,
+          receiptGlobalThresholdCents: receiptGlobalThresholdCents ?? 10000,
+          receiptGracePeriodDays: receiptGracePeriodDays ?? 7,
+          allowedTeamThresholdOverride: allowedTeamThresholdOverride ?? false,
         },
       });
 

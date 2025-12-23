@@ -100,7 +100,22 @@ export async function GET(request: NextRequest) {
       filters,
     })
 
-    return NextResponse.json(result, { status: 200 })
+    // Map snake_case database fields to camelCase for frontend
+    const mappedResult = {
+      ...result,
+      items: result.items.map((item: any) => ({
+        ...item,
+        validation: item.validation_json,
+        exceptionSeverity: item.exception_severity,
+        exceptionReason: item.exception_reason,
+        resolvedAt: item.resolved_at,
+        resolvedBy: item.resolved_by,
+        overrideJustification: item.override_justification,
+        resolutionNotes: item.resolution_notes,
+      })),
+    }
+
+    return NextResponse.json(mappedResult, { status: 200 })
   } catch (error) {
     logger.error('GET /api/transactions error', error as Error)
     if (error instanceof Error) {
@@ -246,12 +261,36 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Build helpful message based on validation results
+    let message = 'Transaction created successfully.'
+    const violations = result.transaction.validation?.violations || []
+    const hasErrors = violations.some((v: any) => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+
+    // DEBUG: Log validation data
+    console.log('[DEBUG] Transaction validation:', {
+      hasValidation: !!result.transaction.validation,
+      violations: violations,
+      violationsCount: violations.length,
+      hasErrors,
+    })
+
+    if (hasErrors) {
+      // Extract specific error messages
+      const errorMessages = violations
+        .filter((v: any) => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+        .map((v: any) => v.message)
+
+      message = 'Transaction created with issues that need attention: ' + errorMessages.join('; ')
+    } else if (result.approvalRequired) {
+      message = 'Transaction created. Approval required from president.'
+    }
+
     return NextResponse.json(
       {
         ...result,
-        message: result.approvalRequired
-          ? 'Transaction created. Approval required from president.'
-          : 'Transaction created successfully.',
+        message,
+        violations: violations.length > 0 ? violations : undefined,
+        hasValidationErrors: hasErrors,
       },
       { status: 201 }
     )

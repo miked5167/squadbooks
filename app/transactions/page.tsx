@@ -71,6 +71,19 @@ interface Transaction {
   }
 }
 
+// Helper function to format dates in UTC without timezone conversion
+function formatUTCDate(dateString: string): string {
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) return 'Invalid date'
+
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const year = date.getUTCFullYear()
+  const month = date.getUTCMonth()
+  const day = date.getUTCDate()
+
+  return `${monthNames[month]} ${day}, ${year}`
+}
+
 export default function TransactionsPage() {
   const searchParams = useSearchParams()
   const { hasPermission, isTreasurer } = usePermissions()
@@ -326,8 +339,8 @@ export default function TransactionsPage() {
       if (!res.ok) {
         throw new Error('Failed to fetch transaction details')
       }
-      const fullTransaction = await res.json()
-      setSelectedTransaction(fullTransaction)
+      const data = await res.json()
+      setSelectedTransaction(data.transaction)
     } catch (error) {
       console.error('Error fetching transaction details:', error)
       toast.error('Failed to load transaction details')
@@ -542,13 +555,13 @@ export default function TransactionsPage() {
                       {items.map((transaction) => {
                         const uiState = getTransactionUIState(transaction)
                         return (
-                          <TableRow key={transaction.id} className="hover:bg-navy/5">
+                          <TableRow
+                            key={transaction.id}
+                            className="hover:bg-navy/5 cursor-pointer"
+                            onClick={() => openTransactionDetails(transaction)}
+                          >
                             <TableCell className="font-medium text-navy/80">
-                              {new Date(transaction.transactionDate).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              })}
+                              {formatUTCDate(transaction.transactionDate)}
                             </TableCell>
                             <TableCell>
                               <Badge
@@ -572,7 +585,11 @@ export default function TransactionsPage() {
                                 )}
                               </div>
                             </TableCell>
-                            <TableCell className="text-navy/70">{transaction.category.name}</TableCell>
+                            <TableCell className="text-navy/70">
+                              {transaction.category?.name || (
+                                <span className="text-amber-600 italic">Needs category</span>
+                              )}
+                            </TableCell>
                             <TableCell className="text-right">
                               <span
                                 className={`font-semibold ${
@@ -593,7 +610,10 @@ export default function TransactionsPage() {
                                 <Button
                                   variant="link"
                                   size="sm"
-                                  onClick={() => openTransactionDetails(transaction)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    openTransactionDetails(transaction)
+                                  }}
                                   className="text-navy hover:text-navy-dark p-0 h-auto flex items-center gap-1"
                                 >
                                   <span>{uiState.validationIcon}</span>
@@ -615,7 +635,10 @@ export default function TransactionsPage() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => openReceiptViewer(transaction)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    openReceiptViewer(transaction)
+                                  }}
                                   className="text-navy hover:text-navy-dark"
                                 >
                                   <Eye className="w-4 h-4" />

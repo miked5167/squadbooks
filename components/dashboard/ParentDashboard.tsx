@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -15,7 +17,7 @@ interface Transaction {
   categoryName: string
   amount: number
   type: 'INCOME' | 'EXPENSE'
-  status: 'APPROVED' | 'PENDING' | 'REJECTED' | 'DRAFT'
+  status: 'VALIDATED' | 'IMPORTED' | 'EXCEPTION' | 'RESOLVED' | 'DRAFT' | 'LOCKED' | 'APPROVED' | 'APPROVED_AUTOMATIC' | 'PENDING' | 'REJECTED'
   receiptUrl: string | null
 }
 

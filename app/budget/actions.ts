@@ -26,6 +26,7 @@ import {
 import { checkThresholdAndLock } from '@/lib/budget-workflow/threshold'
 import { transitionTeamSeason } from '@/lib/services/team-season-lifecycle'
 import { checkAndLockBudget } from '@/lib/services/team-season-auto-transitions'
+import { logger } from '@/lib/logger'
 
 // ============================================
 // HELPER: Get authenticated user with team info
@@ -394,6 +395,58 @@ export async function submitForReview(input: SubmitForReviewInput): Promise<Budg
           code: 'INVALID_STATUS_TRANSITION',
           message: `Cannot transition from ${budget.status} to REVIEW`,
         },
+      }
+    }
+
+    // Validate budget against coach compensation policy
+    const { validateBudget } = await import('@/lib/services/coach-compensation')
+    const team = await prisma.team.findUnique({
+      where: { id: budget.teamId },
+      select: {
+        associationTeam: {
+          select: {
+            associationId: true,
+            association: {
+              select: {
+                season: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    if (team?.associationTeam?.[0]) {
+      const associationId = team.associationTeam[0].associationId
+      const season = team.associationTeam[0].association.season
+
+      const budgetValidation = await validateBudget({
+        budgetId: input.budgetId,
+        teamId: budget.teamId,
+        season,
+        associationId,
+      })
+
+      // BLOCK or REQUIRE_EXCEPTION: prevent submission
+      if (!budgetValidation.allowed) {
+        if (budgetValidation.severity === 'critical' || budgetValidation.severity === 'error') {
+          return {
+            success: false,
+            error: {
+              code: 'BUDGET_VALIDATION_FAILED',
+              message: budgetValidation.message || 'Budget validation failed',
+            },
+          }
+        }
+      }
+
+      // Log warnings even if allowed
+      if (budgetValidation.severity === 'warn' && budgetValidation.message) {
+        logger.warn('Budget submission warning', {
+          budgetId: input.budgetId,
+          teamId: budget.teamId,
+          message: budgetValidation.message,
+        })
       }
     }
 

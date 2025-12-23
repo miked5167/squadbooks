@@ -74,6 +74,26 @@ export async function POST(request: NextRequest) {
         },
       })
 
+      // Re-validate transaction after receipt upload
+      // This will automatically clear exception status if all issues are resolved
+      try {
+        const { validateSingleTransaction } = await import(
+          '@/lib/services/validate-imported-transactions'
+        )
+        const validationResult = await validateSingleTransaction(transactionId, user.teamId!)
+        logger.info(`Re-validated transaction ${transactionId} after receipt upload`, {
+          newStatus: validationResult.status,
+          compliant: validationResult.validationJson.compliant,
+          violations: validationResult.validationJson.violations.length,
+        })
+      } catch (error) {
+        logger.warn('Failed to re-validate transaction after receipt upload', {
+          transactionId,
+          error: error instanceof Error ? error.message : String(error),
+        })
+        // Don't fail the receipt upload if validation fails
+      }
+
       return NextResponse.json(
         {
           message: 'Receipt uploaded and attached to transaction',

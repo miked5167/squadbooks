@@ -40,7 +40,7 @@ export async function getFinancialSummary(
 
   const currentSeason = season || team.season
 
-  // Fetch all approved transactions for this team
+  // Fetch all approved/validated/resolved transactions for this team
   const [incomeTransactions, expenseTransactions, budgetAllocations] = await Promise.all([
     // Get all approved INCOME transactions
     prisma.transaction.findMany({
@@ -52,8 +52,8 @@ export async function getFinancialSummary(
       },
       select: {
         amount: true,
-        systemCategoryId: true,
-        systemCategory: {
+        categoryId: true,
+        category: {
           select: {
             id: true,
             name: true,
@@ -61,18 +61,19 @@ export async function getFinancialSummary(
         },
       },
     }),
-    // Get all approved EXPENSE transactions
+    // Get all APPROVED, VALIDATED, and RESOLVED EXPENSE transactions
+    // (matching the budget calculation logic)
     prisma.transaction.findMany({
       where: {
         teamId,
         type: 'EXPENSE',
-        status: 'APPROVED',
+        status: { in: ['APPROVED', 'VALIDATED', 'RESOLVED'] },
         deletedAt: null,
       },
       select: {
         amount: true,
-        systemCategoryId: true,
-        systemCategory: {
+        categoryId: true,
+        category: {
           select: {
             id: true,
             name: true,
@@ -116,13 +117,13 @@ export async function getFinancialSummary(
   // Group income by category
   const incomeMap = new Map<string, { name: string; amount: number }>()
   incomeTransactions.forEach((transaction) => {
-    if (!transaction.systemCategoryId || !transaction.systemCategory) return
-    const existing = incomeMap.get(transaction.systemCategoryId)
+    if (!transaction.categoryId || !transaction.category) return
+    const existing = incomeMap.get(transaction.categoryId)
     if (existing) {
       existing.amount += Number(transaction.amount)
     } else {
-      incomeMap.set(transaction.systemCategoryId, {
-        name: transaction.systemCategory.name,
+      incomeMap.set(transaction.categoryId, {
+        name: transaction.category.name,
         amount: Number(transaction.amount),
       })
     }
@@ -137,13 +138,13 @@ export async function getFinancialSummary(
   // Group expenses by category
   const expenseMap = new Map<string, { name: string; amount: number }>()
   expenseTransactions.forEach((transaction) => {
-    if (!transaction.systemCategoryId || !transaction.systemCategory) return
-    const existing = expenseMap.get(transaction.systemCategoryId)
+    if (!transaction.categoryId || !transaction.category) return
+    const existing = expenseMap.get(transaction.categoryId)
     if (existing) {
       existing.amount += Number(transaction.amount)
     } else {
-      expenseMap.set(transaction.systemCategoryId, {
-        name: transaction.systemCategory.name,
+      expenseMap.set(transaction.categoryId, {
+        name: transaction.category.name,
         amount: Number(transaction.amount),
       })
     }

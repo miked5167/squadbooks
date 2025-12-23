@@ -255,7 +255,7 @@ export async function getTeamDetailData(
           where: {
             teamId: teamInternalId,
             categoryId: allocation.category.id,
-            status: 'APPROVED',
+            status: 'VALIDATED',
             type: 'EXPENSE',
           },
           select: {
@@ -297,6 +297,7 @@ export async function getTeamDetailData(
           receiptUrl: true,
           transactionDate: true,
           createdAt: true,
+          validation_json: true,
           category: {
             select: {
               heading: true,
@@ -318,12 +319,12 @@ export async function getTeamDetailData(
         }))
       )
 
-    // Fetch recent approved transactions
+    // Fetch recent validated transactions
     const recentTransactions = await prisma.transaction
       .findMany({
         where: {
           teamId: teamInternalId,
-          status: 'APPROVED',
+          status: 'VALIDATED',
         },
         orderBy: {
           transactionDate: 'desc',

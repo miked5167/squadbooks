@@ -63,28 +63,48 @@ interface ValidationAnalytics {
   }
 }
 
-export function ValidationComplianceCard() {
+interface ValidationComplianceCardProps {
+  teamId?: string
+}
+
+export function ValidationComplianceCard({ teamId }: ValidationComplianceCardProps) {
   const [analytics, setAnalytics] = useState<ValidationAnalytics | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchAnalytics()
-  }, [])
+    async function fetchAnalytics() {
+      try {
+        setLoading(true)
+        const url = teamId
+          ? `/api/validation-analytics?teamId=${encodeURIComponent(teamId)}`
+          : '/api/validation-analytics'
 
-  async function fetchAnalytics() {
-    try {
-      setLoading(true)
-      const res = await fetch('/api/validation-analytics')
-      if (!res.ok) throw new Error('Failed to fetch analytics')
-      const data = await res.json()
-      setAnalytics(data)
-    } catch (error) {
-      console.error('Failed to fetch validation analytics:', error)
-      toast.error('Failed to load compliance metrics')
-    } finally {
-      setLoading(false)
+        const res = await fetch(url)
+
+        if (!res.ok) {
+          const errorText = await res.text()
+          let errorData: any = {}
+          try {
+            errorData = JSON.parse(errorText)
+          } catch {
+            // Could not parse as JSON
+          }
+          console.error('Validation analytics error:', errorData)
+          throw new Error(errorData.details || errorData.error || `Failed to fetch analytics`)
+        }
+
+        const data = await res.json()
+        setAnalytics(data)
+      } catch (error) {
+        console.error('Failed to fetch validation analytics:', error)
+        toast.error(error instanceof Error ? error.message : 'Failed to load compliance metrics')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+
+    fetchAnalytics()
+  }, [teamId])
 
   if (loading) {
     return (

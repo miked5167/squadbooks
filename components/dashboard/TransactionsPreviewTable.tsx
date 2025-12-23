@@ -21,7 +21,7 @@ interface Transaction {
   categoryName: string
   amount: number
   type: 'INCOME' | 'EXPENSE'
-  status: 'APPROVED' | 'PENDING' | 'REJECTED' | 'DRAFT'
+  status: 'VALIDATED' | 'IMPORTED' | 'EXCEPTION' | 'RESOLVED' | 'DRAFT' | 'LOCKED' | 'APPROVED' | 'APPROVED_AUTOMATIC' | 'PENDING' | 'REJECTED'
   receiptUrl: string | null
 }
 
@@ -42,14 +42,26 @@ export function TransactionsPreviewTable({
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'APPROVED':
-        return <Badge variant="success" className="bg-green-100 text-green-800">Approved</Badge>
-      case 'PENDING':
-        return <Badge variant="warning" className="bg-yellow-100 text-yellow-800">Pending</Badge>
-      case 'REJECTED':
-        return <Badge variant="destructive">Rejected</Badge>
+      case 'VALIDATED':
+        return <Badge variant="success" className="bg-green-100 text-green-800">Validated</Badge>
+      case 'IMPORTED':
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Imported</Badge>
+      case 'EXCEPTION':
+        return <Badge variant="warning" className="bg-orange-100 text-orange-800">Exception</Badge>
+      case 'RESOLVED':
+        return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Resolved</Badge>
+      case 'LOCKED':
+        return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Locked</Badge>
       case 'DRAFT':
-        return <Badge variant="outline">Draft</Badge>
+        return <Badge variant="outline" className="bg-gray-100 text-gray-800">Draft</Badge>
+      // Legacy status mappings (for backward compatibility)
+      case 'APPROVED':
+      case 'APPROVED_AUTOMATIC':
+        return <Badge variant="success" className="bg-green-100 text-green-800">Validated</Badge>
+      case 'PENDING':
+        return <Badge variant="warning" className="bg-yellow-100 text-yellow-800">Pending Review</Badge>
+      case 'REJECTED':
+        return <Badge variant="warning" className="bg-red-100 text-red-800">Exception</Badge>
       default:
         return <Badge variant="secondary">{status}</Badge>
     }

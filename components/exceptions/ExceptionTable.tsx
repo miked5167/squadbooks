@@ -70,9 +70,9 @@ export function ExceptionTable({ transactions, onRowClick }: ExceptionTableProps
 
   const getViolationCount = (txn: TransactionWithValidation) => {
     if (!txn.validationJson?.violations) return 0
-    return txn.validationJson.violations.filter(
-      (v) => v.severity === 'ERROR' || v.severity === 'CRITICAL'
-    ).length
+    // Count all violations regardless of severity
+    // Violations can have severity: ERROR, CRITICAL, WARNING, INFO, MEDIUM, LOW, HIGH
+    return txn.validationJson.violations.length
   }
 
   return (

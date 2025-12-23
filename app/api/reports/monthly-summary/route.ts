@@ -40,12 +40,14 @@ export async function GET(req: NextRequest) {
     const startDate = new Date(year, monthNum - 1, 1)
     const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999)
 
-    // Get all approved transactions for the month
+    // Get all validated/approved transactions for the month
     const transactions = await prisma.transaction.findMany({
       where: {
         teamId: user.teamId,
         deletedAt: null,
-        status: 'APPROVED',
+        status: {
+          in: ['APPROVED', 'APPROVED_AUTOMATIC', 'VALIDATED', 'RESOLVED'],
+        },
         transactionDate: {
           gte: startDate,
           lte: endDate,
@@ -63,7 +65,7 @@ export async function GET(req: NextRequest) {
     transactions
       .filter((t) => t.type === 'INCOME')
       .forEach((t) => {
-        const categoryName = t.category.name
+        const categoryName = t.category?.name || 'Uncategorized'
         const amount = Number(t.amount)
         incomeByCategory[categoryName] = (incomeByCategory[categoryName] || 0) + amount
         totalIncome += amount
@@ -76,7 +78,7 @@ export async function GET(req: NextRequest) {
     transactions
       .filter((t) => t.type === 'EXPENSE')
       .forEach((t) => {
-        const categoryName = t.category.name
+        const categoryName = t.category?.name || 'Uncategorized'
         const amount = Number(t.amount)
         expensesByCategory[categoryName] = (expensesByCategory[categoryName] || 0) + amount
         totalExpenses += amount

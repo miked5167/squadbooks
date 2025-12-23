@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ReportScheduleBuilder, type ReportSchedule } from './ReportScheduleBuilder';
+import { ReceiptPolicyFields, type ReceiptPolicyFieldsData } from '@/components/shared/ReceiptPolicyFields';
 
 interface StepDashboardConfigProps {
   onComplete: (data: DashboardConfigData) => void;
@@ -47,6 +48,12 @@ interface DashboardConfigData {
   enableAssociationReports: boolean;
   parentReportSchedule?: ReportSchedule;
   associationReportSchedule?: ReportSchedule;
+
+  // Receipt Policy
+  receiptsEnabled: boolean;
+  receiptGlobalThresholdCents: number;
+  receiptGracePeriodDays: number;
+  allowedTeamThresholdOverride: boolean;
 }
 
 const RECOMMENDED_DEFAULTS: DashboardConfigData = {
@@ -90,6 +97,12 @@ const RECOMMENDED_DEFAULTS: DashboardConfigData = {
     requireBudgetChanges: true,
     requireCategoryBreakdown: true,
   },
+
+  // Receipt Policy
+  receiptsEnabled: true,
+  receiptGlobalThresholdCents: 10000, // $100.00
+  receiptGracePeriodDays: 7,
+  allowedTeamThresholdOverride: false,
 };
 
 export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDashboardConfigProps) {
@@ -118,6 +131,12 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
     enableAssociationReports: initialData?.enableAssociationReports ?? RECOMMENDED_DEFAULTS.enableAssociationReports,
     parentReportSchedule: initialData?.parentReportSchedule ?? RECOMMENDED_DEFAULTS.parentReportSchedule,
     associationReportSchedule: initialData?.associationReportSchedule ?? RECOMMENDED_DEFAULTS.associationReportSchedule,
+
+    // Receipt Policy
+    receiptsEnabled: initialData?.receiptsEnabled ?? RECOMMENDED_DEFAULTS.receiptsEnabled,
+    receiptGlobalThresholdCents: initialData?.receiptGlobalThresholdCents ?? RECOMMENDED_DEFAULTS.receiptGlobalThresholdCents,
+    receiptGracePeriodDays: initialData?.receiptGracePeriodDays ?? RECOMMENDED_DEFAULTS.receiptGracePeriodDays,
+    allowedTeamThresholdOverride: initialData?.allowedTeamThresholdOverride ?? RECOMMENDED_DEFAULTS.allowedTeamThresholdOverride,
   });
 
   const [errors, setErrors] = useState<string[]>([]);
@@ -573,6 +592,28 @@ export function StepDashboardConfig({ onComplete, onBack, initialData }: StepDas
                   />
                 )}
               </div>
+            </div>
+
+            {/* Receipt Policy */}
+            <div className="border-t border-gray-200 pt-6">
+              <ReceiptPolicyFields
+                data={{
+                  receiptsEnabled: formData.receiptsEnabled,
+                  receiptGlobalThresholdCents: formData.receiptGlobalThresholdCents,
+                  receiptGracePeriodDays: formData.receiptGracePeriodDays,
+                  allowedTeamThresholdOverride: formData.allowedTeamThresholdOverride,
+                }}
+                onChange={(receiptData) => {
+                  setFormData({
+                    ...formData,
+                    receiptsEnabled: receiptData.receiptsEnabled,
+                    receiptGlobalThresholdCents: receiptData.receiptGlobalThresholdCents,
+                    receiptGracePeriodDays: receiptData.receiptGracePeriodDays,
+                    allowedTeamThresholdOverride: receiptData.allowedTeamThresholdOverride,
+                  });
+                }}
+                compact={true}
+              />
             </div>
 
             {errors.length > 0 && (

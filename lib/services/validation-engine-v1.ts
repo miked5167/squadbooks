@@ -358,7 +358,32 @@ export function validateTransaction(context: ValidationContext): ValidationResul
 
 /**
  * Derive transaction status from validation result
+ *
+ * @param validation - The validation result
+ * @param currentStatus - The current status of the transaction (if updating)
+ * @returns The new status: VALIDATED, EXCEPTION, or RESOLVED
  */
-export function deriveStatus(validation: ValidationResult): 'VALIDATED' | 'EXCEPTION' {
-  return validation.compliant ? 'VALIDATED' : 'EXCEPTION'
+export function deriveStatus(
+  validation: ValidationResult,
+  currentStatus?: string
+): 'VALIDATED' | 'EXCEPTION' | 'RESOLVED' {
+  // Legacy status mappings
+  // REJECTED and PENDING (with violations) should be treated as exceptions
+  const wasException =
+    currentStatus === 'EXCEPTION' ||
+    currentStatus === 'REJECTED' ||
+    (currentStatus === 'PENDING' && !validation.compliant)
+
+  // If transaction is now compliant
+  if (validation.compliant) {
+    // If it was previously an EXCEPTION or legacy exception status, mark it as RESOLVED
+    if (wasException) {
+      return 'RESOLVED'
+    }
+    // Otherwise it's VALIDATED
+    return 'VALIDATED'
+  }
+
+  // If not compliant, it's an EXCEPTION
+  return 'EXCEPTION'
 }

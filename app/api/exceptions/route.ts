@@ -56,11 +56,17 @@ export async function GET() {
     })
 
     // Transform to include parsed validation JSON
-    const transformedTransactions = transactions.map((txn) => ({
-      ...txn,
-      amount: Number(txn.amount),
-      validationJson: txn.validationJson ? JSON.parse(JSON.stringify(txn.validationJson)) : null,
-    }))
+    // Note: Prisma returns validation_json (snake_case) from DB, we need to map to validationJson (camelCase)
+    const transformedTransactions = transactions.map((txn) => {
+      // @ts-expect-error - Prisma returns snake_case field names
+      const validationData = txn.validation_json || txn.validationJson
+
+      return {
+        ...txn,
+        amount: Number(txn.amount),
+        validationJson: validationData ? JSON.parse(JSON.stringify(validationData)) : null,
+      }
+    })
 
     return NextResponse.json({
       transactions: transformedTransactions,

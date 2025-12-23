@@ -119,11 +119,12 @@ export async function getAssociationFinancials(
       .map(at => at.team?.id)
       .filter(Boolean) as string[]
 
-    // Get all VALIDATED transactions for spent calculation
+    // Get all APPROVED and RESOLVED transactions for spent calculation
+    // APPROVED = approved by team manager, RESOLVED = exceptions that were resolved
     const approvedTransactions = await prisma.transaction.findMany({
       where: {
         teamId: { in: teamInternalIds },
-        status: 'VALIDATED',
+        status: { in: ['APPROVED', 'RESOLVED'] },
         type: 'EXPENSE',
       },
       select: {

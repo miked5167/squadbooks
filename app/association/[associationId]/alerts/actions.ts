@@ -146,27 +146,29 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
         })
       }
 
-      // 3. Fetch transactions with missing receipts
-      const missingReceiptTxns = await prisma.transaction.findMany({
-        where: {
-          teamId: teamInternalId,
-          status: {
-            in: ['PENDING', 'VALIDATED']
-          },
-          receiptUrl: null,
-        },
-        select: {
-          id: true,
-          amount: true,
-          vendor: true,
-          transactionDate: true,
-          createdAt: true,
-        },
-        orderBy: {
-          transactionDate: 'desc',
-        },
-        take: 5, // Limit to 5 most recent per team
-      })
+      // 3. Fetch transactions with ERROR severity MISSING_RECEIPT violations
+      // Query for transactions where validation_json contains violations with:
+      // - code: 'MISSING_RECEIPT'
+      // - severity: 'ERROR' (excludes INFO violations which are within grace period)
+      const missingReceiptTxns = await prisma.$queryRaw<Array<{
+        id: string;
+        amount: number;
+        vendor: string;
+        transactionDate: Date;
+        createdAt: Date;
+      }>>`
+        SELECT id, amount, vendor, "transactionDate", "createdAt"
+        FROM "transactions"
+        WHERE "teamId" = ${teamInternalId}
+          AND validation_json IS NOT NULL
+          AND EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements(validation_json->'violations') AS violation
+            WHERE violation->>'code' = 'MISSING_RECEIPT'
+              AND violation->>'severity' = 'ERROR'
+          )
+        ORDER BY "transactionDate" DESC
+      `
 
       for (const txn of missingReceiptTxns) {
         allAlerts.push({
@@ -177,7 +179,7 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
           message: `Missing receipt for ${txn.vendor} - $${Number(txn.amount).toLocaleString()}`,
           severity: 'HIGH',
           createdAt: txn.createdAt,
-          link: `/association/${associationId}/teams/${assocTeam.id}`,
+          link: `/association/${associationId}/teams/${assocTeam.id}?receiptFilter=missing_required`,
         })
       }
 
@@ -258,17 +260,31 @@ export async function getAlertsData(associationId: string): Promise<AlertsData> 
           })
         }
 
-        // Multiple missing receipts alert
-        if (latestSnapshot.missingReceipts !== null && latestSnapshot.missingReceipts >= 3) {
+        // Multiple missing receipts alert - calculate from actual violations
+        const missingReceiptsCount = await prisma.$queryRaw<Array<{ count: bigint }>>`
+          SELECT COUNT(*) as count
+          FROM "transactions"
+          WHERE "teamId" = ${teamInternalId}
+            AND validation_json IS NOT NULL
+            AND EXISTS (
+              SELECT 1
+              FROM jsonb_array_elements(validation_json->'violations') AS violation
+              WHERE violation->>'code' = 'MISSING_RECEIPT'
+                AND violation->>'severity' = 'ERROR'
+            )
+        `
+
+        const receiptCount = Number(missingReceiptsCount[0]?.count || 0)
+        if (receiptCount >= 3) {
           allAlerts.push({
             id: `receipts-count-${assocTeam.id}`,
             teamId: assocTeam.id,
             teamName: assocTeam.teamName,
             type: 'MULTIPLE_RECEIPTS',
-            message: `${latestSnapshot.missingReceipts} missing receipts require attention`,
+            message: `${receiptCount} missing receipts require attention`,
             severity: 'HIGH',
-            createdAt: latestSnapshot.snapshotAt,
-            link: `/association/${associationId}/teams/${assocTeam.id}`,
+            createdAt: new Date(),
+            link: `/association/${associationId}/teams/${assocTeam.id}?receiptFilter=missing_required`,
           })
         }
       }

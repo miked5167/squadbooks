@@ -12,6 +12,7 @@ interface ReceiptUploadProps {
   currentFile: File | null
   disabled?: boolean
   maxSizeMB?: number
+  hideLabel?: boolean
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf']
@@ -23,6 +24,7 @@ export function ReceiptUpload({
   currentFile,
   disabled = false,
   maxSizeMB = DEFAULT_MAX_SIZE_MB,
+  hideLabel = false,
 }: ReceiptUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
@@ -147,7 +149,9 @@ export function ReceiptUpload({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-navy">Receipt (Optional)</label>
+      {!hideLabel && (
+        <label className="text-sm font-medium text-navy">Receipt (Optional)</label>
+      )}
 
       {currentFile ? (
         // File selected - show preview

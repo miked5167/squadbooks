@@ -8,6 +8,7 @@ import type {
 import { logger } from '@/lib/logger'
 import { computeValidation } from '@/lib/services/transaction-validator'
 import type { ValidationContext } from '@/lib/types/validation'
+import { RuleEnforcementEngine } from '@/lib/services/rule-enforcement-engine'
 
 /**
  * Business Logic: Determine if a transaction requires approval
@@ -78,31 +79,51 @@ async function buildValidationContext(
     },
   })
 
-  // Get active budget with allocations
-  const budget = await prisma.budget.findFirst({
+  // Get active budget
+  const budgetRecord = await prisma.budget.findFirst({
     where: {
       teamId,
       status: 'LOCKED',
     },
-    include: {
-      currentVersion: {
-        include: {
-          allocations: {
-            select: {
-              categoryId: true,
-              allocated: true,
-              spent: true,
-            },
+    select: {
+      id: true,
+      status: true,
+      currentVersionNumber: true,
+    },
+  })
+
+  // Get current budget version with allocations
+  let budget = null
+  if (budgetRecord) {
+    const currentVersion = await prisma.budgetVersion.findFirst({
+      where: {
+        budgetId: budgetRecord.id,
+        versionNumber: budgetRecord.currentVersionNumber,
+      },
+      include: {
+        allocations: {
+          select: {
+            categoryId: true,
+            allocated: true,
+            spent: true,
           },
         },
       },
-    },
-  })
+    })
+
+    if (currentVersion) {
+      budget = {
+        id: budgetRecord.id,
+        status: budgetRecord.status,
+        currentVersion,
+      }
+    }
+  }
 
   // Get active envelopes
   const envelopes = await prisma.budgetEnvelope.findMany({
     where: {
-      budgetId: budget?.id,
+      budgetId: budgetRecord?.id,
       isActive: true,
     },
     select: {
@@ -111,7 +132,6 @@ async function buildValidationContext(
       vendorMatch: true,
       vendorMatchType: true,
       capAmount: true,
-      spent: true,
       maxSingleTransaction: true,
     },
   })
@@ -122,12 +142,8 @@ async function buildValidationContext(
       teamId,
     },
     select: {
-      season: {
-        select: {
-          startDate: true,
-          endDate: true,
-        },
-      },
+      seasonStart: true,
+      seasonEnd: true,
     },
   })
 
@@ -186,8 +202,8 @@ async function buildValidationContext(
     receiptPolicy,
     season: teamSeason
       ? {
-          startDate: teamSeason.season.startDate,
-          endDate: teamSeason.season.endDate,
+          startDate: teamSeason.seasonStart,
+          endDate: teamSeason.seasonEnd,
         }
       : undefined,
   }
@@ -239,6 +255,49 @@ export async function createTransaction(
     teamId
   )
   const validationResult = await computeValidation(validationContext)
+
+  // Check coach compensation limits via RuleEnforcementEngine
+  const ruleEngine = new RuleEnforcementEngine()
+  const ruleValidation = await ruleEngine.validateTransaction(teamId, {
+    id: undefined, // New transaction, no ID yet
+    amount,
+    type: type as 'INCOME' | 'EXPENSE',
+    systemCategoryId: data.systemCategoryId,
+    teamId,
+  })
+
+  // BLOCK enforcement: throw error if coach comp validation fails and enforcement is BLOCK
+  if (ruleValidation.coachCompValidation && !ruleValidation.coachCompValidation.allowed) {
+    if (ruleValidation.coachCompValidation.severity === 'critical') {
+      throw new Error(
+        ruleValidation.coachCompValidation.message ||
+        'Transaction blocked by coach compensation policy'
+      )
+    }
+  }
+
+  // Merge coach comp violations into validation result
+  if (ruleValidation.coachCompValidation && ruleValidation.coachCompValidation.severity !== 'ok') {
+    // Add coach comp validation message to violations
+    validationResult.violations.push({
+      type: 'COACH_COMPENSATION_CAP',
+      severity: ruleValidation.coachCompValidation.severity === 'critical' ? 'CRITICAL' :
+                ruleValidation.coachCompValidation.severity === 'error' ? 'ERROR' : 'WARNING',
+      message: ruleValidation.coachCompValidation.message || 'Coach compensation cap issue',
+      metadata: {
+        cap: ruleValidation.coachCompValidation.cap,
+        actual: ruleValidation.coachCompValidation.currentActual,
+        projected: ruleValidation.coachCompValidation.projectedActual,
+        percentUsed: ruleValidation.coachCompValidation.percentUsed,
+      },
+    })
+
+    // Update compliance status if we have errors or critical violations
+    if (ruleValidation.coachCompValidation.severity === 'error' ||
+        ruleValidation.coachCompValidation.severity === 'critical') {
+      validationResult.compliant = false
+    }
+  }
 
   // Create transaction with routing decision AND validation result
   const transaction = await prisma.transaction.create({
@@ -374,6 +433,40 @@ export async function createTransaction(
     // Don't fail transaction creation if audit logging fails
   }
 
+  // Trigger coach compensation alerts if applicable (non-blocking)
+  if (transaction.systemCategoryId) {
+    Promise.resolve().then(async () => {
+      try {
+        const { triggerCoachCompAlertsForTeam } = await import('@/lib/services/coach-compensation')
+        const team = await prisma.team.findUnique({
+          where: { id: teamId },
+          select: {
+            associationTeam: {
+              select: {
+                associationId: true,
+                association: { select: { season: true } },
+              },
+            },
+          },
+        })
+
+        if (team?.associationTeam?.[0]) {
+          const associationId = team.associationTeam[0].associationId
+          const season = team.associationTeam[0].association.season
+
+          await triggerCoachCompAlertsForTeam({
+            teamId,
+            season,
+            associationId,
+          })
+        }
+      } catch (error) {
+        console.error('Failed to trigger coach comp alerts after transaction creation:', error)
+        // Don't fail transaction creation if alert triggering fails
+      }
+    })
+  }
+
   return {
     transaction,
     approvalRequired: routingDecision.requiresApprovalRecords,
@@ -498,15 +591,71 @@ export async function getTransactionsWithCursor(params: {
 
   // Add filters
   if (type) where.type = type
-  if (status) where.status = status
   if (categoryId) where.categoryId = categoryId
+
+  // Handle computed validation-first statuses and search (combining OR conditions)
+  const statusConditions: Prisma.TransactionWhereInput[] = []
+  const searchConditions: Prisma.TransactionWhereInput[] = []
+
+  if (status) {
+    switch (status) {
+      case 'IMPORTED':
+        // Transactions missing category or receipt (need validation)
+        statusConditions.push({ categoryId: null })
+        statusConditions.push({ receiptUrl: null })
+        break
+      case 'VALIDATED':
+        // Transactions that passed validation
+        where.validation_json = {
+          path: ['compliant'],
+          equals: true,
+        }
+        break
+      case 'EXCEPTION':
+        // Transactions with policy violations (compliant = false)
+        where.validation_json = {
+          path: ['compliant'],
+          equals: false,
+        }
+        where.resolved_at = null // Not yet resolved
+        break
+      case 'RESOLVED':
+        // Exceptions that were addressed
+        where.resolved_at = { not: null }
+        break
+      case 'LOCKED':
+      case 'APPROVED':
+      case 'PENDING':
+      case 'DRAFT':
+      case 'REJECTED':
+        // Legacy statuses - filter by database status field
+        where.status = status
+        break
+      default:
+        // Unknown status - ignore filter
+        break
+    }
+  }
 
   // Server-side search on vendor and description
   if (search && search.trim()) {
-    where.OR = [
-      { vendor: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } },
+    searchConditions.push({ vendor: { contains: search, mode: 'insensitive' } })
+    searchConditions.push({ description: { contains: search, mode: 'insensitive' } })
+  }
+
+  // Combine OR conditions properly
+  if (statusConditions.length > 0 && searchConditions.length > 0) {
+    // Both status OR and search OR - combine with AND
+    where.AND = [
+      { OR: statusConditions },
+      { OR: searchConditions },
     ]
+  } else if (statusConditions.length > 0) {
+    // Only status OR
+    where.OR = statusConditions
+  } else if (searchConditions.length > 0) {
+    // Only search OR
+    where.OR = searchConditions
   }
 
   // Build cursor where clause separately to avoid OR conflicts
@@ -566,6 +715,14 @@ export async function getTransactionsWithCursor(params: {
       receiptUrl: true,
       envelopeId: true,
       approvalReason: true,
+      // Validation fields for exception tracking
+      validation_json: true,
+      exception_severity: true,
+      exception_reason: true,
+      resolved_at: true,
+      resolved_by: true,
+      override_justification: true,
+      resolution_notes: true,
       // Minimal category data
       category: {
         select: {
@@ -724,8 +881,10 @@ export async function updateTransaction(
     throw new Error('Transaction not found')
   }
 
-  if (existing.status === 'APPROVED' || existing.status === 'REJECTED') {
-    throw new Error('Cannot update approved or rejected transactions')
+  // In validation-first workflow, only LOCKED transactions cannot be edited
+  // All other statuses (IMPORTED, VALIDATED, EXCEPTION, RESOLVED) can be edited by treasurers
+  if (existing.status === 'LOCKED') {
+    throw new Error('Cannot update locked transactions. Season has been locked.')
   }
 
   // Capture old values for audit trail
@@ -737,6 +896,40 @@ export async function updateTransaction(
     vendor: existing.vendor,
     description: existing.description,
     transactionDate: existing.transactionDate.toISOString(),
+  }
+
+  // Check coach compensation limits for edits (if amount or category changed)
+  const amountChanged = data.amount !== undefined && data.amount !== Number(existing.amount)
+  const categoryChanged = data.categoryId !== undefined && data.categoryId !== existing.categoryId
+
+  if (amountChanged || categoryChanged) {
+    const ruleEngine = new RuleEnforcementEngine()
+    const ruleValidation = await ruleEngine.validateTransaction(teamId, {
+      id: existing.id,
+      amount: data.amount ?? Number(existing.amount),
+      type: (data.type ?? existing.type) as 'INCOME' | 'EXPENSE',
+      systemCategoryId: existing.systemCategoryId,
+      teamId,
+    })
+
+    // BLOCK enforcement: throw error if coach comp validation fails
+    if (ruleValidation.coachCompValidation && !ruleValidation.coachCompValidation.allowed) {
+      if (ruleValidation.coachCompValidation.severity === 'critical') {
+        throw new Error(
+          ruleValidation.coachCompValidation.message ||
+          'Transaction update blocked by coach compensation policy'
+        )
+      }
+    }
+
+    // Log warning if not blocking
+    if (ruleValidation.coachCompValidation && ruleValidation.coachCompValidation.severity === 'warn') {
+      logger.warn('Transaction update exceeds coach compensation cap (WARN_ONLY mode)', {
+        transactionId: id,
+        teamId,
+        message: ruleValidation.coachCompValidation.message,
+      })
+    }
   }
 
   // Update transaction
@@ -787,25 +980,76 @@ export async function updateTransaction(
     // Don't fail transaction update if audit logging fails
   }
 
-  // NEW: Re-run validation after update (especially important for category changes)
-  // Run validation asynchronously to avoid blocking the response
-  Promise.resolve().then(async () => {
-    try {
-      const { validateSingleTransaction } =
-        await import('@/lib/services/validate-imported-transactions')
-      await validateSingleTransaction(id, teamId)
-      logger.info(`Re-validated transaction ${id} after update`)
-    } catch (error) {
-      logger.error('Failed to re-validate transaction after update:', error)
-      // Don't fail the update if validation fails
-    }
-  })
+  // NEW: Re-run validation after update (especially important for category/receipt changes)
+  // Run validation synchronously to ensure exceptions are cleared before returning
+  try {
+    const { validateSingleTransaction } =
+      await import('@/lib/services/validate-imported-transactions')
+    const validationResult = await validateSingleTransaction(id, teamId)
+    logger.info(`Re-validated transaction ${id} after update`, {
+      newStatus: validationResult.status,
+      compliant: validationResult.validationJson.compliant,
+      violations: validationResult.validationJson.violations.length
+    })
+  } catch (error) {
+    logger.error('Failed to re-validate transaction after update:', error)
+    // Don't fail the update if validation fails
+  }
+
+  // Trigger coach compensation alerts if applicable (non-blocking)
+  if (transaction.systemCategoryId) {
+    Promise.resolve().then(async () => {
+      try {
+        const { triggerCoachCompAlertsForTeam } = await import('@/lib/services/coach-compensation')
+        const team = await prisma.team.findUnique({
+          where: { id: teamId },
+          select: {
+            associationTeam: {
+              select: {
+                associationId: true,
+                association: { select: { season: true } },
+              },
+            },
+          },
+        })
+
+        if (team?.associationTeam?.[0]) {
+          const associationId = team.associationTeam[0].associationId
+          const season = team.associationTeam[0].association.season
+
+          await triggerCoachCompAlertsForTeam({
+            teamId,
+            season,
+            associationId,
+          })
+        }
+      } catch (error) {
+        logger.error('Failed to trigger coach comp alerts after transaction update:', error)
+        // Don't fail transaction update if alert triggering fails
+      }
+    })
+  }
 
   // Revalidate budget cache to reflect updated transaction
   const { revalidateBudgetCache } = await import('@/lib/db/budget')
   revalidateBudgetCache()
 
-  return transaction
+  // Fetch the transaction again to get the updated validation_json
+  const updatedTransaction = await prisma.transaction.findUnique({
+    where: { id },
+    include: {
+      category: true,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          role: true,
+        },
+      },
+    },
+  })
+
+  return updatedTransaction || transaction
 }
 
 /**
