@@ -29,7 +29,7 @@ export function EmailSignupForm({ source = 'landing_hero', className = '' }: Ema
     setIsSubmitting(true)
 
     try {
-      const response = await fetch('/api/waitlist', {
+      const response = await fetch('/api/landing/email-signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export function EmailSignupForm({ source = 'landing_hero', className = '' }: Ema
       if (response.ok && data.success) {
         setSubmitted(true)
         setEmail('')
-        toast.success("Thanks for signing up! Check your email for confirmation.")
+        toast.success('Thanks for signing up! Check your email for confirmation.')
 
         // Reset submitted state after 5 seconds
         setTimeout(() => setSubmitted(false), 5000)
@@ -62,19 +62,11 @@ export function EmailSignupForm({ source = 'landing_hero', className = '' }: Ema
 
   if (submitted) {
     return (
-      <div className={`flex items-center justify-center gap-2 text-meadow font-medium ${className}`}>
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 13l4 4L19 7"
-          />
+      <div
+        className={`text-meadow flex items-center justify-center gap-2 font-medium ${className}`}
+      >
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
         <span>Thanks! Check your email.</span>
       </div>
@@ -83,20 +75,20 @@ export function EmailSignupForm({ source = 'landing_hero', className = '' }: Ema
 
   return (
     <form onSubmit={handleSubmit} className={`w-full ${className}`}>
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           placeholder="Enter your email"
           disabled={isSubmitting}
-          className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-golden focus:border-transparent outline-none disabled:opacity-50 disabled:cursor-not-allowed text-navy placeholder:text-gray-500"
+          className="focus:ring-golden text-navy flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none placeholder:text-gray-500 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
           required
         />
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-8 py-3 bg-golden text-navy font-semibold rounded-lg hover:bg-golden/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          className="bg-golden text-navy hover:bg-golden/90 rounded-lg px-8 py-3 font-semibold whitespace-nowrap transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? 'Signing up...' : 'Get Notified'}
         </button>

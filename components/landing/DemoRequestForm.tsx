@@ -39,11 +39,15 @@ export function DemoRequestForm() {
     setIsSubmitting(true)
 
     try {
-      // TODO: Implement API endpoint for demo requests
-      // For now, simulate submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch('/api/landing/demo-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(validation.data),
+      })
 
-      console.log('Demo request:', validation.data)
+      if (!response.ok) {
+        throw new Error('Failed to submit')
+      }
 
       setSubmitted(true)
       toast.success("Demo request received! We'll be in touch soon.")
