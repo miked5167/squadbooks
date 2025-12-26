@@ -6,14 +6,7 @@ import { MobileHeader } from '@/components/MobileHeader'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  DollarSign,
-  TrendingUp,
-  Clock,
-  ShieldCheck,
-  ArrowRight,
-  PiggyBank,
-} from 'lucide-react'
+import { DollarSign, TrendingUp, Clock, ShieldCheck, ArrowRight, PiggyBank } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getFinancialSummary } from '@/lib/db/financial-summary'
 import { KpiCard } from '@/components/dashboard/KpiCard'
@@ -93,12 +86,12 @@ export default async function DashboardPage() {
 
   // Calculate spent per category
   const categorySpending = new Map<string, number>()
-  financialSummary.expensesByCategory.forEach((expense) => {
+  financialSummary.expensesByCategory.forEach(expense => {
     categorySpending.set(expense.categoryId, expense.amount)
   })
 
   // Format budget data for component
-  const budgetCategories = budgetAllocations.map((allocation) => ({
+  const budgetCategories = budgetAllocations.map(allocation => ({
     id: allocation.categoryId,
     name: allocation.category.name,
     spent: categorySpending.get(allocation.categoryId) || 0,
@@ -106,15 +99,21 @@ export default async function DashboardPage() {
   }))
 
   // Format transactions for preview table
-  const formattedTransactions = recentTransactions.map((tx) => ({
+  const formattedTransactions = recentTransactions.map(tx => ({
     id: tx.id,
     transactionDate: tx.transactionDate,
     vendor: tx.vendor,
     categoryName: tx.category.name,
+    categoryId: tx.categoryId,
     amount: Number(tx.amount),
     type: tx.type,
     status: tx.status,
     receiptUrl: tx.receiptUrl,
+    validation: tx.validationJson as { compliant: boolean; violations?: any[] } | null,
+    exceptionReason: tx.exceptionReason,
+    resolvedAt: tx.resolvedAt?.toISOString(),
+    overrideJustification: tx.overrideJustification,
+    resolutionNotes: tx.resolutionNotes,
   }))
   const complianceScore = complianceResult.score || 100
   const complianceStatus = complianceResult.status || 'COMPLIANT'
@@ -127,20 +126,16 @@ export default async function DashboardPage() {
 
   const isNetPositive = financialSummary.netPosition >= 0
 
-  // Determine budget burn status
-  const budgetBurnStatus =
-    expensePercentage >= 90
-      ? 'destructive'
-      : expensePercentage >= 75
-      ? 'warning'
-      : 'success'
+  // Determine budget utilization status
+  const budgetUtilizationStatus =
+    expensePercentage >= 90 ? 'destructive' : expensePercentage >= 75 ? 'warning' : 'success'
 
   const complianceBadgeVariant =
     complianceStatus === 'COMPLIANT'
       ? 'success'
       : complianceStatus === 'AT_RISK'
-      ? 'warning'
-      : 'destructive'
+        ? 'warning'
+        : 'destructive'
 
   // If parent user, show parent-specific dashboard
   if (isParent) {
@@ -164,7 +159,7 @@ export default async function DashboardPage() {
         <AppSidebar />
 
         {/* Main Content */}
-        <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
+        <main className="ml-0 px-4 py-6 pt-20 lg:ml-64 lg:px-8 lg:py-8 lg:pt-8">
           <ParentDashboard
             teamName={user.team?.name || 'Your Team'}
             season={user.team?.season || '2024-2025'}
@@ -191,34 +186,15 @@ export default async function DashboardPage() {
       <AppSidebar />
 
       {/* Main Content */}
-      <main className="ml-0 lg:ml-64 px-4 py-6 pt-20 lg:pt-8 lg:px-8 lg:py-8">
+      <main className="ml-0 px-4 py-6 pt-20 lg:ml-64 lg:px-8 lg:py-8 lg:pt-8">
         {/* Page Header */}
-        <div className="mb-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-navy mb-1">Dashboard</h1>
-            <p className="text-base text-navy/60">{user.team?.name || 'Your Team'}</p>
-          </div>
-          {!isParent && (
-            <div className="flex gap-2">
-              <Button asChild variant="outline" size="sm" className="border-navy/20">
-                <Link href="/transactions">View Transactions</Link>
-              </Button>
-              {isTreasurer && (
-                <>
-                  <Button asChild variant="outline" size="sm" className="border-navy/20">
-                    <Link href="/income/new">Add Income</Link>
-                  </Button>
-                  <Button asChild size="sm" className="bg-navy hover:bg-navy-medium text-white">
-                    <Link href="/expenses/new">Add Expense</Link>
-                  </Button>
-                </>
-              )}
-            </div>
-          )}
+        <div className="mb-8">
+          <h1 className="text-navy mb-1 text-3xl font-bold">Dashboard</h1>
+          <p className="text-navy/60 text-base">{user.team?.name || 'Your Team'}</p>
         </div>
 
         {/* Financial Health Overview - 4 KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <KpiCard
             title="Cash Position"
             value={`${isNetPositive ? '+' : '-'}$${Math.abs(financialSummary.netPosition).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
@@ -235,7 +211,7 @@ export default async function DashboardPage() {
           />
 
           <KpiCard
-            title="Budget Burn"
+            title="Budget Utilization"
             value={`$${financialSummary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             subtitle={`of $${financialSummary.budgetedExpensesTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} budgeted`}
             icon={PiggyBank}
@@ -247,9 +223,9 @@ export default async function DashboardPage() {
                 expensePercentage >= 90
                   ? 'High'
                   : expensePercentage >= 75
-                  ? 'Moderate'
-                  : 'On Track',
-              variant: budgetBurnStatus,
+                    ? 'Moderate'
+                    : 'On Track',
+              variant: budgetUtilizationStatus,
             }}
           />
 
@@ -273,6 +249,7 @@ export default async function DashboardPage() {
                   }
                 : undefined
             }
+            href="/exceptions"
           />
 
           <KpiCard
@@ -285,8 +262,8 @@ export default async function DashboardPage() {
                 complianceStatus === 'COMPLIANT'
                   ? 'Fully compliant'
                   : complianceStatus === 'AT_RISK'
-                  ? 'At risk'
-                  : 'Non-compliant',
+                    ? 'At risk'
+                    : 'Non-compliant',
               isPositive: complianceStatus === 'COMPLIANT',
             }}
             badge={{
@@ -294,22 +271,22 @@ export default async function DashboardPage() {
                 complianceStatus === 'COMPLIANT'
                   ? 'Compliant'
                   : complianceStatus === 'AT_RISK'
-                  ? 'At Risk'
-                  : 'Non-Compliant',
+                    ? 'At Risk'
+                    : 'Non-Compliant',
               variant: complianceBadgeVariant,
             }}
           />
         </div>
 
         {/* Middle Grid - Budget Performance + Quick Actions/Exceptions */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Budget Performance - 8 cols on desktop */}
           <div className="lg:col-span-8">
             <BudgetCategoryList categories={budgetCategories} />
           </div>
 
           {/* Right Column - Quick Actions + Approvals/Compliance - 4 cols on desktop */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="space-y-6 lg:col-span-4">
             {/* Quick Actions */}
             <QuickActionsCard isTreasurer={isTreasurer} />
 
@@ -320,25 +297,26 @@ export default async function DashboardPage() {
             {exceptionsCount > 0 && (
               <Card className="border-0 shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
+                  <CardTitle className="text-navy flex items-center gap-2 text-base font-semibold">
+                    <Clock className="h-4 w-4" />
                     Exceptions Need Review
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <p className="text-2xl font-bold text-golden">{exceptionsCount}</p>
-                    <p className="text-sm text-navy/60">
-                      {exceptionsCount === 1 ? 'transaction' : 'transactions'} flagged by validation rules
+                    <p className="text-golden text-2xl font-bold">{exceptionsCount}</p>
+                    <p className="text-navy/60 text-sm">
+                      {exceptionsCount === 1 ? 'transaction' : 'transactions'} flagged by validation
+                      rules
                     </p>
                   </div>
                   <Button
                     asChild
-                    className="w-full bg-golden hover:bg-golden/90 text-navy font-semibold"
+                    className="bg-golden hover:bg-golden/90 text-navy w-full font-semibold"
                   >
                     <Link href="/exceptions">
                       Review Exceptions
-                      <ArrowRight className="ml-2 w-4 h-4" />
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </CardContent>
@@ -349,26 +327,26 @@ export default async function DashboardPage() {
             {complianceStatus !== 'COMPLIANT' && (
               <Card className="border-0 shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4" />
+                  <CardTitle className="text-navy flex items-center gap-2 text-base font-semibold">
+                    <ShieldCheck className="h-4 w-4" />
                     Compliance Alert
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-navy/70">Status</span>
+                    <span className="text-navy/70 text-sm">Status</span>
                     <Badge variant={complianceBadgeVariant}>
                       {complianceStatus === 'AT_RISK' ? 'At Risk' : 'Non-Compliant'}
                     </Badge>
                   </div>
-                  <p className="text-sm text-navy/60">
+                  <p className="text-navy/60 text-sm">
                     {complianceResult.violations?.length || 0} active{' '}
                     {(complianceResult.violations?.length || 0) === 1 ? 'violation' : 'violations'}
                   </p>
-                  <Button asChild variant="outline" className="w-full border-navy/20" size="sm">
+                  <Button asChild variant="outline" className="border-navy/20 w-full" size="sm">
                     <Link href="/compliance">
                       View Details
-                      <ArrowRight className="ml-2 w-4 h-4" />
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </CardContent>
@@ -378,10 +356,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Recent Transactions - Full Width */}
-        <TransactionsPreviewTable
-          transactions={formattedTransactions}
-          isTreasurer={isTreasurer}
-        />
+        <TransactionsPreviewTable transactions={formattedTransactions} isTreasurer={isTreasurer} />
       </main>
     </div>
   )

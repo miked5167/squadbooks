@@ -15,10 +15,29 @@ interface Transaction {
   transactionDate: Date
   vendor: string
   categoryName: string
+  categoryId?: string
   amount: number
   type: 'INCOME' | 'EXPENSE'
-  status: 'VALIDATED' | 'IMPORTED' | 'EXCEPTION' | 'RESOLVED' | 'DRAFT' | 'LOCKED' | 'APPROVED' | 'APPROVED_AUTOMATIC' | 'PENDING' | 'REJECTED'
+  status:
+    | 'VALIDATED'
+    | 'IMPORTED'
+    | 'EXCEPTION'
+    | 'RESOLVED'
+    | 'DRAFT'
+    | 'LOCKED'
+    | 'APPROVED'
+    | 'APPROVED_AUTOMATIC'
+    | 'PENDING'
+    | 'REJECTED'
   receiptUrl: string | null
+  validation?: {
+    compliant: boolean
+    violations?: any[]
+  } | null
+  exceptionReason?: string | null
+  resolvedAt?: string | null
+  overrideJustification?: string | null
+  resolutionNotes?: string | null
 }
 
 interface CategoryData {
@@ -60,41 +79,33 @@ export function ParentDashboard({
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold text-navy">Team Finances</h1>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Eye className="w-3 h-3" />
-                    Read-only
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs text-sm">
-                    You&apos;re viewing financial data in read-only mode. Contact your team treasurer
-                    to request changes.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <p className="text-base text-navy/60">
-            {teamName} • {season}
-          </p>
+      <div>
+        <div className="mb-2 flex items-center gap-3">
+          <h1 className="text-navy text-3xl font-bold">Team Finances</h1>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <Eye className="h-3 w-3" />
+                  Read-only
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs text-sm">
+                  You&apos;re viewing financial data in read-only mode. Contact your team treasurer
+                  to request changes.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-        {/* Optional: Download Report button - disabled for now */}
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="border-navy/20" disabled>
-            Download Report
-          </Button>
-        </div>
+        <p className="text-navy/60 text-base">
+          {teamName} • {season}
+        </p>
       </div>
 
       {/* Top KPI Overview - 3 tiles for parents */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -115,9 +126,7 @@ export function ParentDashboard({
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="max-w-xs text-sm">
-                All approved income transactions for this season
-              </p>
+              <p className="max-w-xs text-sm">All approved income transactions for this season</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -142,9 +151,7 @@ export function ParentDashboard({
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="max-w-xs text-sm">
-                All approved expenses for this season
-              </p>
+              <p className="max-w-xs text-sm">All approved expenses for this season</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -171,7 +178,8 @@ export function ParentDashboard({
             </TooltipTrigger>
             <TooltipContent>
               <p className="max-w-xs text-sm">
-                Current financial position (income - expenses). Updates as transactions are approved.
+                Current financial position (income - expenses). Updates as transactions are
+                approved.
               </p>
             </TooltipContent>
           </Tooltip>
@@ -179,12 +187,10 @@ export function ParentDashboard({
       </div>
 
       {/* Info Banner */}
-      <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+      <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+        <Info className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
         <div>
-          <p className="text-sm font-medium text-blue-900 mb-1">
-            Data Updates Automatically
-          </p>
+          <p className="mb-1 text-sm font-medium text-blue-900">Data Updates Automatically</p>
           <p className="text-sm text-blue-700">
             All financial information updates in real-time as your team treasurer approves
             transactions. You&apos;re always viewing the latest data.
@@ -193,7 +199,7 @@ export function ParentDashboard({
       </div>
 
       {/* Main Content Grid - Budget + Transparency */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Budget Overview - 8 cols on desktop */}
         <div className="lg:col-span-8">
           <ParentBudgetOverview
@@ -214,10 +220,7 @@ export function ParentDashboard({
       </div>
 
       {/* Recent Transactions - Full Width */}
-      <TransactionsPreviewTable
-        transactions={transactions}
-        readOnly={true}
-      />
+      <TransactionsPreviewTable transactions={transactions} readOnly={true} />
     </div>
   )
 }
