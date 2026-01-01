@@ -9,52 +9,52 @@ datasource db {
 }
 
 model Association {
-  id                         String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                       String                     @unique @db.VarChar(255)
-  abbreviation               String?                    @db.VarChar(32)
-  provinceState              String?                    @map("province_state") @db.VarChar(64)
-  country                    String?                    @db.VarChar(64)
-  logoUrl                    String?                    @map("logo_url") @db.VarChar(500)
-  season                     String?                    @db.VarChar(32)
-  createdAt                  DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                  DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
-  currency                          String  @default("CAD") @db.VarChar(3)
+  id                               String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                             String                     @unique @db.VarChar(255)
+  abbreviation                     String?                    @db.VarChar(32)
+  provinceState                    String?                    @map("province_state") @db.VarChar(64)
+  country                          String?                    @db.VarChar(64)
+  logoUrl                          String?                    @map("logo_url") @db.VarChar(500)
+  season                           String?                    @db.VarChar(32)
+  createdAt                        DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                        DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  currency                         String                     @default("CAD") @db.VarChar(3)
   // Receipt Policy Fields
-  receiptsEnabled                   Boolean @default(true) @map("receipts_enabled")
-  receiptGlobalThresholdCents       Int     @default(10000) @map("receipt_global_threshold_cents")
-  receiptGracePeriodDays            Int     @default(7) @map("receipt_grace_period_days")
-  receiptCategoryThresholdsEnabled  Boolean @default(false) @map("receipt_category_thresholds_enabled")
-  receiptCategoryOverrides          Json    @default("{}") @map("receipt_category_overrides") @db.JsonB
-  allowedTeamThresholdOverride      Boolean @default(false) @map("allowed_team_threshold_override")
-  preSeasonBudgetAutoApprove        Boolean @default(false) @map("pre_season_budget_auto_approve")
-  preSeasonBudgetDeadline    DateTime?                  @map("pre_season_budget_deadline") @db.Timestamptz(6)
-  preSeasonBudgetsRequired   Int?                       @map("pre_season_budgets_required")
-  alerts                     Alert[]
-  governanceRule             AssociationGovernanceRule?
-  rules                      AssociationRule[]          @relation("AssociationRules")
-  teams                      AssociationTeam[]
-  users                      AssociationUser[]
-  config                     DashboardConfig?
-  preSeasonBudgets           PreSeasonBudget[]
-  reportSchedules            ReportSchedule[]
-  reports                    Report[]
+  receiptsEnabled                  Boolean                    @default(true) @map("receipts_enabled")
+  receiptGlobalThresholdCents      Int                        @default(10000) @map("receipt_global_threshold_cents")
+  receiptGracePeriodDays           Int                        @default(7) @map("receipt_grace_period_days")
+  receiptCategoryThresholdsEnabled Boolean                    @default(false) @map("receipt_category_thresholds_enabled")
+  receiptCategoryOverrides         Json                       @default("{}") @map("receipt_category_overrides") @db.JsonB
+  allowedTeamThresholdOverride     Boolean                    @default(false) @map("allowed_team_threshold_override")
+  preSeasonBudgetAutoApprove       Boolean                    @default(false) @map("pre_season_budget_auto_approve")
+  preSeasonBudgetDeadline          DateTime?                  @map("pre_season_budget_deadline") @db.Timestamptz(6)
+  preSeasonBudgetsRequired         Int?                       @map("pre_season_budgets_required")
+  alerts                           Alert[]
+  governanceRule                   AssociationGovernanceRule?
+  rules                            AssociationRule[]          @relation("AssociationRules")
+  teams                            AssociationTeam[]
+  users                            AssociationUser[]
+  config                           DashboardConfig?
+  preSeasonBudgets                 PreSeasonBudget[]
+  reportSchedules                  ReportSchedule[]
+  reports                          Report[]
 
   @@map("associations")
 }
 
 model AssociationUser {
-  id                    String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  associationId         String      @map("association_id") @db.Uuid
-  clerkUserId           String      @map("clerk_user_id") @db.VarChar(255)
-  email                 String      @db.VarChar(255)
-  name                  String?     @db.VarChar(255)
-  role                  String      @db.VarChar(32)
-  lastLoginAt           DateTime?   @map("last_login_at") @db.Timestamptz(6)
-  createdAt             DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  alertsAcknowledged    Alert[]     @relation("AlertAcknowledgedBy")
-  association           Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
-  reports               Report[]
-  teamUsers             User[]
+  id                 String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  associationId      String      @map("association_id") @db.Uuid
+  clerkUserId        String      @map("clerk_user_id") @db.VarChar(255)
+  email              String      @db.VarChar(255)
+  name               String?     @db.VarChar(255)
+  role               String      @db.VarChar(32)
+  lastLoginAt        DateTime?   @map("last_login_at") @db.Timestamptz(6)
+  createdAt          DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  alertsAcknowledged Alert[]     @relation("AlertAcknowledgedBy")
+  association        Association @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  reports            Report[]
+  teamUsers          User[]
 
   @@unique([clerkUserId, associationId], name: "unique_user_per_association")
   @@map("association_users")
@@ -205,22 +205,22 @@ model ReportSchedule {
 }
 
 model AssociationRule {
-  id                          String             @id @default(cuid())
+  id                          String                   @id @default(cuid())
   ruleType                    String
   name                        String
   description                 String?
-  isActive                    Boolean            @default(true)
+  isActive                    Boolean                  @default(true)
   config                      Json
   approvalTiers               Json?
   requiredExpenses            Json?
-  createdAt                   DateTime           @default(now())
-  updatedAt                   DateTime           @updatedAt
+  createdAt                   DateTime                 @default(now())
+  updatedAt                   DateTime                 @updatedAt
   createdBy                   String?
-  associationId               String             @db.Uuid
-  signingAuthorityComposition Json?              @map("signing_authority_composition")
-  ageDivisionFilter           Json?              @map("age_division_filter")
-  competitiveLevelFilter      Json?              @map("competitive_level_filter")
-  teamTypeFilter              Json?              @map("team_type_filter")
+  associationId               String                   @db.Uuid
+  signingAuthorityComposition Json?                    @map("signing_authority_composition")
+  ageDivisionFilter           Json?                    @map("age_division_filter")
+  competitiveLevelFilter      Json?                    @map("competitive_level_filter")
+  teamTypeFilter              Json?                    @map("team_type_filter")
   association                 Association              @relation("AssociationRules", fields: [associationId], references: [id], onDelete: Cascade)
   violations                  RuleViolation[]
   overrides                   TeamRuleOverride[]
@@ -440,6 +440,7 @@ model Team {
   invitations           Invitation[]
   parentInviteTokens    ParentInviteToken[]
   players               Player[]
+  vendors               Vendor[]
   sourcePreSeasonBudget PreSeasonBudget?       @relation("PreSeasonBudgetActivated")
   violations            RuleViolation[]
   seasonClosures        SeasonClosure[]
@@ -450,6 +451,8 @@ model Team {
   signingAuthorities    TeamSigningAuthority[]
   transactions          Transaction[]
   users                 User[]
+  spendIntents          SpendIntent[]
+  plaidBankTransactions PlaidBankTransaction[]
 
   @@map("teams")
 }
@@ -557,6 +560,13 @@ model User {
   validationsPerformed    TransactionValidation[] @relation("ValidationValidator")
   transactionsCreated     Transaction[]           @relation("TransactionCreator")
   transactionsResolved    Transaction[]           @relation("TransactionResolver")
+  spendIntentsCreated     SpendIntent[]           @relation("SpendIntentCreator")
+  spendIntentsAsPayee     SpendIntent[]           @relation("SpendIntentPayee")
+  spendIntentApprovals    SpendIntentApproval[]   @relation("SpendIntentApprover")
+  reviewsPerformed        Review[]                @relation("TransactionReviewer")
+  chequesSignedAs1        ChequeMetadata[]        @relation("ChequeSigner1")
+  chequesSignedAs2        ChequeMetadata[]        @relation("ChequeSigner2")
+  chequesAttested         ChequeMetadata[]        @relation("ChequeAttester")
   associationUser         AssociationUser?        @relation(fields: [associationUserId], references: [id])
   team                    Team                    @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
@@ -574,6 +584,7 @@ model TeamSigningAuthority {
   position                String?
   hasFinanceExperience    Boolean   @default(false) @map("has_finance_experience")
   backgroundCheckComplete Boolean   @default(false) @map("background_check_complete")
+  isIndependentParentRep  Boolean   @default(false) @map("is_independent_parent_rep")
   appointedDate           DateTime  @map("appointed_date") @db.Date
   removedDate             DateTime? @map("removed_date") @db.Date
   isActive                Boolean   @default(true) @map("is_active")
@@ -687,8 +698,12 @@ model Transaction {
   resolved_by            String?
   resolved_at            DateTime?              @db.Timestamptz(6)
   override_justification String?
+  spendIntentId          String?                @unique @map("spend_intent_id")
   approvals              Approval[]
   validation             TransactionValidation?
+  review                 Review?
+  policyExceptions       PolicyException[]
+  spendIntent            SpendIntent?           @relation("SpendIntentTransaction", fields: [spendIntentId], references: [id])
   category               Category?              @relation(fields: [categoryId], references: [id])
   creator                User                   @relation("TransactionCreator", fields: [createdBy], references: [id])
   envelope               BudgetEnvelope?        @relation(fields: [envelopeId], references: [id])
@@ -705,6 +720,7 @@ model Transaction {
   @@index([plaidTransactionId])
   @@index([isImported])
   @@index([envelopeId])
+  @@index([spendIntentId])
   @@index([teamId, deletedAt, transactionDate, id])
   @@index([teamId, deletedAt, status, transactionDate, id])
   @@index([teamId, deletedAt, type, transactionDate, id])
@@ -992,20 +1008,37 @@ model Invitation {
   @@map("invitations")
 }
 
+model Vendor {
+  id            String        @id @default(cuid())
+  teamId        String        @map("team_id")
+  name          String        @db.VarChar(255)
+  isWhitelisted Boolean       @default(false) @map("is_whitelisted")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  team          Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  spendIntents  SpendIntent[]
+
+  @@unique([teamId, name], name: "unique_vendor_per_team")
+  @@index([teamId])
+  @@index([isWhitelisted])
+  @@map("vendors")
+}
+
 model TeamSettings {
-  id                        String   @id @default(cuid())
-  teamId                    String   @unique
-  dualApprovalEnabled       Boolean  @default(true)
-  dualApprovalThreshold     Decimal  @default(200.00) @db.Decimal(10, 2)
-  receiptRequired                      Boolean @default(true)
-  receiptGlobalThresholdOverrideCents  Int?    @map("receipt_global_threshold_override_cents")
-  allowSelfReimbursement               Boolean @default(false)
-  duplicateDetectionEnabled Boolean  @default(true)
-  allowedPaymentMethods     String[] @default(["CASH", "CHEQUE", "E_TRANSFER"])
-  duplicateDetectionWindow  Int      @default(7)
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @updatedAt
-  team                      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  id                                  String   @id @default(cuid())
+  teamId                              String   @unique
+  dualApprovalEnabled                 Boolean  @default(true)
+  dualApprovalThreshold               Decimal  @default(200.00) @db.Decimal(10, 2)
+  receiptRequired                     Boolean  @default(true)
+  receiptGlobalThresholdOverrideCents Int?     @map("receipt_global_threshold_override_cents")
+  allowSelfReimbursement              Boolean  @default(false)
+  duplicateDetectionEnabled           Boolean  @default(true)
+  allowedPaymentMethods               String[] @default(["CASH", "CHEQUE", "E_TRANSFER"])
+  duplicateDetectionWindow            Int      @default(7)
+  requireChequeImageThresholdCents    Int      @default(50000) @map("require_cheque_image_threshold_cents")
+  createdAt                           DateTime @default(now())
+  updatedAt                           DateTime @updatedAt
+  team                                Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@map("team_settings")
 }
@@ -1209,6 +1242,150 @@ model WaitlistSignup {
   @@index([email])
   @@index([createdAt])
   @@map("waitlist_signups")
+}
+
+model SpendIntent {
+  id                     String                 @id @default(cuid())
+  teamId                 String                 @map("team_id")
+  createdByUserId        String                 @map("created_by_user_id")
+  amountCents            Int                    @map("amount_cents")
+  currency               String                 @default("CAD") @db.VarChar(3)
+  vendorId               String?                @map("vendor_id")
+  vendorName             String?                @map("vendor_name") @db.VarChar(255)
+  payeeUserId            String?                @map("payee_user_id")
+  budgetLineItemId       String?                @map("budget_line_item_id")
+  paymentMethod          PaymentMethod          @map("payment_method")
+  authorizationType      AuthorizationType      @map("authorization_type")
+  requiresManualApproval Boolean                @default(false) @map("requires_manual_approval")
+  status                 SpendIntentStatus      @default(PROPOSED)
+  authorizedAt           DateTime?              @map("authorized_at") @db.Timestamptz(6)
+  createdAt              DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  approvals              SpendIntentApproval[]
+  chequeMetadata         ChequeMetadata?
+  team                   Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  creator                User                   @relation("SpendIntentCreator", fields: [createdByUserId], references: [id])
+  payee                  User?                  @relation("SpendIntentPayee", fields: [payeeUserId], references: [id], onDelete: SetNull)
+  vendor                 Vendor?                @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  transaction            Transaction?           @relation("SpendIntentTransaction")
+  plaidBankTransactions  PlaidBankTransaction[] @relation("PlaidBankTransactionSpendIntent")
+
+  @@index([teamId])
+  @@index([createdByUserId])
+  @@index([vendorId])
+  @@index([status])
+  @@index([paymentMethod])
+  @@map("spend_intents")
+}
+
+model SpendIntentApproval {
+  id                     String      @id @default(cuid())
+  spendIntentId          String      @map("spend_intent_id")
+  approverUserId         String      @map("approver_user_id")
+  isIndependentParentRep Boolean     @map("is_independent_parent_rep")
+  note                   String?
+  approvedAt             DateTime    @default(now()) @map("approved_at") @db.Timestamptz(6)
+  createdAt              DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  spendIntent            SpendIntent @relation(fields: [spendIntentId], references: [id], onDelete: Cascade)
+  approver               User        @relation("SpendIntentApprover", fields: [approverUserId], references: [id])
+
+  @@unique([spendIntentId, approverUserId], name: "unique_approver_per_spend_intent")
+  @@index([spendIntentId])
+  @@index([approverUserId])
+  @@map("spend_intent_approvals")
+}
+
+model ChequeMetadata {
+  id                String      @id @default(cuid())
+  spendIntentId     String      @unique @map("spend_intent_id")
+  chequeNumber      String      @map("cheque_number") @db.VarChar(50)
+  signer1UserId     String?     @map("signer1_user_id")
+  signer1Name       String?     @map("signer1_name") @db.VarChar(255)
+  signer2UserId     String?     @map("signer2_user_id")
+  signer2Name       String?     @map("signer2_name") @db.VarChar(255)
+  issuedAt          DateTime    @map("issued_at") @db.Timestamptz(6)
+  chequeImageFileId String?     @map("cheque_image_file_id")
+  note              String?
+  attestedByUserId  String?     @map("attested_by_user_id")
+  attestedAt        DateTime?   @map("attested_at") @db.Timestamptz(6)
+  createdAt         DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  spendIntent       SpendIntent @relation(fields: [spendIntentId], references: [id], onDelete: Cascade)
+  signer1           User?       @relation("ChequeSigner1", fields: [signer1UserId], references: [id])
+  signer2           User?       @relation("ChequeSigner2", fields: [signer2UserId], references: [id])
+  attestedBy        User?       @relation("ChequeAttester", fields: [attestedByUserId], references: [id])
+
+  @@index([spendIntentId])
+  @@index([chequeNumber])
+  @@map("cheque_metadata")
+}
+
+model PlaidBankTransaction {
+  id                 String            @id @default(cuid())
+  teamId             String            @map("team_id")
+  plaidTransactionId String            @unique @map("plaid_transaction_id") @db.VarChar(255)
+  amountCents        Int               @map("amount_cents")
+  currency           String            @default("CAD") @db.VarChar(3)
+  postedAt           DateTime          @map("posted_at") @db.Timestamptz(6)
+  authorizedAt       DateTime?         @map("authorized_at") @db.Timestamptz(6)
+  merchantName       String?           @map("merchant_name") @db.VarChar(255)
+  rawName            String?           @map("raw_name") @db.VarChar(500)
+  paymentChannel     String?           @map("payment_channel") @db.VarChar(50)
+  pending            Boolean           @default(false)
+  raw                Json
+  spendIntentId      String?           @map("spend_intent_id")
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  team               Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  spendIntent        SpendIntent?      @relation("PlaidBankTransactionSpendIntent", fields: [spendIntentId], references: [id])
+  policyExceptions   PolicyException[]
+
+  @@index([teamId])
+  @@index([plaidTransactionId])
+  @@index([postedAt])
+  @@index([pending])
+  @@index([spendIntentId])
+  @@map("plaid_bank_transactions")
+}
+
+model Review {
+  id             String       @id @default(cuid())
+  transactionId  String       @unique @map("transaction_id")
+  reviewerUserId String       @map("reviewer_user_id")
+  status         ReviewStatus
+  notes          String?
+  reviewedAt     DateTime     @map("reviewed_at") @db.Timestamptz(6)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  transaction    Transaction  @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  reviewer       User         @relation("TransactionReviewer", fields: [reviewerUserId], references: [id])
+
+  @@index([transactionId])
+  @@index([reviewerUserId])
+  @@index([status])
+  @@map("reviews")
+}
+
+model PolicyException {
+  id                     String                @id @default(cuid())
+  transactionId          String?               @map("transaction_id")
+  plaidBankTransactionId String?               @map("plaid_bank_transaction_id")
+  type                   PolicyExceptionType
+  severity               AlertSeverity
+  details                Json
+  detectedAt             DateTime              @map("detected_at") @db.Timestamptz(6)
+  resolvedAt             DateTime?             @map("resolved_at") @db.Timestamptz(6)
+  createdAt              DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime              @updatedAt @map("updated_at") @db.Timestamptz(6)
+  transaction            Transaction?          @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  plaidBankTransaction   PlaidBankTransaction? @relation(fields: [plaidBankTransactionId], references: [id], onDelete: Cascade)
+
+  @@index([transactionId])
+  @@index([plaidBankTransactionId])
+  @@index([type])
+  @@index([severity])
+  @@index([resolvedAt])
+  @@map("policy_exceptions")
 }
 
 enum ParentAckMode {
@@ -1434,4 +1611,47 @@ enum ReceiptStatus {
   NONE
   ATTACHED
   REQUIRED_MISSING
+}
+
+enum PaymentMethod {
+  CASH
+  CHEQUE
+  E_TRANSFER
+}
+
+enum AuthorizationType {
+  STANDING_BUDGET_AUTHORIZATION
+  MANUAL_SIGNER_APPROVAL
+}
+
+enum SpendIntentStatus {
+  PROPOSED
+  AUTHORIZATION_PENDING
+  AUTHORIZED
+  ISSUED
+  OUTSTANDING
+  PAID_PENDING_REVIEW
+  SETTLED
+  REVIEWED
+  RECONCILED
+}
+
+enum ReviewStatus {
+  VERIFIED
+  EXCEPTION
+  ESCALATED
+}
+
+enum PolicyExceptionType {
+  ETRANSFER_PAID_WITHOUT_REQUIRED_APPROVAL
+  CHEQUE_MISSING_EVIDENCE
+  CHEQUE_SINGLE_SIGNATURE_SUSPECTED
+  SETTLED_NOT_REVIEWED_OVERDUE
+  UNMATCHED_BANK_TRANSACTION
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
 }

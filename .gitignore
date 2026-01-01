@@ -31,6 +31,9 @@ nul
 test-results/
 playwright-report/
 coverage/
+prisma/schema.test.prisma
+prisma/test.db
+prisma/test.db-journal
 
 # Sentry
 .sentryclirc
