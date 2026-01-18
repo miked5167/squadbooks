@@ -96,17 +96,45 @@ Explicitly excluded. Documented to prevent scope creep.
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement                           | Phase | Status |
-| ------------------------------------- | ----- | ------ |
-| _To be populated by roadmap creation_ |       |        |
+| Requirement | Phase   | Status  |
+| ----------- | ------- | ------- |
+| VIEW-01     | Phase 2 | Pending |
+| VIEW-02     | Phase 2 | Pending |
+| VIEW-03     | Phase 2 | Pending |
+| VIEW-04     | Phase 2 | Pending |
+| VIEW-05     | Phase 2 | Pending |
+| FILTER-01   | Phase 3 | Pending |
+| FILTER-02   | Phase 3 | Pending |
+| FILTER-03   | Phase 3 | Pending |
+| FILTER-04   | Phase 3 | Pending |
+| FILTER-05   | Phase 3 | Pending |
+| FILTER-06   | Phase 3 | Pending |
+| FILTER-07   | Phase 3 | Pending |
+| FILTER-08   | Phase 3 | Pending |
+| RECEIPT-01  | Phase 2 | Pending |
+| RECEIPT-02  | Phase 3 | Pending |
+| RECEIPT-03  | Phase 3 | Pending |
+| RECEIPT-04  | Phase 3 | Pending |
+| RECEIPT-05  | Phase 3 | Pending |
+| RECEIPT-06  | Phase 2 | Pending |
+| NAV-01      | Phase 2 | Pending |
+| NAV-02      | Phase 2 | Pending |
+| NAV-03      | Phase 2 | Pending |
+| NAV-04      | Phase 2 | Pending |
+| SEC-01      | Phase 1 | Pending |
+| SEC-02      | Phase 1 | Pending |
+| SEC-03      | Phase 1 | Pending |
+| PERF-01     | Phase 1 | Pending |
+| PERF-02     | Phase 1 | Pending |
+| PERF-03     | Phase 1 | Pending |
 
 **Coverage:**
 
-- v1 requirements: 0 total
-- Mapped to phases: 0
-- Unmapped: 0 ⚠️
+- v1 requirements: 29 total
+- Mapped to phases: 29
+- Unmapped: 0
 
 ---
 
 _Requirements defined: 2026-01-18_
-_Last updated: 2026-01-18 after initial definition_
+_Last updated: 2026-01-18 after roadmap creation_
