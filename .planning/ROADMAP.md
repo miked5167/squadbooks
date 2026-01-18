@@ -32,12 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
 3. Dashboard loads in under 2 seconds for 50 teams with 1000 transactions each
 4. Multi-team transaction queries use single batch query (no N+1 query patterns)
 5. Database queries use composite index on (teamId, transactionDate DESC, id DESC)
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Security hardening with mutation rejection and integration tests
+- [ ] 01-02-PLAN.md — Database performance verification and validation
 
 ### Phase 2: Association Dashboard View
 
