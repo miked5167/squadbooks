@@ -10,10 +10,7 @@ import { logger } from '@/lib/logger'
  * GET /api/transactions/[id]
  * Fetch a single transaction for editing
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
 
@@ -39,10 +36,7 @@ export async function GET(
 
     // Check role - only TREASURER and ASSISTANT_TREASURER can edit transactions
     if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
-      return NextResponse.json(
-        { error: 'Only treasurers can edit transactions' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'Only treasurers can edit transactions' }, { status: 403 })
     }
 
     // Fetch transaction and verify it belongs to user's team
@@ -82,10 +76,7 @@ export async function GET(
     })
 
     if (!transaction) {
-      return NextResponse.json(
-        { error: 'Transaction not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
     }
 
     // Check if transaction can be edited based on lifecycle state
@@ -118,8 +109,10 @@ export async function GET(
         if (!areTransactionsAllowed(teamSeason.state)) {
           const stateMessages: Record<string, string> = {
             SETUP: 'Team season is in setup. Complete team setup before editing transactions.',
-            BUDGET_DRAFT: 'Budget is still in draft. Submit budget for review before editing transactions.',
-            BUDGET_REVIEW: 'Budget is under review. Wait for budget approval before editing transactions.',
+            BUDGET_DRAFT:
+              'Budget is still in draft. Submit budget for review before editing transactions.',
+            BUDGET_REVIEW:
+              'Budget is under review. Wait for budget approval before editing transactions.',
             TEAM_APPROVED: 'Budget is approved but not yet presented to parents.',
             PRESENTED: 'Waiting for parent approvals.',
             ARCHIVED: 'Season is archived. Transactions cannot be edited for archived seasons.',
@@ -172,27 +165,24 @@ export async function GET(
  * PATCH /api/transactions/[id]
  * Update an existing transaction and re-validate
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
 
     // Authenticate user
-    const { userId } = await auth()
-    if (!userId) {
+    const { getCurrentUser, isAssociationUser } =
+      await import('@/lib/permissions/server-permissions')
+    const user = await getCurrentUser()
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get user's team and role
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-      select: { id: true, teamId: true, role: true },
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    // Defense-in-depth: Explicitly reject association users (read-only access)
+    if (isAssociationUser(user)) {
+      return NextResponse.json(
+        { error: 'Association users have read-only access to team data' },
+        { status: 403 }
+      )
     }
 
     if (!user.teamId) {
@@ -201,10 +191,7 @@ export async function PATCH(
 
     // Check role - only TREASURER and ASSISTANT_TREASURER can edit transactions
     if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
-      return NextResponse.json(
-        { error: 'Only treasurers can edit transactions' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'Only treasurers can edit transactions' }, { status: 403 })
     }
 
     // Fetch existing transaction
@@ -216,10 +203,7 @@ export async function PATCH(
     })
 
     if (!existingTransaction) {
-      return NextResponse.json(
-        { error: 'Transaction not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
     }
 
     // Check lifecycle state - only allow edits in LOCKED, ACTIVE, or CLOSEOUT states
@@ -251,8 +235,10 @@ export async function PATCH(
         if (!areTransactionsAllowed(teamSeason.state)) {
           const stateMessages: Record<string, string> = {
             SETUP: 'Team season is in setup. Complete team setup before editing transactions.',
-            BUDGET_DRAFT: 'Budget is still in draft. Submit budget for review before editing transactions.',
-            BUDGET_REVIEW: 'Budget is under review. Wait for budget approval before editing transactions.',
+            BUDGET_DRAFT:
+              'Budget is still in draft. Submit budget for review before editing transactions.',
+            BUDGET_REVIEW:
+              'Budget is under review. Wait for budget approval before editing transactions.',
             TEAM_APPROVED: 'Budget is approved but not yet presented to parents.',
             PRESENTED: 'Waiting for parent approvals.',
             ARCHIVED: 'Season is archived. Transactions cannot be edited for archived seasons.',
@@ -329,19 +315,23 @@ export async function DELETE(
     const { id } = await params
 
     // Authenticate user
-    const { userId } = await auth()
-    if (!userId) {
+    const { getCurrentUser, isAssociationUser } =
+      await import('@/lib/permissions/server-permissions')
+    const user = await getCurrentUser()
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get user's team and role
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-      select: { teamId: true, role: true },
-    })
+    // Defense-in-depth: Explicitly reject association users (read-only access)
+    if (isAssociationUser(user)) {
+      return NextResponse.json(
+        { error: 'Association users have read-only access to team data' },
+        { status: 403 }
+      )
+    }
 
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    if (!user.teamId) {
+      return NextResponse.json({ error: 'User not assigned to a team' }, { status: 400 })
     }
 
     // Check role - only TREASURER can delete transactions
@@ -355,10 +345,7 @@ export async function DELETE(
     // Delete transaction
     await deleteTransaction(id, user.teamId, user.id)
 
-    return NextResponse.json(
-      { message: 'Transaction deleted successfully' },
-      { status: 200 }
-    )
+    return NextResponse.json({ message: 'Transaction deleted successfully' }, { status: 200 })
   } catch (error) {
     logger.error('DELETE /api/transactions/[id] error', error as Error)
     if (error instanceof Error) {

@@ -1,13 +1,23 @@
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { auth } from '@/lib/auth/server-auth'
 import { CreateTransactionSchema, TransactionFilterSchema } from '@/lib/validations/transaction'
-import { createTransaction, getTransactions, getTransactionsWithCursor, decodeCursor } from '@/lib/db/transactions'
+import {
+  createTransaction,
+  getTransactions,
+  getTransactionsWithCursor,
+  decodeCursor,
+} from '@/lib/db/transactions'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import { areTransactionsAllowed } from '@/lib/services/team-season-lifecycle'
 import { autoActivateOnFirstTransaction } from '@/lib/services/team-season-auto-transitions'
 import { createTeamSeasonWithSnapshot } from '@/lib/services/team-policy-snapshot'
+import {
+  getCurrentUser,
+  getAccessibleTeams,
+  isAssociationUser,
+} from '@/lib/permissions/server-permissions'
 
 /**
  * GET /api/transactions
@@ -23,23 +33,9 @@ import { createTeamSeasonWithSnapshot } from '@/lib/services/team-policy-snapsho
 export async function GET(request: NextRequest) {
   try {
     // Authenticate user
-    const { userId } = await auth()
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Get user's team
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-      select: { teamId: true, role: true },
-    })
-
+    const user = await getCurrentUser()
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
-
-    if (!user.teamId) {
-      return NextResponse.json({ error: 'User not assigned to a team' }, { status: 400 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Parse query parameters
@@ -50,6 +46,7 @@ export async function GET(request: NextRequest) {
     const statusParam = searchParams.get('status')
     const categoryIdParam = searchParams.get('categoryId')
     const searchParam = searchParams.get('search')
+    const teamIdsParam = searchParams.get('teamIds') // Optional: specific team IDs filter
 
     // Decode cursor if provided
     let cursor: { transactionDate: Date; id: string } | undefined
@@ -70,7 +67,16 @@ export async function GET(request: NextRequest) {
     // Build filters
     const filters: {
       type?: 'INCOME' | 'EXPENSE'
-      status?: 'IMPORTED' | 'VALIDATED' | 'EXCEPTION' | 'RESOLVED' | 'LOCKED' | 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
+      status?:
+        | 'IMPORTED'
+        | 'VALIDATED'
+        | 'EXCEPTION'
+        | 'RESOLVED'
+        | 'LOCKED'
+        | 'DRAFT'
+        | 'PENDING'
+        | 'APPROVED'
+        | 'REJECTED'
       categoryId?: string
       search?: string
     } = {}
@@ -79,7 +85,17 @@ export async function GET(request: NextRequest) {
       filters.type = typeParam
     }
 
-    const validStatuses = ['IMPORTED', 'VALIDATED', 'EXCEPTION', 'RESOLVED', 'LOCKED', 'DRAFT', 'PENDING', 'APPROVED', 'REJECTED']
+    const validStatuses = [
+      'IMPORTED',
+      'VALIDATED',
+      'EXCEPTION',
+      'RESOLVED',
+      'LOCKED',
+      'DRAFT',
+      'PENDING',
+      'APPROVED',
+      'REJECTED',
+    ]
     if (statusParam && validStatuses.includes(statusParam)) {
       filters.status = statusParam as typeof filters.status
     }
@@ -92,9 +108,55 @@ export async function GET(request: NextRequest) {
       filters.search = searchParam.trim()
     }
 
+    // Determine which teams to query
+    let teamIds: string[] | undefined
+    let teamId: string | undefined
+
+    if (isAssociationUser(user)) {
+      // Association users can query multiple teams
+      const accessibleTeams = await getAccessibleTeams()
+
+      // If specific team IDs are provided via query param, filter to those
+      if (teamIdsParam) {
+        const requestedTeamIds = teamIdsParam.split(',')
+        const accessibleTeamIds = accessibleTeams.map(t => t.id)
+
+        // Only include teams the user has access to
+        teamIds = requestedTeamIds.filter(id => accessibleTeamIds.includes(id))
+
+        if (teamIds.length === 0) {
+          return NextResponse.json(
+            { error: 'No accessible teams in requested list' },
+            { status: 403 }
+          )
+        }
+      } else {
+        // Query all accessible teams
+        teamIds = accessibleTeams.map(t => t.id)
+      }
+
+      if (teamIds.length === 0) {
+        return NextResponse.json(
+          {
+            items: [],
+            hasMore: false,
+            nextCursor: null,
+          },
+          { status: 200 }
+        )
+      }
+    } else {
+      // Team users can only query their own team
+      if (!user.teamId) {
+        return NextResponse.json({ error: 'User not assigned to a team' }, { status: 400 })
+      }
+      teamId = user.teamId
+    }
+
     // Get transactions with cursor pagination
     const result = await getTransactionsWithCursor({
-      teamId: user.teamId,
+      teamId,
+      teamIds,
       limit,
       cursor,
       filters,
@@ -132,19 +194,17 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Authenticate user
-    const { userId } = await auth()
-    if (!userId) {
+    const user = await getCurrentUser()
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get user's team and role
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-      select: { id: true, teamId: true, role: true },
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    // Defense-in-depth: Explicitly reject association users (read-only access)
+    if (isAssociationUser(user)) {
+      return NextResponse.json(
+        { error: 'Association users have read-only access to team data' },
+        { status: 403 }
+      )
     }
 
     // Check role - only TREASURER can create transactions
@@ -222,10 +282,14 @@ export async function POST(request: NextRequest) {
       if (teamSeason && !areTransactionsAllowed(teamSeason.state)) {
         const stateMessages: Record<string, string> = {
           SETUP: 'Team season is in setup. Complete team setup before creating transactions.',
-          BUDGET_DRAFT: 'Budget is still in draft. Submit budget for review before creating transactions.',
-          BUDGET_REVIEW: 'Budget is under review. Wait for budget approval before creating transactions.',
-          TEAM_APPROVED: 'Budget is approved but not yet presented to parents. Present budget to parents before creating transactions.',
-          PRESENTED: 'Waiting for parent approvals. Transactions will be allowed once budget is locked.',
+          BUDGET_DRAFT:
+            'Budget is still in draft. Submit budget for review before creating transactions.',
+          BUDGET_REVIEW:
+            'Budget is under review. Wait for budget approval before creating transactions.',
+          TEAM_APPROVED:
+            'Budget is approved but not yet presented to parents. Present budget to parents before creating transactions.',
+          PRESENTED:
+            'Waiting for parent approvals. Transactions will be allowed once budget is locked.',
           ARCHIVED: 'Season is archived. Transactions cannot be created for archived seasons.',
         }
 
@@ -264,7 +328,9 @@ export async function POST(request: NextRequest) {
     // Build helpful message based on validation results
     let message = 'Transaction created successfully.'
     const violations = result.transaction.validation?.violations || []
-    const hasErrors = violations.some((v: any) => v.severity === 'ERROR' || v.severity === 'CRITICAL')
+    const hasErrors = violations.some(
+      (v: any) => v.severity === 'ERROR' || v.severity === 'CRITICAL'
+    )
 
     // DEBUG: Log validation data
     console.log('[DEBUG] Transaction validation:', {
