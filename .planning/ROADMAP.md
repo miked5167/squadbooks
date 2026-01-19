@@ -36,11 +36,11 @@ v1.0 delivered association-scoped transaction viewing with advanced filtering, P
 3. Information hierarchy is immediately scannable - users can distinguish metrics from labels at a glance
 4. Visual rhythm feels professional and matches QuickBooks design polish
 
-**Plans:** TBD
+**Plans:** 1 plan
 
 Plans:
 
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Apply QuickBooks typography hierarchy and refine 4px spacing grid
 
 #### Phase 6: Component Polish
 
@@ -73,9 +73,9 @@ Plans:
 | 2. Security          | v1.0      | Complete       | Complete    | 2026-01-19 |
 | 3. Features          | v1.0      | Complete       | Complete    | 2026-01-19 |
 | 4. Polish            | v1.0      | Complete       | Complete    | 2026-01-19 |
-| 5. Design Foundation | v1.1      | 0/TBD          | Not started | -          |
+| 5. Design Foundation | v1.1      | 0/1            | Not started | -          |
 | 6. Component Polish  | v1.1      | 0/TBD          | Not started | -          |
 
 ---
 
-_Last updated: 2026-01-19 after v1.1 milestone initialization_
+_Last updated: 2026-01-19 after Phase 5 planning_
