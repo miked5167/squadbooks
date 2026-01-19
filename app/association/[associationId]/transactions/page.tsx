@@ -212,7 +212,12 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
 
       const res = await fetch(`/api/transactions?${params.toString()}`)
       if (!res.ok) {
-        throw new Error('Failed to fetch transactions')
+        const errorData = await res.json().catch(() => ({}))
+        console.error('Transaction fetch failed:', res.status, errorData)
+        if (res.status === 401) {
+          throw new Error('Please log in to view transactions')
+        }
+        throw new Error(errorData.error || 'Failed to fetch transactions')
       }
 
       const data = await res.json()
@@ -225,6 +230,7 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to load transactions'
+      console.error('fetchInitialTransactions error:', err)
       toast.error(errorMsg)
       setItems([])
     } finally {
