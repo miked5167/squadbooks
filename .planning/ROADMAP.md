@@ -44,7 +44,7 @@ v1.0 delivered association-scoped transaction viewing with advanced filtering, P
 Plans:
 
 - [x] 05-01-PLAN.md — Apply QuickBooks typography hierarchy and refine 4px spacing grid
-- [ ] 05-02-PLAN.md — Remove text-base overrides from 4 dashboard components for consistent 18px rendering
+- [x] 05-02-PLAN.md — Remove text-base overrides from 4 dashboard components for consistent 18px rendering
 
 #### Phase 6: Component Polish
 
@@ -77,9 +77,9 @@ Plans:
 | 2. Security          | v1.0      | Complete       | Complete    | 2026-01-19 |
 | 3. Features          | v1.0      | Complete       | Complete    | 2026-01-19 |
 | 4. Polish            | v1.0      | Complete       | Complete    | 2026-01-19 |
-| 5. Design Foundation | v1.1      | 1/2            | In progress | -          |
+| 5. Design Foundation | v1.1      | 2/2            | Complete    | 2026-01-19 |
 | 6. Component Polish  | v1.1      | 0/TBD          | Not started | -          |
 
 ---
 
-_Last updated: 2026-01-19 after Phase 5 gap closure plan creation (05-02)_
+_Last updated: 2026-01-19 after Phase 5 completion_

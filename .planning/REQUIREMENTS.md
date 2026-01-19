@@ -9,8 +9,8 @@ Requirements for applying QuickBooks and FreshBooks design patterns to improve d
 
 ### Visual Hierarchy
 
-- [ ] **UX-01**: Apply QuickBooks 4px spacing grid system across all dashboard components (card padding p-6, grid gaps gap-4/gap-6, section spacing space-y-8)
-- [ ] **UX-02**: Implement QuickBooks typography hierarchy with systematic type scale (12px badges, 14px labels, 18px headings, 30px metrics with appropriate font weights)
+- [x] **UX-01**: Apply QuickBooks 4px spacing grid system across all dashboard components (card padding p-6, grid gaps gap-4/gap-6, section spacing space-y-8)
+- [x] **UX-02**: Implement QuickBooks typography hierarchy with systematic type scale (12px badges, 14px labels, 18px headings, 30px metrics with appropriate font weights)
 
 ### Status Indicators
 
