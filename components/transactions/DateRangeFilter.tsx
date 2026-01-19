@@ -110,6 +110,24 @@ export function DateRangeFilter() {
           </div>
           {/* Calendar */}
           <div className="flex-1 p-3">
+            <style jsx global>{`
+              .rdp-month_grid {
+                display: table !important;
+                border-collapse: separate !important;
+                border-spacing: 4px !important;
+              }
+              .rdp-week {
+                display: table-row !important;
+              }
+              .rdp-day,
+              .rdp-weekday {
+                display: table-cell !important;
+                width: 40px !important;
+                height: 40px !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+              }
+            `}</style>
             <Calendar
               mode="range"
               selected={range}
