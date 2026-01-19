@@ -18,6 +18,7 @@ import { Separator } from '@/components/ui/separator'
 import { TrendingUp, Users, DollarSign, AlertTriangle, CheckCircle2, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
+import { TeamsNeedingAttentionWidget } from '@/components/dashboard/TeamsNeedingAttentionWidget'
 
 // Fetch overview data directly from database
 async function getOverviewData(associationId: string) {
@@ -285,63 +286,7 @@ export default async function OverviewPage() {
       </div>
 
       {/* Teams Needing Attention */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Teams Needing Attention</CardTitle>
-          <CardDescription>
-            Teams with critical issues or warnings requiring immediate action
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {topAttentionTeams.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <CheckCircle2 className="mb-3 h-12 w-12 text-green-600" />
-              <h3 className="mb-1 text-lg font-semibold">All Teams Looking Good!</h3>
-              <p className="text-muted-foreground text-sm">
-                No teams require immediate attention at this time.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {topAttentionTeams.map(team => (
-                <Link
-                  key={team.id}
-                  href={`/association/teams/${team.id}`}
-                  className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 flex items-center gap-2">
-                      <span className="truncate font-medium">{team.teamName}</span>
-                      {team.division && (
-                        <span className="text-muted-foreground text-sm">• {team.division}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <HealthBadge status={team.healthStatus} />
-                      {team.redFlagCount > 0 && (
-                        <Badge variant="outline" className="text-xs">
-                          {team.redFlagCount} flag{team.redFlagCount !== 1 ? 's' : ''}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="ml-4 text-right">
-                    {team.percentUsed !== null && (
-                      <div className="text-sm font-medium">{team.percentUsed.toFixed(0)}% used</div>
-                    )}
-                    {team.lastSynced && (
-                      <div className="text-muted-foreground text-xs">
-                        Updated{' '}
-                        {formatDistanceToNow(new Date(team.lastSynced), { addSuffix: true })}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <TeamsNeedingAttentionWidget teams={topAttentionTeams} associationId={association.id} />
 
       {/* Recent Alerts */}
       <Card>
@@ -388,32 +333,6 @@ export default async function OverviewPage() {
         </CardContent>
       </Card>
     </div>
-  )
-}
-
-// Health Status Badge Component
-function HealthBadge({ status }: { status: string }) {
-  const variants: Record<string, { label: string; className: string }> = {
-    healthy: {
-      label: 'Healthy',
-      className: 'bg-green-100 text-green-800 border-green-200',
-    },
-    needs_attention: {
-      label: 'Needs Attention',
-      className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    },
-    at_risk: {
-      label: 'At Risk',
-      className: 'bg-red-100 text-red-800 border-red-200',
-    },
-  }
-
-  const variant = variants[status] || variants.healthy
-
-  return (
-    <Badge variant="outline" className={`text-xs ${variant.className}`}>
-      {variant.label}
-    </Badge>
   )
 }
 
