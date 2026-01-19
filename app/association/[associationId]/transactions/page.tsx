@@ -31,6 +31,8 @@ import { MissingReceiptsToggle } from '@/components/transactions/MissingReceipts
 import { TransactionSearch } from '@/components/transactions/TransactionSearch'
 import { FilterChips } from '@/components/transactions/FilterChips'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorState } from '@/components/transactions/ErrorState'
+import { ERROR_MESSAGES } from '@/lib/constants/error-messages'
 import {
   mapTransactionToUIState,
   mapUIFilterToBackendStatus,
@@ -152,6 +154,9 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
 
+  // Error state
+  const [error, setError] = useState<string | null>(null)
+
   // Filter state (sent to server)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [typeFilter, setTypeFilter] = useState<string>('all')
@@ -222,6 +227,7 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
   async function fetchInitialTransactions() {
     try {
       setLoading(true)
+      setError(null)
       setItems([])
       setNextCursor(null)
 
@@ -296,13 +302,18 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
         toast.success(`Loaded ${data.items.length} transactions`)
       }
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to load transactions'
       console.error('fetchInitialTransactions error:', err)
-      toast.error(errorMsg)
+      setError(ERROR_MESSAGES.FETCH_FAILED)
       setItems([])
     } finally {
       setLoading(false)
     }
+  }
+
+  // Retry handler for error state
+  function handleRetry() {
+    setError(null)
+    fetchInitialTransactions()
   }
 
   // Load more transactions using cursor
@@ -683,8 +694,17 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
         {/* Loading State */}
         {loading && <LoadingSkeleton />}
 
+        {/* Error State */}
+        {!loading && error && (
+          <Card className="shadow-card border-0">
+            <CardContent>
+              <ErrorState message={error} onRetry={handleRetry} />
+            </CardContent>
+          </Card>
+        )}
+
         {/* Empty State */}
-        {!loading && items.length === 0 && (
+        {!loading && !error && items.length === 0 && (
           <Card className="shadow-card border-0">
             <CardContent className="flex flex-col items-center justify-center py-12">
               <FileText className="mb-4 h-16 w-16 text-gray-300" />
@@ -699,7 +719,7 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
         )}
 
         {/* Transaction List */}
-        {!loading && items.length > 0 && (
+        {!loading && !error && items.length > 0 && (
           <Card className="shadow-card border-0">
             <CardHeader>
               <CardTitle className="text-navy">Transactions</CardTitle>
@@ -709,6 +729,7 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="text-muted-foreground mb-2 text-xs">All dates in Eastern Time</div>
               <div className="overflow-hidden rounded-lg border border-gray-200">
                 <Table>
                   <TableHeader>
@@ -864,7 +885,7 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
 
               {/* Load More Button */}
               {nextCursor && (
-                <div className="mt-6 flex justify-center">
+                <div className="flex flex-col items-center gap-4 py-6">
                   <Button
                     onClick={loadMoreTransactions}
                     disabled={loadingMore}
@@ -872,10 +893,7 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
                     size="lg"
                   >
                     {loadingMore ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Loading...
-                      </>
+                      <>Loading...</>
                     ) : (
                       <>
                         <ChevronDown className="mr-2 h-4 w-4" />
@@ -883,6 +901,9 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
                       </>
                     )}
                   </Button>
+                  {loadingMore && (
+                    <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
+                  )}
                 </div>
               )}
 
