@@ -18,14 +18,14 @@ export function TransparencyCard({
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
-          <Info className="w-4 h-4" />
+        <CardTitle className="text-navy flex items-center gap-2 font-semibold">
+          <Info className="h-4 w-4" />
           Transparency & Help
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Helper Text */}
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
           <p className="text-sm text-blue-900">
             All financial data is updated in real-time as transactions are approved by your team
             treasurer.
@@ -34,36 +34,36 @@ export function TransparencyCard({
 
         {/* Contact Treasurer */}
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold text-navy">Questions?</h4>
+          <h4 className="text-navy text-sm font-semibold">Questions?</h4>
           {treasurerName || treasurerEmail || treasurerPhone ? (
             <div className="space-y-2">
               {treasurerName && (
-                <p className="text-sm text-navy/70">
+                <p className="text-navy/70 text-sm">
                   Contact your team treasurer:
-                  <span className="block font-medium text-navy mt-1">{treasurerName}</span>
+                  <span className="text-navy mt-1 block font-medium">{treasurerName}</span>
                 </p>
               )}
               {treasurerEmail && (
                 <a
                   href={`mailto:${treasurerEmail}`}
-                  className="flex items-center gap-2 text-sm text-navy hover:text-navy-medium transition-colors"
+                  className="text-navy hover:text-navy-medium flex items-center gap-2 text-sm transition-colors"
                 >
-                  <Mail className="w-4 h-4" />
+                  <Mail className="h-4 w-4" />
                   {treasurerEmail}
                 </a>
               )}
               {treasurerPhone && (
                 <a
                   href={`tel:${treasurerPhone}`}
-                  className="flex items-center gap-2 text-sm text-navy hover:text-navy-medium transition-colors"
+                  className="text-navy hover:text-navy-medium flex items-center gap-2 text-sm transition-colors"
                 >
-                  <Phone className="w-4 h-4" />
+                  <Phone className="h-4 w-4" />
                   {treasurerPhone}
                 </a>
               )}
             </div>
           ) : (
-            <p className="text-sm text-navy/60">
+            <p className="text-navy/60 text-sm">
               Contact your team treasurer for questions about specific transactions or the budget.
             </p>
           )}
@@ -73,27 +73,37 @@ export function TransparencyCard({
 
         {/* Policy Links */}
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold text-navy">Resources</h4>
+          <h4 className="text-navy text-sm font-semibold">Resources</h4>
           <div className="space-y-1">
-            <Button asChild variant="ghost" size="sm" className="w-full justify-start text-navy/70 h-auto py-2">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-navy/70 h-auto w-full justify-start py-2"
+            >
               <Link href="/budget">
-                <FileText className="w-4 h-4 mr-2" />
+                <FileText className="mr-2 h-4 w-4" />
                 Team Budget
-                <ArrowRight className="w-3 h-3 ml-auto" />
+                <ArrowRight className="ml-auto h-3 w-3" />
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="sm" className="w-full justify-start text-navy/70 h-auto py-2">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-navy/70 h-auto w-full justify-start py-2"
+            >
               <Link href="/transactions">
-                <FileText className="w-4 h-4 mr-2" />
+                <FileText className="mr-2 h-4 w-4" />
                 Transaction History
-                <ArrowRight className="w-3 h-3 ml-auto" />
+                <ArrowRight className="ml-auto h-3 w-3" />
               </Link>
             </Button>
           </div>
         </div>
 
         {/* Data Freshness Note */}
-        <div className="pt-2 text-xs text-navy/50 text-center">
+        <div className="text-navy/50 pt-2 text-center text-xs">
           Data updates automatically when transactions are approved
         </div>
       </CardContent>

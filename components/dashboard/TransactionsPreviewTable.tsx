@@ -109,7 +109,7 @@ export function TransactionsPreviewTable({
     return (
       <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-navy text-base font-semibold">Recent Transactions</CardTitle>
+          <CardTitle className="text-navy font-semibold">Recent Transactions</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -127,7 +127,7 @@ export function TransactionsPreviewTable({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-navy text-base font-semibold">Recent Transactions</CardTitle>
+            <CardTitle className="text-navy font-semibold">Recent Transactions</CardTitle>
             <p className="text-navy/60 mt-1 text-sm">Latest financial activity</p>
           </div>
           {hasTransactions && (
