@@ -271,7 +271,7 @@ export async function createTransaction(
     if (ruleValidation.coachCompValidation.severity === 'critical') {
       throw new Error(
         ruleValidation.coachCompValidation.message ||
-        'Transaction blocked by coach compensation policy'
+          'Transaction blocked by coach compensation policy'
       )
     }
   }
@@ -281,8 +281,12 @@ export async function createTransaction(
     // Add coach comp validation message to violations
     validationResult.violations.push({
       type: 'COACH_COMPENSATION_CAP',
-      severity: ruleValidation.coachCompValidation.severity === 'critical' ? 'CRITICAL' :
-                ruleValidation.coachCompValidation.severity === 'error' ? 'ERROR' : 'WARNING',
+      severity:
+        ruleValidation.coachCompValidation.severity === 'critical'
+          ? 'CRITICAL'
+          : ruleValidation.coachCompValidation.severity === 'error'
+            ? 'ERROR'
+            : 'WARNING',
       message: ruleValidation.coachCompValidation.message || 'Coach compensation cap issue',
       metadata: {
         cap: ruleValidation.coachCompValidation.cap,
@@ -293,8 +297,10 @@ export async function createTransaction(
     })
 
     // Update compliance status if we have errors or critical violations
-    if (ruleValidation.coachCompValidation.severity === 'error' ||
-        ruleValidation.coachCompValidation.severity === 'critical') {
+    if (
+      ruleValidation.coachCompValidation.severity === 'error' ||
+      ruleValidation.coachCompValidation.severity === 'critical'
+    ) {
       validationResult.compliant = false
     }
   }
@@ -567,7 +573,8 @@ export async function getTransactions(teamId: string, filters: TransactionFilter
  * Returns only fields needed for the transaction list, with minimal relations
  */
 export async function getTransactionsWithCursor(params: {
-  teamId: string
+  teamId?: string
+  teamIds?: string[]
   limit?: number
   cursor?: { transactionDate: Date; id: string }
   filters?: {
@@ -575,23 +582,47 @@ export async function getTransactionsWithCursor(params: {
     categoryId?: string
     status?: TransactionStatus
     search?: string
+    dateFrom?: string
+    dateTo?: string
+    missingReceipts?: boolean
   }
 }) {
-  const { teamId, limit = 20, cursor, filters = {} } = params
-  const { type, categoryId, status, search } = filters
+  const { teamId, teamIds, limit = 20, cursor, filters = {} } = params
+  const { type, categoryId, status, search, dateFrom, dateTo, missingReceipts } = filters
 
   // Clamp limit to prevent abuse
   const take = Math.min(limit, 50)
 
-  // Build where clause
+  // Build where clause - support either single teamId or multiple teamIds
   const where: Prisma.TransactionWhereInput = {
-    teamId,
     deletedAt: null,
+  }
+
+  // Add team filter - either single or multiple
+  if (teamIds && teamIds.length > 0) {
+    where.teamId = { in: teamIds }
+  } else if (teamId) {
+    where.teamId = teamId
+  } else {
+    throw new Error('Either teamId or teamIds must be provided')
   }
 
   // Add filters
   if (type) where.type = type
   if (categoryId) where.categoryId = categoryId
+
+  // Date range filter - only apply if both dateFrom and dateTo are provided
+  if (dateFrom && dateTo) {
+    where.transactionDate = {
+      gte: new Date(dateFrom + 'T00:00:00Z'),
+      lte: new Date(dateTo + 'T23:59:59Z'),
+    }
+  }
+
+  // Missing receipts filter
+  if (missingReceipts) {
+    where.receiptUrl = null
+  }
 
   // Handle computed validation-first statuses and search (combining OR conditions)
   const statusConditions: Prisma.TransactionWhereInput[] = []
@@ -646,10 +677,7 @@ export async function getTransactionsWithCursor(params: {
   // Combine OR conditions properly
   if (statusConditions.length > 0 && searchConditions.length > 0) {
     // Both status OR and search OR - combine with AND
-    where.AND = [
-      { OR: statusConditions },
-      { OR: searchConditions },
-    ]
+    where.AND = [{ OR: statusConditions }, { OR: searchConditions }]
   } else if (statusConditions.length > 0) {
     // Only status OR
     where.OR = statusConditions
@@ -917,13 +945,16 @@ export async function updateTransaction(
       if (ruleValidation.coachCompValidation.severity === 'critical') {
         throw new Error(
           ruleValidation.coachCompValidation.message ||
-          'Transaction update blocked by coach compensation policy'
+            'Transaction update blocked by coach compensation policy'
         )
       }
     }
 
     // Log warning if not blocking
-    if (ruleValidation.coachCompValidation && ruleValidation.coachCompValidation.severity === 'warn') {
+    if (
+      ruleValidation.coachCompValidation &&
+      ruleValidation.coachCompValidation.severity === 'warn'
+    ) {
       logger.warn('Transaction update exceeds coach compensation cap (WARN_ONLY mode)', {
         transactionId: id,
         teamId,
@@ -989,7 +1020,7 @@ export async function updateTransaction(
     logger.info(`Re-validated transaction ${id} after update`, {
       newStatus: validationResult.status,
       compliant: validationResult.validationJson.compliant,
-      violations: validationResult.validationJson.violations.length
+      violations: validationResult.validationJson.violations.length,
     })
   } catch (error) {
     logger.error('Failed to re-validate transaction after update:', error)

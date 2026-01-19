@@ -47,6 +47,9 @@ export async function GET(request: NextRequest) {
     const categoryIdParam = searchParams.get('categoryId')
     const searchParam = searchParams.get('search')
     const teamIdsParam = searchParams.get('teamIds') // Optional: specific team IDs filter
+    const dateFromParam = searchParams.get('dateFrom')
+    const dateToParam = searchParams.get('dateTo')
+    const missingReceiptsParam = searchParams.get('missingReceipts')
 
     // Decode cursor if provided
     let cursor: { transactionDate: Date; id: string } | undefined
@@ -79,6 +82,9 @@ export async function GET(request: NextRequest) {
         | 'REJECTED'
       categoryId?: string
       search?: string
+      dateFrom?: string
+      dateTo?: string
+      missingReceipts?: boolean
     } = {}
 
     if (typeParam && (typeParam === 'INCOME' || typeParam === 'EXPENSE')) {
@@ -106,6 +112,18 @@ export async function GET(request: NextRequest) {
 
     if (searchParam && searchParam.trim()) {
       filters.search = searchParam.trim()
+    }
+
+    if (dateFromParam) {
+      filters.dateFrom = dateFromParam
+    }
+
+    if (dateToParam) {
+      filters.dateTo = dateToParam
+    }
+
+    if (missingReceiptsParam === 'true') {
+      filters.missingReceipts = true
     }
 
     // Determine which teams to query
