@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-01-18)
 ## Current Position
 
 Phase: 3 of 4 (Enhanced Filtering & PDF Support)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-18 — Completed Phase 2
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-01-19 — Completed 03-01-PLAN.md
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 5
-- Average duration: 33 min
-- Total execution time: 2.8 hours
+- Total plans completed: 6
+- Average duration: 28 min
+- Total execution time: 2.97 hours
 
 **By Phase:**
 
@@ -30,11 +30,12 @@ Progress: [█████░░░░░] 50%
 | ----- | ----- | ------- | -------- |
 | 01    | 2/2   | 159 min | 80 min   |
 | 02    | 3/3   | 7 min   | 2.3 min  |
+| 03    | 1/3   | 10 min  | 10 min   |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01 (134min), 01-02 (25min), 02-01 (2min), 02-02 (3min), 02-03 (2min)
-- Trend: Exceptional velocity in Phase 2 (all UI work, human verification checkpoint)
+- Last 5 plans: 01-02 (25min), 02-01 (2min), 02-02 (3min), 02-03 (2min), 03-01 (10min)
+- Trend: Consistent high velocity - UI/filter components execute quickly
 
 _Updated after each plan completion_
 
@@ -59,6 +60,10 @@ Recent decisions affecting current work:
 | Client-side fetching for TransactionsSection                                       | 02-02 | Enables dynamic filtering and pagination without page refreshes; component accepts teamId and isAssociationUser props                              |
 | Remove team column from team details transaction table                             | 02-02 | In team details context, user already knows which team - column adds no value and reduces information density                                      |
 | Always set isAssociationUser=true for team details under association route         | 02-02 | Team details page at /association/[id]/teams/[id] only accessible by association users, no runtime detection needed                                |
+| Use ISO date strings (YYYY-MM-DD) in URL params                                    | 03-01 | Avoid timezone issues by storing dates in URL without time component, convert to Date with explicit timezone (T00:00:00Z) for Prisma queries       |
+| Require both dates for range filter                                                | 03-01 | Only apply date range filter when both dateFrom and dateTo are provided to avoid ambiguous partial ranges                                          |
+| 300ms debounce for search input                                                    | 03-01 | Balance responsiveness (users see instant input) and API efficiency (don't fire request on every keystroke)                                        |
+| Reset pagination on filter change                                                  | 03-01 | Delete cursor param whenever any filter changes to ensure user starts from page 1 of filtered results                                              |
 
 ### Pending Todos
 
@@ -74,7 +79,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-18 (Phase 2 execution)
-Stopped at: Completed Phase 2
+Last session: 2026-01-19 (Phase 3 plan 01 execution)
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
-Next: Plan Phase 3 (Enhanced Filtering & PDF Support)
+Next: Execute 03-02-PLAN.md (Filter Integration)
