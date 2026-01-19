@@ -27,6 +27,7 @@
     "db:studio": "prisma studio",
     "db:seed": "node prisma/seed.js",
     "seed:demo": "tsx prisma/seed-demo.ts",
+    "seed:prod": "tsx prisma/seed-production-scale.ts",
     "seed:preseason": "tsx scripts/seed-pre-season-budgets.ts",
     "verify:demo": "tsx prisma/verify-demo.ts",
     "prepare": "husky"
