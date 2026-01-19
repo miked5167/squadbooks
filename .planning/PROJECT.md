@@ -48,25 +48,25 @@ Association leaders can quickly identify teams with missing receipts and verify 
 - ✓ Defense-in-depth security blocking all mutations for association users — v1.0
 - ✓ Production-scale performance validated (50 teams, 20K transactions, <2s load) — v1.0 (achieved 595ms)
 
-## Current Milestone: v1.1 Dashboard UX Polish
+## Current State (v1.1 Shipped - 2026-01-19)
 
-**Goal:** Apply QuickBooks and FreshBooks design patterns to improve association dashboard visual hierarchy, scannability, and professional polish
+**Latest Milestone:** v1.1 Dashboard UX Polish
 
-**Target improvements:**
+Association dashboard enhanced with QuickBooks and FreshBooks design patterns for improved visual hierarchy, scannability, and professional polish. Typography hierarchy, accessible status badges, and compact progress bars create a more polished, industry-standard experience.
 
-- Apply QuickBooks 4px spacing grid for consistent visual rhythm
-- Implement FreshBooks visual priority breakdown for Teams Needing Attention
-- Enhance status badges with icons and industry-standard colors (WCAG 2.1 AA compliant)
-- Apply FreshBooks progress bar styling to budget indicators
-- Implement QuickBooks typography hierarchy for clear information architecture
+**Key Achievements:**
 
-### Active
+- QuickBooks typography hierarchy (12px → 14px → 18px → 30px) applied app-wide to 107 files
+- WCAG 2.1 AA accessible status badges with icon + color + text pattern
+- FreshBooks-style 8px progress bars with 70/90 thresholds and smooth transitions
+- Reusable TeamsNeedingAttentionWidget with visual breakdown bar
+- Consistent amber/green/red color palette across all components
 
-- [ ] QuickBooks 4px spacing grid applied consistently across dashboard
-- [ ] FreshBooks "Outstanding Invoices" pattern adapted for Teams Needing Attention section
-- [ ] Status badges enhanced with icons (CheckCircle, AlertTriangle, AlertOctagon) and accessible colors
-- [ ] FreshBooks-style progress bars for budget tracking (8px height, dynamic color thresholds)
-- [ ] QuickBooks typography hierarchy implemented (12px badges, 14px labels, 18px headings, 30px metrics)
+**Archive:** [.planning/milestones/v1.1-ROADMAP.md](.planning/milestones/v1.1-ROADMAP.md)
+
+### Next Milestone
+
+Planning for future milestones - use `/gsd:new-milestone` to start defining the next iteration.
 
 ### Out of Scope
 
@@ -140,4 +140,4 @@ Association treasurers can now identify which teams have transactions with missi
 
 ---
 
-_Last updated: 2026-01-19 after v1.1 milestone initialization_
+_Last updated: 2026-01-19 after v1.1 completion_
