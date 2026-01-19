@@ -22,7 +22,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { FileText, Loader2, Search, RefreshCw, X, Eye, ChevronDown, Info } from 'lucide-react'
+import {
+  FileText,
+  Loader2,
+  Search,
+  RefreshCw,
+  X,
+  Eye,
+  ChevronDown,
+  Info,
+  Receipt,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { TransactionDetailsDrawer } from '@/components/transactions/transaction-details-drawer'
 import { TeamFilter } from '@/components/transactions/TeamFilter'
@@ -32,6 +42,7 @@ import { TransactionSearch } from '@/components/transactions/TransactionSearch'
 import { FilterChips } from '@/components/transactions/FilterChips'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ErrorState } from '@/components/transactions/ErrorState'
+import { EmptyState } from '@/components/transactions/EmptyState'
 import { ERROR_MESSAGES } from '@/lib/constants/error-messages'
 import {
   mapTransactionToUIState,
@@ -706,14 +717,24 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
         {/* Empty State */}
         {!loading && !error && items.length === 0 && (
           <Card className="shadow-card border-0">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <FileText className="mb-4 h-16 w-16 text-gray-300" />
-              <h3 className="text-navy mb-2 text-lg font-semibold">No transactions found</h3>
-              <p className="text-navy/60 mb-6 text-center">
-                {searchQuery || categoryFilter
-                  ? 'Try adjusting your filters or search query'
-                  : 'No transactions available for the selected teams'}
-              </p>
+            <CardContent>
+              {getActiveFilters().length > 0 ? (
+                <EmptyState
+                  icon={Search}
+                  title="No transactions match your filters"
+                  description="Try adjusting your date range or team selection to see more results."
+                  action={{
+                    label: 'Clear Filters',
+                    onClick: handleClearAllFilters,
+                  }}
+                />
+              ) : (
+                <EmptyState
+                  icon={Receipt}
+                  title="No transactions yet"
+                  description="Teams in this association haven't recorded any transactions yet. Transactions will appear here once team treasurers start adding them."
+                />
+              )}
             </CardContent>
           </Card>
         )}

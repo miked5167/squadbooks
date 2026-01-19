@@ -1,3 +1,26 @@
+/**
+ * Transaction Data Access Layer (DAL)
+ *
+ * Security Pattern: Data Access Layer (DAL)
+ * Per Next.js official guidance (https://nextjs.org/docs/app/guides/authentication),
+ * this module implements the Data Access Layer pattern for transaction operations.
+ *
+ * Key Principles:
+ * 1. API routes (app/api/transactions) handle HTTP layer and permission checks
+ * 2. This DAL handles database operations and business logic
+ * 3. Permission checks happen at API route level BEFORE calling DAL functions
+ * 4. DAL functions assume authorization already verified by caller
+ *
+ * Defense-in-Depth:
+ * - API routes check isAssociationUser() before role checks
+ * - Association users blocked from mutations at API layer
+ * - DAL functions focus on business logic, not authorization
+ *
+ * CVE-2025-29927 Mitigation:
+ * This pattern avoids middleware-only security (vulnerable to bypass).
+ * Instead, permission checks occur in API routes close to the data source.
+ */
+
 import { prisma } from '@/lib/prisma'
 import type { TransactionType, TransactionStatus, Prisma } from '@prisma/client'
 import type {
@@ -211,6 +234,13 @@ async function buildValidationContext(
 
 /**
  * Create a new transaction
+ *
+ * DAL Pattern: Authorization assumed to be verified by caller (API route)
+ * Caller must verify:
+ * - User is authenticated
+ * - User is NOT an association user (read-only)
+ * - User has TREASURER role
+ * - User belongs to the specified teamId
  */
 export async function createTransaction(
   data: CreateTransactionInput,
@@ -481,6 +511,9 @@ export async function createTransaction(
 
 /**
  * Get transactions with filters, pagination, and sorting
+ *
+ * DAL Pattern: Read-only operation, safe for association users
+ * Caller should verify user has access to the specified teamId
  */
 export async function getTransactions(teamId: string, filters: TransactionFilter) {
   const { type, status, categoryId, startDate, endDate, page, perPage, sortBy, sortOrder } = filters
@@ -571,6 +604,10 @@ export async function getTransactions(teamId: string, filters: TransactionFilter
 /**
  * Get transactions with cursor-based pagination (optimized for list view)
  * Returns only fields needed for the transaction list, with minimal relations
+ *
+ * DAL Pattern: Read-only operation, safe for association users
+ * Caller should verify user has access to the specified teamId/teamIds
+ * Association users can query multiple teams in their association
  */
 export async function getTransactionsWithCursor(params: {
   teamId?: string
@@ -853,6 +890,9 @@ export function decodeCursor(cursor: string): { transactionDate: Date; id: strin
 
 /**
  * Get a single transaction by ID
+ *
+ * DAL Pattern: Read-only operation, safe for association users
+ * Caller should verify user has access to the specified teamId
  */
 export async function getTransactionById(id: string, teamId: string) {
   const transaction = await prisma.transaction.findFirst({
@@ -930,6 +970,13 @@ export async function getTransactionById(id: string, teamId: string) {
 /**
  * Update a transaction
  * Can only update if status is DRAFT or PENDING
+ *
+ * DAL Pattern: Authorization assumed to be verified by caller (API route)
+ * Caller must verify:
+ * - User is authenticated
+ * - User is NOT an association user (read-only)
+ * - User has TREASURER or ASSISTANT_TREASURER role
+ * - User belongs to the specified teamId
  */
 export async function updateTransaction(
   id: string,
@@ -1123,6 +1170,13 @@ export async function updateTransaction(
 /**
  * Soft delete a transaction
  * Can only delete if status is DRAFT
+ *
+ * DAL Pattern: Authorization assumed to be verified by caller (API route)
+ * Caller must verify:
+ * - User is authenticated
+ * - User is NOT an association user (read-only)
+ * - User has TREASURER role
+ * - User belongs to the specified teamId
  */
 export async function deleteTransaction(id: string, teamId: string, userId: string) {
   // Check current transaction status
