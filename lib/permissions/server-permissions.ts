@@ -4,10 +4,11 @@
  * Use these in API routes to check permissions before allowing actions
  */
 
-import { UserRole } from '@prisma/client'
+import type { UserRole } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth/server-auth'
-import { hasPermission, Permission, PermissionErrors, canResolveException } from './permissions'
+import type { Permission } from './permissions'
+import { hasPermission, PermissionErrors, canResolveException } from './permissions'
 
 /**
  * Get current user with role and team info
@@ -50,6 +51,36 @@ export async function getCurrentUser() {
 }
 
 /**
+ * Check if user is an association user (has associationId)
+ */
+export function isAssociationUser(user: Awaited<ReturnType<typeof getCurrentUser>>): boolean {
+  return user !== null && user.associationId !== null
+}
+
+/**
+ * Get all teams accessible to the current association user
+ */
+export async function getAccessibleTeams() {
+  const user = await getCurrentUser()
+
+  if (!user || !user.associationId) {
+    return []
+  }
+
+  const teams = await prisma.team.findMany({
+    where: {
+      associationId: user.associationId,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  })
+
+  return teams
+}
+
+/**
  * Require authentication - throws if not authenticated
  */
 export async function requireAuth() {
@@ -81,13 +112,10 @@ export async function requirePermission(permission: Permission) {
 export async function requireAnyPermission(permissions: Permission[]) {
   const user = await requireAuth()
 
-  const hasAny = permissions.some((p) => hasPermission(user.role, p))
+  const hasAny = permissions.some(p => hasPermission(user.role, p))
 
   if (!hasAny) {
-    throw new PermissionError(
-      `This action requires one of: ${permissions.join(', ')}`,
-      403
-    )
+    throw new PermissionError(`This action requires one of: ${permissions.join(', ')}`, 403)
   }
 
   return user
@@ -102,10 +130,7 @@ export async function requireRole(role: UserRole | UserRole[]) {
   const roles = Array.isArray(role) ? role : [role]
 
   if (!roles.includes(user.role)) {
-    throw new PermissionError(
-      PermissionErrors.ROLE_REQUIRED(roles.join(' or ')),
-      403
-    )
+    throw new PermissionError(PermissionErrors.ROLE_REQUIRED(roles.join(' or ')), 403)
   }
 
   return user
@@ -259,15 +284,9 @@ export class PermissionError extends Error {
  */
 export function handlePermissionError(error: unknown) {
   if (error instanceof PermissionError) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: error.statusCode }
-    )
+    return new Response(JSON.stringify({ error: error.message }), { status: error.statusCode })
   }
 
   console.error('Unexpected error:', error)
-  return new Response(
-    JSON.stringify({ error: 'An unexpected error occurred' }),
-    { status: 500 }
-  )
+  return new Response(JSON.stringify({ error: 'An unexpected error occurred' }), { status: 500 })
 }
