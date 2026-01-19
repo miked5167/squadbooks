@@ -26,12 +26,18 @@ import { FileText, Loader2, Search, RefreshCw, X, Eye, ChevronDown, Info } from 
 import { toast } from 'sonner'
 import { TransactionDetailsDrawer } from '@/components/transactions/transaction-details-drawer'
 import { TeamFilter } from '@/components/transactions/TeamFilter'
+import { DateRangeFilter } from '@/components/transactions/DateRangeFilter'
+import { MissingReceiptsToggle } from '@/components/transactions/MissingReceiptsToggle'
+import { TransactionSearch } from '@/components/transactions/TransactionSearch'
+import { FilterChips } from '@/components/transactions/FilterChips'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   mapTransactionToUIState,
   mapUIFilterToBackendStatus,
   type TransactionStatus,
 } from '@/lib/utils/transaction-ui-mapping'
+import { format } from 'date-fns'
+import { useRouter } from 'next/navigation'
 
 interface Transaction {
   id: string
@@ -104,6 +110,7 @@ function formatUTCDate(dateString: string): string {
 
 export default function AssociationTransactionsPage({ params }: PageProps) {
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   // Resolve async params
   const [associationId, setAssociationId] = useState<string | null>(null)
@@ -193,6 +200,28 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
         params.append('teamIds', teamIds)
       }
 
+      // Read date range filters from URL
+      const dateFrom = searchParams?.get('dateFrom')
+      const dateTo = searchParams?.get('dateTo')
+      if (dateFrom) {
+        params.append('dateFrom', dateFrom)
+      }
+      if (dateTo) {
+        params.append('dateTo', dateTo)
+      }
+
+      // Read missing receipts filter from URL
+      const missingReceipts = searchParams?.get('missingReceipts')
+      if (missingReceipts === 'true') {
+        params.append('missingReceipts', 'true')
+      }
+
+      // Read search filter from URL
+      const search = searchParams?.get('search')
+      if (search?.trim()) {
+        params.append('search', search.trim())
+      }
+
       const backendStatus = mapUIFilterToBackendStatus(statusFilter)
       if (backendStatus) {
         params.append('status', backendStatus)
@@ -253,6 +282,28 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
       const teamIds = searchParams?.get('teamIds')
       if (teamIds) {
         params.append('teamIds', teamIds)
+      }
+
+      // Read date range filters from URL
+      const dateFrom = searchParams?.get('dateFrom')
+      const dateTo = searchParams?.get('dateTo')
+      if (dateFrom) {
+        params.append('dateFrom', dateFrom)
+      }
+      if (dateTo) {
+        params.append('dateTo', dateTo)
+      }
+
+      // Read missing receipts filter from URL
+      const missingReceipts = searchParams?.get('missingReceipts')
+      if (missingReceipts === 'true') {
+        params.append('missingReceipts', 'true')
+      }
+
+      // Read search filter from URL
+      const search = searchParams?.get('search')
+      if (search?.trim()) {
+        params.append('search', search.trim())
       }
 
       const backendStatus = mapUIFilterToBackendStatus(statusFilter)
@@ -383,6 +434,77 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
     }
   }
 
+  // Derive active filters from URL params for FilterChips
+  function getActiveFilters() {
+    const filters: Array<{ key: string; label: string; value: string }> = []
+
+    // Date range filter
+    const dateFrom = searchParams?.get('dateFrom')
+    const dateTo = searchParams?.get('dateTo')
+    if (dateFrom && dateTo) {
+      const fromDate = new Date(dateFrom + 'T00:00:00Z')
+      const toDate = new Date(dateTo + 'T00:00:00Z')
+      filters.push({
+        key: 'dateRange',
+        label: 'Date range',
+        value: `${format(fromDate, 'MMM d, yyyy')} - ${format(toDate, 'MMM d, yyyy')}`,
+      })
+    }
+
+    // Missing receipts filter
+    const missingReceipts = searchParams?.get('missingReceipts')
+    if (missingReceipts === 'true') {
+      filters.push({
+        key: 'missingReceipts',
+        label: 'Filter',
+        value: 'Missing receipts only',
+      })
+    }
+
+    // Search filter
+    const search = searchParams?.get('search')
+    if (search?.trim()) {
+      filters.push({
+        key: 'search',
+        label: 'Search',
+        value: search.trim(),
+      })
+    }
+
+    return filters
+  }
+
+  // Handle individual filter chip removal
+  function handleRemoveFilter(key: string) {
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (key === 'dateRange') {
+      params.delete('dateFrom')
+      params.delete('dateTo')
+    } else {
+      params.delete(key)
+    }
+
+    // Reset cursor when filter changes
+    params.delete('cursor')
+
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  // Handle clear all filters
+  function handleClearAllFilters() {
+    const params = new URLSearchParams(searchParams.toString())
+
+    // Remove all filter params but keep teamIds (from TeamFilter)
+    params.delete('dateFrom')
+    params.delete('dateTo')
+    params.delete('missingReceipts')
+    params.delete('search')
+    params.delete('cursor')
+
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
   // Loading skeleton
   const LoadingSkeleton = () => (
     <Card className="shadow-card border-0">
@@ -443,60 +565,57 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
         {/* Filters */}
         <Card className="shadow-card border-0">
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {/* Team Filter */}
-              <div className="md:col-span-3">
+            {/* Filter Controls Row */}
+            <div className="mb-4 flex flex-wrap items-end gap-4">
+              <div>
+                <label className="text-navy mb-2 block text-sm font-medium">Teams</label>
                 <TeamFilter />
               </div>
-
-              {/* Status Filter Tabs */}
-              <div className="md:col-span-3">
-                <Tabs value={statusFilter} onValueChange={setStatusFilter}>
-                  <TabsList className="grid w-full max-w-2xl grid-cols-5">
-                    <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="imported">Imported</TabsTrigger>
-                    <TabsTrigger value="validated">Validated</TabsTrigger>
-                    <TabsTrigger value="exceptions">Exceptions</TabsTrigger>
-                    <TabsTrigger value="resolved">Resolved</TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
-
-              {/* Type Filter */}
               <div>
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Types" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="income">Income</SelectItem>
-                    <SelectItem value="expense">Expense</SelectItem>
-                  </SelectContent>
-                </Select>
+                <label className="text-navy mb-2 block text-sm font-medium">Date Range</label>
+                <DateRangeFilter />
               </div>
+              <div className="flex items-end pb-2">
+                <MissingReceiptsToggle />
+              </div>
+              <div className="flex-1">
+                <label className="text-navy mb-2 block text-sm font-medium">Search</label>
+                <TransactionSearch />
+              </div>
+            </div>
 
-              {/* Search */}
-              <div className="md:col-span-2">
-                <div className="relative">
-                  <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                  <Input
-                    placeholder="Search vendor or description..."
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="pr-10 pl-10"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-400 hover:text-gray-600"
-                      aria-label="Clear search"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
+            {/* Filter Chips */}
+            <FilterChips
+              filters={getActiveFilters()}
+              onRemove={handleRemoveFilter}
+              onClearAll={handleClearAllFilters}
+            />
+
+            {/* Status Filter Tabs */}
+            <div className="mt-4">
+              <Tabs value={statusFilter} onValueChange={setStatusFilter}>
+                <TabsList className="grid w-full max-w-2xl grid-cols-5">
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="imported">Imported</TabsTrigger>
+                  <TabsTrigger value="validated">Validated</TabsTrigger>
+                  <TabsTrigger value="exceptions">Exceptions</TabsTrigger>
+                  <TabsTrigger value="resolved">Resolved</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            {/* Type Filter */}
+            <div className="mt-4">
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="income">Income</SelectItem>
+                  <SelectItem value="expense">Expense</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Active Category Filter */}

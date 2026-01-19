@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +11,10 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Download, Printer, ZoomIn, ZoomOut, Loader2, AlertCircle } from 'lucide-react';
+import { Download, Printer, ZoomIn, ZoomOut, Loader2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 interface ReceiptViewerProps {
   isOpen: boolean;
@@ -26,9 +32,13 @@ export function ReceiptViewer({
   receiptUrl,
   transactionVendor,
 }: ReceiptViewerProps) {
-  const [zoom, setZoom] = useState(1);
+  const [scale, setScale] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // PDF-specific state
+  const [numPages, setNumPages] = useState<number>(0);
+  const [pageNumber, setPageNumber] = useState(1);
 
   const getFileType = (url: string): FileType => {
     const extension = url.split('.').pop()?.toLowerCase();
@@ -38,6 +48,23 @@ export function ReceiptViewer({
   };
 
   const fileType = getFileType(receiptUrl);
+
+  const handlePDFLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setLoading(false);
+    setError(false);
+  };
+
+  const handlePDFLoadError = (error: Error) => {
+    console.error('PDF load error:', error);
+    setLoading(false);
+    setError(true);
+  };
+
+  const canZoomIn = scale < 3.0;
+  const canZoomOut = scale > 0.5;
+  const canPrevPage = pageNumber > 1;
+  const canNextPage = pageNumber < numPages;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -56,6 +83,31 @@ export function ReceiptViewer({
             Receipt {transactionVendor && `- ${transactionVendor}`}
           </h2>
         </div>
+
+        {/* Page Navigation (PDF only) */}
+        {fileType === 'pdf' && !loading && !error && (
+          <div className="flex items-center justify-center gap-2 px-6 py-2 border-b bg-gray-50">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!canPrevPage}
+              onClick={() => setPageNumber(p => p - 1)}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            <span className="text-sm min-w-[120px] text-center">
+              Page {pageNumber} of {numPages || '...'}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!canNextPage}
+              onClick={() => setPageNumber(p => p + 1)}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
 
         {/* Toolbar */}
         <div className="flex items-center gap-2 px-6 py-3 border-b bg-white">
@@ -78,30 +130,26 @@ export function ReceiptViewer({
             <Printer className="w-4 h-4" />
             Print
           </Button>
-          {fileType === 'image' && (
-            <>
-              <div className="flex-1" />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setZoom(Math.max(zoom - 0.25, 0.5))}
-                disabled={zoom <= 0.5}
-              >
-                <ZoomOut className="w-4 h-4" />
-              </Button>
-              <span className="text-sm font-medium min-w-[60px] text-center">
-                {Math.round(zoom * 100)}%
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setZoom(Math.min(zoom + 0.25, 3))}
-                disabled={zoom >= 3}
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-            </>
-          )}
+          <div className="flex-1" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setScale(Math.max(0.5, scale - 0.25))}
+            disabled={!canZoomOut}
+          >
+            <ZoomOut className="w-4 h-4" />
+          </Button>
+          <span className="text-sm font-medium min-w-[60px] text-center">
+            {Math.round(scale * 100)}%
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setScale(Math.min(3.0, scale + 0.25))}
+            disabled={!canZoomIn}
+          >
+            <ZoomIn className="w-4 h-4" />
+          </Button>
         </div>
 
         {/* Content */}
@@ -130,7 +178,7 @@ export function ReceiptViewer({
                 alt="Receipt"
                 className="max-w-full h-auto"
                 style={{
-                  transform: `scale(${zoom})`,
+                  transform: `scale(${scale})`,
                   transformOrigin: 'center',
                   display: loading || error ? 'none' : 'block',
                 }}
@@ -141,13 +189,28 @@ export function ReceiptViewer({
           )}
 
           {fileType === 'pdf' && (
-            <iframe
-              src={receiptUrl}
-              className="w-full h-full min-h-[600px]"
-              title="Receipt PDF"
-              onLoad={() => setLoading(false)}
-              onError={() => { setLoading(false); setError(true); }}
-            />
+            <div className="flex items-center justify-center min-h-full">
+              <Document
+                file={receiptUrl}
+                onLoadSuccess={handlePDFLoadSuccess}
+                onLoadError={handlePDFLoadError}
+                loading={null}
+                error={null}
+                options={{
+                  cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
+                  cMapPacked: true,
+                }}
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  scale={scale}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                  className="shadow-lg"
+                  loading={null}
+                />
+              </Document>
+            </div>
           )}
         </div>
       </DialogContent>
