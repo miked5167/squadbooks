@@ -61,11 +61,13 @@ Plans:
 3. Teams Needing Attention widget displays visual breakdown bar showing critical vs warning distribution with numerical counts
 4. All status indicators remain usable for users with color vision deficiencies (icons provide redundant signaling)
 
-**Plans:** TBD
+**Plans:** 3 plans (2 parallel in Wave 1, 1 in Wave 2)
 
 Plans:
 
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Enhance status badges with accessibility (icons + color + text, WCAG 2.1 AA)
+- [ ] 06-02-PLAN.md — Apply FreshBooks progress bar styling (8px height, 70/90 thresholds, smooth transitions)
+- [ ] 06-03-PLAN.md — Create Teams Needing Attention visual breakdown widget
 
 ## Progress
 
@@ -78,8 +80,8 @@ Plans:
 | 3. Features          | v1.0      | Complete       | Complete    | 2026-01-19 |
 | 4. Polish            | v1.0      | Complete       | Complete    | 2026-01-19 |
 | 5. Design Foundation | v1.1      | 2/2            | Complete    | 2026-01-19 |
-| 6. Component Polish  | v1.1      | 0/TBD          | Not started | -          |
+| 6. Component Polish  | v1.1      | 0/3            | Not started | -          |
 
 ---
 
-_Last updated: 2026-01-19 after Phase 5 completion_
+_Last updated: 2026-01-19 after Phase 6 planning_
