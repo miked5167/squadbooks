@@ -66,8 +66,9 @@ export function ParentBudgetOverview({
             <CardTitle className="text-navy font-semibold">Budget Tracking</CardTitle>
             <p className="text-navy/60 mt-1 text-sm">Season spending vs. budget</p>
           </div>
-          <Badge variant={status.variant} className="flex items-center gap-1">
-            <StatusIcon className="h-3 w-3" />
+          <Badge variant={status.variant} className="flex items-center gap-1.5">
+            <StatusIcon className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="sr-only">Budget status: </span>
             {status.label}
           </Badge>
         </div>
