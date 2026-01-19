@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-18)
 ## Current Position
 
 Phase: 2 of 4 (Association Dashboard View)
-Plan: Not yet planned
-Status: Ready to plan
-Last activity: 2026-01-18 — Phase 1 complete (2/2 plans), all requirements verified ✓
+Plan: 1 of 3 (Association Transactions Page)
+Status: In progress
+Last activity: 2026-01-19 — Completed 02-01-PLAN.md
 
-Progress: [██░░░░░░░░] 20%
+Progress: [███░░░░░░░] 30%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2
-- Average duration: 80 min (1h 20m)
+- Total plans completed: 3
+- Average duration: 54 min
 - Total execution time: 2.6 hours
 
 **By Phase:**
@@ -29,11 +29,12 @@ Progress: [██░░░░░░░░] 20%
 | Phase | Plans | Total   | Avg/Plan |
 | ----- | ----- | ------- | -------- |
 | 01    | 2/2   | 159 min | 80 min   |
+| 02    | 1/3   | 2 min   | 2 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01 (134min), 01-02 (25min)
-- Trend: Improving velocity (second plan 5x faster)
+- Last 5 plans: 01-01 (134min), 01-02 (25min), 02-01 (2min)
+- Trend: Accelerating execution (latest plan completed in 2min)
 
 _Updated after each plan completion_
 
@@ -44,14 +45,17 @@ _Updated after each plan completion_
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-| Decision                                                                           | Phase | Rationale                                                                                                                                     |
-| ---------------------------------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Use defense-in-depth by adding explicit association user checks before role checks | 01-01 | Fail fast to prevent association users from triggering expensive database queries; blocks edge case where association user has TREASURER role |
-| Consistent 403 error message for read-only users                                   | 01-01 | "Association users have read-only access to team data" - clear, uniform messaging for frontend error handling                                 |
-| Mock Clerk auth at module level for integration testing                            | 01-01 | Use vi.mock() with dynamic imports to allow switching user context between tests                                                              |
-| Use EXPLAIN ANALYZE for accurate query plan inspection                             | 01-02 | Direct query plan inspection via PostgreSQL's EXPLAIN ANALYZE provides authoritative verification of index usage vs. relying on assumptions   |
-| Verify indexes via pg_indexes system catalog                                       | 01-02 | Querying PostgreSQL system catalogs provides definitive proof that composite indexes exist and match expected schema                          |
-| Test with 5 teams (345 transactions) as baseline                                   | 01-02 | Existing seed data provides realistic test case; recommend re-validation with production-scale seed data (50 teams, 1000 transactions each)   |
+| Decision                                                                           | Phase | Rationale                                                                                                                                          |
+| ---------------------------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Use defense-in-depth by adding explicit association user checks before role checks | 01-01 | Fail fast to prevent association users from triggering expensive database queries; blocks edge case where association user has TREASURER role      |
+| Consistent 403 error message for read-only users                                   | 01-01 | "Association users have read-only access to team data" - clear, uniform messaging for frontend error handling                                      |
+| Mock Clerk auth at module level for integration testing                            | 01-01 | Use vi.mock() with dynamic imports to allow switching user context between tests                                                                   |
+| Use EXPLAIN ANALYZE for accurate query plan inspection                             | 01-02 | Direct query plan inspection via PostgreSQL's EXPLAIN ANALYZE provides authoritative verification of index usage vs. relying on assumptions        |
+| Verify indexes via pg_indexes system catalog                                       | 01-02 | Querying PostgreSQL system catalogs provides definitive proof that composite indexes exist and match expected schema                               |
+| Test with 5 teams (345 transactions) as baseline                                   | 01-02 | Existing seed data provides realistic test case; recommend re-validation with production-scale seed data (50 teams, 1000 transactions each)        |
+| Use 50-item pagination limit for association views                                 | 02-01 | Association users may view hundreds/thousands of transactions; larger page size reduces "Load More" clicks while maintaining reasonable load times |
+| Team column positioned between Date and Vendor                                     | 02-01 | Logical information flow for association users: when transaction occurred → which team → what vendor                                               |
+| URL-driven fetch pattern for team filtering                                        | 02-01 | TeamFilter updates URL searchParams → useEffect reacts → fetches with teamIds → clean separation of concerns + browser back/forward support        |
 
 ### Pending Todos
 
@@ -67,7 +71,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-18 (Phase 1 execution)
-Stopped at: Phase 1 complete - all requirements verified (5/5 must-haves passed)
+Last session: 2026-01-19 (Phase 2 execution)
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
-Next: Plan Phase 2 (Association Dashboard View)
+Next: Continue with Plan 02-02 (Navigation Integration)
