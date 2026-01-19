@@ -76,10 +76,10 @@ export function DateRangeFilter() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <div className="flex">
+      <PopoverContent className="w-auto max-w-none p-0" align="start">
+        <div className="flex flex-col md:flex-row">
           {/* Presets */}
-          <div className="flex flex-col gap-1 border-r p-3">
+          <div className="flex flex-col gap-1 border-b p-3 md:border-r md:border-b-0">
             {presets.map(preset => (
               <Button
                 key={preset.label}
@@ -89,7 +89,7 @@ export function DateRangeFilter() {
                   handleSelect(preset.range)
                   setOpen(false)
                 }}
-                className="justify-start font-normal"
+                className="justify-start font-normal whitespace-nowrap"
               >
                 {preset.label}
               </Button>
@@ -102,20 +102,22 @@ export function DateRangeFilter() {
                   handleSelect(undefined)
                   setOpen(false)
                 }}
-                className="justify-start font-normal text-red-600"
+                className="justify-start font-normal whitespace-nowrap text-red-600"
               >
                 Clear
               </Button>
             )}
           </div>
           {/* Calendar */}
-          <Calendar
-            mode="range"
-            selected={range}
-            onSelect={handleSelect}
-            numberOfMonths={2}
-            defaultMonth={range?.from}
-          />
+          <div className="p-3">
+            <Calendar
+              mode="range"
+              selected={range}
+              onSelect={handleSelect}
+              numberOfMonths={2}
+              defaultMonth={range?.from}
+            />
+          </div>
         </div>
       </PopoverContent>
     </Popover>

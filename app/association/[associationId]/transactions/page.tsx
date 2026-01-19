@@ -209,7 +209,13 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
     debouncedSearch,
     mounted,
     associationId,
-    searchParams,
+    searchParams?.get('teamIds'),
+    searchParams?.get('dateFrom'),
+    searchParams?.get('dateTo'),
+    searchParams?.get('missingReceipts'),
+    searchParams?.get('search'),
+    sortBy,
+    sortDir,
   ])
 
   // Fetch initial page (reset list)
