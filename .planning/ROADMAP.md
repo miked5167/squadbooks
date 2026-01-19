@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Security Foundation & Infrastructure** - Establish bulletproof permission enforcement and performance foundation
 - [x] **Phase 2: Association Dashboard View** - Build minimal viable association transaction view with basic filtering
-- [ ] **Phase 3: Enhanced Filtering & PDF Support** - Add advanced filtering and PDF receipt viewing
+- [x] **Phase 3: Enhanced Filtering & PDF Support** - Add advanced filtering and PDF receipt viewing
 - [ ] **Phase 4: Polish & Production Readiness** - Handle edge cases, loading states, and production validation
 
 ## Phase Details
@@ -99,12 +99,14 @@ Plans:
 4. Timezone labels indicate association timezone ("All dates in Eastern Time")
 5. Performance validated with realistic data (50 teams, 20K transactions, <2s dashboard load)
 6. Security audit confirms no mutation paths exist for association role
-   **Plans**: TBD
+   **Plans**: 4 plans
 
 Plans:
 
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Loading & error state polish with inline error replacement
+- [ ] 04-02-PLAN.md — Empty state components and timezone labels
+- [ ] 04-03-PLAN.md — Production-scale seed data and performance validation
+- [ ] 04-04-PLAN.md — Security audit and read-only verification
 
 ## Progress
 
@@ -116,4 +118,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Security Foundation & Infrastructure | 2/2            | ✓ Complete  | 2026-01-18 |
 | 2. Association Dashboard View           | 3/3            | ✓ Complete  | 2026-01-18 |
 | 3. Enhanced Filtering & PDF Support     | 6/6            | ✓ Complete  | 2026-01-19 |
-| 4. Polish & Production Readiness        | 0/2            | Not started | -          |
+| 4. Polish & Production Readiness        | 0/4            | Not started | -          |
