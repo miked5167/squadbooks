@@ -75,15 +75,16 @@ Plans:
 7. Filter state persists in URL (shareable/bookmarkable filtered views)
 8. Receipt drawer displays PDF receipts with page navigation and zoom controls
 9. Receipt drawer shows metadata (who uploaded, when, amount, category) and download button
-   **Plans**: 5 plans
+   **Plans**: 6 plans
 
 Plans:
 
-- [ ] 03-01-PLAN.md — Filter controls (date range, missing receipts, search) with URL state
-- [ ] 03-02-PLAN.md — Filter chips component and page integration
-- [ ] 03-03-PLAN.md — Column sorting with URL state and API enhancement
-- [ ] 03-04-PLAN.md — Enhanced PDF viewer with react-pdf (page navigation, zoom controls)
-- [ ] 03-05-PLAN.md — Human verification of all filtering and PDF viewing features
+- [x] 03-01-PLAN.md — Filter controls (date range, missing receipts, search) with URL state
+- [x] 03-02-PLAN.md — Filter chips component and page integration
+- [x] 03-03-PLAN.md — Column sorting with URL state and API enhancement
+- [x] 03-04-PLAN.md — Enhanced PDF viewer with react-pdf (page navigation, zoom controls)
+- [x] 03-05-PLAN.md — Human verification of all filtering and PDF viewing features
+- [ ] 03-06-PLAN.md — Gap closure: Implement react-pdf Document/Page integration
 
 ### Phase 4: Polish & Production Readiness
 
@@ -114,5 +115,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | --------------------------------------- | -------------- | ----------- | ---------- |
 | 1. Security Foundation & Infrastructure | 2/2            | ✓ Complete  | 2026-01-18 |
 | 2. Association Dashboard View           | 3/3            | ✓ Complete  | 2026-01-18 |
-| 3. Enhanced Filtering & PDF Support     | 0/5            | Not started | -          |
+| 3. Enhanced Filtering & PDF Support     | 5/6            | In progress | -          |
 | 4. Polish & Production Readiness        | 0/2            | Not started | -          |
