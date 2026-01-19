@@ -108,9 +108,37 @@ function formatUTCDate(dateString: string): string {
   return `${monthNames[month]} ${day}, ${year}`
 }
 
+// Custom hook for managing transaction sort state
+type SortField = 'date' | 'amount' | 'category' | 'vendor'
+type SortDir = 'asc' | 'desc'
+
+function useTransactionSort() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const sortBy = (searchParams?.get('sortBy') as SortField) || 'date'
+  const sortDir = (searchParams?.get('sortDir') as SortDir) || 'desc'
+
+  const handleSort = (field: SortField) => {
+    const params = new URLSearchParams(searchParams?.toString() || '')
+
+    // Toggle direction if clicking same field, default desc for new field
+    const newDir = field === sortBy && sortDir === 'desc' ? 'asc' : 'desc'
+
+    params.set('sortBy', field)
+    params.set('sortDir', newDir)
+    params.delete('cursor') // Reset pagination when sort changes
+
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  return { sortBy, sortDir, handleSort }
+}
+
 export default function AssociationTransactionsPage({ params }: PageProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { sortBy, sortDir, handleSort } = useTransactionSort()
 
   // Resolve async params
   const [associationId, setAssociationId] = useState<string | null>(null)
@@ -239,6 +267,10 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
         params.append('search', debouncedSearch.trim())
       }
 
+      // Add sort parameters
+      params.append('sortBy', sortBy)
+      params.append('sortDir', sortDir)
+
       const res = await fetch(`/api/transactions?${params.toString()}`)
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
@@ -322,6 +354,10 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
       if (debouncedSearch.trim()) {
         params.append('search', debouncedSearch.trim())
       }
+
+      // Add sort parameters
+      params.append('sortBy', sortBy)
+      params.append('sortDir', sortDir)
 
       const res = await fetch(`/api/transactions?${params.toString()}`)
       if (!res.ok) {
@@ -671,12 +707,44 @@ export default function AssociationTransactionsPage({ params }: PageProps) {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-navy/5 hover:bg-navy/5">
-                      <TableHead className="text-navy font-semibold">Date</TableHead>
+                      <TableHead
+                        className="text-navy cursor-pointer font-semibold hover:bg-gray-100"
+                        onClick={() => handleSort('date')}
+                      >
+                        Date
+                        {sortBy === 'date' && (
+                          <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </TableHead>
                       <TableHead className="text-navy font-semibold">Team</TableHead>
                       <TableHead className="text-navy font-semibold">Type</TableHead>
-                      <TableHead className="text-navy font-semibold">Vendor</TableHead>
-                      <TableHead className="text-navy font-semibold">Category</TableHead>
-                      <TableHead className="text-navy text-right font-semibold">Amount</TableHead>
+                      <TableHead
+                        className="text-navy cursor-pointer font-semibold hover:bg-gray-100"
+                        onClick={() => handleSort('vendor')}
+                      >
+                        Vendor
+                        {sortBy === 'vendor' && (
+                          <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </TableHead>
+                      <TableHead
+                        className="text-navy cursor-pointer font-semibold hover:bg-gray-100"
+                        onClick={() => handleSort('category')}
+                      >
+                        Category
+                        {sortBy === 'category' && (
+                          <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </TableHead>
+                      <TableHead
+                        className="text-navy cursor-pointer text-right font-semibold hover:bg-gray-100"
+                        onClick={() => handleSort('amount')}
+                      >
+                        Amount
+                        {sortBy === 'amount' && (
+                          <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </TableHead>
                       <TableHead className="text-navy font-semibold">Status</TableHead>
                       <TableHead className="text-navy font-semibold">Validation</TableHead>
                       <TableHead className="text-navy text-center font-semibold">Receipt</TableHead>
