@@ -14,7 +14,7 @@ This roadmap delivers association-level financial oversight capabilities to enab
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Security Foundation & Infrastructure** - Establish bulletproof permission enforcement and performance foundation
-- [ ] **Phase 2: Association Dashboard View** - Build minimal viable association transaction view with basic filtering
+- [x] **Phase 2: Association Dashboard View** - Build minimal viable association transaction view with basic filtering
 - [ ] **Phase 3: Enhanced Filtering & PDF Support** - Add advanced filtering and PDF receipt viewing
 - [ ] **Phase 4: Polish & Production Readiness** - Handle edge cases, loading states, and production validation
 
@@ -55,9 +55,9 @@ Plans:
 
 Plans:
 
-- [ ] 02-01-PLAN.md — Association transactions page with team filtering and drawer integration
-- [ ] 02-02-PLAN.md — Team details transaction section with pre-filtering
-- [ ] 02-03-PLAN.md — Human verification of both transaction views and navigation
+- [x] 02-01-PLAN.md — Association transactions page with team filtering and drawer integration
+- [x] 02-02-PLAN.md — Team details transaction section with pre-filtering
+- [x] 02-03-PLAN.md — Human verification of both transaction views and navigation
 
 ### Phase 3: Enhanced Filtering & PDF Support
 
@@ -111,6 +111,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase                                   | Plans Complete | Status      | Completed  |
 | --------------------------------------- | -------------- | ----------- | ---------- |
 | 1. Security Foundation & Infrastructure | 2/2            | ✓ Complete  | 2026-01-18 |
-| 2. Association Dashboard View           | 0/3            | Not started | -          |
+| 2. Association Dashboard View           | 3/3            | ✓ Complete  | 2026-01-18 |
 | 3. Enhanced Filtering & PDF Support     | 0/3            | Not started | -          |
 | 4. Polish & Production Readiness        | 0/2            | Not started | -          |

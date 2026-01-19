@@ -98,11 +98,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase   | Status   |
 | ----------- | ------- | -------- |
-| VIEW-01     | Phase 2 | Pending  |
-| VIEW-02     | Phase 2 | Pending  |
-| VIEW-03     | Phase 2 | Pending  |
-| VIEW-04     | Phase 2 | Pending  |
-| VIEW-05     | Phase 2 | Pending  |
+| VIEW-01     | Phase 2 | Complete |
+| VIEW-02     | Phase 2 | Complete |
+| VIEW-03     | Phase 2 | Complete |
+| VIEW-04     | Phase 2 | Complete |
+| VIEW-05     | Phase 2 | Complete |
 | FILTER-01   | Phase 3 | Pending  |
 | FILTER-02   | Phase 3 | Pending  |
 | FILTER-03   | Phase 3 | Pending  |
@@ -111,16 +111,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FILTER-06   | Phase 3 | Pending  |
 | FILTER-07   | Phase 3 | Pending  |
 | FILTER-08   | Phase 3 | Pending  |
-| RECEIPT-01  | Phase 2 | Pending  |
+| RECEIPT-01  | Phase 2 | Complete |
 | RECEIPT-02  | Phase 3 | Pending  |
 | RECEIPT-03  | Phase 3 | Pending  |
 | RECEIPT-04  | Phase 3 | Pending  |
 | RECEIPT-05  | Phase 3 | Pending  |
-| RECEIPT-06  | Phase 2 | Pending  |
-| NAV-01      | Phase 2 | Pending  |
-| NAV-02      | Phase 2 | Pending  |
-| NAV-03      | Phase 2 | Pending  |
-| NAV-04      | Phase 2 | Pending  |
+| RECEIPT-06  | Phase 2 | Complete |
+| NAV-01      | Phase 2 | Complete |
+| NAV-02      | Phase 2 | Complete |
+| NAV-03      | Phase 2 | Complete |
+| NAV-04      | Phase 2 | Complete |
 | SEC-01      | Phase 1 | Complete |
 | SEC-02      | Phase 1 | Complete |
 | SEC-03      | Phase 1 | Complete |
