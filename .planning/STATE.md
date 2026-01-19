@@ -10,19 +10,19 @@ See: .planning/PROJECT.md (updated 2026-01-18)
 ## Current Position
 
 Phase: 3 of 4 (Enhanced Filtering & PDF Support)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-01-19 — Completed 03-01-PLAN.md
+Last activity: 2026-01-19 — Completed 03-02-PLAN.md
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
-- Average duration: 28 min
-- Total execution time: 2.97 hours
+- Total plans completed: 7
+- Average duration: 24 min
+- Total execution time: 3.04 hours
 
 **By Phase:**
 
@@ -30,12 +30,12 @@ Progress: [██████░░░░] 60%
 | ----- | ----- | ------- | -------- |
 | 01    | 2/2   | 159 min | 80 min   |
 | 02    | 3/3   | 7 min   | 2.3 min  |
-| 03    | 1/3   | 10 min  | 10 min   |
+| 03    | 2/3   | 14 min  | 7 min    |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-02 (25min), 02-01 (2min), 02-02 (3min), 02-03 (2min), 03-01 (10min)
-- Trend: Consistent high velocity - UI/filter components execute quickly
+- Last 5 plans: 02-01 (2min), 02-02 (3min), 02-03 (2min), 03-01 (10min), 03-02 (4min)
+- Trend: Sustained high velocity - UI/filter integration executing efficiently
 
 _Updated after each plan completion_
 
@@ -64,6 +64,9 @@ Recent decisions affecting current work:
 | Require both dates for range filter                                                | 03-01 | Only apply date range filter when both dateFrom and dateTo are provided to avoid ambiguous partial ranges                                          |
 | 300ms debounce for search input                                                    | 03-01 | Balance responsiveness (users see instant input) and API efficiency (don't fire request on every keystroke)                                        |
 | Reset pagination on filter change                                                  | 03-01 | Delete cursor param whenever any filter changes to ensure user starts from page 1 of filtered results                                              |
+| FilterChips derive state from searchParams (no separate state)                     | 03-02 | URL is single source of truth - prevents state synchronization bugs, ensures chips always match active filters                                     |
+| Clear all preserves team selection (from TeamFilter)                               | 03-02 | Team selection is primary filter for association users - clearing other filters while keeping team context provides better UX                      |
+| Date range displayed as formatted text in chips (MMM d, yyyy format)               | 03-02 | Human-readable format more useful than ISO dates - users recognize "Jan 15, 2026" faster than "2026-01-15"                                         |
 
 ### Pending Todos
 
@@ -79,7 +82,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-19 (Phase 3 plan 01 execution)
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-01-19 (Phase 3 plan 02 execution)
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
-Next: Execute 03-02-PLAN.md (Filter Integration)
+Next: Execute 03-03-PLAN.md (PDF Viewing Infrastructure)
