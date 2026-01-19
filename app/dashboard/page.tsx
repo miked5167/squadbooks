@@ -13,6 +13,7 @@ import { KpiCard } from '@/components/dashboard/KpiCard'
 import { QuickActionsCard } from '@/components/dashboard/QuickActionsCard'
 import { BudgetCategoryList } from '@/components/dashboard/BudgetCategoryList'
 import { TransactionsPreviewTable } from '@/components/dashboard/TransactionsPreviewTable'
+import { DashboardContent } from '@/components/dashboard/DashboardContent'
 import { ParentDashboard } from '@/components/dashboard/ParentDashboard'
 import { ValidationComplianceCard } from '@/components/dashboard/ValidationComplianceCard'
 import { getTeamCompliance } from '@/app/transactions/actions'
@@ -297,7 +298,7 @@ export default async function DashboardPage() {
             {exceptionsCount > 0 && (
               <Card className="border-0 shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-navy flex items-center gap-2 text-base font-semibold">
+                  <CardTitle className="text-navy flex items-center gap-2 font-semibold">
                     <Clock className="h-4 w-4" />
                     Exceptions Need Review
                   </CardTitle>
@@ -327,7 +328,7 @@ export default async function DashboardPage() {
             {complianceStatus !== 'COMPLIANT' && (
               <Card className="border-0 shadow-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-navy flex items-center gap-2 text-base font-semibold">
+                  <CardTitle className="text-navy flex items-center gap-2 font-semibold">
                     <ShieldCheck className="h-4 w-4" />
                     Compliance Alert
                   </CardTitle>
@@ -356,7 +357,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Recent Transactions - Full Width */}
-        <TransactionsPreviewTable transactions={formattedTransactions} isTreasurer={isTreasurer} />
+        <DashboardContent transactions={formattedTransactions} isTreasurer={isTreasurer} />
       </main>
     </div>
   )
