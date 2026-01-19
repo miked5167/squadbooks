@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -40,6 +43,35 @@ interface TransactionsPreviewTableProps {
   isLoading?: boolean
   isTreasurer?: boolean
   readOnly?: boolean
+  isAssociationUser?: boolean
+  onTransactionClick?: (transactionId: string) => void
+}
+
+// Custom hook for managing transaction sort state (for association users)
+type SortField = 'date' | 'amount' | 'category' | 'vendor'
+type SortDir = 'asc' | 'desc'
+
+function useTransactionSort() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const sortBy = (searchParams?.get('sortBy') as SortField) || 'date'
+  const sortDir = (searchParams?.get('sortDir') as SortDir) || 'desc'
+
+  const handleSort = (field: SortField) => {
+    const params = new URLSearchParams(searchParams?.toString() || '')
+
+    // Toggle direction if clicking same field, default desc for new field
+    const newDir = field === sortBy && sortDir === 'desc' ? 'asc' : 'desc'
+
+    params.set('sortBy', field)
+    params.set('sortDir', newDir)
+    params.delete('cursor') // Reset pagination when sort changes
+
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  return { sortBy, sortDir, handleSort }
 }
 
 export function TransactionsPreviewTable({
@@ -47,8 +79,13 @@ export function TransactionsPreviewTable({
   isLoading = false,
   isTreasurer = false,
   readOnly = false,
+  isAssociationUser = false,
+  onTransactionClick,
 }: TransactionsPreviewTableProps) {
   const hasTransactions = transactions.length > 0
+
+  // Always call hook (React rules of hooks), but only use values if isAssociationUser
+  const { sortBy, sortDir, handleSort } = useTransactionSort()
 
   const getTransactionUIState = (transaction: Transaction) => {
     return mapTransactionToUIState(
@@ -109,10 +146,48 @@ export function TransactionsPreviewTable({
             <Table>
               <TableHeader>
                 <TableRow className="border-navy/10 hover:bg-transparent">
-                  <TableHead className="text-navy/70">Date</TableHead>
-                  <TableHead className="text-navy/70">Payee</TableHead>
-                  <TableHead className="text-navy/70">Category</TableHead>
-                  <TableHead className="text-navy/70 text-right">Amount</TableHead>
+                  <TableHead
+                    className={`text-navy/70 ${isAssociationUser && handleSort ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                    onClick={isAssociationUser && handleSort ? () => handleSort('date') : undefined}
+                  >
+                    Date
+                    {isAssociationUser && sortBy === 'date' && (
+                      <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </TableHead>
+                  <TableHead
+                    className={`text-navy/70 ${isAssociationUser && handleSort ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                    onClick={
+                      isAssociationUser && handleSort ? () => handleSort('vendor') : undefined
+                    }
+                  >
+                    Payee
+                    {isAssociationUser && sortBy === 'vendor' && (
+                      <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </TableHead>
+                  <TableHead
+                    className={`text-navy/70 ${isAssociationUser && handleSort ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                    onClick={
+                      isAssociationUser && handleSort ? () => handleSort('category') : undefined
+                    }
+                  >
+                    Category
+                    {isAssociationUser && sortBy === 'category' && (
+                      <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </TableHead>
+                  <TableHead
+                    className={`text-navy/70 text-right ${isAssociationUser && handleSort ? 'cursor-pointer hover:bg-gray-100' : ''}`}
+                    onClick={
+                      isAssociationUser && handleSort ? () => handleSort('amount') : undefined
+                    }
+                  >
+                    Amount
+                    {isAssociationUser && sortBy === 'amount' && (
+                      <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </TableHead>
                   <TableHead className="text-navy/70 text-center">Status</TableHead>
                   <TableHead className="text-navy/70 w-16 text-center"></TableHead>
                 </TableRow>
@@ -121,7 +196,11 @@ export function TransactionsPreviewTable({
                 {transactions.map(transaction => {
                   const uiState = getTransactionUIState(transaction)
                   return (
-                    <TableRow key={transaction.id} className="border-navy/10">
+                    <TableRow
+                      key={transaction.id}
+                      className={`border-navy/10 ${onTransactionClick ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                      onClick={() => onTransactionClick?.(transaction.id)}
+                    >
                       <TableCell className="text-navy/80 text-sm">
                         {format(new Date(transaction.transactionDate), 'MMM d, yyyy')}
                       </TableCell>
