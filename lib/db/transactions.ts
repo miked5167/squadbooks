@@ -586,8 +586,18 @@ export async function getTransactionsWithCursor(params: {
     dateTo?: string
     missingReceipts?: boolean
   }
+  sortBy?: 'date' | 'amount' | 'category' | 'vendor'
+  sortDir?: 'asc' | 'desc'
 }) {
-  const { teamId, teamIds, limit = 20, cursor, filters = {} } = params
+  const {
+    teamId,
+    teamIds,
+    limit = 20,
+    cursor,
+    filters = {},
+    sortBy = 'date',
+    sortDir = 'desc',
+  } = params
   const { type, categoryId, status, search, dateFrom, dateTo, missingReceipts } = filters
 
   // Clamp limit to prevent abuse
@@ -724,13 +734,33 @@ export async function getTransactionsWithCursor(params: {
   // Get total count (without cursor, but with filters)
   const totalCount = await prisma.transaction.count({ where })
 
+  // Build orderBy clause based on sortBy parameter
+  const orderBy: Prisma.TransactionOrderByWithRelationInput[] = []
+
+  switch (sortBy) {
+    case 'date':
+      orderBy.push({ transactionDate: sortDir })
+      break
+    case 'amount':
+      orderBy.push({ amount: sortDir })
+      break
+    case 'category':
+      orderBy.push({ category: { name: sortDir } })
+      break
+    case 'vendor':
+      orderBy.push({ vendor: sortDir })
+      break
+    default:
+      orderBy.push({ transactionDate: sortDir })
+  }
+
+  // Always add id as secondary sort for stable pagination
+  orderBy.push({ id: 'desc' })
+
   // Fetch transactions with optimized select
   const transactions = await prisma.transaction.findMany({
     where: whereWithCursor,
-    orderBy: [
-      { transactionDate: 'desc' },
-      { id: 'desc' }, // Secondary sort for stable ordering
-    ],
+    orderBy,
     take: take + 1, // Fetch one extra to check if there are more
     select: {
       id: true,
@@ -761,6 +791,13 @@ export async function getTransactionsWithCursor(params: {
       },
       // Minimal creator data
       creator: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      // Team data (for association view)
+      team: {
         select: {
           id: true,
           name: true,

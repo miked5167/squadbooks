@@ -50,6 +50,8 @@ export async function GET(request: NextRequest) {
     const dateFromParam = searchParams.get('dateFrom')
     const dateToParam = searchParams.get('dateTo')
     const missingReceiptsParam = searchParams.get('missingReceipts')
+    const sortByParam = searchParams.get('sortBy')
+    const sortDirParam = searchParams.get('sortDir')
 
     // Decode cursor if provided
     let cursor: { transactionDate: Date; id: string } | undefined
@@ -126,6 +128,25 @@ export async function GET(request: NextRequest) {
       filters.missingReceipts = true
     }
 
+    // Parse and validate sort parameters
+    const validSortFields = ['date', 'amount', 'category', 'vendor']
+    const validSortDirs = ['asc', 'desc']
+
+    let sortBy: 'date' | 'amount' | 'category' | 'vendor' = 'date'
+    let sortDir: 'asc' | 'desc' = 'desc'
+
+    if (sortByParam && validSortFields.includes(sortByParam)) {
+      sortBy = sortByParam as typeof sortBy
+    } else if (sortByParam) {
+      logger.warn('Invalid sortBy parameter', { sortBy: sortByParam })
+    }
+
+    if (sortDirParam && validSortDirs.includes(sortDirParam)) {
+      sortDir = sortDirParam as typeof sortDir
+    } else if (sortDirParam) {
+      logger.warn('Invalid sortDir parameter', { sortDir: sortDirParam })
+    }
+
     // Determine which teams to query
     let teamIds: string[] | undefined
     let teamId: string | undefined
@@ -178,6 +199,8 @@ export async function GET(request: NextRequest) {
       limit,
       cursor,
       filters,
+      sortBy,
+      sortDir,
     })
 
     // Map snake_case database fields to camelCase for frontend
