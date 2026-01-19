@@ -109,7 +109,7 @@ export function DateRangeFilter() {
             )}
           </div>
           {/* Calendar */}
-          <div className="flex-1 p-3">
+          <div className="flex-1 bg-white p-3">
             <style jsx global>{`
               .rdp-month_grid {
                 display: table !important;
