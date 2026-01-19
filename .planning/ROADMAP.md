@@ -51,13 +51,13 @@ Plans:
 3. Transaction list displays date, vendor, amount, category, team name, and receipt status for each transaction
 4. Association user can click transaction to view receipt in right-side drawer (or "No receipt" state)
 5. Transaction list uses cursor-based pagination and loads 50 items per page
-   **Plans**: TBD
+   **Plans**: 3 plans
 
 Plans:
 
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Association transactions page with team filtering and drawer integration
+- [ ] 02-02-PLAN.md — Team details transaction section with pre-filtering
+- [ ] 02-03-PLAN.md — Human verification of both transaction views and navigation
 
 ### Phase 3: Enhanced Filtering & PDF Support
 
