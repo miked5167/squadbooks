@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import type { UseFormReturn } from "react-hook-form"
-import { FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import type { UseFormReturn } from 'react-hook-form'
+import { FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   TeamTypeEnum,
   AgeDivisionEnum,
@@ -12,63 +12,61 @@ import {
   type TeamType,
   type AgeDivision,
   type CompetitiveLevel,
-} from "@/lib/validations/rule-schemas"
+} from '@/lib/validations/rule-schemas'
 
 interface RuleFiltersProps {
   form: UseFormReturn<any>
 }
 
 const teamTypeLabels: Record<TeamType, string> = {
-  HOUSE_LEAGUE: "House League",
-  REPRESENTATIVE: "Representative (Rep/Travel)",
-  ADULT_RECREATIONAL: "Adult Recreational",
-  OTHER: "Other",
+  HOUSE_LEAGUE: 'House League',
+  REPRESENTATIVE: 'Representative (Rep/Travel)',
+  ADULT_RECREATIONAL: 'Adult Recreational',
+  OTHER: 'Other',
 }
 
 const ageDivisionLabels: Record<AgeDivision, string> = {
-  U7: "U7 (Tyke)",
-  U9: "U9 (Novice)",
-  U11: "U11 (Atom)",
-  U13: "U13 (Peewee)",
-  U15: "U15 (Bantam)",
-  U18: "U18 (Midget)",
-  OTHER: "Other",
+  U7: 'U7 (Tyke)',
+  U9: 'U9 (Novice)',
+  U11: 'U11 (Atom)',
+  U13: 'U13 (Peewee)',
+  U15: 'U15 (Bantam)',
+  U18: 'U18 (Midget)',
+  OTHER: 'Other',
 }
 
 const competitiveLevelLabels: Record<CompetitiveLevel, string> = {
-  AAA: "AAA (Elite)",
-  AA: "AA",
-  A: "A",
-  BB: "BB",
-  B: "B",
-  MD: "MD (Multi-Divisional)",
-  HOUSE_RECREATIONAL: "House/Recreational",
-  NOT_APPLICABLE: "Not Applicable",
-  OTHER: "Other",
+  AAA: 'AAA (Elite)',
+  AA: 'AA',
+  A: 'A',
+  BB: 'BB',
+  B: 'B',
+  MD: 'MD (Multi-Divisional)',
+  HOUSE_RECREATIONAL: 'House/Recreational',
+  NOT_APPLICABLE: 'Not Applicable',
+  OTHER: 'Other',
 }
 
 export function RuleFilters({ form }: RuleFiltersProps) {
-  const teamTypeFilter = form.watch("teamTypeFilter") || []
-  const ageDivisionFilter = form.watch("ageDivisionFilter") || []
-  const competitiveLevelFilter = form.watch("competitiveLevelFilter") || []
+  const teamTypeFilter = form.watch('teamTypeFilter') || []
+  const ageDivisionFilter = form.watch('ageDivisionFilter') || []
+  const competitiveLevelFilter = form.watch('competitiveLevelFilter') || []
 
   const hasAnyFilters =
-    teamTypeFilter.length > 0 ||
-    ageDivisionFilter.length > 0 ||
-    competitiveLevelFilter.length > 0
+    teamTypeFilter.length > 0 || ageDivisionFilter.length > 0 || competitiveLevelFilter.length > 0
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Team Targeting (Optional)</h3>
+        <h3 className="mb-2 text-lg font-semibold text-gray-900">Team Targeting (Optional)</h3>
         <p className="text-sm text-gray-600">
-          Choose which teams this rule applies to. Leave all unchecked to apply to{" "}
+          Choose which teams this rule applies to. Leave all unchecked to apply to{' '}
           <strong>all teams</strong>.
         </p>
         {!hasAnyFilters && (
-          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800 font-medium flex items-center gap-2">
+          <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+            <p className="flex items-center gap-2 text-sm font-medium text-blue-800">
               <Badge variant="secondary">All Teams</Badge>
               This rule will apply to every team in the association
             </p>
@@ -79,7 +77,7 @@ export function RuleFilters({ form }: RuleFiltersProps) {
       {/* Team Type Filter */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Team Type</CardTitle>
+          <CardTitle>Team Type</CardTitle>
         </CardHeader>
         <CardContent>
           <FormField
@@ -88,7 +86,7 @@ export function RuleFilters({ form }: RuleFiltersProps) {
             render={() => (
               <FormItem>
                 <div className="space-y-3">
-                  {TeamTypeEnum.options.map((teamType) => (
+                  {TeamTypeEnum.options.map(teamType => (
                     <FormField
                       key={teamType}
                       control={form.control}
@@ -96,11 +94,11 @@ export function RuleFilters({ form }: RuleFiltersProps) {
                       render={({ field }) => {
                         const value = field.value || []
                         return (
-                          <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormItem className="flex items-center space-y-0 space-x-3">
                             <FormControl>
                               <Checkbox
                                 checked={value.includes(teamType)}
-                                onCheckedChange={(checked) => {
+                                onCheckedChange={checked => {
                                   const newValue = checked
                                     ? [...value, teamType]
                                     : value.filter((v: TeamType) => v !== teamType)
@@ -108,7 +106,7 @@ export function RuleFilters({ form }: RuleFiltersProps) {
                                 }}
                               />
                             </FormControl>
-                            <FormLabel className="text-sm font-normal cursor-pointer">
+                            <FormLabel className="cursor-pointer text-sm font-normal">
                               {teamTypeLabels[teamType]}
                             </FormLabel>
                           </FormItem>
@@ -129,7 +127,7 @@ export function RuleFilters({ form }: RuleFiltersProps) {
       {/* Age Division Filter */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Age Division</CardTitle>
+          <CardTitle>Age Division</CardTitle>
         </CardHeader>
         <CardContent>
           <FormField
@@ -137,8 +135,8 @@ export function RuleFilters({ form }: RuleFiltersProps) {
             name="ageDivisionFilter"
             render={() => (
               <FormItem>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {AgeDivisionEnum.options.map((division) => (
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                  {AgeDivisionEnum.options.map(division => (
                     <FormField
                       key={division}
                       control={form.control}
@@ -146,11 +144,11 @@ export function RuleFilters({ form }: RuleFiltersProps) {
                       render={({ field }) => {
                         const value = field.value || []
                         return (
-                          <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormItem className="flex items-center space-y-0 space-x-3">
                             <FormControl>
                               <Checkbox
                                 checked={value.includes(division)}
-                                onCheckedChange={(checked) => {
+                                onCheckedChange={checked => {
                                   const newValue = checked
                                     ? [...value, division]
                                     : value.filter((v: AgeDivision) => v !== division)
@@ -158,7 +156,7 @@ export function RuleFilters({ form }: RuleFiltersProps) {
                                 }}
                               />
                             </FormControl>
-                            <FormLabel className="text-sm font-normal cursor-pointer">
+                            <FormLabel className="cursor-pointer text-sm font-normal">
                               {ageDivisionLabels[division]}
                             </FormLabel>
                           </FormItem>
@@ -179,7 +177,7 @@ export function RuleFilters({ form }: RuleFiltersProps) {
       {/* Competitive Level Filter */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Competitive Level</CardTitle>
+          <CardTitle>Competitive Level</CardTitle>
         </CardHeader>
         <CardContent>
           <FormField
@@ -187,8 +185,8 @@ export function RuleFilters({ form }: RuleFiltersProps) {
             name="competitiveLevelFilter"
             render={() => (
               <FormItem>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {CompetitiveLevelEnum.options.map((level) => (
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                  {CompetitiveLevelEnum.options.map(level => (
                     <FormField
                       key={level}
                       control={form.control}
@@ -196,11 +194,11 @@ export function RuleFilters({ form }: RuleFiltersProps) {
                       render={({ field }) => {
                         const value = field.value || []
                         return (
-                          <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormItem className="flex items-center space-y-0 space-x-3">
                             <FormControl>
                               <Checkbox
                                 checked={value.includes(level)}
-                                onCheckedChange={(checked) => {
+                                onCheckedChange={checked => {
                                   const newValue = checked
                                     ? [...value, level]
                                     : value.filter((v: CompetitiveLevel) => v !== level)
@@ -208,7 +206,7 @@ export function RuleFilters({ form }: RuleFiltersProps) {
                                 }}
                               />
                             </FormControl>
-                            <FormLabel className="text-sm font-normal cursor-pointer">
+                            <FormLabel className="cursor-pointer text-sm font-normal">
                               {competitiveLevelLabels[level]}
                             </FormLabel>
                           </FormItem>

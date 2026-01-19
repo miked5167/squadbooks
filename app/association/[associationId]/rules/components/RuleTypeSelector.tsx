@@ -1,18 +1,10 @@
-"use client"
+'use client'
 
-import type { RuleType} from "@/lib/validations/rule-schemas";
-import { ruleTypeMetadata } from "@/lib/validations/rule-schemas"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-  DollarSign,
-  Users,
-  Gift,
-  Scale,
-  CheckCircle,
-  List,
-  Shield,
-} from "lucide-react"
+import type { RuleType } from '@/lib/validations/rule-schemas'
+import { ruleTypeMetadata } from '@/lib/validations/rule-schemas'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { DollarSign, Users, Gift, Scale, CheckCircle, List, Shield } from 'lucide-react'
 
 const iconMap = {
   DollarSign,
@@ -31,18 +23,18 @@ interface RuleTypeSelectorProps {
 
 export function RuleTypeSelector({ selectedType, onSelect }: RuleTypeSelectorProps) {
   const ruleTypes: RuleType[] = [
-    "MAX_BUDGET",
-    "MAX_ASSESSMENT",
-    "MAX_BUYOUT",
-    "ZERO_BALANCE",
-    "APPROVAL_TIERS",
-    "REQUIRED_EXPENSES",
-    "SIGNING_AUTHORITY_COMPOSITION",
+    'MAX_BUDGET',
+    'MAX_ASSESSMENT',
+    'MAX_BUYOUT',
+    'ZERO_BALANCE',
+    'APPROVAL_TIERS',
+    'REQUIRED_EXPENSES',
+    'SIGNING_AUTHORITY_COMPOSITION',
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {ruleTypes.map((ruleType) => {
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {ruleTypes.map(ruleType => {
         const metadata = ruleTypeMetadata[ruleType]
         const Icon = iconMap[metadata.icon as keyof typeof iconMap]
         const isSelected = selectedType === ruleType
@@ -52,8 +44,8 @@ export function RuleTypeSelector({ selectedType, onSelect }: RuleTypeSelectorPro
             key={ruleType}
             className={`cursor-pointer transition-all hover:shadow-md ${
               isSelected
-                ? "ring-2 ring-primary border-primary bg-primary/5"
-                : "hover:border-primary/50"
+                ? 'ring-primary border-primary bg-primary/5 ring-2'
+                : 'hover:border-primary/50'
             }`}
             onClick={() => onSelect(ruleType)}
           >
@@ -61,16 +53,14 @@ export function RuleTypeSelector({ selectedType, onSelect }: RuleTypeSelectorPro
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2 rounded-lg ${
-                      isSelected
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
+                    className={`rounded-lg p-2 ${
+                      isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted'
                     }`}
                   >
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-base">{metadata.label}</CardTitle>
+                    <CardTitle>{metadata.label}</CardTitle>
                   </div>
                 </div>
                 {isSelected && (
@@ -81,9 +71,7 @@ export function RuleTypeSelector({ selectedType, onSelect }: RuleTypeSelectorPro
               </div>
             </CardHeader>
             <CardContent>
-              <CardDescription className="text-sm">
-                {metadata.description}
-              </CardDescription>
+              <CardDescription className="text-sm">{metadata.description}</CardDescription>
             </CardContent>
           </Card>
         )

@@ -15,14 +15,7 @@ import { prisma } from '@/lib/prisma'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import {
-  TrendingUp,
-  Users,
-  DollarSign,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-} from 'lucide-react'
+import { TrendingUp, Users, DollarSign, AlertTriangle, CheckCircle2, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -215,14 +208,7 @@ export default async function OverviewPage() {
     )
   }
 
-  const {
-    totals,
-    statusCounts,
-    budgetTotals,
-    topAttentionTeams,
-    recentAlerts,
-    dataAsOf,
-  } = data
+  const { totals, statusCounts, budgetTotals, topAttentionTeams, recentAlerts, dataAsOf } = data
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -230,16 +216,12 @@ export default async function OverviewPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-          <p className="text-muted-foreground">
-            Association dashboard for {association.name}
-          </p>
+          <p className="text-muted-foreground">Association dashboard for {association.name}</p>
         </div>
         {dataAsOf && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <Clock className="h-4 w-4" />
-            <span>
-              Data as of {formatDistanceToNow(new Date(dataAsOf), { addSuffix: true })}
-            </span>
+            <span>Data as of {formatDistanceToNow(new Date(dataAsOf), { addSuffix: true })}</span>
           </div>
         )}
       </div>
@@ -249,28 +231,24 @@ export default async function OverviewPage() {
         {/* Total Teams */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Teams</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="font-medium">Total Teams</CardTitle>
+            <Users className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.totalTeams}</div>
-            <p className="text-xs text-muted-foreground">
-              {totals.activeTeams} active
-            </p>
+            <p className="text-muted-foreground text-xs">{totals.activeTeams} active</p>
           </CardContent>
         </Card>
 
         {/* Healthy Teams */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Healthy</CardTitle>
+            <CardTitle className="font-medium">Healthy</CardTitle>
             <CheckCircle2 className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {statusCounts.healthy}
-            </div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-green-600">{statusCounts.healthy}</div>
+            <p className="text-muted-foreground text-xs">
               {Math.round((statusCounts.healthy / totals.totalTeams) * 100)}% of teams
             </p>
           </CardContent>
@@ -279,14 +257,12 @@ export default async function OverviewPage() {
         {/* At Risk Teams */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">At Risk</CardTitle>
+            <CardTitle className="font-medium">At Risk</CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {statusCounts.atRisk}
-            </div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-red-600">{statusCounts.atRisk}</div>
+            <p className="text-muted-foreground text-xs">
               {statusCounts.needsAttention} need attention
             </p>
           </CardContent>
@@ -295,14 +271,12 @@ export default async function OverviewPage() {
         {/* Budget Summary */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Budget</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="font-medium">Total Budget</CardTitle>
+            <DollarSign className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ${budgetTotals.totalBudget.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">${budgetTotals.totalBudget.toLocaleString()}</div>
+            <p className="text-muted-foreground text-xs">
               ${budgetTotals.totalSpent.toLocaleString()} spent (
               {budgetTotals.averagePercentUsed.toFixed(0)}% avg)
             </p>
@@ -321,27 +295,25 @@ export default async function OverviewPage() {
         <CardContent>
           {topAttentionTeams.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <CheckCircle2 className="h-12 w-12 text-green-600 mb-3" />
-              <h3 className="text-lg font-semibold mb-1">All Teams Looking Good!</h3>
-              <p className="text-sm text-muted-foreground">
+              <CheckCircle2 className="mb-3 h-12 w-12 text-green-600" />
+              <h3 className="mb-1 text-lg font-semibold">All Teams Looking Good!</h3>
+              <p className="text-muted-foreground text-sm">
                 No teams require immediate attention at this time.
               </p>
             </div>
           ) : (
             <div className="space-y-3">
-              {topAttentionTeams.map((team) => (
+              {topAttentionTeams.map(team => (
                 <Link
                   key={team.id}
                   href={`/association/teams/${team.id}`}
-                  className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors"
+                  className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-4 transition-colors"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium truncate">{team.teamName}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="truncate font-medium">{team.teamName}</span>
                       {team.division && (
-                        <span className="text-sm text-muted-foreground">
-                          • {team.division}
-                        </span>
+                        <span className="text-muted-foreground text-sm">• {team.division}</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
@@ -353,15 +325,14 @@ export default async function OverviewPage() {
                       )}
                     </div>
                   </div>
-                  <div className="text-right ml-4">
+                  <div className="ml-4 text-right">
                     {team.percentUsed !== null && (
-                      <div className="text-sm font-medium">
-                        {team.percentUsed.toFixed(0)}% used
-                      </div>
+                      <div className="text-sm font-medium">{team.percentUsed.toFixed(0)}% used</div>
                     )}
                     {team.lastSynced && (
-                      <div className="text-xs text-muted-foreground">
-                        Updated {formatDistanceToNow(new Date(team.lastSynced), { addSuffix: true })}
+                      <div className="text-muted-foreground text-xs">
+                        Updated{' '}
+                        {formatDistanceToNow(new Date(team.lastSynced), { addSuffix: true })}
                       </div>
                     )}
                   </div>
@@ -381,7 +352,7 @@ export default async function OverviewPage() {
               <CardDescription>Latest alerts from the past week</CardDescription>
             </div>
             <Link href="/association/alerts">
-              <Badge variant="outline" className="cursor-pointer hover:bg-muted">
+              <Badge variant="outline" className="hover:bg-muted cursor-pointer">
                 View All
               </Badge>
             </Link>
@@ -390,30 +361,24 @@ export default async function OverviewPage() {
         <CardContent>
           {recentAlerts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <CheckCircle2 className="h-10 w-10 text-green-600 mb-2" />
-              <p className="text-sm text-muted-foreground">
-                No recent alerts
-              </p>
+              <CheckCircle2 className="mb-2 h-10 w-10 text-green-600" />
+              <p className="text-muted-foreground text-sm">No recent alerts</p>
             </div>
           ) : (
             <div className="space-y-2">
-              {recentAlerts.map((alert) => (
+              {recentAlerts.map(alert => (
                 <div
                   key={alert.id}
-                  className="flex items-start justify-between p-3 rounded-lg border"
+                  className="flex items-start justify-between rounded-lg border p-3"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex items-center gap-2">
                       <SeverityBadge severity={alert.severity} />
-                      <span className="text-sm font-medium truncate">
-                        {alert.teamName}
-                      </span>
+                      <span className="truncate text-sm font-medium">{alert.teamName}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {alert.title}
-                    </p>
+                    <p className="text-muted-foreground truncate text-sm">{alert.title}</p>
                   </div>
-                  <div className="text-xs text-muted-foreground ml-4 whitespace-nowrap">
+                  <div className="text-muted-foreground ml-4 text-xs whitespace-nowrap">
                     {formatDistanceToNow(new Date(alert.createdAt), { addSuffix: true })}
                   </div>
                 </div>
@@ -460,11 +425,7 @@ function SeverityBadge({ severity }: { severity: string }) {
   return (
     <Badge
       variant={isCritical ? 'destructive' : 'outline'}
-      className={
-        isWarning
-          ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
-          : ''
-      }
+      className={isWarning ? 'border-yellow-200 bg-yellow-100 text-yellow-800' : ''}
     >
       {severity}
     </Badge>
