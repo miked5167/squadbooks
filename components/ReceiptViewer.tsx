@@ -1,9 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-import 'react-pdf/dist/esm/Page/TextLayer.css'
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,9 +13,12 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
+import { Document, Page, pdfjs } from 'react-pdf'
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+import 'react-pdf/dist/esm/Page/TextLayer.css'
 
 // Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 interface ReceiptViewerProps {
   isOpen: boolean
@@ -39,8 +39,6 @@ export function ReceiptViewer({
   const [scale, setScale] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-
-  // PDF-specific state
   const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState(1)
 
@@ -53,22 +51,8 @@ export function ReceiptViewer({
 
   const fileType = getFileType(receiptUrl)
 
-  const handlePDFLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages)
-    setLoading(false)
-    setError(false)
-  }
-
-  const handlePDFLoadError = (error: Error) => {
-    console.error('PDF load error:', error)
-    setLoading(false)
-    setError(true)
-  }
-
   const canZoomIn = scale < 3.0
   const canZoomOut = scale > 0.5
-  const canPrevPage = pageNumber > 1
-  const canNextPage = pageNumber < numPages
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -87,31 +71,6 @@ export function ReceiptViewer({
             Receipt {transactionVendor && `- ${transactionVendor}`}
           </h2>
         </div>
-
-        {/* Page Navigation (PDF only) */}
-        {fileType === 'pdf' && !loading && !error && (
-          <div className="flex items-center justify-center gap-2 border-b bg-gray-50 px-6 py-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!canPrevPage}
-              onClick={() => setPageNumber(p => p - 1)}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <span className="min-w-[120px] text-center text-sm">
-              Page {pageNumber} of {numPages || '...'}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!canNextPage}
-              onClick={() => setPageNumber(p => p + 1)}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
 
         {/* Toolbar */}
         <div className="flex items-center gap-2 border-b bg-white px-6 py-3">
@@ -156,6 +115,35 @@ export function ReceiptViewer({
           </Button>
         </div>
 
+        {/* Page Navigation Toolbar (PDFs only) */}
+        {fileType === 'pdf' && (
+          <div className="flex items-center gap-4 border-b bg-white px-6 py-3">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+              disabled={pageNumber <= 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+
+            <span className="text-sm text-gray-600">
+              Page {pageNumber} of {numPages || '...'}
+            </span>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
+              disabled={pageNumber >= numPages}
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+
         {/* Content */}
         <div className="flex-1 overflow-auto bg-gray-100 p-4">
           {loading && !error && (
@@ -199,17 +187,25 @@ export function ReceiptViewer({
           )}
 
           {fileType === 'pdf' && (
-            <div className="flex min-h-full items-center justify-center">
+            <div className="flex items-center justify-center overflow-auto bg-gray-100 p-4">
               <Document
                 file={receiptUrl}
-                onLoadSuccess={handlePDFLoadSuccess}
-                onLoadError={handlePDFLoadError}
-                loading={null}
-                error={null}
-                options={{
-                  cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
-                  cMapPacked: true,
+                onLoadSuccess={({ numPages }) => {
+                  setNumPages(numPages)
+                  setPageNumber(1)
+                  setLoading(false)
+                  setError(false)
                 }}
+                onLoadError={error => {
+                  console.error('PDF load error:', error)
+                  setLoading(false)
+                  setError(true)
+                }}
+                loading={
+                  <div className="flex items-center justify-center p-8">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                }
               >
                 <Page
                   pageNumber={pageNumber}
@@ -217,7 +213,6 @@ export function ReceiptViewer({
                   renderTextLayer={true}
                   renderAnnotationLayer={true}
                   className="shadow-lg"
-                  loading={null}
                 />
               </Document>
             </div>
