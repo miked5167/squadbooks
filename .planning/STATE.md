@@ -11,26 +11,26 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 5 of 6 (Design Foundation)
-Plan: Ready to plan
-Status: Ready to plan
-Last activity: 2026-01-19 - v1.1 roadmap created with 2 phases covering 5 UX requirements
+Plan: 1 of 2
+Status: In progress
+Last activity: 2026-01-19 - Completed 05-01-PLAN.md (Typography hierarchy)
 
-Progress: [████████░░] 67% (v1.0 complete, v1.1 in progress)
+Progress: [████████░░] 69% (v1.0 complete, v1.1 in progress - 1 of 2 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 15 (v1.0)
-- Average duration: 75 min
-- Total execution time: 18.7 hours
+- Total plans completed: 16 (15 v1.0 + 1 v1.1)
+- Average duration: 74 min
+- Total execution time: 19.9 hours
 
 **By Milestone:**
 
 | Milestone                              | Plans | Total    | Avg/Plan |
 | -------------------------------------- | ----- | -------- | -------- |
 | v1.0 Association Transaction Oversight | 15    | 18.7 hrs | 75 min   |
-| v1.1 Dashboard UX Polish               | 0     | 0 hrs    | -        |
+| v1.1 Dashboard UX Polish               | 1     | 1.2 hrs  | 71 min   |
 
 **v1.0 Performance:**
 
@@ -48,10 +48,12 @@ Decisions are logged in PROJECT.md Key Decisions table.
 
 Recent decisions affecting current work:
 
+- v1.1 (05-01): CardTitle text-lg default affects all 107 Card usages app-wide - Intentional hierarchy improvement
+- v1.1 (05-01): Removed explicit text-base from CardTitle elements - Prefer inheritance over duplication
+- v1.1 (05-01): Extended scope to association dashboard - User requested consistent hierarchy across both dashboards
 - v1.0: Defense-in-depth security pattern - Association user checks before role checks
 - v1.0: 50-item pagination for association views - Balance load time vs click reduction
 - v1.0: Inline error states with retry - Primary content failures replace content area
-- v1.0: Production-scale validation - Validate with 50 teams/20K transactions before launch
 
 ### Pending Todos
 
@@ -64,9 +66,9 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: v1.1 roadmap created, ready to begin Phase 5 planning
+Stopped at: Completed 05-01-PLAN.md (Typography hierarchy) - Phase 5 Plan 1 of 2 complete
 Resume file: None
 
 ---
 
-_Last updated: 2026-01-19 after v1.1 roadmap creation_
+_Last updated: 2026-01-19 after 05-01 plan completion_
