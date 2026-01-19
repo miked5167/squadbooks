@@ -31,7 +31,7 @@ async function verifyIndexes() {
     SELECT indexname, indexdef
     FROM pg_indexes
     WHERE tablename = 'transactions'
-    AND indexdef LIKE '%team_id%'
+    AND indexdef LIKE '%teamId%'
     ORDER BY indexname;
   `
 
@@ -40,7 +40,7 @@ async function verifyIndexes() {
 
   // Check for required composite index
   const hasCompositeIndex = indexes.some(
-    idx => idx.indexdef.includes('team_id') && idx.indexdef.includes('transaction_date')
+    idx => idx.indexdef.includes('teamId') && idx.indexdef.includes('transactionDate')
   )
 
   if (hasCompositeIndex) {
@@ -74,9 +74,9 @@ async function testMultiTeamQuery() {
   const explainResult = await prisma.$queryRaw<Array<{ 'QUERY PLAN': string }>>`
     EXPLAIN ANALYZE
     SELECT * FROM transactions
-    WHERE team_id = ANY(${teamIds})
-      AND deleted_at IS NULL
-    ORDER BY transaction_date DESC, id DESC
+    WHERE "teamId" = ANY(${teamIds})
+      AND "deletedAt" IS NULL
+    ORDER BY "transactionDate" DESC, id DESC
     LIMIT 20;
   `
 
