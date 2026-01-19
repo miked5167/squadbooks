@@ -109,13 +109,14 @@ export function DateRangeFilter() {
             )}
           </div>
           {/* Calendar */}
-          <div className="p-3">
+          <div className="p-4">
             <Calendar
               mode="range"
               selected={range}
               onSelect={handleSelect}
               numberOfMonths={2}
               defaultMonth={range?.from}
+              className="[--cell-size:3rem]"
             />
           </div>
         </div>
