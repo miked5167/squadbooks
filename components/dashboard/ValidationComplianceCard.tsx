@@ -138,22 +138,22 @@ export function ValidationComplianceCard({ teamId }: ValidationComplianceCardPro
   const getComplianceColor = (rate: number) => {
     if (rate >= 95) return 'text-green-600'
     if (rate >= 85) return 'text-blue-600'
-    if (rate >= 75) return 'text-yellow-600'
+    if (rate >= 75) return 'text-amber-600'
     return 'text-red-600'
   }
 
   const getSeverityIcon = (severity: string) => {
     switch (severity.toUpperCase()) {
       case 'CRITICAL':
-        return <XCircle className="w-4 h-4 text-red-600" />
+        return <XCircle className="w-4 h-4 text-red-600" aria-hidden="true" />
       case 'HIGH':
-        return <AlertCircle className="w-4 h-4 text-orange-600" />
+        return <AlertCircle className="w-4 h-4 text-orange-600" aria-hidden="true" />
       case 'MEDIUM':
-        return <AlertTriangle className="w-4 h-4 text-yellow-600" />
+        return <AlertTriangle className="w-4 h-4 text-amber-600" aria-hidden="true" />
       case 'LOW':
-        return <AlertCircle className="w-4 h-4 text-blue-600" />
+        return <AlertCircle className="w-4 h-4 text-blue-600" aria-hidden="true" />
       default:
-        return <AlertCircle className="w-4 h-4 text-gray-600" />
+        return <AlertCircle className="w-4 h-4 text-gray-600" aria-hidden="true" />
     }
   }
 
@@ -189,19 +189,19 @@ export function ValidationComplianceCard({ teamId }: ValidationComplianceCardPro
           <Progress value={compliance.complianceRate} className="h-2" />
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="flex items-center gap-1">
-              <CheckCircle className="w-3 h-3 text-green-600" />
+              <CheckCircle className="w-3 h-3 text-green-600" aria-hidden="true" />
               <span className="text-navy/60">
                 Validated: <span className="font-semibold">{compliance.validatedTransactions}</span>
               </span>
             </div>
             <div className="flex items-center gap-1">
-              <AlertTriangle className="w-3 h-3 text-yellow-600" />
+              <AlertTriangle className="w-3 h-3 text-amber-600" aria-hidden="true" />
               <span className="text-navy/60">
                 Exceptions: <span className="font-semibold">{compliance.exceptionsActive}</span>
               </span>
             </div>
             <div className="flex items-center gap-1">
-              <CheckCircle className="w-3 h-3 text-blue-600" />
+              <CheckCircle className="w-3 h-3 text-blue-600" aria-hidden="true" />
               <span className="text-navy/60">
                 Resolved: <span className="font-semibold">{compliance.exceptionsResolved}</span>
               </span>
@@ -216,7 +216,7 @@ export function ValidationComplianceCard({ teamId }: ValidationComplianceCardPro
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <XCircle className="w-4 h-4 text-red-600" />
+                  <XCircle className="w-4 h-4 text-red-600" aria-hidden="true" />
                   <span className="text-xs text-red-700 font-medium">Critical</span>
                 </div>
                 <span className="text-lg font-bold text-red-600">
@@ -227,7 +227,7 @@ export function ValidationComplianceCard({ teamId }: ValidationComplianceCardPro
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-orange-600" />
+                  <AlertCircle className="w-4 h-4 text-orange-600" aria-hidden="true" />
                   <span className="text-xs text-orange-700 font-medium">High</span>
                 </div>
                 <span className="text-lg font-bold text-orange-600">
@@ -235,13 +235,13 @@ export function ValidationComplianceCard({ teamId }: ValidationComplianceCardPro
                 </span>
               </div>
             </div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  <span className="text-xs text-yellow-700 font-medium">Medium</span>
+                  <AlertTriangle className="w-4 h-4 text-amber-600" aria-hidden="true" />
+                  <span className="text-xs text-amber-700 font-medium">Medium</span>
                 </div>
-                <span className="text-lg font-bold text-yellow-600">
+                <span className="text-lg font-bold text-amber-600">
                   {exceptionsBySeverity.medium}
                 </span>
               </div>
@@ -249,7 +249,7 @@ export function ValidationComplianceCard({ teamId }: ValidationComplianceCardPro
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-blue-600" />
+                  <AlertCircle className="w-4 h-4 text-blue-600" aria-hidden="true" />
                   <span className="text-xs text-blue-700 font-medium">Low</span>
                 </div>
                 <span className="text-lg font-bold text-blue-600">{exceptionsBySeverity.low}</span>
