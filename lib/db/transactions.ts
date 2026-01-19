@@ -700,9 +700,9 @@ export async function getTransactionsWithCursor(params: {
   const whereWithCursor = { ...where }
 
   // Add cursor condition for pagination
-  // Order is: transactionDate DESC, id DESC
-  // For cursor, we want items that come AFTER the cursor (older transactions)
-  if (cursor) {
+  // IMPORTANT: Cursor logic only works when sorting by date (default)
+  // When sorting by other fields, disable cursor to avoid incorrect pagination
+  if (cursor && sortBy === 'date') {
     // If we already have OR (from search), wrap everything in AND
     if (whereWithCursor.OR) {
       const searchOR = whereWithCursor.OR
