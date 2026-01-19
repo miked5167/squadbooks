@@ -17,22 +17,22 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Filtering & Search
 
-- [ ] **FILTER-01**: Association user can filter transactions by team (multi-select)
-- [ ] **FILTER-02**: Association user can filter transactions by date range
-- [ ] **FILTER-03**: Association user can filter transactions by missing receipts (show only transactions without receipts)
-- [ ] **FILTER-04**: Association user can search transactions by vendor name or description
-- [ ] **FILTER-05**: Association user can sort transactions by date, amount, or category
-- [ ] **FILTER-06**: Filter state persists in URL (shareable/bookmarkable filtered views)
-- [ ] **FILTER-07**: Applied filters display as removable chips above transaction list
-- [ ] **FILTER-08**: Filter controls show result counts (e.g., "15 transactions")
+- [x] **FILTER-01**: Association user can filter transactions by team (multi-select)
+- [x] **FILTER-02**: Association user can filter transactions by date range
+- [x] **FILTER-03**: Association user can filter transactions by missing receipts (show only transactions without receipts)
+- [x] **FILTER-04**: Association user can search transactions by vendor name or description
+- [x] **FILTER-05**: Association user can sort transactions by date, amount, or category
+- [x] **FILTER-06**: Filter state persists in URL (shareable/bookmarkable filtered views)
+- [x] **FILTER-07**: Applied filters display as removable chips above transaction list
+- [x] **FILTER-08**: Filter controls show result counts (e.g., "15 transactions")
 
 ### Receipt Viewing
 
 - [ ] **RECEIPT-01**: Association user can click transaction to view receipt in right-side drawer
-- [ ] **RECEIPT-02**: Drawer displays image receipts (JPG/PNG) with zoom/pan
-- [ ] **RECEIPT-03**: Drawer displays PDF receipts with page navigation
-- [ ] **RECEIPT-04**: Drawer shows receipt metadata (who uploaded, when uploaded, amount, category)
-- [ ] **RECEIPT-05**: Association user can download receipt file from drawer
+- [x] **RECEIPT-02**: Drawer displays image receipts (JPG/PNG) with zoom/pan
+- [x] **RECEIPT-03**: Drawer displays PDF receipts with page navigation
+- [x] **RECEIPT-04**: Drawer shows receipt metadata (who uploaded, when uploaded, amount, category)
+- [x] **RECEIPT-05**: Association user can download receipt file from drawer
 - [ ] **RECEIPT-06**: Drawer shows "No receipt" state for transactions without receipts
 
 ### Navigation
@@ -103,19 +103,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VIEW-03     | Phase 2 | Complete |
 | VIEW-04     | Phase 2 | Complete |
 | VIEW-05     | Phase 2 | Complete |
-| FILTER-01   | Phase 3 | Pending  |
-| FILTER-02   | Phase 3 | Pending  |
-| FILTER-03   | Phase 3 | Pending  |
-| FILTER-04   | Phase 3 | Pending  |
-| FILTER-05   | Phase 3 | Pending  |
-| FILTER-06   | Phase 3 | Pending  |
-| FILTER-07   | Phase 3 | Pending  |
-| FILTER-08   | Phase 3 | Pending  |
+| FILTER-01   | Phase 3 | Complete |
+| FILTER-02   | Phase 3 | Complete |
+| FILTER-03   | Phase 3 | Complete |
+| FILTER-04   | Phase 3 | Complete |
+| FILTER-05   | Phase 3 | Complete |
+| FILTER-06   | Phase 3 | Complete |
+| FILTER-07   | Phase 3 | Complete |
+| FILTER-08   | Phase 3 | Complete |
 | RECEIPT-01  | Phase 2 | Complete |
-| RECEIPT-02  | Phase 3 | Pending  |
-| RECEIPT-03  | Phase 3 | Pending  |
-| RECEIPT-04  | Phase 3 | Pending  |
-| RECEIPT-05  | Phase 3 | Pending  |
+| RECEIPT-02  | Phase 3 | Complete |
+| RECEIPT-03  | Phase 3 | Complete |
+| RECEIPT-04  | Phase 3 | Complete |
+| RECEIPT-05  | Phase 3 | Complete |
 | RECEIPT-06  | Phase 2 | Complete |
 | NAV-01      | Phase 2 | Complete |
 | NAV-02      | Phase 2 | Complete |
