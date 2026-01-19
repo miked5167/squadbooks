@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { ArrowRight, TrendingUp, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface CategoryData {
   id: string
@@ -27,19 +28,19 @@ export function ParentBudgetOverview({
 
   // Determine budget status
   const getBudgetStatus = () => {
-    if (percentageUsed >= 95) {
+    if (percentageUsed >= 90) {
       return {
         label: 'Over Budget',
         variant: 'destructive' as const,
         icon: AlertTriangle,
         color: 'text-red-600',
       }
-    } else if (percentageUsed >= 85) {
+    } else if (percentageUsed >= 70) {
       return {
         label: 'Watch',
         variant: 'warning' as const,
         icon: AlertTriangle,
-        color: 'text-yellow-600',
+        color: 'text-amber-600',
       }
     } else {
       return {
@@ -87,14 +88,11 @@ export function ParentBudgetOverview({
           </div>
           <Progress
             value={Math.min(percentageUsed, 100)}
-            className="h-3"
-            indicatorClassName={
-              percentageUsed >= 95
-                ? 'bg-red-600'
-                : percentageUsed >= 85
-                  ? 'bg-yellow-600'
-                  : undefined
-            }
+            className="h-2"
+            indicatorClassName={cn(
+              'transition-colors duration-300',
+              percentageUsed >= 90 ? 'bg-red-600' : percentageUsed >= 70 ? 'bg-amber-600' : 'bg-green-600'
+            )}
           />
           <div className="flex items-center justify-between">
             <span className={`text-sm font-semibold ${status.color}`}>
@@ -128,7 +126,10 @@ export function ParentBudgetOverview({
                     <Progress
                       value={Math.min(categoryPercentage, 100)}
                       className="h-1.5"
-                      indicatorClassName={isOverBudget ? 'bg-red-600' : undefined}
+                      indicatorClassName={cn(
+                        'transition-colors duration-300',
+                        isOverBudget ? 'bg-red-600' : 'bg-green-600'
+                      )}
                     />
                   </div>
                 )
