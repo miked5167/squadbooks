@@ -5,38 +5,38 @@
 See: .planning/PROJECT.md (updated 2026-01-19)
 
 **Core value:** Association leaders can quickly identify teams with missing receipts and verify compliance with spending policies across all teams in their association.
-**Current focus:** v1.0 milestone complete - ready for next milestone planning
+
+**Current focus:** Phase 5 - Design Foundation (v1.1 Dashboard UX Polish)
 
 ## Current Position
 
-Milestone: v1.0 complete ✅
-Phase: All 4 phases shipped (15 plans total)
-Status: Ready for production deployment
-Last activity: 2026-01-19 — v1.0 milestone archived
+Phase: 5 of 6 (Design Foundation)
+Plan: Ready to plan
+Status: Ready to plan
+Last activity: 2026-01-19 - v1.1 roadmap created with 2 phases covering 5 UX requirements
 
-Next: /gsd:new-milestone to define next version
+Progress: [████████░░] 67% (v1.0 complete, v1.1 in progress)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 14
-- Average duration: 15 min
-- Total execution time: 3.9 hours
+- Total plans completed: 15 (v1.0)
+- Average duration: 75 min
+- Total execution time: 18.7 hours
 
-**By Phase:**
+**By Milestone:**
 
-| Phase | Plans | Total   | Avg/Plan |
-| ----- | ----- | ------- | -------- |
-| 01    | 2/2   | 159 min | 80 min   |
-| 02    | 3/3   | 7 min   | 2.3 min  |
-| 03    | 6/6   | 23 min  | 3.8 min  |
-| 04    | 4/4   | 40 min  | 10.0 min |
+| Milestone                              | Plans | Total    | Avg/Plan |
+| -------------------------------------- | ----- | -------- | -------- |
+| v1.0 Association Transaction Oversight | 15    | 18.7 hrs | 75 min   |
+| v1.1 Dashboard UX Polish               | 0     | 0 hrs    | -        |
 
-**Recent Trend:**
+**v1.0 Performance:**
 
-- Last 5 plans: 03-05 (2min), 03-06 (5min), 04-02 (15min), 04-03 (9min), 04-01 (16min)
-- Trend: Excellent velocity - Phase 3 and 4 plans averaging <10min each
+- 4 phases, 15 plans completed
+- Dashboard load: 595ms (70% under 2s target)
+- Security: 15+ test cases passed
 
 _Updated after each plan completion_
 
@@ -44,28 +44,29 @@ _Updated after each plan completion_
 
 ### Decisions
 
-All v1.0 decisions logged in PROJECT.md with outcomes marked ✓ Good.
+Decisions are logged in PROJECT.md Key Decisions table.
 
-Key architectural decisions:
+Recent decisions affecting current work:
 
-- Defense-in-depth security (association checks before role checks)
-- URL as single source of truth for filter state
-- react-pdf with current-page-only rendering
-- Production-scale validation (50 teams, 20K transactions)
-
-See .planning/PROJECT.md Key Decisions table for full list.
+- v1.0: Defense-in-depth security pattern - Association user checks before role checks
+- v1.0: 50-item pagination for association views - Balance load time vs click reduction
+- v1.0: Inline error states with retry - Primary content failures replace content area
+- v1.0: Production-scale validation - Validate with 50 teams/20K transactions before launch
 
 ### Pending Todos
 
-None - v1.0 complete
+None yet.
 
 ### Blockers/Concerns
 
-None - all v1.0 blockers resolved
+None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-19 (v1.0 milestone complete)
-Stopped at: Milestone archived to .planning/milestones/
+Last session: 2026-01-19
+Stopped at: v1.1 roadmap created, ready to begin Phase 5 planning
 Resume file: None
-Next: /gsd:new-milestone to define v1.1 or v2.0
+
+---
+
+_Last updated: 2026-01-19 after v1.1 roadmap creation_

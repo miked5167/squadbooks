@@ -56,21 +56,21 @@ Deferred UI/UX enhancements for future releases.
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase | Status  |
-| ----------- | ----- | ------- |
-| UX-01       | TBD   | Pending |
-| UX-02       | TBD   | Pending |
-| UX-03       | TBD   | Pending |
-| UX-04       | TBD   | Pending |
-| UX-05       | TBD   | Pending |
+| Requirement | Phase   | Status  |
+| ----------- | ------- | ------- |
+| UX-01       | Phase 5 | Pending |
+| UX-02       | Phase 5 | Pending |
+| UX-03       | Phase 6 | Pending |
+| UX-04       | Phase 6 | Pending |
+| UX-05       | Phase 6 | Pending |
 
 **Coverage:**
 
 - v1.1 requirements: 5 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 5 ⚠️
+- Mapped to phases: 5 (100% coverage)
+- Unmapped: 0
 
 ---
 
 _Requirements defined: 2026-01-19_
-_Last updated: 2026-01-19 after initial definition_
+_Last updated: 2026-01-19 after roadmap creation_
