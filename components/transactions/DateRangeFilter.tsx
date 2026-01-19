@@ -76,7 +76,7 @@ export function DateRangeFilter() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[700px] p-0" align="start">
+      <PopoverContent className="w-[700px] bg-white p-0" align="start">
         <div className="flex">
           {/* Presets */}
           <div className="flex min-w-[140px] flex-col gap-1 border-r p-3">
