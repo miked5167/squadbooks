@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-01-18)
 Phase: 3 of 4 (Enhanced Filtering & PDF Support)
 Plan: 3 of 3 complete
 Status: Phase complete
-Last activity: 2026-01-19 — Completed 03-04-PLAN.md
+Last activity: 2026-01-19 — Completed 03-03-PLAN.md
 
 Progress: [████████░░] 80%
 
@@ -21,7 +21,7 @@ Progress: [████████░░] 80%
 **Velocity:**
 
 - Total plans completed: 8
-- Average duration: 21 min
+- Average duration: 20 min
 - Total execution time: 3.15 hours
 
 **By Phase:**
@@ -34,8 +34,8 @@ Progress: [████████░░] 80%
 
 **Recent Trend:**
 
-- Last 5 plans: 02-02 (3min), 02-03 (2min), 03-01 (10min), 03-02 (4min), 03-04 (7min)
-- Trend: Sustained high velocity - verification-only execution when work pre-completed
+- Last 5 plans: 02-03 (2min), 03-01 (10min), 03-02 (1min), 03-03 (10min), 03-04 (pending)
+- Trend: Sustained high velocity - small-scope plans execute quickly
 
 _Updated after each plan completion_
 
@@ -67,6 +67,10 @@ Recent decisions affecting current work:
 | FilterChips derive state from searchParams (no separate state)                     | 03-02 | URL is single source of truth - prevents state synchronization bugs, ensures chips always match active filters                                     |
 | Clear all preserves team selection (from TeamFilter)                               | 03-02 | Team selection is primary filter for association users - clearing other filters while keeping team context provides better UX                      |
 | Date range displayed as formatted text in chips (MMM d, yyyy format)               | 03-02 | Human-readable format more useful than ISO dates - users recognize "Jan 15, 2026" faster than "2026-01-15"                                         |
+| Toggle sort direction on same column click                                         | 03-03 | Clicking same column toggles between desc and asc - provides intuitive control for users exploring data                                            |
+| Default to descending when switching to new column                                 | 03-03 | When switching columns, default to desc (most recent/highest first) - matches user expectation for transaction data                                |
+| Reset pagination on sort change                                                    | 03-03 | Delete cursor param when sort changes to avoid inconsistent results from stale cursor                                                              |
+| Always call React hooks unconditionally                                            | 03-03 | React rules of hooks require unconditional calls - call useTransactionSort always, use values conditionally based on isAssociationUser             |
 | Use react-pdf instead of PDF.js direct integration                                 | 03-04 | react-pdf provides cleaner React API, handles worker setup, manages PDF.js lifecycle, has 7K+ GitHub stars and active maintenance                  |
 | Configure pdfjs worker via unpkg.com CDN                                           | 03-04 | Avoids CORS issues; unpkg.com provides reliable CDN with proper headers                                                                            |
 | Render only current page (not all pages) for PDFs                                  | 03-04 | Multi-page PDFs consume excessive memory if all pages rendered simultaneously; current-page-only keeps memory low even for 100+ page documents     |
@@ -85,7 +89,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-19 (Phase 3 plan 04 execution)
-Stopped at: Completed 03-04-PLAN.md - Phase 3 complete
+Last session: 2026-01-19 (Phase 3 plan 03 execution)
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None
-Next: Begin Phase 4 (execute-phase command will determine next plan)
+Next: Execute 03-04-PLAN.md (Enhanced PDF Viewer)
