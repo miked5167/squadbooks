@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge'
 import { AlertTriangle, AlertOctagon, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { cn } from '@/lib/utils'
 
 interface Team {
   id: string
