@@ -14,15 +14,15 @@ Requirements for applying QuickBooks and FreshBooks design patterns to improve d
 
 ### Status Indicators
 
-- [ ] **UX-03**: Enhance status badges with accessibility features including icons (CheckCircle for healthy, AlertTriangle for warning, AlertOctagon for critical) and WCAG 2.1 AA compliant colors (green-100/800, amber-100/800, red-100/800)
+- [x] **UX-03**: Enhance status badges with accessibility features including icons (CheckCircle for healthy, AlertTriangle for warning, AlertOctagon for critical) and WCAG 2.1 AA compliant colors (green-100/800, amber-100/800, red-100/800)
 
 ### Financial Visualizations
 
-- [ ] **UX-04**: Apply FreshBooks progress bar styling to budget indicators (8px height, rounded-full container, dynamic color thresholds: <75% green, 75-90% amber, >90% red, smooth 300ms transitions)
+- [x] **UX-04**: Apply FreshBooks progress bar styling to budget indicators (8px height, rounded-full container, dynamic color thresholds: <75% green, 75-90% amber, >90% red, smooth 300ms transitions)
 
 ### Teams Needing Attention Widget
 
-- [ ] **UX-05**: Implement FreshBooks "Outstanding Invoices" pattern with visual breakdown bar showing critical vs warning team distribution, numerical counts with color coding, and CTA button to review teams
+- [x] **UX-05**: Implement FreshBooks "Outstanding Invoices" pattern with visual breakdown bar showing critical vs warning team distribution, numerical counts with color coding, and CTA button to review teams
 
 ## v2 Requirements
 
@@ -56,13 +56,13 @@ Deferred UI/UX enhancements for future releases.
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase   | Status  |
-| ----------- | ------- | ------- |
-| UX-01       | Phase 5 | Pending |
-| UX-02       | Phase 5 | Pending |
-| UX-03       | Phase 6 | Pending |
-| UX-04       | Phase 6 | Pending |
-| UX-05       | Phase 6 | Pending |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| UX-01       | Phase 5 | Complete |
+| UX-02       | Phase 5 | Complete |
+| UX-03       | Phase 6 | Complete |
+| UX-04       | Phase 6 | Complete |
+| UX-05       | Phase 6 | Complete |
 
 **Coverage:**
 
