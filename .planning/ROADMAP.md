@@ -23,7 +23,7 @@ v1.0 delivered association-scoped transaction viewing with advanced filtering, P
 
 #### Phase 5: Design Foundation
 
-**Goal:** Dashboard uses QuickBooks spacing grid and typography hierarchy for consistent visual rhythm and clear information architecture
+**Goal:** Application uses QuickBooks spacing grid and typography hierarchy for consistent visual rhythm and clear information architecture (base component changes affect all pages)
 
 **Depends on:** Phase 4 (v1.0 complete)
 
@@ -31,10 +31,13 @@ v1.0 delivered association-scoped transaction viewing with advanced filtering, P
 
 **Success Criteria** (what must be TRUE):
 
-1. Dashboard components use consistent 4px-based spacing (card padding p-6/24px, grid gaps gap-4/16px or gap-6/24px, section spacing space-y-8/32px)
-2. Dashboard text follows systematic type scale (badges 12px, labels 14px, headings 18px, metrics 30px with appropriate font weights)
-3. Information hierarchy is immediately scannable - users can distinguish metrics from labels at a glance
-4. Visual rhythm feels professional and matches QuickBooks design polish
+1. All Card components app-wide use consistent 4px-based spacing (CardHeader space-y-2/8px, card padding p-6/24px, grid gaps gap-4/16px or gap-6/24px)
+2. All CardTitle components app-wide follow systematic type scale (18px headings via text-lg default, labels 14px, badges 12px, metrics 30px with appropriate font weights)
+3. Information hierarchy is immediately scannable on dashboard, transactions, teams, and settings pages - users can distinguish metrics from labels at a glance
+4. Visual rhythm feels professional and matches QuickBooks design polish across entire application
+5. No regressions on any pages from base component changes (107 files use Card component)
+
+**Scope Note:** This phase modifies `components/ui/card.tsx` (base component), affecting all pages app-wide. CardTitle text-lg default and CardHeader space-y-2 apply globally for consistent hierarchy. Cross-app verification required.
 
 **Plans:** 1 plan
 
@@ -78,4 +81,4 @@ Plans:
 
 ---
 
-_Last updated: 2026-01-19 after Phase 5 planning_
+_Last updated: 2026-01-19 after Phase 5 revision (scope expanded to reflect base component changes)_
