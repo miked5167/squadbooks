@@ -1,6 +1,6 @@
 'use server'
 
-import type { Decimal } from '@prisma/client';
+import type { Decimal } from '@prisma/client'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -115,9 +115,7 @@ export async function getAssociationFinancials(
     let pendingAmount = 0
 
     // Collect all team IDs to query transactions
-    const teamInternalIds = associationTeams
-      .map(at => at.team?.id)
-      .filter(Boolean) as string[]
+    const teamInternalIds = associationTeams.map(at => at.team?.id).filter(Boolean) as string[]
 
     // Get all APPROVED and RESOLVED transactions for spent calculation
     // APPROVED = approved by team manager, RESOLVED = exceptions that were resolved
@@ -126,6 +124,7 @@ export async function getAssociationFinancials(
         teamId: { in: teamInternalIds },
         status: { in: ['APPROVED', 'RESOLVED'] },
         type: 'EXPENSE',
+        deletedAt: null,
       },
       select: {
         amount: true,
@@ -144,6 +143,7 @@ export async function getAssociationFinancials(
       where: {
         teamId: { in: teamInternalIds },
         status: 'PENDING',
+        deletedAt: null,
       },
       select: {
         amount: true,
@@ -160,15 +160,9 @@ export async function getAssociationFinancials(
       }
     }
 
-    totalSpent = approvedTransactions.reduce(
-      (sum, t) => sum + decimalToNumber(t.amount),
-      0
-    )
+    totalSpent = approvedTransactions.reduce((sum, t) => sum + decimalToNumber(t.amount), 0)
 
-    pendingAmount = pendingTransactions.reduce(
-      (sum, t) => sum + decimalToNumber(t.amount),
-      0
-    )
+    pendingAmount = pendingTransactions.reduce((sum, t) => sum + decimalToNumber(t.amount), 0)
 
     const remainingBudget = totalBudget - totalSpent
     const budgetUsedPercent = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0
@@ -192,9 +186,7 @@ export async function getAssociationFinancials(
       .map(([name, categorySpent]) => ({
         name,
         totalSpent: categorySpent,
-        percentOfTotal: overallTotalSpent > 0
-          ? (categorySpent / overallTotalSpent) * 100
-          : 0,
+        percentOfTotal: overallTotalSpent > 0 ? (categorySpent / overallTotalSpent) * 100 : 0,
       }))
       .sort((a, b) => b.totalSpent - a.totalSpent)
 
@@ -205,20 +197,15 @@ export async function getAssociationFinancials(
         const teamId = at.team?.id
 
         // Get team's approved transactions
-        const teamTransactions = approvedTransactions.filter(
-          t => t.teamId === teamId
-        )
-        const teamSpent = teamTransactions.reduce(
-          (sum, t) => sum + decimalToNumber(t.amount),
-          0
-        )
+        const teamTransactions = approvedTransactions.filter(t => t.teamId === teamId)
+        const teamSpent = teamTransactions.reduce((sum, t) => sum + decimalToNumber(t.amount), 0)
 
         // Get budget from snapshot or team
         const budget = snapshot?.budgetTotal
           ? decimalToNumber(snapshot.budgetTotal)
           : at.team?.budgetTotal
-          ? decimalToNumber(at.team.budgetTotal)
-          : 0
+            ? decimalToNumber(at.team.budgetTotal)
+            : 0
 
         const budgetUsedPercent = budget > 0 ? (teamSpent / budget) * 100 : 0
 
