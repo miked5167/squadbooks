@@ -17,7 +17,7 @@ export async function getComplianceData(associationId: string) {
       return { association: null, teams: [], stats: null }
     }
 
-    // Get all teams with their compliance status
+    // Get all teams with their latest snapshots (same as teams page)
     const associationTeams = await prisma.associationTeam.findMany({
       where: {
         associationId,
@@ -26,7 +26,6 @@ export async function getComplianceData(associationId: string) {
       include: {
         team: {
           include: {
-            complianceStatus: true,
             violations: {
               where: {
                 resolved: false,
@@ -34,28 +33,45 @@ export async function getComplianceData(associationId: string) {
             },
           },
         },
+        snapshots: {
+          orderBy: {
+            snapshotAt: 'desc',
+          },
+          take: 1,
+          select: {
+            id: true,
+            healthStatus: true,
+            healthScore: true,
+            snapshotAt: true,
+          },
+        },
       },
     })
 
-    // Calculate statistics
+    // Calculate statistics using snapshot healthStatus (same as teams page)
     const teams = associationTeams
       .filter(at => at.team)
-      .map(at => ({
-        id: at.team!.id,
-        name: at.teamName,
-        division: at.division,
-        complianceStatus: at.team!.complianceStatus,
-        activeViolations: at.team!.violations.length,
-      }))
+      .map(at => {
+        const latestSnapshot = at.snapshots[0] || null
+        return {
+          id: at.id, // Use associationTeam.id to match team detail page route
+          name: at.teamName,
+          division: at.division,
+          healthStatus: latestSnapshot?.healthStatus || null,
+          healthScore: latestSnapshot?.healthScore || null,
+          activeViolations: at.team!.violations.length,
+        }
+      })
 
     const stats = {
       totalTeams: teams.length,
-      compliant: teams.filter(t => t.complianceStatus?.status === 'COMPLIANT').length,
-      atRisk: teams.filter(t => t.complianceStatus?.status === 'AT_RISK').length,
-      nonCompliant: teams.filter(t => t.complianceStatus?.status === 'NON_COMPLIANT').length,
-      averageScore: teams.length > 0
-        ? teams.reduce((sum, t) => sum + (t.complianceStatus?.complianceScore || 100), 0) / teams.length
-        : 100,
+      compliant: teams.filter(t => t.healthStatus === 'healthy').length,
+      atRisk: teams.filter(t => t.healthStatus === 'needs_attention').length,
+      nonCompliant: teams.filter(t => t.healthStatus === 'at_risk').length,
+      averageScore:
+        teams.length > 0
+          ? teams.reduce((sum, t) => sum + (t.healthScore || 100), 0) / teams.length
+          : 100,
       totalViolations: teams.reduce((sum, t) => sum + t.activeViolations, 0),
     }
 
