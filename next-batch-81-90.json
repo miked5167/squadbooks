@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Brampton Hockey Inc",
+    "location": "Brampton, ON",
+    "website": "https://bramptonhockey.com",
+    "staffPage": "https://bramptonhockey.com/Staff/1003/",
+    "notes": "CSV has complete data with multiple VPs - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Fort Erie International Falcons",
+    "location": "Fort Erie, ON",
+    "website": "https://forteriehockey.com",
+    "staffPage": "https://forteriehockey.com/Staff/1003/",
+    "notes": "CSV has multiple VPs via Apify - validate Greater Fort Erie",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Blackburn Stingers",
+    "location": "Blackburn Hamlet, ON",
+    "website": "https://blackburnstingers.ca",
+    "staffPage": "https://blackburnstingers.ca/Staff/1003/",
+    "notes": "CSV has VP Hockey Ops and VP Finance - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Belle River Jr Canadiens",
+    "location": "Belle River, ON",
+    "website": "https://brdmha.com",
+    "staffPage": "https://brdmha.com/Staff/1003/",
+    "notes": "CSV has Finance Officer instead of Treasurer - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Brant Battalion Paris",
+    "location": "Paris, ON",
+    "website": "https://parisminorhockey.com",
+    "staffPage": "https://parisminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Bruce Grey Bulls",
+    "location": "Port Elgin, ON",
+    "website": "https://brucegreybulls.ca",
+    "staffPage": "https://brucegreybulls.ca/Staff/1003/",
+    "notes": "CSV has Chairman instead of President - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Canterbury Knights",
+    "location": "Ottawa, ON",
+    "website": "https://www.crknights.ca",
+    "staffPage": "https://www.crknights.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify RAMP - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Carleton Place Kings",
+    "location": "Carleton Place, ON",
+    "website": "https://cpmha.ca",
+    "staffPage": "https://cpmha.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify Sportsheadz - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Castor River Canucks",
+    "location": "Metcalfe, ON",
+    "website": "https://metcalfejets.ca",
+    "staffPage": "https://metcalfejets.ca/Staff/1003/",
+    "notes": "CSV has VP Competitive listed - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Current River Comets",
+    "location": "Thunder Bay, ON",
+    "website": "https://pamha.ca",
+    "staffPage": "https://pamha.ca/Staff/1003/",
+    "notes": "CSV has complete data - validate Port Arthur MHA",
+    "action": "VALIDATE"
+  }
+]

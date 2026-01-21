@@ -1,0 +1,184 @@
+[
+  {
+    "association": "Bracebridge",
+    "location": "Bracebridge, ON",
+    "website": "https://southmuskokaminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Brant County",
+    "location": "Brant County, ON",
+    "website": "https://brantcountyminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Brantford 99ers",
+    "location": "Brantford, ON",
+    "website": "https://brantfordminorhockey.com",
+    "success": true,
+    "url": "https://brantfordminorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "COREY WARING",
+      "email": "president@brantfordminorhockey.com"
+    },
+    "vp": {
+      "role": "1ST VICE-PRESIDENT",
+      "name": "MIKE PIERCE",
+      "email": "firstvp@brantfordminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DAVE HERRIOT",
+      "email": "treasurer@brantfordminorhockey.com"
+    }
+  },
+  {
+    "association": "Blind River Thunder",
+    "location": "Blind River, ON",
+    "website": "https://blindriverminorhockey.ca",
+    "success": true,
+    "url": "https://blindriverminorhockey.ca/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ALISON FAUTEUX",
+      "email": "president@blindriverminorhockey.ca"
+    },
+    "vp": {
+      "role": "2ND VICE-PRESIDENT",
+      "name": "ERIC LAFERRIERE",
+      "email": "2ndvice@blindriverminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "SARRA MEADOWS",
+      "email": "sarrameadows.brmha@gmail.com"
+    }
+  },
+  {
+    "association": "Blyth-Brussels Crusaders",
+    "location": "Blyth-Brussels, ON",
+    "website": "https://blythbrusselsminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Bancroft Jets",
+    "location": "Bancroft, ON",
+    "website": "https://bancroftjets.com",
+    "success": true,
+    "url": "https://bancroftjets.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARC GIBSON",
+      "email": "bancroftminorhockey@gmail.com"
+    },
+    "vp": {
+      "role": "1ST VICE PRESIDENT - COACHING CO-ORDINATOR",
+      "name": "TRAVIS KAUFFELDT",
+      "email": "bancroftminorhockey@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MEREDITH CARD",
+      "email": "bancroftminorhockey@gmail.com"
+    }
+  },
+  {
+    "association": "Belleville Jr Bulls",
+    "location": "Belleville, ON",
+    "website": "https://bellevilleminorhockey.ca",
+    "success": true,
+    "url": "https://bellevilleminorhockey.ca/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JILL BAIN",
+      "email": "president@bellevilleminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "RYAN LAPALM",
+      "email": "rlapalm@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "RYAN GRIFFIN",
+      "email": "ryan@qhsi.ca"
+    }
+  },
+  {
+    "association": "Ayr Flames",
+    "location": "Ayr, ON",
+    "website": "https://ayrminorhockey.com",
+    "success": true,
+    "url": "https://ayrminorhockey.com/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KEVIN MILLER",
+      "email": "president@ayrminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT (ADMIN)",
+      "name": "SHIRLEY CRONKITE",
+      "email": "vpadmin@ayrminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MELISSA EDGAR",
+      "email": "treasurer@ayrminorhockey.com"
+    }
+  },
+  {
+    "association": "Ausable Valley Coyotes",
+    "location": "Parkhill, ON",
+    "website": "https://ausablevalleyhockey.ca",
+    "success": true,
+    "url": "https://ausablevalleyhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "GLENN SILVER",
+      "email": "president@ausablevalleyhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT – NORTH MIDDLESEX",
+      "name": "KEVIN THOMPSON",
+      "email": "VPNorthMiddlesex@ausablevalleyhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MANDY WALKER",
+      "email": "Treasurer@ausablevalleyhockey.ca"
+    }
+  },
+  {
+    "association": "Arran-Elderslie Ice Dogs",
+    "location": "Paisley, ON",
+    "website": "https://aemha.ca",
+    "success": true,
+    "url": "https://aemha.ca/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "NICOLE VACHAL",
+      "email": "aemhaicedogs@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE-PRESIDENT",
+      "name": "DUSTIN STARK",
+      "email": "starkd1887@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DANIELLE DEBOER",
+      "email": "aemhaicedogs@hotmail.com"
+    }
+  }
+]

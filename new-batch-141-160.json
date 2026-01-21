@@ -1,0 +1,162 @@
+[
+  {
+    "name": "Ajax Pickering Raiders",
+    "location": "Ajax, ON",
+    "website": "https://ajaxpickeringminorhockey.com",
+    "staffPage": "https://ajaxpickeringminorhockey.com/Staff/1003/",
+    "notes": "Found via web search - OMHA Sportsheadz site",
+    "action": "EXTRACT"
+  },
+  {
+    "name": "Akwesasne Wolves",
+    "location": "Akwesasne, ON",
+    "website": "https://akwesasneminorhockey.com",
+    "staffPage": "https://akwesasneminorhockey.com/Staff/1003/",
+    "notes": "Guessed URL pattern - UCMHL team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Alexandria Glens",
+    "location": "Alexandria, ON",
+    "website": "https://alexandriaglens.com",
+    "staffPage": "https://alexandriaglens.com/Staff/1003/",
+    "notes": "Guessed URL pattern - UCMHL team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Almaguin Gazelles",
+    "location": "Sundridge, ON",
+    "website": "https://almaguingazelles.com",
+    "staffPage": "https://almaguingazelles.com/Staff/1003/",
+    "notes": "Guessed URL pattern - Girls only team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Ancaster Avalanche",
+    "location": "Ancaster, ON",
+    "website": "https://ancasteravalanche.ca",
+    "staffPage": "https://ancasteravalanche.ca/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-S girls team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Avenue Road Ducks",
+    "location": "North York, ON",
+    "website": "https://avenueroadhockey.com",
+    "staffPage": "https://avenueroadhockey.com/Staff/1003/",
+    "notes": "Guessed URL pattern - GTHL team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Ayr Rockets",
+    "location": "Ayr, ON",
+    "website": "https://ayrrockets.com",
+    "staffPage": "https://ayrrockets.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-S girls team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Baltimore Ice Dogs",
+    "location": "Baltimore, ON",
+    "website": "https://baltimoreminorhockey.com",
+    "staffPage": "https://baltimoreminorhockey.com/Staff/1003/",
+    "notes": "Guessed URL pattern - EOMHL/OMHA team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Barrie Colts AAA",
+    "location": "Barrie, ON",
+    "website": "https://barriecoltsaaa.com",
+    "staffPage": "https://barriecoltsaaa.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OMHA AAA team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Barrie Sharks",
+    "location": "Barrie, ON",
+    "website": "https://barriesharks.ca",
+    "staffPage": "https://barriesharks.ca/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-S girls team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Beeton Stingers",
+    "location": "Beeton, ON",
+    "website": "https://beetonstingers.com",
+    "staffPage": "https://beetonstingers.com/Staff/1003/",
+    "notes": "Known URL from previous work - OMHA team",
+    "action": "EXTRACT"
+  },
+  {
+    "name": "Belleville Bearcats",
+    "location": "Belleville, ON",
+    "website": "https://bellevillebearcats.com",
+    "staffPage": "https://bellevillebearcats.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-S girls team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Belmont Blazers",
+    "location": "Belmont, ON",
+    "website": "https://belmontminorhockey.ca",
+    "staffPage": "https://belmontminorhockey.ca/Staff/1003/",
+    "notes": "Known URL from previous work - OWHL-S girls team",
+    "action": "EXTRACT"
+  },
+  {
+    "name": "BioSteel Sports Academy",
+    "location": "Windsor, ON",
+    "website": "https://biosteelsportsacademy.com",
+    "staffPage": "https://biosteelsportsacademy.com/Staff/1003/",
+    "notes": "Guessed URL pattern - Sports academy",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Bluewater Hawks",
+    "location": "Strathroy, ON",
+    "website": "https://bluewaterhawks.com",
+    "staffPage": "https://bluewaterhawks.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-S girls team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Brampton 45s",
+    "location": "Brampton, ON",
+    "website": "https://brampton45s.com",
+    "staffPage": "https://brampton45s.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OMHA/TCMHL team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Brampton Canadettes",
+    "location": "Brampton, ON",
+    "website": "https://bramptoncanadettes.com",
+    "staffPage": "https://bramptoncanadettes.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-S girls team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Brant Battalion",
+    "location": "Paris, ON",
+    "website": "https://parisminorhockey.com",
+    "staffPage": "https://parisminorhockey.com/Staff/1003/",
+    "notes": "Already extracted in previous batch - for validation",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Brantford Ice Cats",
+    "location": "Brantford, ON",
+    "website": "https://brantfordicecats.com",
+    "staffPage": "https://brantfordicecats.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-S girls team",
+    "action": "TRY_EXTRACTION"
+  },
+  {
+    "name": "Brockville Angels",
+    "location": "Brockville, ON",
+    "website": "https://brockvilleangels.com",
+    "staffPage": "https://brockvilleangels.com/Staff/1003/",
+    "notes": "Guessed URL pattern - OWHL-E girls team",
+    "action": "TRY_EXTRACTION"
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "url": "http://localhost:3000",
+  "timestamp": "2025-11-28 15:43:27",
+  "visual": {
+    "screenshot": "desktop-screenshot.png",
+    "fonts_used": [
+      "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "__nextjs-Geist, Geist, -apple-system, \"Source Sans Pro\", sans-serif"
+    ],
+    "cumulative_layout_shift": 0.0007379211928128215
+  },
+  "accessibility": {
+    "error": "'Axe' object has no attribute 'inject'"
+  },
+  "performance": {
+    "load_time": 2.92,
+    "metrics": {
+      "domContentLoaded": 2020,
+      "domInteractive": 2020,
+      "firstPaint": 1772,
+      "firstContentfulPaint": 2104
+    }
+  },
+  "functionality": {
+    "forms_count": 0,
+    "buttons_count": 2,
+    "links_count": 3,
+    "interactive_elements": 0
+  },
+  "responsive": {
+    "mobile": {
+      "viewport": {
+        "width": 375,
+        "height": 667
+      },
+      "screenshot": "mobile-screenshot.png"
+    },
+    "tablet": {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "screenshot": "tablet-screenshot.png"
+    }
+  }
+}

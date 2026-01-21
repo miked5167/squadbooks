@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Georgian Bay Islanders",
+    "location": "Midland, ON",
+    "website": "https://georgianbayminorhockey.ca",
+    "staffPage": "https://georgianbayminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Georgian Shores Lightning",
+    "location": "Meaford, ON",
+    "website": "https://georgianshoreshockey.ca",
+    "staffPage": "https://georgianshoreshockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Gloucester Dragons",
+    "location": "Gloucester, ON",
+    "website": "https://gloucesterminorhockey.com",
+    "staffPage": "https://gloucesterminorhockey.com/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Goulbourn Stingers",
+    "location": "Stittsville, ON",
+    "website": "https://goulbournhockey.ca",
+    "staffPage": "https://goulbournhockey.ca/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Grey Highlands Hawks",
+    "location": "Flesherton, ON",
+    "website": "https://greyhighlandsminorhockey.ca",
+    "staffPage": "https://greyhighlandsminorhockey.ca/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Grimsby Peach Kings",
+    "location": "Grimsby, ON",
+    "website": "https://grimsbyminorhockey.com",
+    "staffPage": "https://grimsbyminorhockey.com/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Guelph Gryphons",
+    "location": "Guelph, ON",
+    "website": "https://guelphminorhockey.com",
+    "staffPage": "https://guelphminorhockey.com/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Haldimand County Huskies",
+    "location": "Haldimand County, ON",
+    "website": "https://haldimandminorhockey.ca",
+    "staffPage": "https://haldimandminorhockey.ca/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Haliburton County Huskies",
+    "location": "Haliburton, ON",
+    "website": "https://haliburtonhockey.ca",
+    "staffPage": "https://haliburtonhockey.ca/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Hamilton Huskies",
+    "location": "Hamilton, ON",
+    "website": "https://hamiltonminorhockey.com",
+    "staffPage": "https://hamiltonminorhockey.com/Staff/1003/",
+    "notes": "Try extraction - OMHA network site",
+    "action": "TRY EXTRACTION"
+  }
+]

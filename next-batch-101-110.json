@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Douro Dukes",
+    "location": "Douro, ON",
+    "website": "https://dourominorhockey.com",
+    "staffPage": "https://dourominorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Drayton Defenders",
+    "location": "Drayton, ON",
+    "website": "https://draytonminorhockey.com",
+    "staffPage": "https://draytonminorhockey.com/Staff/1003/",
+    "notes": "CSV has President and Treasurer, VP not listed - OMHA site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Dresden Jr Kings",
+    "location": "Dresden, ON",
+    "website": "https://dresdenminorhockey.com",
+    "staffPage": "https://dresdenminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Dubreuilville Bobcats",
+    "location": "Dubreuilville, ON",
+    "website": "https://gobobcatsgo.ca",
+    "staffPage": "https://gobobcatsgo.ca/Staff/1003/",
+    "notes": "Found general email but no specific exec emails - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Duffield Devils",
+    "location": "North York, ON",
+    "website": "https://duffieldhockey.com",
+    "staffPage": "https://duffieldhockey.com/Staff/1003/",
+    "notes": "CSV has President and VP, GM instead of Treasurer - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Dundas Blues",
+    "location": "Dundas, ON",
+    "website": "https://dundasblues.com",
+    "staffPage": "https://dundasblues.com/Staff/1003/",
+    "notes": "CSV has complete data - Junior/PJHL - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Dunnville Mudcats",
+    "location": "Dunnville, ON",
+    "website": "https://dunnvillemudcats.com",
+    "staffPage": "https://dunnvillemudcats.com/Staff/1003/",
+    "notes": "CSV has 2 VPs - Junior/PJHL - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Durham West Lightning",
+    "location": "Pickering, ON",
+    "website": "https://dwgha.com",
+    "staffPage": "https://dwgha.com/Staff/1003/",
+    "notes": "CSV has President and Treasurer, VP vacant - girls only - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "East Enders Ticats",
+    "location": "Toronto, ON",
+    "website": "https://torontoeastenders.com",
+    "staffPage": "https://torontoeastenders.com/Staff/1003/",
+    "notes": "CSV has President and VP - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "East Lambton Eagles",
+    "location": "Watford, ON",
+    "website": "https://eastlambtonminorhockey.ca",
+    "staffPage": "https://eastlambtonminorhockey.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify - validate",
+    "action": "VALIDATE"
+  }
+]

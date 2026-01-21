@@ -1,0 +1,118 @@
+# ============================================
+# BRAND VOICE RULES FOR TEAMTREASURE
+# ============================================
+
+## UI Copy Standards
+
+CRITICAL: When generating any user-facing text (labels, buttons, notifications, settings, help text):
+
+1. NEVER use the word "fraud" in UI components
+2. NEVER use "embezzlement", "theft", "stealing", "suspicious", "unauthorized"
+3. ALWAYS use protective, supportive language instead
+
+## Approved Terminology
+
+### IN-APP UI (Use these):
+- Financial protection
+- Safeguards
+- Verification
+- Two-person approval
+- Independent review
+- Oversight
+- Accountability
+- Team approach
+- Protects you
+- Builds trust
+
+### MARKETING PAGES ONLY (Limited use):
+- Fraud prevention (only when discussing industry problems)
+- Embezzlement protection (historical context)
+- OMHA scandal (comparison/reference)
+
+### NEVER USE IN UI:
+- Fraud detection
+- Fraud prevention
+- Catches thieves
+- Prevents theft
+- Stops embezzlement
+- Suspicious activity
+- Unauthorized expenses
+- Red flags (use "needs attention" instead)
+
+## Tone Guidelines
+
+### In-App Copy:
+- Supportive, not policing
+- Collaborative, not accusatory
+- Protective, not suspicious
+- Professional, not corporate
+- Warm, not cold
+
+### Key Principles:
+1. Frame features as protecting the treasurer, not policing them
+2. Use "team approach" language (collaborative)
+3. Focus on building parent trust, not catching bad actors
+4. Keep copy tight and action-oriented (not verbose paragraphs)
+
+## Examples (Good vs Bad)
+
+### Settings Page Headers:
+✅ GOOD: "Approval & Protection Settings"
+❌ BAD:  "Fraud Prevention Settings"
+
+### Feature Descriptions:
+✅ GOOD: "Two-person verification protects everyone"
+❌ BAD:  "Prevents fraud with dual approval"
+
+### Button Labels:
+✅ GOOD: "Review & Approve"
+❌ BAD:  "Approve to Prevent Fraud"
+
+### Success Messages:
+✅ GOOD: "Financial safeguards active ✓"
+❌ BAD:  "Fraud prevention enabled ✓"
+
+### Error Messages (Self-Approval):
+✅ GOOD: "For accountability, expenses must be approved by a different team member"
+❌ BAD:  "You cannot approve your own expenses (fraud prevention)"
+
+### Notifications:
+✅ GOOD: "Expense pending verification"
+❌ BAD:  "Expense pending fraud check"
+
+## Copy Writing Checklist
+
+Before finalizing any UI copy, verify:
+1. ✅ No "fraud/embezzlement/theft" language in user-facing text
+2. ✅ Uses approved protective terminology
+3. ✅ Tone is supportive, not accusatory
+4. ✅ Copy is tight and scannable (not paragraph-length)
+5. ✅ Frames features as helping the treasurer
+6. ✅ Would a volunteer feel trusted (not suspected) reading this?
+
+## When to Reference
+
+Always apply these rules when generating:
+- Settings pages
+- Dashboard copy
+- Button labels
+- Form labels and placeholders
+- Success/error messages
+- Notifications (email, in-app, push)
+- Tooltips and help text
+- Onboarding wizard copy
+- Modal dialogs
+
+## Decision Framework
+
+When unsure about terminology:
+1. Ask: "Does this sound supportive or accusatory?"
+2. Ask: "Would a volunteer treasurer feel trusted or suspected?"
+3. Ask: "Are we protecting or policing?"
+4. Replace any "fraud" language with protection/safeguard alternatives
+5. If still unsure, refer to `/docs/BRAND-VOICE-GUIDE.md`
+
+## Reference Documentation
+
+Full guidelines available at: `/docs/BRAND-VOICE-GUIDE.md`
+Quick lookup available at: `/docs/UI-COPY-REFERENCE.md`

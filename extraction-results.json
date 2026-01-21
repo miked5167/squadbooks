@@ -1,0 +1,167 @@
+[
+  {
+    "association": "Beeton Stingers",
+    "url": "https://beetonstingers.com/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MARK SHAW",
+      "email": "president@beetonstingers.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MARK SHAW",
+      "email": "president@beetonstingers.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANDREA WALLIS",
+      "email": "andrea.wallis@sympatico.ca"
+    }
+  },
+  {
+    "association": "Colborne Fire Hawks",
+    "url": "https://ccmhafirehawks.com/Staff/1003/",
+    "success": true
+  },
+  {
+    "association": "Collingwood Jr Blues",
+    "url": "https://collingwoodhockey.com/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT, CLINICS, DISCIPLINE, COMMUNICATIONS",
+      "name": "DAVE EPP",
+      "email": "president@collingwoodhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JOHN ELMES",
+      "email": "Johnelmes@collingwoodhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DWAYNE DRAPER",
+      "email": "treasurer@collingwoodhockey.com"
+    }
+  },
+  {
+    "association": "Deseronto Bulldogs",
+    "url": "https://ddmha.ca/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT & OMHA REP",
+      "name": "JULIE BARTOLO",
+      "email": "jnbartolo@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER - CO-SIGNER",
+      "name": "JULIE BARTOLO",
+      "email": "jnbartolo@hotmail.com"
+    }
+  },
+  {
+    "association": "East Gwillimbury Eagles",
+    "url": "https://egmha.com/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT EMERITUS",
+      "name": "ERIC KOPSALA",
+      "email": "presidentemeritus@egmha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DAVE DIGIOVANNI",
+      "email": "treasurer@egmha.com"
+    }
+  },
+  {
+    "association": "Embro Edge",
+    "url": "https://embrohockey.com/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "SONYA GREEN",
+      "email": "president@embrohockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/REFEREE IN CHIEF/TIMEKEEPER CONVENOR",
+      "name": "JOSH SMITH",
+      "email": "jsmith4778@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JORDAN MUNRO",
+      "email": "president@embrohockey.com"
+    }
+  },
+  {
+    "association": "Essex Ravens",
+    "url": "https://essex-southpoint.com/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JAIME PAQUETTE",
+      "email": "paquer40@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JAMIE PAQUETTE",
+      "email": "paquer40@gmail.com"
+    }
+  },
+  {
+    "association": "Georgina Blaze",
+    "url": "https://georginahockey.com/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIM MARSHALL",
+      "email": "president@georginahockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TRACEY BOLIN",
+      "email": "traceyleebolin@gmail.com"
+    }
+  },
+  {
+    "association": "Hanover Falcons",
+    "url": "https://saugeenvalleyminorhockey.com/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JEREMY WHITE",
+      "email": "president@saugeenvalleyminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CRAIG CORRIVEAU",
+      "email": "vicepresident@saugeenvalleyminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CORNELIA VAN DEN HOEK",
+      "email": "treasurer@saugeenvalleyminorhockey.com"
+    }
+  },
+  {
+    "association": "Ingersoll Express",
+    "url": "https://ingersollminorhockey.ca/Staff/1003/",
+    "success": true,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JASON GRAHAM",
+      "email": "jasongraham68@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/ OMHA REP",
+      "name": "CHRIS PARE",
+      "email": "dieguy81@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANGELA NEDDO",
+      "email": "a_vyse@hotmail.com"
+    }
+  }
+]

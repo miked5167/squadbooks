@@ -1,0 +1,222 @@
+[
+  {
+    "index": 201,
+    "name": "Kapuskasing Jaguars",
+    "location": "Kapuskasing, ON | Girls Only",
+    "website": "",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "No website or executive contact information found for this girls-only association"
+  },
+  {
+    "index": 202,
+    "name": "Kawartha Coyotes",
+    "location": "Lindsay, ON",
+    "website": "",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "No website or executive contact information found"
+  },
+  {
+    "index": 203,
+    "name": "Keene Wolverines",
+    "location": "Keene, ON | Girls Only",
+    "website": "",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "No website or executive contact information found for this girls-only association"
+  },
+  {
+    "index": 204,
+    "name": "Kemptville Royals",
+    "location": "Kemptville, ON",
+    "website": "",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "No website or executive contact information found"
+  },
+  {
+    "index": 205,
+    "name": "Kenora Thistles",
+    "location": "Kenora, ON",
+    "website": "",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "No website or executive contact information found"
+  },
+  {
+    "index": 206,
+    "name": "Kent Cobras",
+    "location": "Chatham, ON",
+    "website": "",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "No website or executive contact information found"
+  },
+  {
+    "index": 207,
+    "name": "Kincardine Kinucks",
+    "location": "Kincardine, ON",
+    "website": "kincardinebulldogs.ca",
+    "success": true,
+    "presidentEmail": "bruce.becker@gmail.com",
+    "vpEmail": "andyflynn22@gmail.com",
+    "treasurerEmail": "jdolmage@brucetelecom.com",
+    "notes": "Found Kincardine Bulldogs with executive contacts"
+  },
+  {
+    "index": 208,
+    "name": "King Rebellion",
+    "location": "Nobleton, ON",
+    "website": "kmha.on.ca",
+    "success": true,
+    "presidentEmail": "president@kmha.on.ca",
+    "vpEmail": "vp@kmha.on.ca",
+    "treasurerEmail": "treasurer@kmha.on.ca",
+    "notes": "Found King Minor Hockey Association (KMHA) contacts"
+  },
+  {
+    "index": 209,
+    "name": "Kingston Canadians",
+    "location": "Kingston, ON",
+    "website": "kcmha.ca",
+    "success": true,
+    "presidentEmail": "president@kcmha.ca",
+    "vpEmail": "vp@kcmha.ca",
+    "treasurerEmail": "treasurer@kcmha.ca",
+    "notes": "Found Kingston Canadians Minor Hockey Association contacts"
+  },
+  {
+    "index": 210,
+    "name": "Kingston Ice Wolves",
+    "location": "Kingston, ON | Girls Only",
+    "website": "kgha.on.ca",
+    "success": true,
+    "presidentEmail": "president@kgha.on.ca",
+    "vpEmail": "vicepresident@kgha.on.ca",
+    "treasurerEmail": "treasurer@kgha.on.ca",
+    "notes": "Found Kingston Girls Hockey Association (KGHA) contacts"
+  },
+  {
+    "index": 211,
+    "name": "Kingston Jr Gaels",
+    "location": "Kingston, ON",
+    "website": "kingston-aaa-hockey.ca",
+    "success": true,
+    "presidentEmail": "president@kingston-aaa-hockey.ca",
+    "vpEmail": "",
+    "treasurerEmail": "treasurer@kingston-aaa-hockey.ca",
+    "notes": "Found Greater Kingston AAA Hockey contacts - President Tim Closs, Treasurer Dana Kellar"
+  },
+  {
+    "index": 212,
+    "name": "Kirkland Lake Blue Devils",
+    "location": "Kirkland Lake, ON",
+    "website": "",
+    "success": true,
+    "presidentEmail": "klmha@live.ca",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "Found KLMHA contact email only, no individual executive emails"
+  },
+  {
+    "index": 213,
+    "name": "Kitchener Jr Rangers",
+    "location": "Kitchener, ON",
+    "website": "kitchenerminorhockey.com",
+    "success": true,
+    "presidentEmail": "president@kitchenerminorhockey.com",
+    "vpEmail": "vp@kitchenerminorhockey.com",
+    "treasurerEmail": "treasurer@kitchenerminorhockey.com",
+    "notes": "Found KMHA board contacts - President Greg Blundell, Treasurer Brad Freund"
+  },
+  {
+    "index": 214,
+    "name": "Kitchener Lady Rangers",
+    "location": "Kitchener, ON | Girls Only",
+    "website": "kitchenerminorhockey.com",
+    "success": true,
+    "presidentEmail": "president@kitchenerminorhockey.com",
+    "vpEmail": "vp@kitchenerminorhockey.com",
+    "treasurerEmail": "treasurer@kitchenerminorhockey.com",
+    "notes": "Girls program under KMHA - same contacts as Jr Rangers"
+  },
+  {
+    "index": 215,
+    "name": "LPC Wild",
+    "location": "Mississauga, ON",
+    "website": "lpcha.ca",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "Found Lorne Park Clarkson Hockey Association website but executive contacts not in preview"
+  },
+  {
+    "index": 216,
+    "name": "LaSalle Sabres",
+    "location": "LaSalle, ON",
+    "website": "lasallesabres.com",
+    "success": true,
+    "presidentEmail": "president@lasallesabres.com",
+    "vpEmail": "vphouseleague@lasallesabres.com",
+    "treasurerEmail": "treasurer@lasallesabres.com",
+    "notes": "Found LaSalle Minor Hockey Association (LMHA) - President Don Durham, VP House League Brian Green, Treasurer Andy Atkins"
+  },
+  {
+    "index": 217,
+    "name": "Lac Seul",
+    "location": "Frenchmen's Head, ON",
+    "website": "",
+    "success": false,
+    "presidentEmail": "",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "First Nation community - no minor hockey association contact information found, only general OMHA contacts"
+  },
+  {
+    "index": 218,
+    "name": "Lake Erie North Stars",
+    "location": "Kingsville, ON",
+    "website": "lakeerieminorhockey.ca",
+    "success": true,
+    "presidentEmail": "president@lakeerieminorhockey.ca",
+    "vpEmail": "vpadmin@lakeerieminorhockey.ca",
+    "treasurerEmail": "nsfim75@yahoo.ca",
+    "notes": "Found Lake Erie Minor Hockey - President Gary Toupin, VP Admin Julie McLean, Treasurer Nelson Ferriera"
+  },
+  {
+    "index": 219,
+    "name": "Lake of the Woods Canucks",
+    "location": "Kenora, ON | Girls Only",
+    "website": "kenoragirlshockey.ca",
+    "success": true,
+    "presidentEmail": "ash.hoffmeister@gmail.com",
+    "vpEmail": "",
+    "treasurerEmail": "",
+    "notes": "Found Lake of the Woods Girls Hockey - President Ashley Hoffmeister, VP Jennifer Young, Treasurer Stacey Rea (emails not all listed)"
+  },
+  {
+    "index": 220,
+    "name": "Lakefield Chiefs",
+    "location": "Lakefield, ON",
+    "website": "lakefieldminorhockey.ca",
+    "success": true,
+    "presidentEmail": "rod.wilson@hillmangroup.com",
+    "vpEmail": "dylanbeggs78@gmail.com",
+    "treasurerEmail": "jdiggity4@gmail.com",
+    "notes": "Found Lakefield Minor Hockey - President Rod Wilson, 1st VP Dylan Beggs, Treasurer Jackie Dignam"
+  }
+]

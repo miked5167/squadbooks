@@ -1,0 +1,143 @@
+[
+  {
+    "association": "Brampton Hockey Inc",
+    "location": "Brampton, ON",
+    "website": "https://bramptonhockey.com",
+    "success": true,
+    "url": "https://bramptonhockey.com/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ANDREW MONAHAN",
+      "email": "president@bramptonhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "PARVEZ CHOWDHURY",
+      "email": "finance@bramptonhockey.com"
+    }
+  },
+  {
+    "association": "Fort Erie International Falcons",
+    "location": "Fort Erie, ON",
+    "website": "https://forteriehockey.com",
+    "success": true,
+    "url": "https://forteriehockey.com/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KEN HOAGE",
+      "email": "president@forteriehockey.com"
+    },
+    "vp": {
+      "role": "SENIOR VICE PRESIDENT",
+      "name": "SEAN MCCOOEY",
+      "email": "seniorvp@forteriehockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "GREG VAMPLEW",
+      "email": "fehockeytreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Blackburn Stingers",
+    "location": "Blackburn Hamlet, ON",
+    "website": "https://blackburnstingers.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Belle River Jr Canadiens",
+    "location": "Belle River, ON",
+    "website": "https://brdmha.com",
+    "success": true,
+    "url": "https://brdmha.com/Staff/1003/",
+    "totalContacts": 28,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PAUL GRAY",
+      "email": "president@brdmha.com"
+    }
+  },
+  {
+    "association": "Brant Battalion Paris",
+    "location": "Paris, ON",
+    "website": "https://parisminorhockey.com",
+    "success": true,
+    "url": "https://parisminorhockey.com/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "ROB DELARONDE",
+      "email": "president@parisminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MATT LAMBERT",
+      "email": "vp@parisminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ALBERT AMOS",
+      "email": "treasurer@parisminorhockey.com"
+    }
+  },
+  {
+    "association": "Bruce Grey Bulls",
+    "location": "Port Elgin, ON",
+    "website": "https://brucegreybulls.ca",
+    "success": true,
+    "url": "https://brucegreybulls.ca/Staff/1003/",
+    "totalContacts": 8,
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DANIELLE DE BOER",
+      "email": "treasurer@brucegreybulls.ca"
+    }
+  },
+  {
+    "association": "Canterbury Knights",
+    "location": "Ottawa, ON",
+    "website": "https://www.crknights.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Carleton Place Kings",
+    "location": "Carleton Place, ON",
+    "website": "https://cpmha.ca",
+    "success": true,
+    "url": "https://cpmha.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "STUART ROBINSON",
+      "email": "president@cpmha.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT HOCKEY",
+      "name": "STEVE VALARDO",
+      "email": "vphockey@cpmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANGELA ROY",
+      "email": "treasurer@cpmha.ca"
+    }
+  },
+  {
+    "association": "Castor River Canucks",
+    "location": "Metcalfe, ON",
+    "website": "https://metcalfejets.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Current River Comets",
+    "location": "Thunder Bay, ON",
+    "website": "https://pamha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Hanover Falcons",
+    "location": "Hanover, ON",
+    "website": "https://saugeenvalleyminorhockey.com",
+    "staffPage": "https://saugeenvalleyminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Playwright - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "East Gwillimbury Eagles",
+    "location": "Sharon, ON",
+    "website": "https://egmha.com",
+    "staffPage": "https://egmha.com/Staff/1003/",
+    "notes": "CSV says VP not listed - validate extraction",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Deseronto Bulldogs",
+    "location": "Deseronto, ON",
+    "website": "https://ddmha.ca",
+    "staffPage": "https://ddmha.ca/Staff/1003/",
+    "notes": "CSV says President and Treasurer share email - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Essex Ravens",
+    "location": "Essex, ON",
+    "website": "https://essex-southpoint.com",
+    "staffPage": "https://essex-southpoint.com/Staff/1003/",
+    "notes": "CSV via Playwright - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Embro Edge",
+    "location": "Embro, ON",
+    "website": "https://embrohockey.com",
+    "staffPage": "https://embrohockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Playwright - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Campbellford Colts",
+    "location": "Campbellford, ON",
+    "website": "https://campbellfordcolts.com",
+    "staffPage": "https://campbellfordcolts.com/Staff/1003/",
+    "notes": "CSV says VP not listed - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Cayuga Stars",
+    "location": "Cayuga, ON",
+    "website": "https://cayugaminorhockey.ca",
+    "staffPage": "https://cayugaminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Centre Hastings Grizzlies",
+    "location": "Madoc, ON",
+    "website": "https://centrehastingsminorhockeyassociation.ca",
+    "staffPage": "https://centrehastingsminorhockeyassociation.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Centre Wellington Fusion",
+    "location": "Fergus, ON",
+    "website": "https://cwminorhockey.ca",
+    "staffPage": "https://cwminorhockey.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Chatsworth Rebels",
+    "location": "Chatsworth, ON",
+    "website": "https://tcdmha.com",
+    "staffPage": "https://tcdmha.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - validate TCDMHA",
+    "action": "VALIDATE"
+  }
+]

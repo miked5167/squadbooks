@@ -1,0 +1,184 @@
+[
+  {
+    "association": "Barrie Colts",
+    "location": "Barrie, ON",
+    "website": "https://barrieminorhockey.net",
+    "action": "UPDATE CSV with new data",
+    "originalNotes": "CSV says 'Only President name found' - but we successfully extracted President and VP!",
+    "success": true,
+    "url": "https://barrieminorhockey.net/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHRIS INGLIS",
+      "email": "president@barrieminorhockey.ca"
+    },
+    "vp": {
+      "role": "DIRECTOR OF INITIATION PROGRAMS (MYTE TO NOVICE)",
+      "name": "TBA TBA",
+      "email": "ip@barrieminorhockey.net"
+    }
+  },
+  {
+    "association": "Almaguin Ice Devils",
+    "location": "Sundridge, ON",
+    "website": "https://almaguinminorhockey.com",
+    "action": "UPDATE CSV with new data",
+    "originalNotes": "CSV says 'Email found - needs decoding' - but we successfully extracted President and Treasurer!",
+    "success": true,
+    "url": "https://almaguinminorhockey.com/Staff/1003/",
+    "totalContacts": 11,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "AARON HILL",
+      "email": "president1.amha@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JENNA WEBSTER",
+      "email": "almaguinicedevils@gmail.com"
+    }
+  },
+  {
+    "association": "Arnprior Packers",
+    "location": "Arnprior, ON",
+    "website": "https://arnpriorminorhockey.ca",
+    "action": "UPDATE CSV with new data",
+    "originalNotes": "CSV says 'Email found - needs decoding' - but we successfully extracted President, VP, and Treasurer!",
+    "success": true,
+    "url": "https://arnpriorminorhockey.ca/Staff/1003/",
+    "totalContacts": 29,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "MATT AALBERS",
+      "email": "president@arnpriorminorhockey.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "TREVOR NICHOLAS",
+      "email": "vicepresident@arnpriorminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "BRETT SIMMONS",
+      "email": "treasurer@arnpriorminorhockey.ca"
+    }
+  },
+  {
+    "association": "Dubreuilville Bobcats",
+    "location": "Dubreuilville, ON",
+    "website": "https://gobobcatsgo.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says general email only - try Staff page extraction",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Atikokan Voyageurs",
+    "location": "Atikokan, ON",
+    "website": "https://www.atikokanhockey.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says 'Website found but contact details behind Facebook login' - try direct extraction",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Espanola Eagles",
+    "location": "Espanola, ON",
+    "website": "http://espanolaminorhockey.com",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says 'Website inaccessible' - try again",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elmvale Coyotes",
+    "location": "Elmvale, ON",
+    "website": "https://elmvaleminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data - validate with fresh extraction",
+    "success": true,
+    "url": "https://elmvaleminorhockey.ca/Staff/1003/",
+    "totalContacts": 26,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN SENEY",
+      "email": "president@elmvaleminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CARLEY PEARSON",
+      "email": "treasurer@elmvaleminorhockey.ca"
+    }
+  },
+  {
+    "association": "Erin Hillsburgh Devils",
+    "location": "Erin, ON",
+    "website": "https://ehmha.ca",
+    "action": "TRY EXTRACTION",
+    "originalNotes": "CSV says 'Found referee contact only' - try Staff page",
+    "success": true,
+    "url": "https://ehmha.ca/Staff/1003/",
+    "totalContacts": 18,
+    "president": {
+      "role": "PRESIDENT (EHMHA_PRESIDENT@EHMHA.CA)",
+      "name": "SID SPEAR",
+      "email": "ehmha_president@ehmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER (TREASURER@EHMHA.CA)",
+      "name": "JAMES TUGMAN",
+      "email": "treasurer@ehmha.ca"
+    }
+  },
+  {
+    "association": "Clearview Canucks",
+    "location": "Stayner, ON",
+    "website": "https://clearviewminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://clearviewminorhockey.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN PATTERSON",
+      "email": "clearviewmhpresident@outlook.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "HENRY BARTON",
+      "email": "henrybarton@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JANINA DOBBERKAU",
+      "email": "treasurerch@outlook.com"
+    }
+  },
+  {
+    "association": "Coldwater Wildcats",
+    "location": "Coldwater, ON",
+    "website": "https://coldwaterwildcats.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://coldwaterwildcats.ca/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KAREN AIGELDINGER",
+      "email": "karenaigeldinger@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "BRIAN ZULAK",
+      "email": "coldwatervp@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "LISA BONIFACE",
+      "email": "coldwatermha.treasurer@gmail.com"
+    }
+  }
+]

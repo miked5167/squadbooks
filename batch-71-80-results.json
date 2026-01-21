@@ -1,0 +1,174 @@
+[
+  {
+    "association": "Applewood Coyotes",
+    "location": "Mississauga, ON",
+    "website": "http://www.applewoodhockey.on.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Almonte Pakenham Thunder",
+    "location": "Almonte, ON",
+    "website": "https://apmha.org",
+    "success": true,
+    "url": "https://apmha.org/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "SCOTT ROBILLARD",
+      "email": "president@apmha.org"
+    }
+  },
+  {
+    "association": "Cornwall Colts",
+    "location": "Cornwall, ON",
+    "website": "http://cornwallminorhockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Credit River Capitals",
+    "location": "Brampton, ON",
+    "website": "https://creditrivercapitals.ca",
+    "success": true,
+    "url": "https://creditrivercapitals.ca/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CHRIS FIORE",
+      "email": "chris.fiore@creditrivercapitals.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "PATTI SAKITKOVSKI",
+      "email": "VP@creditrivercapitals.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JOHN SACCO",
+      "email": "treasurer@creditrivercapitals.ca"
+    }
+  },
+  {
+    "association": "Durham Crusaders",
+    "location": "Oshawa, ON",
+    "website": "https://durhamcrusaders.ca",
+    "success": true,
+    "url": "https://durhamcrusaders.ca/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PRES;DENT PRES;DENT",
+      "email": "durhamcrusaderspresident@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT - LOCAL LEAGUE/ REP.",
+      "name": "VP VP",
+      "email": "rjford@furlongford.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TREASURER TREASURER",
+      "email": "crusadertreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Eastern Ontario Cobras",
+    "location": "Casselman, ON",
+    "website": "https://easternontariocobras.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elgin Thames 73s",
+    "location": "Aylmer, ON",
+    "website": "https://elginthamesminorhockey.ca",
+    "success": true,
+    "url": "https://elginthamesminorhockey.ca/Staff/1003/",
+    "totalContacts": 12,
+    "president": {
+      "role": "PRESIDENT ETMH (AMHA)",
+      "name": "SHAWN PEDE",
+      "email": "president@elginthamesminorhockey.ca"
+    },
+    "vp": {
+      "role": "1ST VP ETMH (BMHA)",
+      "name": "MARK LANDON",
+      "email": "meblandon@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER/SECRETARY",
+      "name": "SANDRA LAKE",
+      "email": "etmhtreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Ennismore Eagles Girls",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoregirlshockey.com",
+    "success": true,
+    "url": "https://ennismoregirlshockey.com/Staff/1003/",
+    "totalContacts": 13,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JASEN MACDONALD",
+      "email": "eghapresident@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CASEY KIDD",
+      "email": "eghavice@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARC ROCHON",
+      "email": "eghatreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Cambridge Hawks",
+    "location": "Cambridge, ON",
+    "website": "https://cambridgeminorhockey.com",
+    "success": true,
+    "url": "https://cambridgeminorhockey.com/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JASON PEMBLETON",
+      "email": "president@cambridgeminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT, HOUSE LEAGUE",
+      "name": "JOHN MORTON",
+      "email": "vphouseleague@cambridgeminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "TED JEFFERIES (INTERIM)",
+      "email": "treasurer@cambridgeminorhockey.com"
+    }
+  },
+  {
+    "association": "Clarington Toros",
+    "location": "Bowmanville, ON",
+    "website": "https://claringtontoros.com",
+    "success": true,
+    "url": "https://claringtontoros.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DAWN MATHERS",
+      "email": "president@claringtontoros.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "DWAYNE MCGLYNN",
+      "email": "vp@claringtontoros.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "RICH SUCHAN",
+      "email": "rsuchan06@gmail.com"
+    }
+  }
+]

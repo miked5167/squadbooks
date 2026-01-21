@@ -1,0 +1,227 @@
+[
+  {
+    "association": "Hanover Falcons",
+    "location": "Hanover, ON",
+    "website": "https://saugeenvalleyminorhockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Playwright - validate",
+    "success": true,
+    "url": "https://saugeenvalleyminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JEREMY WHITE",
+      "email": "president@saugeenvalleyminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CRAIG CORRIVEAU",
+      "email": "vicepresident@saugeenvalleyminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CORNELIA VAN DEN HOEK",
+      "email": "treasurer@saugeenvalleyminorhockey.com"
+    }
+  },
+  {
+    "association": "East Gwillimbury Eagles",
+    "location": "Sharon, ON",
+    "website": "https://egmha.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says VP not listed - validate extraction",
+    "success": true,
+    "url": "https://egmha.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "RICK MCGLONE",
+      "email": "president@egmha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "DAVE DIGIOVANNI",
+      "email": "treasurer@egmha.com"
+    }
+  },
+  {
+    "association": "Deseronto Bulldogs",
+    "location": "Deseronto, ON",
+    "website": "https://ddmha.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says President and Treasurer share email - validate",
+    "success": true,
+    "url": "https://ddmha.ca/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT & OMHA REP",
+      "name": "JULIE BARTOLO",
+      "email": "jnbartolo@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CHRISTINE DEWBERRY",
+      "email": "ddmhatreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Essex Ravens",
+    "location": "Essex, ON",
+    "website": "https://essex-southpoint.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV via Playwright - validate",
+    "success": true,
+    "url": "https://essex-southpoint.com/Staff/1003/",
+    "totalContacts": 7,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JAMIE PAQUETTE",
+      "email": "paquer40@gmail.com"
+    }
+  },
+  {
+    "association": "Embro Edge",
+    "location": "Embro, ON",
+    "website": "https://embrohockey.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Playwright - validate",
+    "success": true,
+    "url": "https://embrohockey.com/Staff/1003/",
+    "totalContacts": 9,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "SONYA GREEN",
+      "email": "president@embrohockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/REFEREE IN CHIEF/TIMEKEEPER CONVENOR",
+      "name": "JOSH SMITH",
+      "email": "jsmith4778@hotmail.com"
+    }
+  },
+  {
+    "association": "Campbellford Colts",
+    "location": "Campbellford, ON",
+    "website": "https://campbellfordcolts.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV says VP not listed - validate",
+    "success": true,
+    "url": "https://campbellfordcolts.com/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "WAYNE KERR",
+      "email": "wanker15@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JOANNA LINTON",
+      "email": "jopeth55@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KRISTY MCKEOWN",
+      "email": "coltstreasurer32@gmail.com"
+    }
+  },
+  {
+    "association": "Cayuga Stars",
+    "location": "Cayuga, ON",
+    "website": "https://cayugaminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://cayugaminorhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TREVOR METCALFE",
+      "email": "trevormetcalfe@cayugaminorhockey.ca"
+    },
+    "vp": {
+      "role": "1ST VICE PRESIDENT",
+      "name": "JEFF ALMAS",
+      "email": "jeffalmas@cayugaminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER - SPONSORSHIP COORDINATOR",
+      "name": "TRISH DAVIDSON",
+      "email": "trishdavidson@cayugaminorhockey.ca"
+    }
+  },
+  {
+    "association": "Centre Hastings Grizzlies",
+    "location": "Madoc, ON",
+    "website": "https://centrehastingsminorhockeyassociation.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://centrehastingsminorhockeyassociation.ca/Staff/1003/",
+    "totalContacts": 11,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "CRYSTAL JULIA",
+      "email": "president@centrehastingsminorhockeyassociation.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/OMHA CONTACT",
+      "name": "JAMES MCCONNELL",
+      "email": "james.s.mcconnell@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KEVIN FORBES",
+      "email": "treasurer@centrehastingsminorhockeyassociation.ca"
+    }
+  },
+  {
+    "association": "Centre Wellington Fusion",
+    "location": "Fergus, ON",
+    "website": "https://cwminorhockey.ca",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate",
+    "success": true,
+    "url": "https://cwminorhockey.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PETER LIRUSSO",
+      "email": "president@cwmha.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "KIEL WEBB",
+      "email": "vp@cwmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "BETH MCCABE",
+      "email": "bethmccabe@wightman.ca"
+    }
+  },
+  {
+    "association": "Chatsworth Rebels",
+    "location": "Chatsworth, ON",
+    "website": "https://tcdmha.com",
+    "action": "VALIDATE",
+    "originalNotes": "CSV has complete data via Apify - validate TCDMHA",
+    "success": true,
+    "url": "https://tcdmha.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "DALE KUHL",
+      "email": "President@tcdmha.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "RANDY SACHS",
+      "email": "vicepresident@tcdmha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "AMANDA LANG",
+      "email": "Treasurer@tcdmha.com"
+    }
+  }
+]

@@ -1,0 +1,142 @@
+[
+  {
+    "association": "Douro Dukes",
+    "location": "Douro, ON",
+    "website": "https://dourominorhockey.com",
+    "success": true,
+    "url": "https://dourominorhockey.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LIAM RYAN",
+      "email": "liamsryan11@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER/TOURNAMENT CONVENER",
+      "name": "EMILY RYAN",
+      "email": "eryan@prhc.on.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "PATRICK O'GRADY",
+      "email": "patrickmogrady@hotmail.ca"
+    }
+  },
+  {
+    "association": "Drayton Defenders",
+    "location": "Drayton, ON",
+    "website": "https://draytonminorhockey.com",
+    "success": true,
+    "url": "https://draytonminorhockey.com/Staff/1003/",
+    "totalContacts": 15,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BARB DRISCOLL",
+      "email": "president@draytonminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JENN ZETTLE",
+      "email": "draytonminorhockeytreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Dresden Jr Kings",
+    "location": "Dresden, ON",
+    "website": "https://dresdenminorhockey.com",
+    "success": true,
+    "url": "https://dresdenminorhockey.com/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "IAN AVERY",
+      "email": "Ian.Avery@lkdsb.net"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "JAMIE BEATTY",
+      "email": "jamiebeatty.djk@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MARTY OSBORNE",
+      "email": "martyosborne18@hotmail.com"
+    }
+  },
+  {
+    "association": "Dubreuilville Bobcats",
+    "location": "Dubreuilville, ON",
+    "website": "https://gobobcatsgo.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Duffield Devils",
+    "location": "North York, ON",
+    "website": "https://duffieldhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Dundas Blues",
+    "location": "Dundas, ON",
+    "website": "https://dundasblues.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Dunnville Mudcats",
+    "location": "Dunnville, ON",
+    "website": "https://dunnvillemudcats.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Durham West Lightning",
+    "location": "Pickering, ON",
+    "website": "https://dwgha.com",
+    "success": true,
+    "url": "https://dwgha.com/Staff/1003/",
+    "totalContacts": 14,
+    "president": {
+      "role": "PRESIDENT & OWHA COMMUNICATIONS OFFICER",
+      "name": "EVAN JONES",
+      "email": "president@dwgha.com"
+    },
+    "treasurer": {
+      "role": "SECRETARY/TREASURER",
+      "name": "VACANT POSITION",
+      "email": "secretary@dwgha.com"
+    }
+  },
+  {
+    "association": "East Enders Ticats",
+    "location": "Toronto, ON",
+    "website": "https://torontoeastenders.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "East Lambton Eagles",
+    "location": "Watford, ON",
+    "website": "https://eastlambtonminorhockey.ca",
+    "success": true,
+    "url": "https://eastlambtonminorhockey.ca/Staff/1003/",
+    "totalContacts": 16,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "TIM LEHRBASS",
+      "email": "President@eastlambtonminorhockey.ca"
+    },
+    "vp": {
+      "role": "OMHA/SHAMROCK REP, RESOLUTION COMMITTEE CHAIR, VICE PRESIDENT #1",
+      "name": "BRAD ROMBOUTS",
+      "email": "shamrockrep@eastlambtonminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER, ROO REVISION COMMITTEE",
+      "name": "JULIE HAYTER",
+      "email": "Treasurer@eastlambtonminorhockey.ca"
+    }
+  }
+]

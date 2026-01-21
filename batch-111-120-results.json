@@ -1,0 +1,137 @@
+[
+  {
+    "association": "East Nipissing Vipers",
+    "location": "Astorville, ON",
+    "website": "https://govipersgo.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "East Ottawa Stars",
+    "location": "Orleans, ON",
+    "website": "https://eogh.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Elliot Lake",
+    "location": "Elliot Lake, ON",
+    "website": "https://elliotlakeminorhockey.ca",
+    "success": true,
+    "url": "https://elliotlakeminorhockey.ca/Staff/1003/",
+    "totalContacts": 10,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "LARA HUKEZALIE",
+      "email": "president@elliotlakeminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "VACANT VACANT",
+      "email": "treasurer@elliotlakeminorhockey.ca"
+    }
+  },
+  {
+    "association": "Elmvale Coyotes",
+    "location": "Elmvale, ON",
+    "website": "https://elmvaleminorhockey.ca",
+    "success": true,
+    "url": "https://elmvaleminorhockey.ca/Staff/1003/",
+    "totalContacts": 26,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN SENEY",
+      "email": "president@elmvaleminorhockey.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "CARLEY PEARSON",
+      "email": "treasurer@elmvaleminorhockey.ca"
+    }
+  },
+  {
+    "association": "Emo Express",
+    "location": "Emo, ON",
+    "website": "https://emohockey.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Englehart Express",
+    "location": "Englehart, ON",
+    "website": "https://www.emhamx.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Ennismore Eagles",
+    "location": "Ennismore, ON",
+    "website": "https://ennismoreeagles.ca",
+    "success": true,
+    "url": "https://ennismoreeagles.ca/Staff/1003/",
+    "totalContacts": 15,
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "CRYSTAL WEISBERG",
+      "email": "eagles.vice@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MIKE MOHER",
+      "email": "eagles.treasurer1@gmail.com"
+    },
+    "president": {
+      "role": "PRESIDENT",
+      "name": "PAULA JOORE",
+      "email": "eagles.pres1@gmail.com"
+    }
+  },
+  {
+    "association": "Erin Hillsburgh Devils",
+    "location": "Erin, ON",
+    "website": "https://ehmha.ca",
+    "success": true,
+    "url": "https://ehmha.ca/Staff/1003/",
+    "totalContacts": 18,
+    "president": {
+      "role": "PRESIDENT (EHMHA_PRESIDENT@EHMHA.CA)",
+      "name": "SID SPEAR",
+      "email": "ehmha_president@ehmha.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER (TREASURER@EHMHA.CA)",
+      "name": "JAMES TUGMAN",
+      "email": "treasurer@ehmha.ca"
+    }
+  },
+  {
+    "association": "Erindale Spitfires",
+    "location": "Mississauga, ON",
+    "website": "https://www.erindalehockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Essa Eagles",
+    "location": "Angus, ON",
+    "website": "https://essaminorhockey.com",
+    "success": true,
+    "url": "https://essaminorhockey.com/Staff/1003/",
+    "totalContacts": 33,
+    "president": {
+      "role": "PRESIDENT/ICE SCHEDULER",
+      "name": "TIFFANY HART",
+      "email": "president@essaminorhockey.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/FUNDRAISING DIRECTOR",
+      "name": "KAYLA OTTEN",
+      "email": "vp@essaminorhockey.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "MACKENZIE JAMES",
+      "email": "treasurer@essaminorhockey.com"
+    }
+  }
+]

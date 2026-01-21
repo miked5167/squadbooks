@@ -1,0 +1,184 @@
+[
+  {
+    "association": "Clarence-Rockland Lightning",
+    "location": "Rockland, ON",
+    "website": "https://crgha.ca",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Clarington Flames",
+    "location": "Bowmanville, ON",
+    "website": "https://claringtonflames.ca",
+    "success": true,
+    "url": "https://claringtonflames.ca/Staff/1003/",
+    "totalContacts": 23,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "BRENT STRAND",
+      "email": "president@claringtonflames.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MELISSA WILSON",
+      "email": "vicepresident@claringtonflames.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JESSICA JAMES",
+      "email": "treasurer@claringtonflames.ca"
+    }
+  },
+  {
+    "association": "Clearview Canucks",
+    "location": "Stayner, ON",
+    "website": "https://clearviewminorhockey.com",
+    "success": true,
+    "url": "https://clearviewminorhockey.com/Staff/1003/",
+    "totalContacts": 19,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "JOHN PATTERSON",
+      "email": "clearviewmhpresident@outlook.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "HENRY BARTON",
+      "email": "henrybarton@hotmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JANINA DOBBERKAU",
+      "email": "treasurerch@outlook.com"
+    }
+  },
+  {
+    "association": "Cold Creek Comets",
+    "location": "Trenton, ON",
+    "website": "https://coldcreekcomets.com",
+    "success": true,
+    "url": "https://coldcreekcomets.com/Staff/1003/",
+    "totalContacts": 12,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "THOMAS MACLEAN",
+      "email": "President@ColdCreekComets.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "RONDA HOUGH",
+      "email": "VicePres@ColdCreekComets.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "ANDREA DUNKLEY",
+      "email": "Treasurer@ColdCreekComets.com"
+    }
+  },
+  {
+    "association": "Coldwater Wildcats",
+    "location": "Coldwater, ON",
+    "website": "https://coldwaterwildcats.ca",
+    "success": true,
+    "url": "https://coldwaterwildcats.ca/Staff/1003/",
+    "totalContacts": 17,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "KAREN AIGELDINGER",
+      "email": "karenaigeldinger@hotmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "BRIAN ZULAK",
+      "email": "coldwatervp@gmail.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "LISA BONIFACE",
+      "email": "coldwatermha.treasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Collingwood Lightning",
+    "location": "Collingwood, ON",
+    "website": "https://collingwoodgirlshockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Copper Cliff Reds",
+    "location": "Copper Cliff, ON",
+    "website": "http://coppercliffminorhockey.com",
+    "success": false,
+    "error": "No contacts found with any URL pattern"
+  },
+  {
+    "association": "Deep River Knights",
+    "location": "Deep River, ON",
+    "website": "https://dramha.com",
+    "success": true,
+    "url": "https://dramha.com/Staff/1003/",
+    "totalContacts": 20,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "STEVE BIRD",
+      "email": "president@dramha.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT/RISK AND SAFETY",
+      "name": "JAMIE CARR",
+      "email": "vicepresident@dramha.com"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JAN SUNSTRUM",
+      "email": "deepriverknightstreasurer@gmail.com"
+    }
+  },
+  {
+    "association": "Delhi Norwich 59ers",
+    "location": "Delhi, ON",
+    "website": "https://delhinorwich59ers.ca",
+    "success": true,
+    "url": "https://delhinorwich59ers.ca/Staff/1003/",
+    "totalContacts": 21,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "RYAN DEVOS",
+      "email": "president@delhinorwich59ers.ca"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT",
+      "name": "MARISSA WILLS",
+      "email": "vp1@delhinorwich59ers.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "JOE VANHAMME",
+      "email": "treasurer@delhinorwich59ers.ca"
+    }
+  },
+  {
+    "association": "Dorchester Dragons",
+    "location": "Dorchester, ON",
+    "website": "https://dorchesterdragons.ca",
+    "success": true,
+    "url": "https://dorchesterdragons.ca/Staff/1003/",
+    "totalContacts": 22,
+    "president": {
+      "role": "PRESIDENT",
+      "name": "GARRETT HAMILTON",
+      "email": "presidentofdmha@gmail.com"
+    },
+    "vp": {
+      "role": "VICE PRESIDENT -- HOCKEY OPERATIONS",
+      "name": "ALICIA DOW-MCDONALD",
+      "email": "vphockeyops@dorchesterdragons.ca"
+    },
+    "treasurer": {
+      "role": "TREASURER",
+      "name": "KAYLA BAILEY",
+      "email": "treasurerdmha@gmail.com"
+    }
+  }
+]

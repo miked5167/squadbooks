@@ -1,0 +1,23 @@
+[
+  {
+    "association": "Ingersoll Express",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Ingersoll, ON",
+    "group": "Test - Previously Successful"
+  },
+  {
+    "association": "Beeton Stingers",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Beeton, ON",
+    "group": "Test - Previously Successful"
+  },
+  {
+    "association": "Georgina Blaze",
+    "success": false,
+    "error": "No contacts found with any URL pattern",
+    "location": "Keswick, ON",
+    "group": "Test - Previously Successful"
+  }
+]

@@ -1,0 +1,403 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { DollarSign, TrendingDown, Wallet, ActivitySquare, AlertTriangle, Loader2, Eye, Plus, AlertCircle, ArrowRight } from 'lucide-react'
+import { toast } from 'sonner'
+import { BudgetAllocationChart } from '@/components/dashboard/BudgetAllocationChart'
+import { KpiCard } from '@/components/dashboard/KpiCard'
+import { FundingSourcesCard } from '@/components/budget/FundingSourcesCard'
+import { CategoryBreakdownTable } from '@/components/budget/CategoryBreakdownTable'
+import { BudgetApprovalStatus } from '@/components/budget/BudgetApprovalStatus'
+import type { BudgetHeadingGroup } from '@/lib/types/budget'
+
+interface BudgetData {
+  teamId: string
+  season: string
+  totalBudget: number
+  totalAllocated: number
+  totalSpent: number
+  totalPending: number
+  totalRemaining: number
+  overallPercentage: number
+  projectedPercentage: number
+  overallHealth: string
+  projectedHealth: string
+  categories: Array<{
+    categoryId: string
+    categoryName: string
+    categoryHeading: string
+    categoryColor: string
+    allocated: number
+    spent: number
+    pending: number
+    remaining: number
+    percentage: number
+    projectedPercentage: number
+    health: string
+    projectedHealth: string
+  }>
+  unallocated: number
+}
+
+interface BudgetPageClientProps {
+  isTreasurer: boolean
+}
+
+interface BudgetApproval {
+  id: string
+  description: string | null
+  approvalType: string
+  amount: number
+  acknowledgedCount: number
+  requiredCount: number
+  progressPercentage: number
+  expiresAt: string | null
+  pendingFamilies: string[]
+}
+
+interface PendingApprovalsData {
+  count: number
+  totalAmount: number
+  approvals: BudgetApproval[]
+}
+
+interface CompletedBudgetApproval {
+  id: string
+  approvalType: string
+  budgetTotal: number
+  acknowledgedCount: number
+  requiredCount: number
+  completedAt: string
+  description: string | null
+}
+
+export function BudgetPageClient({ isTreasurer }: BudgetPageClientProps) {
+  const [budgetData, setBudgetData] = useState<BudgetData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [pendingApprovals, setPendingApprovals] = useState<PendingApprovalsData | null>(null)
+  const [completedApproval, setCompletedApproval] = useState<CompletedBudgetApproval | null>(null)
+
+  // Financial summary state
+  const [financialSummary, setFinancialSummary] = useState<{
+    totalIncome: number
+    totalExpenses: number
+    netPosition: number
+    budgetedExpensesTotal: number
+    incomeByCategory: Array<{
+      categoryId: string
+      categoryName: string
+      amount: number
+    }>
+  } | null>(null)
+
+  async function fetchBudget() {
+    try {
+      const res = await fetch('/api/budget')
+      if (res.ok) {
+        const data = await res.json()
+        setBudgetData(data)
+      } else {
+        toast.error('Failed to load budget data')
+      }
+    } catch (err) {
+      console.error('Failed to fetch budget:', err)
+      toast.error('Failed to load budget data')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function fetchFinancialSummary() {
+    try {
+      const res = await fetch('/api/financial-summary')
+      if (res.ok) {
+        const data = await res.json()
+        setFinancialSummary(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch financial summary:', err)
+    }
+  }
+
+  async function fetchPendingApprovals() {
+    try {
+      const res = await fetch('/api/budget-approvals/pending-count')
+      if (res.ok) {
+        const data = await res.json()
+        setPendingApprovals(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch pending approvals:', err)
+    }
+  }
+
+  async function fetchCompletedApproval() {
+    try {
+      const res = await fetch('/api/budget-approvals/completed-initial')
+      if (res.ok) {
+        const data = await res.json()
+        setCompletedApproval(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch completed approval:', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchBudget()
+    fetchFinancialSummary()
+    fetchPendingApprovals()
+    fetchCompletedApproval()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-navy" />
+      </div>
+    )
+  }
+
+  if (!budgetData) {
+    return (
+      <Card className="border-0 shadow-card">
+        <CardContent className="py-12">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-navy/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-8 h-8 text-navy" />
+            </div>
+            <h3 className="text-lg font-semibold text-navy mb-2">No Budget Data</h3>
+            <p className="text-navy/60 mb-4">
+              Set up your budget to start tracking spending
+            </p>
+            {isTreasurer && (
+              <Button className="bg-navy hover:bg-navy-medium text-white">
+                <Plus className="mr-2 w-4 h-4" />
+                Create Budget
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const { totalAllocated, totalSpent, totalRemaining, categories, season } = budgetData
+
+  // Calculate budget health
+  const percentUsed = totalAllocated > 0 ? (totalSpent / totalAllocated) * 100 : 0
+  const getBudgetHealth = (percent: number) => {
+    if (percent >= 100) return { label: 'Over Budget', variant: 'destructive' as const }
+    if (percent >= 90) return { label: 'At Limit', variant: 'warning' as const }
+    if (percent >= 70) return { label: 'Watch', variant: 'warning' as const }
+    return { label: 'On Track', variant: 'success' as const }
+  }
+  const budgetHealth = getBudgetHealth(percentUsed)
+
+  // Group categories by heading for allocation chart
+  const headingGroups = categories.reduce((acc, item) => {
+    const heading = item.categoryHeading
+    if (!acc[heading]) {
+      acc[heading] = {
+        heading,
+        color: item.categoryColor,
+        allocated: 0,
+        spent: 0,
+        percentOfTotal: 0,
+      }
+    }
+    acc[heading].allocated += item.allocated * 100 // Convert to cents
+    acc[heading].spent += item.spent * 100
+    return acc
+  }, {} as Record<string, BudgetHeadingGroup>)
+
+  // Calculate percentages
+  const allocationGroups = Object.values(headingGroups).map((group) => ({
+    ...group,
+    percentOfTotal: totalAllocated > 0 ? (group.allocated / 100 / totalAllocated) * 100 : 0,
+  }))
+
+  // Prepare category data for breakdown table
+  const categoryData = categories.map((cat) => ({
+    categoryId: cat.categoryId,
+    categoryName: cat.categoryName,
+    categoryHeading: cat.categoryHeading,
+    categoryColor: cat.categoryColor,
+    budgeted: cat.allocated,
+    spent: cat.spent,
+    remaining: cat.remaining,
+    percentUsed: cat.percentage,
+  }))
+
+  // Prepare funding sources from financial summary
+  const fundingSources = financialSummary?.incomeByCategory.map((income) => ({
+    categoryId: income.categoryId,
+    categoryName: income.categoryName,
+    amount: income.amount,
+  })) || []
+
+  return (
+    <>
+      {/* Page Header */}
+      <div className="mb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-navy">Budget</h1>
+              {!isTreasurer && (
+                <Badge variant="secondary" className="bg-navy/10 text-navy hover:bg-navy/10">
+                  <Eye className="w-3 h-3 mr-1" />
+                  Read-only
+                </Badge>
+              )}
+            </div>
+            <p className="text-base text-navy/60 mt-1">
+              {season || '2024-25 Season'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Completed Budget Approval Status */}
+      {completedApproval && (
+        <Card className="border-0 shadow-card mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-l-green-500">
+          <CardContent className="py-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-lg font-semibold text-green-900">
+                    Budget Approved by Parent Group
+                  </h3>
+                  <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+                    Completed
+                  </Badge>
+                </div>
+                <p className="text-sm text-green-700 mb-2">
+                  {completedApproval.description || 'Initial Season Budget'}
+                </p>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-green-800">
+                  <div className="flex items-center gap-1">
+                    <DollarSign className="w-4 h-4" />
+                    <span className="font-medium">
+                      ${Number(completedApproval.budgetTotal).toLocaleString('en-US', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>
+                      {completedApproval.acknowledgedCount}/{completedApproval.requiredCount} families approved
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>
+                      Approved {new Date(completedApproval.completedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Pending Budget Approval Status */}
+      {pendingApprovals && pendingApprovals.approvals && pendingApprovals.approvals.length > 0 && (
+        <BudgetApprovalStatus
+          approvals={pendingApprovals.approvals}
+          totalAmount={pendingApprovals.totalAmount}
+        />
+      )}
+
+      {/* KPI Overview Strip */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <KpiCard
+          title="Total Budget"
+          value={`$${totalAllocated.toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`}
+          subtitle="Budgeted expenses"
+          icon={DollarSign}
+        />
+        <KpiCard
+          title="Total Spent"
+          value={`$${totalSpent.toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`}
+          subtitle={`${percentUsed.toFixed(1)}% of budget`}
+          icon={TrendingDown}
+        />
+        <KpiCard
+          title="Remaining"
+          value={`$${totalRemaining.toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`}
+          subtitle={totalRemaining >= 0 ? 'Under budget' : 'Over budget'}
+          icon={Wallet}
+          badge={
+            totalRemaining >= 0
+              ? { label: 'Available', variant: 'success' }
+              : { label: 'Deficit', variant: 'destructive' }
+          }
+        />
+        <KpiCard
+          title="Budget Health"
+          value={`${percentUsed.toFixed(1)}%`}
+          subtitle="Used to date"
+          icon={ActivitySquare}
+          badge={{ label: budgetHealth.label, variant: budgetHealth.variant }}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="space-y-6">
+        {/* Budget Allocation Chart */}
+        <BudgetAllocationChart
+          groups={allocationGroups}
+          totalBudget={totalAllocated * 100}
+        />
+
+        {/* Funding Sources */}
+        {financialSummary && fundingSources.length > 0 && (
+          <FundingSourcesCard
+            sources={fundingSources}
+            totalIncome={financialSummary.totalIncome}
+            totalBudget={totalAllocated}
+          />
+        )}
+
+        {/* Category Breakdown Table */}
+        <CategoryBreakdownTable
+          categories={categoryData}
+          isTreasurer={isTreasurer}
+          canProposeUpdate={false}
+        />
+      </div>
+    </>
+  )
+}

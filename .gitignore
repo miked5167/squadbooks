@@ -1,0 +1,43 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.dev
+.env.staging
+.env.backup
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+scripts/check-mikes-team.ts
+scripts/update-roles.ts
+nul
+
+# Testing
+test-results/
+playwright-report/
+coverage/
+prisma/schema.test.prisma
+prisma/test.db
+prisma/test.db-journal
+
+# Sentry
+.sentryclirc
+sentry.properties
+
+# clerk configuration (can include secrets)
+/.clerk/

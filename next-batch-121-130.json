@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Etobicoke Bulldogs",
+    "location": "Etobicoke, ON",
+    "website": "https://gtcapitals.com",
+    "staffPage": "https://gtcapitals.com/Staff/1003/",
+    "notes": "CSV has President and VP, no traditional Treasurer - GT Capitals",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Etobicoke Dolphins",
+    "location": "Etobicoke, ON",
+    "website": "https://etobicokedolphins.ca",
+    "staffPage": "https://etobicokedolphins.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OWHA girls site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Faustina Fury",
+    "location": "Etobicoke, ON",
+    "website": "https://www.faustinahockey.com",
+    "staffPage": "https://www.faustinahockey.com/Staff/1003/",
+    "notes": "Found only general contact email - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Faustina Toros",
+    "location": "York, ON",
+    "website": "https://www.toroshockey.com",
+    "staffPage": "https://www.toroshockey.com/Staff/1003/",
+    "notes": "CSV has President and GM, no VP or Treasurer - validate",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Flamborough Falcons",
+    "location": "Flamborough, ON",
+    "website": "https://www.fgha.ca",
+    "staffPage": "https://www.fgha.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify - RAMP girls site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Flamborough Sabres",
+    "location": "Flamborough, ON",
+    "website": "https://flamboroughhockey.com",
+    "staffPage": "https://flamboroughhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Forest Hill Force",
+    "location": "Toronto, ON",
+    "website": "https://www.fhha.org",
+    "staffPage": "https://www.fhha.org/Staff/1003/",
+    "notes": "Role-based emails only - SportsEngine site - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Fort Frances Canadians",
+    "location": "Fort Frances, ON",
+    "website": "https://www.fortfranceshockey.com",
+    "staffPage": "https://www.fortfranceshockey.com/Staff/1003/",
+    "notes": "President vacant, VP listed but no email - SportsEngine - try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Fort Frances Leafs",
+    "location": "Fort Frances, ON",
+    "website": "http://ffgwha.msa4.rampinteractive.com",
+    "staffPage": "http://ffgwha.msa4.rampinteractive.com/Staff/1003/",
+    "notes": "CSV has President and Treasurer, VP no email - RAMP girls site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Frontenac Flyers",
+    "location": "Frontenac, ON",
+    "website": "https://frontenachockey.ca",
+    "staffPage": "https://frontenachockey.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify - OMHA Sportsheadz site",
+    "action": "VALIDATE"
+  }
+]

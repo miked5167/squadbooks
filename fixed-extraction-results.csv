@@ -1,0 +1,10 @@
+Association,Location,President Email,VP Email,Treasurer Email,President Name,VP Name,Treasurer Name,Total Contacts,Notes,Group
+"Ingersoll Express","Ingersoll, ON","jasongraham68@gmail.com","dieguy81@gmail.com","a_vyse@hotmail.com","JASON GRAHAM","CHRIS PARE","ANGELA NEDDO",16,"SUCCESS - Extracted from https://ingersollminorhockey.ca/Staff/1003/","Test - Previously Successful"
+"Beeton Stingers","Beeton, ON","president@beetonstingers.com","Not found","andrea.wallis@sympatico.ca","MARK SHAW","","ANDREA WALLIS",9,"SUCCESS - Extracted from https://beetonstingers.com/Staff/1003/","Test - Previously Successful"
+"Georgina Blaze","Keswick, ON","president@georginahockey.com","Not found","traceyleebolin@gmail.com","TIM MARSHALL","","TRACEY BOLIN",12,"SUCCESS - Extracted from https://georginahockey.com/Staff/1003/","Test - Previously Successful"
+"Ajax Pickering Raiders","Ajax, ON","Not found","Not found","Not found","","","",0,"Failed: No contacts found with any URL pattern","OMHA Network"
+"Almaguin Ice Devils","Sundridge, ON","president1.amha@gmail.com","Not found","almaguinicedevils@gmail.com","AARON HILL","","JENNA WEBSTER",11,"SUCCESS - Extracted from https://almaguinminorhockey.com/Staff/1003/","Cloudflare Encoded"
+"Arnprior Packers","Arnprior, ON","president@arnpriorminorhockey.ca","vicepresident@arnpriorminorhockey.ca","treasurer@arnpriorminorhockey.ca","MATT AALBERS","TREVOR NICHOLAS","BRETT SIMMONS",29,"SUCCESS - Extracted from https://arnpriorminorhockey.ca/Staff/1003/","Cloudflare Encoded"
+"Colborne Fire Hawks","Colborne, ON","Not found","Not found","Not found","","","",0,"Failed: No contacts found with any URL pattern","Playwright Retry"
+"Barrie Colts","Barrie, ON","president@barrieminorhockey.ca","ip@barrieminorhockey.net","Not found","CHRIS INGLIS","TBA TBA","",20,"SUCCESS - Extracted from https://barrieminorhockey.net/Staff/1003/","Playwright Retry"
+"Copper Cliff Reds","Copper Cliff, ON","Not found","Not found","Not found","","","",0,"Failed: No contacts found with any URL pattern","Playwright Retry"

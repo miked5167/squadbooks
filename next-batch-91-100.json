@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Clarence-Rockland Lightning",
+    "location": "Rockland, ON",
+    "website": "https://crgha.ca",
+    "staffPage": "https://crgha.ca/Staff/1003/",
+    "notes": "CSV has President and Treasurer, VP vacant - RAMP site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Clarington Flames",
+    "location": "Bowmanville, ON",
+    "website": "https://claringtonflames.ca",
+    "staffPage": "https://claringtonflames.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OWHA site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Clearview Canucks",
+    "location": "Stayner, ON",
+    "website": "https://clearviewminorhockey.com",
+    "staffPage": "https://clearviewminorhockey.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Cold Creek Comets",
+    "location": "Trenton, ON",
+    "website": "https://coldcreekcomets.com",
+    "staffPage": "https://coldcreekcomets.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OWHA girls site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Coldwater Wildcats",
+    "location": "Coldwater, ON",
+    "website": "https://coldwaterwildcats.ca",
+    "staffPage": "https://coldwaterwildcats.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Collingwood Lightning",
+    "location": "Collingwood, ON",
+    "website": "https://collingwoodgirlshockey.com",
+    "staffPage": "https://collingwoodgirlshockey.com/Staff/1003/",
+    "notes": "CSV has President and Treasurer, VP not listed - RAMP site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Copper Cliff Reds",
+    "location": "Copper Cliff, ON",
+    "website": "http://coppercliffminorhockey.com",
+    "staffPage": "http://coppercliffminorhockey.com/Staff/1003/",
+    "notes": "TeamPages site - no contacts listed, try extraction",
+    "action": "TRY EXTRACTION"
+  },
+  {
+    "name": "Deep River Knights",
+    "location": "Deep River, ON",
+    "website": "https://dramha.com",
+    "staffPage": "https://dramha.com/Staff/1003/",
+    "notes": "CSV has complete data via Apify - Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Delhi Norwich 59ers",
+    "location": "Delhi, ON",
+    "website": "https://delhinorwich59ers.ca",
+    "staffPage": "https://delhinorwich59ers.ca/Staff/1003/",
+    "notes": "CSV has 2 VPs via Apify - Sportsheadz site",
+    "action": "VALIDATE"
+  },
+  {
+    "name": "Dorchester Dragons",
+    "location": "Dorchester, ON",
+    "website": "https://dorchesterdragons.ca",
+    "staffPage": "https://dorchesterdragons.ca/Staff/1003/",
+    "notes": "CSV has complete data via Apify - OMHA site",
+    "action": "VALIDATE"
+  }
+]
