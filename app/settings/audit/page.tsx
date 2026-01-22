@@ -55,11 +55,12 @@ export default function AuditPage() {
   const [endDate, setEndDate] = useState('')
   const [userId, setUserId] = useState('')
   const [action, setAction] = useState('')
+  const [filterVersion, setFilterVersion] = useState(0) // Trigger re-fetch when filters applied
 
-  // Fetch audit logs
+  // Fetch audit logs when offset or filters change
   useEffect(() => {
     fetchLogs()
-  }, [offset])
+  }, [offset, filterVersion])
 
   async function fetchLogs() {
     try {
@@ -104,7 +105,7 @@ export default function AuditPage() {
 
   function handleFilter() {
     setOffset(0)
-    fetchLogs()
+    setFilterVersion((v) => v + 1) // Trigger re-fetch via useEffect
   }
 
   function handleReset() {
@@ -113,7 +114,7 @@ export default function AuditPage() {
     setUserId('')
     setAction('')
     setOffset(0)
-    fetchLogs()
+    setFilterVersion((v) => v + 1) // Trigger re-fetch via useEffect
   }
 
   function formatDate(dateString: string) {
@@ -203,11 +204,15 @@ export default function AuditPage() {
               <Label htmlFor="action" className="text-sm">
                 Action Type
               </Label>
-              <Select value={action || undefined} onValueChange={setAction}>
+              <Select
+                value={action || 'all'}
+                onValueChange={(value) => setAction(value === 'all' ? '' : value)}
+              >
                 <SelectTrigger id="action">
                   <SelectValue placeholder="All actions" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">All actions</SelectItem>
                   <SelectItem value="CREATE">Create</SelectItem>
                   <SelectItem value="UPDATE">Update</SelectItem>
                   <SelectItem value="DELETE">Delete</SelectItem>

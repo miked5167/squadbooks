@@ -66,10 +66,8 @@ export function PlaidLinkButton({
     }
   }, [linkToken, toast]);
 
-  // Automatically fetch link token on mount
-  useEffect(() => {
-    fetchLinkToken();
-  }, [fetchLinkToken]);
+  // Only fetch link token when user clicks the button, not on mount
+  // This prevents console errors when Plaid credentials aren't configured
 
   // Handle successful bank connection
   const handleOnSuccess = useCallback(
@@ -146,14 +144,18 @@ export function PlaidLinkButton({
 
   const { open, ready } = usePlaidLink(config);
 
-  // Handle button click
-  const handleClick = () => {
+  // Handle button click - fetch token first if needed
+  const handleClick = async () => {
+    if (!linkToken) {
+      await fetchLinkToken();
+      return; // Token will be set, user needs to click again
+    }
     if (ready) {
       open();
     }
   };
 
-  const isButtonDisabled = disabled || isLoading || isExchanging || !ready || !linkToken;
+  const isButtonDisabled = disabled || isLoading || isExchanging;
   const showLoading = isLoading || isExchanging;
 
   return (

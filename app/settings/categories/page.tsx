@@ -10,6 +10,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -51,16 +60,15 @@ interface BudgetAllocation {
   allocated: number
 }
 
-// Define expense and income group headings
+// Define expense and income group headings (must match seed data exactly)
 const EXPENSE_GROUPS = [
-  'Ice & Facilities',
-  'Equipment & Uniforms',
-  'Tournament & League Fees',
-  'Travel & Accommodation',
+  'Ice Time & Facilities',
+  'Equipment & Jerseys',
+  'Travel & Tournaments',
   'Coaching & Officials',
-  'Fundraising & Events',
-  'Administrative',
-  'Other',
+  'League & Registration',
+  'Team Operations',
+  'Miscellaneous',
 ] as const
 
 const INCOME_GROUPS = ['Fundraising & Income'] as const
@@ -326,16 +334,6 @@ export default function CategoriesPage() {
     setEditDialogOpen(true)
   }
 
-  function openCreateDialogForGroup(heading: string) {
-    setFormData({
-      name: '',
-      heading: heading,
-      color: '#3B82F6',
-      sortOrder: 0,
-    })
-    setCreateDialogOpen(true)
-  }
-
   // Helper functions for group classification
   function isIncomeGroup(heading: string): boolean {
     return INCOME_GROUPS.includes(heading as any)
@@ -426,16 +424,6 @@ export default function CategoriesPage() {
               )}
             </div>
           </AccordionTrigger>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => openCreateDialogForGroup(heading)}
-            className="text-xs ml-3 flex-shrink-0"
-          >
-            <Plus className="w-3 h-3 mr-1" />
-            Add
-          </Button>
         </div>
 
         <AccordionContent className="pt-2 pb-4">
@@ -514,6 +502,17 @@ export default function CategoriesPage() {
                 Manage expense and income categories for budget planning
               </p>
             </div>
+            <Button
+              variant="outline"
+              onClick={() => {
+                resetForm()
+                setCreateDialogOpen(true)
+              }}
+              className="border-navy text-navy hover:bg-navy hover:text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Category
+            </Button>
           </div>
         </div>
 
@@ -618,16 +617,35 @@ export default function CategoriesPage() {
               </div>
 
               <div>
-                <Label htmlFor="createHeading">Heading *</Label>
-                <Input
-                  id="createHeading"
+                <Label htmlFor="createHeading">Category Group *</Label>
+                <Select
                   value={formData.heading}
-                  onChange={(e) =>
-                    setFormData({ ...formData, heading: e.target.value })
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, heading: value })
                   }
-                  placeholder="e.g., Team Operations"
-                  required
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Expense Categories</SelectLabel>
+                      {EXPENSE_GROUPS.map((group) => (
+                        <SelectItem key={group} value={group}>
+                          {group}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                    <SelectGroup>
+                      <SelectLabel>Income Categories</SelectLabel>
+                      {INCOME_GROUPS.map((group) => (
+                        <SelectItem key={group} value={group}>
+                          {group}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -722,15 +740,35 @@ export default function CategoriesPage() {
               </div>
 
               <div>
-                <Label htmlFor="editHeading">Heading *</Label>
-                <Input
-                  id="editHeading"
+                <Label htmlFor="editHeading">Category Group *</Label>
+                <Select
                   value={formData.heading}
-                  onChange={(e) =>
-                    setFormData({ ...formData, heading: e.target.value })
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, heading: value })
                   }
-                  required
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Expense Categories</SelectLabel>
+                      {EXPENSE_GROUPS.map((group) => (
+                        <SelectItem key={group} value={group}>
+                          {group}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                    <SelectGroup>
+                      <SelectLabel>Income Categories</SelectLabel>
+                      {INCOME_GROUPS.map((group) => (
+                        <SelectItem key={group} value={group}>
+                          {group}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>

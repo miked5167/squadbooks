@@ -10,13 +10,9 @@
 import { NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
-import { logger } from '@/lib/logger'
 import { requireAuditor } from '@/lib/auth/permissions'
-import { logger } from '@/lib/logger'
 import { auditLogFilterSchema } from '@/lib/validations/settings'
-import { logger } from '@/lib/logger'
 import { z } from 'zod'
-import { logger } from '@/lib/logger'
 
 /**
  * GET /api/settings/audit-log

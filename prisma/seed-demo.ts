@@ -1788,9 +1788,11 @@ async function createTransactions(
 
   // Helper to find category by heading
   const findCategory = (heading: string) => categories.find(c => c.heading === heading)
+  // Helper to find category by name
+  const findCategoryByName = (name: string) => categories.find(c => c.name === name)
 
   // 1. Registration income (September)
-  const registrationCat = findCategory('Fundraising & Income')
+  const registrationCat = findCategoryByName('Registration Fees')
   if (registrationCat) {
     process.stdout.write('   Creating registration income...')
     const range = FAMILY_FEE_RANGE[cfg.competitiveLevel]
@@ -1883,7 +1885,7 @@ async function createTransactions(
     ]
 
     for (const tourneyDate of tournamentDates) {
-      const amount = randomInt(1500, 3500)
+      const amount = randomInt(400, 800)
       const tx = await prisma.transaction.create({
         data: {
           teamId,
@@ -1938,7 +1940,7 @@ async function createTransactions(
 
     for (const weekend of tournamentWeekends) {
       // Hotel
-      const hotelAmount = randomInt(2500, 4500)
+      const hotelAmount = randomInt(600, 1000)
       const hotelTx = await prisma.transaction.create({
         data: {
           teamId,
@@ -1957,7 +1959,7 @@ async function createTransactions(
       transactions.push(hotelTx)
 
       // Gas
-      const gasAmount = randomInt(800, 1500)
+      const gasAmount = randomInt(150, 350)
       const gasTx = await prisma.transaction.create({
         data: {
           teamId,
@@ -1978,7 +1980,7 @@ async function createTransactions(
   }
 
   // 7. Fundraising income
-  const fundraisingCat = findCategory('Fundraising & Income')
+  const fundraisingCat = findCategoryByName('Fundraising Events')
   if (fundraisingCat) {
     let fundraisingDate = new Date('2025-10-05T00:00:00Z')
     const fundraisingEvents = ['Bottle drive', '50/50 draw', 'Raffle night', 'Pub night fundraiser']
