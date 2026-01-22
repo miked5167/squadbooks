@@ -299,11 +299,14 @@ export async function getTeamDetailData(
       },
     })
 
-    // Fetch recent approved transactions
+    // Fetch recent transactions (all statuses for visibility)
+    // Include both legacy (APPROVED, APPROVED_AUTOMATIC) and new validation statuses
     const recentTransactions = await prisma.transaction.findMany({
       where: {
         teamId: teamInternalId,
-        status: 'APPROVED',
+        status: {
+          in: ['APPROVED', 'APPROVED_AUTOMATIC', 'VALIDATED', 'RESOLVED', 'IMPORTED', 'EXCEPTION'],
+        },
       },
       orderBy: {
         transactionDate: 'desc',
@@ -433,10 +436,10 @@ export async function getTeamDetailData(
     }
 
     // 3. Missing receipts (NONE or MISSING status indicates missing receipt)
+    // Include both income and expense transactions
     const missingReceiptTxns = allTransactions.filter(t =>
       (t.receipt_status === 'NONE' || t.receipt_status === 'MISSING') &&
-      t.status === 'APPROVED' &&
-      t.type === 'EXPENSE'
+      t.status === 'APPROVED'
     ).slice(0, 5)
     for (const txn of missingReceiptTxns) {
       alerts.push({

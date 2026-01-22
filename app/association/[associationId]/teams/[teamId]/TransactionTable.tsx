@@ -63,14 +63,23 @@ export function TransactionTable({ transactions, associationId, totalCount }: Tr
 
   const isIncome = (type: string) => type === 'INCOME'
   const statusColors: Record<string, string> = {
+    // Legacy statuses
     APPROVED: 'bg-green-100 text-green-800',
+    APPROVED_AUTOMATIC: 'bg-green-100 text-green-800',
     PENDING: 'bg-yellow-100 text-yellow-800',
     REJECTED: 'bg-red-100 text-red-800',
+    // Validation-first statuses
+    VALIDATED: 'bg-green-100 text-green-800',
+    RESOLVED: 'bg-blue-100 text-blue-800',
+    IMPORTED: 'bg-gray-100 text-gray-800',
+    EXCEPTION: 'bg-red-100 text-red-800',
+    DRAFT: 'bg-gray-100 text-gray-600',
+    LOCKED: 'bg-purple-100 text-purple-800',
   }
 
   const hasReceipt = (tx: Transaction) => {
-    // Show eye icon if NOT missing receipt (i.e., not an expense with NONE/MISSING status)
-    const isMissingReceipt = (tx.receipt_status === 'NONE' || tx.receipt_status === 'MISSING') && tx.type === 'EXPENSE'
+    // Show eye icon if NOT missing receipt (applies to both income and expenses)
+    const isMissingReceipt = tx.receipt_status === 'NONE' || tx.receipt_status === 'MISSING'
     return !isMissingReceipt
   }
 
@@ -129,7 +138,7 @@ export function TransactionTable({ transactions, associationId, totalCount }: Tr
                 <td className="px-4 py-3">
                   <div className="flex flex-col gap-1">
                     <span className="text-sm text-gray-600">{transaction.description || '-'}</span>
-                    {(transaction.receipt_status === 'NONE' || transaction.receipt_status === 'MISSING') && transaction.type === 'EXPENSE' && (
+                    {(transaction.receipt_status === 'NONE' || transaction.receipt_status === 'MISSING') && (
                       <span className="inline-flex items-center gap-1 text-xs text-red-600">
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />

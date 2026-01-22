@@ -42,12 +42,12 @@ export async function getFinancialSummary(
 
   // Fetch all approved/validated/resolved transactions for this team
   const [incomeTransactions, expenseTransactions, budgetAllocations] = await Promise.all([
-    // Get all approved INCOME transactions
+    // Get all APPROVED, VALIDATED, and RESOLVED INCOME transactions
     prisma.transaction.findMany({
       where: {
         teamId,
         type: 'INCOME',
-        status: 'APPROVED',
+        status: { in: ['APPROVED', 'VALIDATED', 'RESOLVED'] },
         deletedAt: null,
       },
       select: {
