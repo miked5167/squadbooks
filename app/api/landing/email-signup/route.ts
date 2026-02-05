@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { prisma } from '@/lib/prisma'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -12,6 +13,26 @@ export async function POST(request: NextRequest) {
     // Validate email
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    }
+
+    // Get IP address
+    const ipAddress =
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+
+    // Check if already signed up
+    const existing = await prisma.waitlistSignup.findUnique({
+      where: { email },
+    })
+
+    if (!existing) {
+      // Save to database
+      await prisma.waitlistSignup.create({
+        data: {
+          email,
+          source: source || 'landing_page',
+          ipAddress,
+        },
+      })
     }
 
     // Send email notification to you
