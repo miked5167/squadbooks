@@ -4,13 +4,13 @@
  * Endpoints for managing a specific budget envelope
  */
 
-import type { NextRequest} from "next/server";
-import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { db } from "@/lib/db";
-import { hasPermission } from "@/lib/auth/permissions";
-import { PeriodType, VendorMatchType } from "@prisma/client";
-import { z } from "zod";
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
+import { prisma as db } from '@/lib/prisma'
+import { hasPermission, Permission } from '@/lib/permissions/permissions'
+import { PeriodType, VendorMatchType } from '@prisma/client'
+import { z } from 'zod'
 
 // Validation schema for updating envelopes
 const updateEnvelopeSchema = z.object({
@@ -22,62 +22,59 @@ const updateEnvelopeSchema = z.object({
   endDate: z.string().datetime().optional().nullable(),
   maxSingleTransaction: z.number().positive().max(100000).optional().nullable(),
   isActive: z.boolean().optional(),
-});
+})
 
 /**
  * PATCH /api/budget-envelopes/[id]
  * Update an existing envelope
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { userId } = await auth();
+    const { userId } = await auth()
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const envelopeId = params.id;
-    const body = await request.json();
-    const validation = updateEnvelopeSchema.safeParse(body);
+    const { id: envelopeId } = await params
+    const body = await request.json()
+    const validation = updateEnvelopeSchema.safeParse(body)
 
     if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid request data", details: validation.error.errors },
+        { error: 'Invalid request data', details: validation.error.errors },
         { status: 400 }
-      );
+      )
     }
 
-    const data = validation.data;
+    const data = validation.data
 
     // Get user and check permissions
     const user = await db.user.findUnique({
       where: { clerkId: userId },
       select: { id: true, teamId: true, role: true },
-    });
+    })
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     // Only treasurers can update envelopes
-    if (!(await hasPermission(userId, user.teamId, "MANAGE_BUDGET"))) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!hasPermission(user.role, Permission.EDIT_BUDGET)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Get existing envelope
     const existingEnvelope = await db.budgetEnvelope.findUnique({
       where: { id: envelopeId },
       select: { id: true, teamId: true },
-    });
+    })
 
     if (!existingEnvelope) {
-      return NextResponse.json({ error: "Envelope not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Envelope not found' }, { status: 404 })
     }
 
     if (existingEnvelope.teamId !== user.teamId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Update the envelope
@@ -88,9 +85,15 @@ export async function PATCH(
         ...(data.vendorMatch !== undefined && { vendorMatch: data.vendorMatch }),
         ...(data.capAmount !== undefined && { capAmount: data.capAmount }),
         ...(data.periodType !== undefined && { periodType: data.periodType }),
-        ...(data.startDate !== undefined && { startDate: data.startDate ? new Date(data.startDate) : null }),
-        ...(data.endDate !== undefined && { endDate: data.endDate ? new Date(data.endDate) : null }),
-        ...(data.maxSingleTransaction !== undefined && { maxSingleTransaction: data.maxSingleTransaction }),
+        ...(data.startDate !== undefined && {
+          startDate: data.startDate ? new Date(data.startDate) : null,
+        }),
+        ...(data.endDate !== undefined && {
+          endDate: data.endDate ? new Date(data.endDate) : null,
+        }),
+        ...(data.maxSingleTransaction !== undefined && {
+          maxSingleTransaction: data.maxSingleTransaction,
+        }),
         ...(data.isActive !== undefined && { isActive: data.isActive }),
         ...(data.isActive === false && {
           deactivatedAt: new Date(),
@@ -114,27 +117,24 @@ export async function PATCH(
           },
         },
       },
-    });
+    })
 
     // Create audit log
     await db.auditLog.create({
       data: {
         teamId: user.teamId,
         userId: user.id,
-        action: "UPDATE_BUDGET_ENVELOPE",
-        entityType: "BudgetEnvelope",
+        action: 'UPDATE_BUDGET_ENVELOPE',
+        entityType: 'BudgetEnvelope',
         entityId: envelope.id,
         newValues: data,
       },
-    });
+    })
 
-    return NextResponse.json({ envelope });
+    return NextResponse.json({ envelope })
   } catch (error) {
-    console.error("[BUDGET_ENVELOPE_PATCH]", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error('[BUDGET_ENVELOPE_PATCH]', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
@@ -144,43 +144,43 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
+    const { userId } = await auth()
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const envelopeId = params.id;
+    const { id: envelopeId } = await params
 
     // Get user and check permissions
     const user = await db.user.findUnique({
       where: { clerkId: userId },
       select: { id: true, teamId: true, role: true },
-    });
+    })
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     // Only treasurers can delete envelopes
-    if (!(await hasPermission(userId, user.teamId, "MANAGE_BUDGET"))) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!hasPermission(user.role, Permission.EDIT_BUDGET)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Get existing envelope
     const existingEnvelope = await db.budgetEnvelope.findUnique({
       where: { id: envelopeId },
       select: { id: true, teamId: true, isActive: true },
-    });
+    })
 
     if (!existingEnvelope) {
-      return NextResponse.json({ error: "Envelope not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Envelope not found' }, { status: 404 })
     }
 
     if (existingEnvelope.teamId !== user.teamId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Soft delete by deactivating
@@ -191,25 +191,22 @@ export async function DELETE(
         deactivatedAt: new Date(),
         deactivatedBy: user.id,
       },
-    });
+    })
 
     // Create audit log
     await db.auditLog.create({
       data: {
         teamId: user.teamId,
         userId: user.id,
-        action: "DELETE_BUDGET_ENVELOPE",
-        entityType: "BudgetEnvelope",
+        action: 'DELETE_BUDGET_ENVELOPE',
+        entityType: 'BudgetEnvelope',
         entityId: envelope.id,
       },
-    });
+    })
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("[BUDGET_ENVELOPE_DELETE]", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    console.error('[BUDGET_ENVELOPE_DELETE]', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

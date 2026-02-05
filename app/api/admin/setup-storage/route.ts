@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
-import { logger } from '@/lib/logger'
 
 /**
  * POST /api/admin/setup-storage
@@ -14,10 +13,7 @@ export async function POST() {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
     if (!supabaseServiceKey) {
-      return NextResponse.json(
-        { error: 'Service role key not configured' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'Service role key not configured' }, { status: 500 })
     }
 
     // Create admin client with service role key
@@ -34,13 +30,7 @@ export async function POST() {
       {
         public: false,
         fileSizeLimit: 5242880, // 5MB
-        allowedMimeTypes: [
-          'image/jpeg',
-          'image/jpg',
-          'image/png',
-          'image/webp',
-          'application/pdf',
-        ],
+        allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'],
       }
     )
 

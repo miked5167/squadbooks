@@ -1,10 +1,8 @@
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth/server-auth'
-import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/prisma'
-import { logger } from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,22 +12,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const {
-      firstName,
-      lastName,
-      jerseyNumber,
-      position,
-      dateOfBirth,
-      familyId,
-      status,
-    } = body
+    const { firstName, lastName, jerseyNumber, position, dateOfBirth, familyId, status } = body
 
     // Validate required fields
     if (!firstName || !lastName) {
-      return NextResponse.json(
-        { error: 'First name and last name are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'First name and last name are required' }, { status: 400 })
     }
 
     // Get user's team and role
@@ -44,10 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Only TREASURER and ASSISTANT_TREASURER can create players
     if (user.role !== 'TREASURER' && user.role !== 'ASSISTANT_TREASURER') {
-      return NextResponse.json(
-        { error: 'Only treasurers can create players' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'Only treasurers can create players' }, { status: 403 })
     }
 
     // If familyId is provided, verify it belongs to the same team
