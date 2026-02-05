@@ -1,8 +1,8 @@
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { prisma } from '@/lib/db'
-import { sendWaitlistWelcomeEmail } from '@/lib/email'
+import { prisma } from '@/lib/prisma'
+import { sendWaitlistWelcomeEmail, sendWaitlistSignupNotificationEmail } from '@/lib/email'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -19,13 +19,12 @@ export async function POST(request: NextRequest) {
     const validatedData = WaitlistSignupSchema.parse(body)
 
     // Get IP address for audit trail
-    const ipAddress = request.headers.get('x-forwarded-for') ||
-                     request.headers.get('x-real-ip') ||
-                     'unknown'
+    const ipAddress =
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
 
     // Check if email already exists
     const existingSignup = await prisma.waitlistSignup.findUnique({
-      where: { email: validatedData.email }
+      where: { email: validatedData.email },
     })
 
     if (existingSignup) {
@@ -42,7 +41,7 @@ export async function POST(request: NextRequest) {
         email: validatedData.email,
         source: validatedData.source || 'landing_hero',
         ipAddress,
-      }
+      },
     })
 
     // Send welcome email
@@ -51,6 +50,18 @@ export async function POST(request: NextRequest) {
     } catch (emailError) {
       console.error('Failed to send welcome email:', emailError)
       // Continue even if email fails - we have their signup
+    }
+
+    // Send notification to admin
+    try {
+      await sendWaitlistSignupNotificationEmail({
+        email: validatedData.email,
+        source: validatedData.source,
+        ipAddress,
+      })
+    } catch (notifyError) {
+      console.error('Failed to send signup notification:', notifyError)
+      // Continue even if notification fails
     }
 
     // Add to Resend audience (if configured)
@@ -71,11 +82,10 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         message: 'Thanks for signing up! Check your email for confirmation.',
-        id: signup.id
+        id: signup.id,
       },
       { status: 201 }
     )
-
   } catch (error) {
     console.error('Waitlist signup error:', error)
 
@@ -85,7 +95,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Invalid email address',
-          details: error.errors
+          details: error.errors,
         },
         { status: 400 }
       )
@@ -95,7 +105,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Failed to process signup. Please try again.'
+        error: 'Failed to process signup. Please try again.',
       },
       { status: 500 }
     )

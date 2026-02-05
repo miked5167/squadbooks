@@ -1512,7 +1512,11 @@ export async function sendExceptionNotificationEmail(data: ExceptionNotification
     LOW: { label: 'Low', color: '#3b82f6', bgColor: '#dbeafe' },
   }
 
-  const { label: severityLabel, color: severityColor, bgColor: severityBgColor } = severityConfig[severity]
+  const {
+    label: severityLabel,
+    color: severityColor,
+    bgColor: severityBgColor,
+  } = severityConfig[severity]
 
   const subject = `[${severityLabel} Priority] Transaction Exception: $${transactionAmount.toLocaleString()} - ${transactionVendor}`
 
@@ -1728,7 +1732,9 @@ export async function sendExceptionDigestEmail(
       </div>
 
       <table style="width: 100%; border-collapse: collapse; border-top: 2px solid #e5e7eb; padding-top: 15px;">
-        ${exceptionsSummary.critical > 0 ? `
+        ${
+          exceptionsSummary.critical > 0
+            ? `
         <tr>
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
             <span style="display: inline-block; width: 12px; height: 12px; background: #dc2626; border-radius: 50%; margin-right: 8px;"></span>
@@ -1736,8 +1742,12 @@ export async function sendExceptionDigestEmail(
           </td>
           <td style="padding: 8px 0; color: #dc2626; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.critical}</td>
         </tr>
-        ` : ''}
-        ${exceptionsSummary.high > 0 ? `
+        `
+            : ''
+        }
+        ${
+          exceptionsSummary.high > 0
+            ? `
         <tr>
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
             <span style="display: inline-block; width: 12px; height: 12px; background: #ea580c; border-radius: 50%; margin-right: 8px;"></span>
@@ -1745,8 +1755,12 @@ export async function sendExceptionDigestEmail(
           </td>
           <td style="padding: 8px 0; color: #ea580c; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.high}</td>
         </tr>
-        ` : ''}
-        ${exceptionsSummary.medium > 0 ? `
+        `
+            : ''
+        }
+        ${
+          exceptionsSummary.medium > 0
+            ? `
         <tr>
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
             <span style="display: inline-block; width: 12px; height: 12px; background: #f59e0b; border-radius: 50%; margin-right: 8px;"></span>
@@ -1754,8 +1768,12 @@ export async function sendExceptionDigestEmail(
           </td>
           <td style="padding: 8px 0; color: #f59e0b; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.medium}</td>
         </tr>
-        ` : ''}
-        ${exceptionsSummary.low > 0 ? `
+        `
+            : ''
+        }
+        ${
+          exceptionsSummary.low > 0
+            ? `
         <tr>
           <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">
             <span style="display: inline-block; width: 12px; height: 12px; background: #3b82f6; border-radius: 50%; margin-right: 8px;"></span>
@@ -1763,7 +1781,9 @@ export async function sendExceptionDigestEmail(
           </td>
           <td style="padding: 8px 0; color: #3b82f6; font-size: 16px; font-weight: 700; text-align: right;">${exceptionsSummary.low}</td>
         </tr>
-        ` : ''}
+        `
+            : ''
+        }
       </table>
 
     </div>
@@ -1981,6 +2001,97 @@ This is an automated message from Squadbooks
     return { success: true, result }
   } catch (error) {
     console.error('Failed to send waitlist welcome email:', error)
+    return { success: false, error }
+  }
+}
+
+/**
+ * Send notification to admin when someone signs up for the waitlist
+ */
+export async function sendWaitlistSignupNotificationEmail(data: {
+  email: string
+  source?: string
+  ipAddress?: string
+}) {
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL
+  if (!adminEmail) {
+    console.warn('ADMIN_NOTIFICATION_EMAIL not set, skipping signup notification')
+    return { success: false, error: 'Admin email not configured' }
+  }
+
+  const { email, source, ipAddress } = data
+  const subject = `New Waitlist Signup: ${email}`
+  const signupTime = new Date().toLocaleString('en-US', {
+    timeZone: 'America/Toronto',
+    dateStyle: 'full',
+    timeStyle: 'short',
+  })
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 20px; background-color: #f3f4f6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <div style="max-width: 500px; margin: 0 auto;">
+    <div style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+      <h1 style="margin: 0; color: white; font-size: 20px;">🎉 New Waitlist Signup!</h1>
+    </div>
+    <div style="background: #ffffff; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Email:</td>
+          <td style="padding: 8px 0; font-weight: 600; font-size: 14px;"><a href="mailto:${email}" style="color: #22c55e;">${email}</a></td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Source:</td>
+          <td style="padding: 8px 0; font-size: 14px;">${source || 'landing_hero'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Time:</td>
+          <td style="padding: 8px 0; font-size: 14px;">${signupTime}</td>
+        </tr>
+        ${
+          ipAddress
+            ? `
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">IP:</td>
+          <td style="padding: 8px 0; font-size: 14px; color: #9ca3af;">${ipAddress}</td>
+        </tr>
+        `
+            : ''
+        }
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+`
+
+  const textContent = `
+New Waitlist Signup!
+
+Email: ${email}
+Source: ${source || 'landing_hero'}
+Time: ${signupTime}
+${ipAddress ? `IP: ${ipAddress}` : ''}
+`
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: adminEmail,
+      subject,
+      html: htmlContent,
+      text: textContent,
+    })
+
+    console.log('Waitlist signup notification sent successfully:', result)
+    return { success: true, result }
+  } catch (error) {
+    console.error('Failed to send waitlist signup notification:', error)
     return { success: false, error }
   }
 }
